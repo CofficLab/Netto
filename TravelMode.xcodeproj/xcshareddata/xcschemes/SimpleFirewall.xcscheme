@@ -17,7 +17,7 @@
                      BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
                      BuildableName = "SimpleFirewall.app"
                      BlueprintName = "SimpleFirewall"
-                     ReferencedContainer = "container:SimpleFirewall.xcodeproj">
+                     ReferencedContainer = "container:TravelMode.xcodeproj">
                   </BuildableReference>
                </EnvironmentBuildable>
             </ActionContent>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
                BuildableName = "SimpleFirewall.app"
                BlueprintName = "SimpleFirewall"
-               ReferencedContainer = "container:SimpleFirewall.xcodeproj">
+               ReferencedContainer = "container:TravelMode.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -68,7 +68,7 @@
             BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
             BuildableName = "SimpleFirewall.app"
             BlueprintName = "SimpleFirewall"
-            ReferencedContainer = "container:SimpleFirewall.xcodeproj">
+            ReferencedContainer = "container:TravelMode.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </LaunchAction>
@@ -85,7 +85,7 @@
             BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
             BuildableName = "SimpleFirewall.app"
             BlueprintName = "SimpleFirewall"
-            ReferencedContainer = "container:SimpleFirewall.xcodeproj">
+            ReferencedContainer = "container:TravelMode.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

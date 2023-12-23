@@ -202,7 +202,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C4B45DB022739FFF0050C59B /* Build configuration list for PBXProject "SimpleFirewall" */;
+			buildConfigurationList = C4B45DB022739FFF0050C59B /* Build configuration list for PBXProject "TravelMode" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -522,7 +522,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C4B45DB022739FFF0050C59B /* Build configuration list for PBXProject "SimpleFirewall" */ = {
+		C4B45DB022739FFF0050C59B /* Build configuration list for PBXProject "TravelMode" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C4B45DC32273A0020050C59B /* Debug */,
