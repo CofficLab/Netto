@@ -45,9 +45,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		03411C5003411ED000000001 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		6ED719E06ED6DED000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
-		6ED8E4306ED7A1A000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.TravelY6HZ9JJYV6.TravelExtension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = "com.example.apple-samplecode.TravelY6HZ9JJYV6.TravelExtension.systemextension"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C40A5C4A229DD6A500627D50 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		C40A5C4C229DD6A500627D50 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -92,14 +90,6 @@
 			name = Configuration;
 			sourceTree = "<group>";
 		};
-		6ED7B3006ED7B69000000001 /* LICENSE */ = {
-			isa = PBXGroup;
-			children = (
-				6ED8E4306ED7A1A000000001 /* LICENSE.txt */,
-			);
-			path = LICENSE;
-			sourceTree = "<group>";
-		};
 		C40A5C47229DD6A500627D50 /* SimpleFirewallExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -115,13 +105,11 @@
 		C4B45DAC22739FFF0050C59B = {
 			isa = PBXGroup;
 			children = (
-				03411C5003411ED000000001 /* README.md */,
 				C4B45DB722739FFF0050C59B /* SimpleFirewall */,
 				C40A5C47229DD6A500627D50 /* SimpleFirewallExtension */,
 				C4B45DB622739FFF0050C59B /* Products */,
 				C4B45DDC2273A3450050C59B /* Frameworks */,
 				6ED613506ED6B88000000001 /* Configuration */,
-				6ED7B3006ED7B69000000001 /* LICENSE */,
 			);
 			sourceTree = "<group>";
 		};
