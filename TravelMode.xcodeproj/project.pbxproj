@@ -105,7 +105,7 @@
 		C4B45DAC22739FFF0050C59B = {
 			isa = PBXGroup;
 			children = (
-				C4B45DB722739FFF0050C59B /* SimpleFirewall */,
+				C4B45DB722739FFF0050C59B /* App */,
 				C40A5C47229DD6A500627D50 /* Extension */,
 				C4B45DB622739FFF0050C59B /* Products */,
 				C4B45DDC2273A3450050C59B /* Frameworks */,
@@ -122,7 +122,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C4B45DB722739FFF0050C59B /* SimpleFirewall */ = {
+		C4B45DB722739FFF0050C59B /* App */ = {
 			isa = PBXGroup;
 			children = (
 				C4B45DB822739FFF0050C59B /* AppDelegate.swift */,
@@ -132,7 +132,7 @@
 				C4B45DC12273A0020050C59B /* Info.plist */,
 				C4B45DC22273A0020050C59B /* Signing.entitlements */,
 			);
-			path = SimpleFirewall;
+			path = App;
 			sourceTree = "<group>";
 		};
 		C4B45DDC2273A3450050C59B /* Frameworks */ = {
@@ -458,7 +458,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SimpleFirewall/Signing.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -467,7 +467,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = SimpleFirewall/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -488,7 +488,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SimpleFirewall/Signing.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -497,7 +497,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = SimpleFirewall/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
