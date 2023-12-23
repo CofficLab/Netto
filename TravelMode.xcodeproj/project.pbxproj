@@ -3,168 +3,340 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0B439E8A2B36E5D500C5DD83 /* TravelModeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B439E892B36E5D500C5DD83 /* TravelModeApp.swift */; };
-		0B439E8C2B36E5D500C5DD83 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B439E8B2B36E5D500C5DD83 /* ContentView.swift */; };
-		0B439E8E2B36E5D700C5DD83 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B439E8D2B36E5D700C5DD83 /* Assets.xcassets */; };
-		0B439E912B36E5D700C5DD83 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B439E902B36E5D700C5DD83 /* Preview Assets.xcassets */; };
+		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
+		C40A5C4B229DD6A500627D50 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A5C4A229DD6A500627D50 /* main.swift */; };
+		C40A5C50229DD6A500627D50 /* com.example.apple-samplecode.TravelModeY6HZ9JJYV6.TravelModeExtension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.TravelModeY6HZ9JJYV6.TravelModeExtension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C40A5C56229DD92E00627D50 /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
+		C40A5C57229DD93200627D50 /* FilterDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E0DBB42273BEA0005B02F4 /* FilterDataProvider.swift */; };
+		C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
+		C4B45DB922739FFF0050C59B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B45DB822739FFF0050C59B /* AppDelegate.swift */; };
+		C4B45DBB22739FFF0050C59B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B45DBA22739FFF0050C59B /* ViewController.swift */; };
+		C4B45DBD2273A0020050C59B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C4B45DBC2273A0020050C59B /* Assets.xcassets */; };
+		C4B45DC02273A0020050C59B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C4B45DBE2273A0020050C59B /* Main.storyboard */; };
+		C4B45DDE2273A3450050C59B /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		C40A5C4E229DD6A500627D50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C4B45DAD22739FFF0050C59B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C40A5C44229DD6A500627D50;
+			remoteInfo = SimpleFirewallExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C40A5C51229DD6A500627D50 /* Embed System Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				C40A5C50229DD6A500627D50 /* com.example.apple-samplecode.TravelModeY6HZ9JJYV6.TravelModeExtension.systemextension in Embed System Extensions */,
+			);
+			name = "Embed System Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		0B439E862B36E5D500C5DD83 /* TravelMode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelMode.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0B439E892B36E5D500C5DD83 /* TravelModeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelModeApp.swift; sourceTree = "<group>"; };
-		0B439E8B2B36E5D500C5DD83 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		0B439E8D2B36E5D700C5DD83 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0B439E902B36E5D700C5DD83 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		0B439E922B36E5D700C5DD83 /* TravelMode.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TravelMode.entitlements; sourceTree = "<group>"; };
-		0BAEDE062B37080F00724464 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		6ED719E06ED6DED000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
+		C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.TravelModeY6HZ9JJYV6.TravelModeExtension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = "com.example.apple-samplecode.TravelModeY6HZ9JJYV6.TravelModeExtension.systemextension"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C40A5C4A229DD6A500627D50 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		C40A5C4C229DD6A500627D50 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C40A5C4D229DD6A500627D50 /* SimpleFirewallExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimpleFirewallExtension.entitlements; sourceTree = "<group>"; };
+		C4B1415A227A396500B26560 /* IPCConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPCConnection.swift; sourceTree = "<group>"; };
+		C4B45DB522739FFF0050C59B /* TravelMode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelMode.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4B45DB822739FFF0050C59B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C4B45DBA22739FFF0050C59B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C4B45DBC2273A0020050C59B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C4B45DBF2273A0020050C59B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C4B45DC12273A0020050C59B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C4B45DC22273A0020050C59B /* SimpleFirewall.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimpleFirewall.entitlements; sourceTree = "<group>"; };
+		C4B45DDD2273A3450050C59B /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		C4E0DBB42273BEA0005B02F4 /* FilterDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDataProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0B439E832B36E5D500C5DD83 /* Frameworks */ = {
+		C40A5C42229DD6A500627D50 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4B45DB222739FFF0050C59B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C4B45DDE2273A3450050C59B /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0B439E7D2B36E5D500C5DD83 = {
+		6ED613506ED6B88000000001 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				0B439EB32B36FF3200C5DD83 /* App */,
-				0B439E882B36E5D500C5DD83 /* TravelMode */,
-				0B439E872B36E5D500C5DD83 /* Products */,
+				6ED719E06ED6DED000000001 /* SampleCode.xcconfig */,
+			);
+			name = Configuration;
+			sourceTree = "<group>";
+		};
+		C40A5C47229DD6A500627D50 /* SimpleFirewallExtension */ = {
+			isa = PBXGroup;
+			children = (
+				C4E0DBB42273BEA0005B02F4 /* FilterDataProvider.swift */,
+				C4B1415A227A396500B26560 /* IPCConnection.swift */,
+				C40A5C4A229DD6A500627D50 /* main.swift */,
+				C40A5C4C229DD6A500627D50 /* Info.plist */,
+				C40A5C4D229DD6A500627D50 /* SimpleFirewallExtension.entitlements */,
+			);
+			path = SimpleFirewallExtension;
+			sourceTree = "<group>";
+		};
+		C4B45DAC22739FFF0050C59B = {
+			isa = PBXGroup;
+			children = (
+				C4B45DB722739FFF0050C59B /* SimpleFirewall */,
+				C40A5C47229DD6A500627D50 /* SimpleFirewallExtension */,
+				C4B45DB622739FFF0050C59B /* Products */,
+				C4B45DDC2273A3450050C59B /* Frameworks */,
+				6ED613506ED6B88000000001 /* Configuration */,
 			);
 			sourceTree = "<group>";
 		};
-		0B439E872B36E5D500C5DD83 /* Products */ = {
+		C4B45DB622739FFF0050C59B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0B439E862B36E5D500C5DD83 /* TravelMode.app */,
+				C4B45DB522739FFF0050C59B /* TravelMode.app */,
+				C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.TravelModeY6HZ9JJYV6.TravelModeExtension.systemextension */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		0B439E882B36E5D500C5DD83 /* TravelMode */ = {
+		C4B45DB722739FFF0050C59B /* SimpleFirewall */ = {
 			isa = PBXGroup;
 			children = (
-				0BAEDE062B37080F00724464 /* Info.plist */,
-				0B439E8D2B36E5D700C5DD83 /* Assets.xcassets */,
-				0B439E922B36E5D700C5DD83 /* TravelMode.entitlements */,
-				0B439E8F2B36E5D700C5DD83 /* Preview Content */,
+				C4B45DB822739FFF0050C59B /* AppDelegate.swift */,
+				C4B45DBA22739FFF0050C59B /* ViewController.swift */,
+				C4B45DBC2273A0020050C59B /* Assets.xcassets */,
+				C4B45DBE2273A0020050C59B /* Main.storyboard */,
+				C4B45DC12273A0020050C59B /* Info.plist */,
+				C4B45DC22273A0020050C59B /* SimpleFirewall.entitlements */,
 			);
-			path = TravelMode;
+			path = SimpleFirewall;
 			sourceTree = "<group>";
 		};
-		0B439E8F2B36E5D700C5DD83 /* Preview Content */ = {
+		C4B45DDC2273A3450050C59B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0B439E902B36E5D700C5DD83 /* Preview Assets.xcassets */,
+				C4B45DDD2273A3450050C59B /* NetworkExtension.framework */,
 			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		0B439EB32B36FF3200C5DD83 /* App */ = {
-			isa = PBXGroup;
-			children = (
-				0B439E892B36E5D500C5DD83 /* TravelModeApp.swift */,
-				0B439E8B2B36E5D500C5DD83 /* ContentView.swift */,
-			);
-			path = App;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0B439E852B36E5D500C5DD83 /* TravelMode */ = {
+		C40A5C44229DD6A500627D50 /* TravelModeExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0B439E952B36E5D700C5DD83 /* Build configuration list for PBXNativeTarget "TravelMode" */;
+			buildConfigurationList = C40A5C54229DD6A500627D50 /* Build configuration list for PBXNativeTarget "TravelModeExtension" */;
 			buildPhases = (
-				0B439E822B36E5D500C5DD83 /* Sources */,
-				0B439E832B36E5D500C5DD83 /* Frameworks */,
-				0B439E842B36E5D500C5DD83 /* Resources */,
+				C40A5C41229DD6A500627D50 /* Sources */,
+				C40A5C42229DD6A500627D50 /* Frameworks */,
+				C40A5C43229DD6A500627D50 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
+			name = TravelModeExtension;
+			productName = SimpleFirewallExtension;
+			productReference = C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.TravelModeY6HZ9JJYV6.TravelModeExtension.systemextension */;
+			productType = "com.apple.product-type.system-extension";
+		};
+		C4B45DB422739FFF0050C59B /* TravelMode */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4B45DC52273A0020050C59B /* Build configuration list for PBXNativeTarget "TravelMode" */;
+			buildPhases = (
+				C4B45DB122739FFF0050C59B /* Sources */,
+				C4B45DB222739FFF0050C59B /* Frameworks */,
+				C4B45DB322739FFF0050C59B /* Resources */,
+				C40A5C51229DD6A500627D50 /* Embed System Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C40A5C4F229DD6A500627D50 /* PBXTargetDependency */,
+			);
 			name = TravelMode;
-			productName = TravelMode;
-			productReference = 0B439E862B36E5D500C5DD83 /* TravelMode.app */;
+			productName = SimpleFirewall;
+			productReference = C4B45DB522739FFF0050C59B /* TravelMode.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		0B439E7E2B36E5D500C5DD83 /* Project object */ = {
+		C4B45DAD22739FFF0050C59B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1510;
-				LastUpgradeCheck = 1510;
+				DefaultBuildSystemTypeForWorkspace = Latest;
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+				ORGANIZATIONNAME = Apple;
 				TargetAttributes = {
-					0B439E852B36E5D500C5DD83 = {
-						CreatedOnToolsVersion = 15.1;
+					C40A5C44229DD6A500627D50 = {
+						CreatedOnToolsVersion = 11.0;
+					};
+					C4B45DB422739FFF0050C59B = {
+						CreatedOnToolsVersion = 11.0;
 					};
 				};
 			};
-			buildConfigurationList = 0B439E812B36E5D500C5DD83 /* Build configuration list for PBXProject "TravelMode" */;
-			compatibilityVersion = "Xcode 14.0";
+			buildConfigurationList = C4B45DB022739FFF0050C59B /* Build configuration list for PBXProject "TravelMode" */;
+			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 0B439E7D2B36E5D500C5DD83;
-			productRefGroup = 0B439E872B36E5D500C5DD83 /* Products */;
+			mainGroup = C4B45DAC22739FFF0050C59B;
+			productRefGroup = C4B45DB622739FFF0050C59B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0B439E852B36E5D500C5DD83 /* TravelMode */,
+				C4B45DB422739FFF0050C59B /* TravelMode */,
+				C40A5C44229DD6A500627D50 /* TravelModeExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0B439E842B36E5D500C5DD83 /* Resources */ = {
+		C40A5C43229DD6A500627D50 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B439E912B36E5D700C5DD83 /* Preview Assets.xcassets in Resources */,
-				0B439E8E2B36E5D700C5DD83 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4B45DB322739FFF0050C59B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C4B45DBD2273A0020050C59B /* Assets.xcassets in Resources */,
+				C4B45DC02273A0020050C59B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		0B439E822B36E5D500C5DD83 /* Sources */ = {
+		C40A5C41229DD6A500627D50 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B439E8C2B36E5D500C5DD83 /* ContentView.swift in Sources */,
-				0B439E8A2B36E5D500C5DD83 /* TravelModeApp.swift in Sources */,
+				C40A5C57229DD93200627D50 /* FilterDataProvider.swift in Sources */,
+				C40A5C56229DD92E00627D50 /* IPCConnection.swift in Sources */,
+				C40A5C4B229DD6A500627D50 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4B45DB122739FFF0050C59B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */,
+				C4B45DBB22739FFF0050C59B /* ViewController.swift in Sources */,
+				C4B45DB922739FFF0050C59B /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		C40A5C4F229DD6A500627D50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C40A5C44229DD6A500627D50 /* TravelModeExtension */;
+			targetProxy = C40A5C4E229DD6A500627D50 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C4B45DBE2273A0020050C59B /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C4B45DBF2273A0020050C59B /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
-		0B439E932B36E5D700C5DD83 /* Debug */ = {
+		C40A5C52229DD6A500627D50 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SimpleFirewallExtension/SimpleFirewallExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = SimpleFirewallExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.SimpleFirewall${SAMPLE_CODE_DISAMBIGUATOR}.SimpleFirewallExtension";
+				PRODUCT_NAME = "com.example.apple-samplecode.TravelModeY6HZ9JJYV6.TravelModeExtension";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C40A5C53229DD6A500627D50 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SimpleFirewallExtension/SimpleFirewallExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = SimpleFirewallExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.SimpleFirewall${SAMPLE_CODE_DISAMBIGUATOR}.SimpleFirewallExtension";
+				PRODUCT_NAME = "com.example.apple-samplecode.TravelModeY6HZ9JJYV6.TravelModeExtension";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		C4B45DC32273A0020050C59B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -183,7 +355,6 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -194,8 +365,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -209,25 +379,25 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
-		0B439E942B36E5D700C5DD83 /* Release */ = {
+		C4B45DC42273A0020050C59B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -246,7 +416,6 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -257,8 +426,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -266,71 +434,57 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Release;
 		};
-		0B439E962B36E5D700C5DD83 /* Debug */ = {
+		C4B45DC62273A0020050C59B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = TravelMode/TravelMode.entitlements;
+				CODE_SIGN_ENTITLEMENTS = SimpleFirewall/SimpleFirewall.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 4;
-				DEVELOPMENT_ASSET_PATHS = "\"TravelMode/Preview Content\"";
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = TravelMode/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_FILE = SimpleFirewall/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.SimpleFirewall${SAMPLE_CODE_DISAMBIGUATOR}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
-		0B439E972B36E5D700C5DD83 /* Release */ = {
+		C4B45DC72273A0020050C59B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = TravelMode/TravelMode.entitlements;
+				CODE_SIGN_ENTITLEMENTS = SimpleFirewall/SimpleFirewall.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 4;
-				DEVELOPMENT_ASSET_PATHS = "\"TravelMode/Preview Content\"";
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = TravelMode/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_FILE = SimpleFirewall/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.SimpleFirewall${SAMPLE_CODE_DISAMBIGUATOR}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -338,25 +492,34 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0B439E812B36E5D500C5DD83 /* Build configuration list for PBXProject "TravelMode" */ = {
+		C40A5C54229DD6A500627D50 /* Build configuration list for PBXNativeTarget "TravelModeExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0B439E932B36E5D700C5DD83 /* Debug */,
-				0B439E942B36E5D700C5DD83 /* Release */,
+				C40A5C52229DD6A500627D50 /* Debug */,
+				C40A5C53229DD6A500627D50 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0B439E952B36E5D700C5DD83 /* Build configuration list for PBXNativeTarget "TravelMode" */ = {
+		C4B45DB022739FFF0050C59B /* Build configuration list for PBXProject "TravelMode" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0B439E962B36E5D700C5DD83 /* Debug */,
-				0B439E972B36E5D700C5DD83 /* Release */,
+				C4B45DC32273A0020050C59B /* Debug */,
+				C4B45DC42273A0020050C59B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C4B45DC52273A0020050C59B /* Build configuration list for PBXNativeTarget "TravelMode" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4B45DC62273A0020050C59B /* Debug */,
+				C4B45DC72273A0020050C59B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 0B439E7E2B36E5D500C5DD83 /* Project object */;
+	rootObject = C4B45DAD22739FFF0050C59B /* Project object */;
 }
