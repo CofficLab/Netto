@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		C40A5C4B229DD6A500627D50 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A5C4A229DD6A500627D50 /* main.swift */; };
-		C40A5C50229DD6A500627D50 /* com.example.apple-samplecode.SimpleFirewall.SimpleFirewallExtension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.SimpleFirewall.SimpleFirewallExtension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C40A5C50229DD6A500627D50 /* com.example.apple-samplecode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C40A5C56229DD92E00627D50 /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
 		C40A5C57229DD93200627D50 /* FilterDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E0DBB42273BEA0005B02F4 /* FilterDataProvider.swift */; };
 		C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
@@ -37,7 +37,7 @@
 			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
 			dstSubfolderSpec = 16;
 			files = (
-				C40A5C50229DD6A500627D50 /* com.example.apple-samplecode.SimpleFirewall.SimpleFirewallExtension.systemextension in Embed System Extensions */,
+				C40A5C50229DD6A500627D50 /* com.example.apple-samplecode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension in Embed System Extensions */,
 			);
 			name = "Embed System Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -46,7 +46,7 @@
 
 /* Begin PBXFileReference section */
 		6ED719E06ED6DED000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
-		C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.SimpleFirewall.SimpleFirewallExtension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = "com.example.apple-samplecode.SimpleFirewall.SimpleFirewallExtension.systemextension"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = "com.example.apple-samplecode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C40A5C4A229DD6A500627D50 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		C40A5C4C229DD6A500627D50 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C40A5C4D229DD6A500627D50 /* SimpleFirewallExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimpleFirewallExtension.entitlements; sourceTree = "<group>"; };
@@ -117,7 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				C4B45DB522739FFF0050C59B /* SimpleFirewall.app */,
-				C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.SimpleFirewall.SimpleFirewallExtension.systemextension */,
+				C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -160,7 +160,7 @@
 			);
 			name = SimpleFirewallExtension;
 			productName = SimpleFirewallExtension;
-			productReference = C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.SimpleFirewall.SimpleFirewallExtension.systemextension */;
+			productReference = C40A5C45229DD6A500627D50 /* com.example.apple-samplecode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension */;
 			productType = "com.apple.product-type.system-extension";
 		};
 		C4B45DB422739FFF0050C59B /* SimpleFirewall */ = {
@@ -289,7 +289,7 @@
 				CODE_SIGN_ENTITLEMENTS = SimpleFirewallExtension/SimpleFirewallExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SimpleFirewallExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -312,7 +312,7 @@
 				CODE_SIGN_ENTITLEMENTS = SimpleFirewallExtension/SimpleFirewallExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SimpleFirewallExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -453,7 +453,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				INFOPLIST_FILE = SimpleFirewall/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -476,7 +476,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				INFOPLIST_FILE = SimpleFirewall/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
