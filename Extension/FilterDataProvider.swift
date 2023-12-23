@@ -30,8 +30,8 @@ class FilterDataProvider: NEFilterDataProvider {
                                                    remotePrefix: 0,
                                                    localNetwork: localNetwork,
                                                    localPrefix: 0,
-                                                   protocol: .TCP,
-                                                   direction: .inbound)
+                                                   protocol: .any,
+                                                   direction: .any)
             return NEFilterRule(networkRule: inboundNetworkRule, action: .filterData)
         }
 
