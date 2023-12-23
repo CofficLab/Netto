@@ -20,6 +20,7 @@
 		0B439E8D2B36E5D700C5DD83 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0B439E902B36E5D700C5DD83 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		0B439E922B36E5D700C5DD83 /* TravelMode.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TravelMode.entitlements; sourceTree = "<group>"; };
+		0BAEDE062B37080F00724464 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +54,7 @@
 		0B439E882B36E5D500C5DD83 /* TravelMode */ = {
 			isa = PBXGroup;
 			children = (
+				0BAEDE062B37080F00724464 /* Info.plist */,
 				0B439E8D2B36E5D700C5DD83 /* Assets.xcassets */,
 				0B439E922B36E5D700C5DD83 /* TravelMode.entitlements */,
 				0B439E8F2B36E5D700C5DD83 /* Preview Content */,
@@ -287,6 +289,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TravelMode/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -316,6 +319,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TravelMode/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
