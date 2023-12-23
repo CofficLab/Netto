@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -188,9 +188,10 @@
 		C4B45DAD22739FFF0050C59B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastSwiftUpdateCheck = 1100;
-				LastUpgradeCheck = 1100;
+				LastUpgradeCheck = 1510;
 				ORGANIZATIONNAME = Apple;
 				TargetAttributes = {
 					C40A5C44229DD6A500627D50 = {
@@ -289,6 +290,7 @@
 				CODE_SIGN_ENTITLEMENTS = SimpleFirewallExtension/SimpleFirewallExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SimpleFirewallExtension/Info.plist;
@@ -312,6 +314,7 @@
 				CODE_SIGN_ENTITLEMENTS = SimpleFirewallExtension/SimpleFirewallExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SimpleFirewallExtension/Info.plist;
@@ -355,6 +358,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -362,9 +366,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -416,6 +422,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -423,9 +430,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -453,7 +462,10 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 8;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SimpleFirewall/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
@@ -479,7 +491,10 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 8;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SimpleFirewall/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
