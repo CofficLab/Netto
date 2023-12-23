@@ -57,7 +57,7 @@
 		C4B45DBC2273A0020050C59B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C4B45DBF2273A0020050C59B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C4B45DC12273A0020050C59B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C4B45DC22273A0020050C59B /* SimpleFirewall.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimpleFirewall.entitlements; sourceTree = "<group>"; };
+		C4B45DC22273A0020050C59B /* Signing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Signing.entitlements; sourceTree = "<group>"; };
 		C4B45DDD2273A3450050C59B /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		C4E0DBB42273BEA0005B02F4 /* FilterDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDataProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -130,7 +130,7 @@
 				C4B45DBC2273A0020050C59B /* Assets.xcassets */,
 				C4B45DBE2273A0020050C59B /* Main.storyboard */,
 				C4B45DC12273A0020050C59B /* Info.plist */,
-				C4B45DC22273A0020050C59B /* SimpleFirewall.entitlements */,
+				C4B45DC22273A0020050C59B /* Signing.entitlements */,
 			);
 			path = SimpleFirewall;
 			sourceTree = "<group>";
@@ -458,8 +458,9 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SimpleFirewall/SimpleFirewall.entitlements;
+				CODE_SIGN_ENTITLEMENTS = SimpleFirewall/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 8;
@@ -474,7 +475,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yueyi.TravelMode.SimpleFirewall${SAMPLE_CODE_DISAMBIGUATOR}";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -487,8 +488,9 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SimpleFirewall/SimpleFirewall.entitlements;
+				CODE_SIGN_ENTITLEMENTS = SimpleFirewall/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 8;
@@ -503,7 +505,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yueyi.TravelMode.SimpleFirewall${SAMPLE_CODE_DISAMBIGUATOR}";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
