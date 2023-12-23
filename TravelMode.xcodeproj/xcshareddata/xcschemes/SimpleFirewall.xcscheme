@@ -15,8 +15,8 @@
                   <BuildableReference
                      BuildableIdentifier = "primary"
                      BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
-                     BuildableName = "SimpleFirewall.app"
-                     BlueprintName = "SimpleFirewall"
+                     BuildableName = "TravelMode.app"
+                     BlueprintName = "TravelMode"
                      ReferencedContainer = "container:TravelMode.xcodeproj">
                   </BuildableReference>
                </EnvironmentBuildable>
@@ -33,8 +33,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
-               BuildableName = "SimpleFirewall.app"
-               BlueprintName = "SimpleFirewall"
+               BuildableName = "TravelMode.app"
+               BlueprintName = "TravelMode"
                ReferencedContainer = "container:TravelMode.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -59,15 +59,14 @@
       allowLocationSimulation = "YES">
       <PathRunnable
          runnableDebuggingMode = "0"
-         BundleIdentifier = "com.yueyi.TravelMode.SimpleFirewallY6HZ9JJYV6"
-         FilePath = "/Applications/SimpleFirewall.app">
+         FilePath = "/Applications/TravelMode.app">
       </PathRunnable>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
-            BuildableName = "SimpleFirewall.app"
-            BlueprintName = "SimpleFirewall"
+            BuildableName = "TravelMode.app"
+            BlueprintName = "TravelMode"
             ReferencedContainer = "container:TravelMode.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -83,8 +82,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
-            BuildableName = "SimpleFirewall.app"
-            BlueprintName = "SimpleFirewall"
+            BuildableName = "TravelMode.app"
+            BlueprintName = "TravelMode"
             ReferencedContainer = "container:TravelMode.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
