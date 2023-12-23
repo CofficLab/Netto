@@ -59,7 +59,7 @@
       allowLocationSimulation = "YES">
       <PathRunnable
          runnableDebuggingMode = "0"
-         BundleIdentifier = "com.example.apple-samplecode.SimpleFirewallY6HZ9JJYV6"
+         BundleIdentifier = "com.yueyi.TravelMode.SimpleFirewallY6HZ9JJYV6"
          FilePath = "/Applications/SimpleFirewall.app">
       </PathRunnable>
       <MacroExpansion>
