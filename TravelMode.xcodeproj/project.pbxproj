@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		C40A5C4B229DD6A500627D50 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A5C4A229DD6A500627D50 /* main.swift */; };
-		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C40A5C56229DD92E00627D50 /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
 		C40A5C57229DD93200627D50 /* FilterDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E0DBB42273BEA0005B02F4 /* FilterDataProvider.swift */; };
 		C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
@@ -37,7 +37,7 @@
 			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
 			dstSubfolderSpec = 16;
 			files = (
-				C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension in Embed System Extensions */,
+				C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */,
 			);
 			name = "Embed System Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -46,7 +46,7 @@
 
 /* Begin PBXFileReference section */
 		6ED719E06ED6DED000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
-		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = "com.yueyi.TravelMode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		C40A5C4A229DD6A500627D50 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		C40A5C4C229DD6A500627D50 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C40A5C4D229DD6A500627D50 /* SimpleFirewallExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimpleFirewallExtension.entitlements; sourceTree = "<group>"; };
@@ -90,7 +90,7 @@
 			name = Configuration;
 			sourceTree = "<group>";
 		};
-		C40A5C47229DD6A500627D50 /* SimpleFirewallExtension */ = {
+		C40A5C47229DD6A500627D50 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
 				C4E0DBB42273BEA0005B02F4 /* FilterDataProvider.swift */,
@@ -99,14 +99,14 @@
 				C40A5C4C229DD6A500627D50 /* Info.plist */,
 				C40A5C4D229DD6A500627D50 /* SimpleFirewallExtension.entitlements */,
 			);
-			path = SimpleFirewallExtension;
+			path = Extension;
 			sourceTree = "<group>";
 		};
 		C4B45DAC22739FFF0050C59B = {
 			isa = PBXGroup;
 			children = (
 				C4B45DB722739FFF0050C59B /* SimpleFirewall */,
-				C40A5C47229DD6A500627D50 /* SimpleFirewallExtension */,
+				C40A5C47229DD6A500627D50 /* Extension */,
 				C4B45DB622739FFF0050C59B /* Products */,
 				C4B45DDC2273A3450050C59B /* Frameworks */,
 				6ED613506ED6B88000000001 /* Configuration */,
@@ -117,7 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				C4B45DB522739FFF0050C59B /* SimpleFirewall.app */,
-				C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension */,
+				C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -146,9 +146,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C40A5C44229DD6A500627D50 /* SimpleFirewallExtension */ = {
+		C40A5C44229DD6A500627D50 /* Extension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C40A5C54229DD6A500627D50 /* Build configuration list for PBXNativeTarget "SimpleFirewallExtension" */;
+			buildConfigurationList = C40A5C54229DD6A500627D50 /* Build configuration list for PBXNativeTarget "Extension" */;
 			buildPhases = (
 				C40A5C41229DD6A500627D50 /* Sources */,
 				C40A5C42229DD6A500627D50 /* Frameworks */,
@@ -158,9 +158,9 @@
 			);
 			dependencies = (
 			);
-			name = SimpleFirewallExtension;
+			name = Extension;
 			productName = SimpleFirewallExtension;
-			productReference = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.SimpleFirewallY6HZ9JJYV6.SimpleFirewallExtension.systemextension */;
+			productReference = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */;
 			productType = "com.apple.product-type.system-extension";
 		};
 		C4B45DB422739FFF0050C59B /* SimpleFirewall */ = {
@@ -216,7 +216,7 @@
 			projectRoot = "";
 			targets = (
 				C4B45DB422739FFF0050C59B /* SimpleFirewall */,
-				C40A5C44229DD6A500627D50 /* SimpleFirewallExtension */,
+				C40A5C44229DD6A500627D50 /* Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -266,7 +266,7 @@
 /* Begin PBXTargetDependency section */
 		C40A5C4F229DD6A500627D50 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C40A5C44229DD6A500627D50 /* SimpleFirewallExtension */;
+			target = C40A5C44229DD6A500627D50 /* Extension */;
 			targetProxy = C40A5C4E229DD6A500627D50 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -287,19 +287,19 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = SimpleFirewallExtension/SimpleFirewallExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extension/SimpleFirewallExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = SimpleFirewallExtension/Info.plist;
+				INFOPLIST_FILE = Extension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yueyi.TravelMode.SimpleFirewall${SAMPLE_CODE_DISAMBIGUATOR}.SimpleFirewallExtension";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode.Extension;
 				PRODUCT_NAME = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -311,19 +311,19 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = SimpleFirewallExtension/SimpleFirewallExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extension/SimpleFirewallExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = SimpleFirewallExtension/Info.plist;
+				INFOPLIST_FILE = Extension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yueyi.TravelMode.SimpleFirewall${SAMPLE_CODE_DISAMBIGUATOR}.SimpleFirewallExtension";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode.Extension;
 				PRODUCT_NAME = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -513,7 +513,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C40A5C54229DD6A500627D50 /* Build configuration list for PBXNativeTarget "SimpleFirewallExtension" */ = {
+		C40A5C54229DD6A500627D50 /* Build configuration list for PBXNativeTarget "Extension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C40A5C52229DD6A500627D50 /* Debug */,
