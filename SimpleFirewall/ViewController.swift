@@ -154,7 +154,7 @@ class ViewController: NSViewController {
         let dateString = dateFormatter.string(from: date)
         let message = "\(dateString) \(userAllowed ? "ALLOW" : "DENY") \(localPort) <-- \(remoteAddress)\n"
 
-        os_log("%@", message)
+        os_log("============= %@", message)
 
         let logAttributes: [NSAttributedString.Key: Any] = [ .font: font, .foregroundColor: NSColor.textColor ]
         let attributedString = NSAttributedString(string: message, attributes: logAttributes)
@@ -344,11 +344,14 @@ extension ViewController: AppCommunication {
             alert.addButton(withTitle: "Allow")
             alert.addButton(withTitle: "Deny")
 
-            alert.beginSheetModal(for: window) { userResponse in
-                let userAllowed = (userResponse == .alertFirstButtonReturn)
-                self.logFlow(flowInfo, at: connectionDate, userAllowed: userAllowed)
-                responseHandler(userAllowed)
-            }
+//            alert.beginSheetModal(for: window) { userResponse in
+//                let userAllowed = (userResponse == .alertFirstButtonReturn)
+//                self.logFlow(flowInfo, at: connectionDate, userAllowed: userAllowed)
+//                responseHandler(userAllowed)
+//            }
+            
+            self.logFlow(flowInfo, at: connectionDate, userAllowed: true)
+            responseHandler(true)
         }
     }
 }

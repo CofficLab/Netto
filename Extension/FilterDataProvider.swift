@@ -36,7 +36,7 @@ class FilterDataProvider: NEFilterDataProvider {
         }
 
         // Allow all flows that do not match the filter rules.
-        let filterSettings = NEFilterSettings(rules: filterRules, defaultAction: .allow)
+        let filterSettings = NEFilterSettings(rules: filterRules, defaultAction: .filterData)
 
         apply(filterSettings) { error in
             if let applyError = error {
@@ -65,17 +65,20 @@ class FilterDataProvider: NEFilterDataProvider {
             FlowInfoKey.localPort.rawValue: localEndpoint.port,
             FlowInfoKey.remoteAddress.rawValue: remoteEndpoint.hostname
         ]
-
+        
         // Ask the app to prompt the user
         let prompted = IPCConnection.shared.promptUser(aboutFlow: flowInfo) { allow in
             let userVerdict: NEFilterNewFlowVerdict = allow ? .allow() : .drop()
+            os_log("====resumeFlow====")
             self.resumeFlow(flow, with: userVerdict)
         }
 
         guard prompted else {
+            os_log("====allow====")
             return .allow()
         }
 
+        os_log("====pause====")
         return .pause()
     }
 }
