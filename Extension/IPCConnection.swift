@@ -66,7 +66,7 @@ class IPCConnection: NSObject {
 
     /// This method is called by the app to register with the provider running in the system extension.
     func register(withExtension bundle: Bundle, delegate: AppCommunication, completionHandler: @escaping (Bool) -> Void) {
-
+        os_log(" =================== IPCConnection.register")
         self.delegate = delegate
 
         guard currentConnection == nil else {

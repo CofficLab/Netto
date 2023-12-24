@@ -152,8 +152,59 @@ class Angel: NSViewController {
         activationRequest.delegate = self
         OSSystemExtensionManager.shared.submitRequest(activationRequest)
     }
+    
+    func startFilter2() {
+        status = .indeterminate
+        guard !NEFilterManager.shared().isEnabled else {
+            registerWithProvider()
+            return
+        }
+
+        guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
+            self.status = .stopped
+            return
+        }
+
+        // Start by activating the system extension
+        let activationRequest = OSSystemExtensionRequest.activationRequest(forExtensionWithIdentifier: extensionIdentifier, queue: .main)
+        activationRequest.delegate = self
+        OSSystemExtensionManager.shared.submitRequest(activationRequest)
+    }
 
     @IBAction func stopFilter(_ sender: Any) {
+
+        let filterManager = NEFilterManager.shared()
+
+        status = .indeterminate
+
+        guard filterManager.isEnabled else {
+            status = .stopped
+            return
+        }
+
+        loadFilterConfiguration { success in
+            guard success else {
+                self.status = .running
+                return
+            }
+
+            // Disable the content filter configuration
+            filterManager.isEnabled = false
+            filterManager.saveToPreferences { saveError in
+                DispatchQueue.main.async {
+                    if let error = saveError {
+                        os_log("Failed to disable the filter configuration: %@", error.localizedDescription)
+                        self.status = .running
+                        return
+                    }
+
+                    self.status = .stopped
+                }
+            }
+        }
+    }
+    
+    func stopFilter2() {
 
         let filterManager = NEFilterManager.shared()
 
