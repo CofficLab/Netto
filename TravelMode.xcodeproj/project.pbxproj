@@ -14,7 +14,7 @@
 		0B5B1CC02B3865F90002421E /* Angel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CBF2B3865F90002421E /* Angel.swift */; };
 		0B5B1CC12B3866250002421E /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
 		0B5B1CC22B386B580002421E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
-		0B5B1CC42B386BB40002421E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0B5B1CC32B386BB40002421E /* Info.plist */; };
+		0B5B1CCB2B387C3F0002421E /* com.yueyi.TravelMode.Extension.systemextension in Copy Files */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		C40A5C4B229DD6A500627D50 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A5C4A229DD6A500627D50 /* main.swift */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -29,6 +29,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0B5B1CC62B387B930002421E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C4B45DAD22739FFF0050C59B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C40A5C44229DD6A500627D50;
+			remoteInfo = Extension;
+		};
 		C40A5C4E229DD6A500627D50 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C4B45DAD22739FFF0050C59B /* Project object */;
@@ -39,6 +46,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		0B5B1CCA2B387C170002421E /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				0B5B1CCB2B387C3F0002421E /* com.yueyi.TravelMode.Extension.systemextension in Copy Files */,
+			);
+			name = "Copy Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C40A5C51229DD6A500627D50 /* Embed System Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -193,18 +211,31 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		0B5B1CC92B387C100002421E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		0B5B1CA42B385BF30002421E /* TravelMode */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0B5B1CB32B385BF60002421E /* Build configuration list for PBXNativeTarget "TravelMode" */;
 			buildPhases = (
+				0B5B1CC92B387C100002421E /* Headers */,
 				0B5B1CA12B385BF30002421E /* Sources */,
 				0B5B1CA22B385BF30002421E /* Frameworks */,
 				0B5B1CA32B385BF30002421E /* Resources */,
+				0B5B1CCA2B387C170002421E /* Copy Files */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				0B5B1CC72B387B930002421E /* PBXTargetDependency */,
 			);
 			name = TravelMode;
 			productName = TravelMode;
@@ -297,7 +328,6 @@
 			files = (
 				0B5B1CAF2B385BF60002421E /* Preview Assets.xcassets in Resources */,
 				0B5B1CAC2B385BF60002421E /* Assets.xcassets in Resources */,
-				0B5B1CC42B386BB40002421E /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,6 +384,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0B5B1CC72B387B930002421E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C40A5C44229DD6A500627D50 /* Extension */;
+			targetProxy = 0B5B1CC62B387B930002421E /* PBXContainerItemProxy */;
+		};
 		C40A5C4F229DD6A500627D50 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C40A5C44229DD6A500627D50 /* Extension */;
@@ -375,6 +410,7 @@
 /* Begin XCBuildConfiguration section */
 		0B5B1CB12B385BF60002421E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -390,6 +426,8 @@
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				INFOPLIST_FILE = TravelMode/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TravelMode2;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Apple. All rights reserved.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -409,6 +447,7 @@
 		};
 		0B5B1CB22B385BF60002421E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -424,6 +463,8 @@
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				INFOPLIST_FILE = TravelMode/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TravelMode2;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Apple. All rights reserved.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
