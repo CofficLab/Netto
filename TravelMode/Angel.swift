@@ -41,42 +41,13 @@ class Angel: NSViewController {
         return formatter
     }()
 
-    var status: Status = .stopped {
-        didSet {
-            // Update the UI to reflect the new status
-            switch status {
-                case .stopped:
-                    statusIndicator.image = #imageLiteral(resourceName: "dot_red")
-                    statusSpinner.stopAnimation(self)
-                    statusSpinner.isHidden = true
-                    stopButton.isHidden = true
-                    startButton.isHidden = false
-                case .indeterminate:
-                    statusIndicator.image = #imageLiteral(resourceName: "dot_yellow")
-                    statusSpinner.startAnimation(self)
-                    statusSpinner.isHidden = false
-                    stopButton.isHidden = true
-                    startButton.isHidden = true
-                case .running:
-                    statusIndicator.image = #imageLiteral(resourceName: "dot_green")
-                    statusSpinner.stopAnimation(self)
-                    statusSpinner.isHidden = true
-                    stopButton.isHidden = false
-                    startButton.isHidden = true
-            }
-
-            if !statusSpinner.isHidden {
-                statusSpinner.startAnimation(self)
-            } else {
-                statusSpinner.stopAnimation(self)
-            }
-        }
-    }
+    var status: Status = .stopped
 
     // Get the Bundle of the system extension.
     lazy var extensionBundle: Bundle = {
-
         let extensionsDirectoryURL = URL(fileURLWithPath: "Contents/Library/SystemExtensions", relativeTo: Bundle.main.bundleURL)
+        
+        print(extensionsDirectoryURL)
         let extensionURLs: [URL]
         do {
             extensionURLs = try FileManager.default.contentsOfDirectory(at: extensionsDirectoryURL,
@@ -218,7 +189,7 @@ class Angel: NSViewController {
     // MARK: Content Filter Configuration Management
 
     func loadFilterConfiguration(completionHandler: @escaping (Bool) -> Void) {
-
+        os_log("============= %@", "loadFilterConfiguration")
         NEFilterManager.shared().loadFromPreferences { loadError in
             DispatchQueue.main.async {
                 var success = true
@@ -232,7 +203,7 @@ class Angel: NSViewController {
     }
 
     func enableFilterConfiguration() {
-
+        os_log("============= %@", "enableFilterConfiguration")
         let filterManager = NEFilterManager.shared()
 
         guard !filterManager.isEnabled else {
@@ -276,7 +247,7 @@ class Angel: NSViewController {
     // MARK: ProviderCommunication
 
     func registerWithProvider() {
-
+        os_log("============= %@", "registerWithProvider")
         IPCConnection.shared.register(withExtension: extensionBundle, delegate: self) { success in
             DispatchQueue.main.async {
                 self.status = (success ? .running : .stopped)

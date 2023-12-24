@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "73148FB3-5E7E-4ADA-9919-8CBCD0BB6C05"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FA399976-FB6A-48B6-8F18-56C82644B6D3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SimpleFirewall/ViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "226"
+            endingLineNumber = "226"
+            landmarkName = "loadFilterConfiguration(completionHandler:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "FA399976-FB6A-48B6-8F18-56C82644B6D3 - 356dc25337d2fdcd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;Swift.Error&gt;) -&gt; () in SimpleFirewall.ViewController.loadFilterConfiguration(completionHandler: (Swift.Bool) -&gt; ()) -&gt; ()"
+                  moduleName = "SimpleFirewall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/angel/Code/Yueyi/TravelMode/SimpleFirewall/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "224"
+                  endingLineNumber = "224"
+                  offsetFromSymbolStart = "224">
+               </Location>
+               <Location
+                  uuid = "FA399976-FB6A-48B6-8F18-56C82644B6D3 - 97009ef1265a6859"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (Swift.Optional&lt;Swift.Error&gt;) -&gt; () in SimpleFirewall.ViewController.loadFilterConfiguration(completionHandler: (Swift.Bool) -&gt; ()) -&gt; ()"
+                  moduleName = "SimpleFirewall"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/angel/Code/Yueyi/TravelMode/SimpleFirewall/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "225"
+                  endingLineNumber = "225"
+                  offsetFromSymbolStart = "88">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "92E55E16-55EA-4C6B-8C30-7DD81BEB5878"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TravelMode/Angel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
+            landmarkName = "Angel"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "92E55E16-55EA-4C6B-8C30-7DD81BEB5878 - 67ab093f3e5c2e67"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; __C.NSBundle in TravelMode.Angel.extensionBundle.getter : __C.NSBundle"
+                  moduleName = "TravelMode"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/angel/Code/Yueyi/TravelMode/TravelMode/Angel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "644">
+               </Location>
+               <Location
+                  uuid = "92E55E16-55EA-4C6B-8C30-7DD81BEB5878 - 67ab093f3e5c2e46"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; __C.NSBundle in TravelMode.Angel.extensionBundle.getter : __C.NSBundle"
+                  moduleName = "TravelMode"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/angel/Code/Yueyi/TravelMode/TravelMode/Angel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "48"
+                  endingLineNumber = "48"
+                  offsetFromSymbolStart = "644">
+               </Location>
+               <Location
+                  uuid = "92E55E16-55EA-4C6B-8C30-7DD81BEB5878 - 67ab093f3e5c2e46"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; __C.NSBundle in TravelMode.Angel.extensionBundle.getter : __C.NSBundle"
+                  moduleName = "TravelMode"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/angel/Code/Yueyi/TravelMode/TravelMode/Angel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "48"
+                  endingLineNumber = "48"
+                  offsetFromSymbolStart = "664">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8545F558-84CB-49AF-9E71-9DCFD36E595C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SimpleFirewall/ViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "79"
+            endingLineNumber = "79"
+            landmarkName = "ViewController"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

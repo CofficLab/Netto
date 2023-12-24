@@ -77,6 +77,8 @@ class ViewController: NSViewController {
     lazy var extensionBundle: Bundle = {
 
         let extensionsDirectoryURL = URL(fileURLWithPath: "Contents/Library/SystemExtensions", relativeTo: Bundle.main.bundleURL)
+        
+        print(extensionsDirectoryURL.absoluteString)
         let extensionURLs: [URL]
         do {
             extensionURLs = try FileManager.default.contentsOfDirectory(at: extensionsDirectoryURL,
@@ -100,7 +102,7 @@ class ViewController: NSViewController {
     // MARK: NSViewController
 
     override func viewWillAppear() {
-
+        os_log("============= %@", "view will appear")
         super.viewWillAppear()
 
         status = .indeterminate
@@ -122,9 +124,10 @@ class ViewController: NSViewController {
     }
 
     override func viewWillDisappear() {
-
+        os_log("============= %@", "view will disappear")
         super.viewWillDisappear()
 
+        
         guard let changeObserver = observer else {
             return
         }
@@ -218,7 +221,7 @@ class ViewController: NSViewController {
     // MARK: Content Filter Configuration Management
 
     func loadFilterConfiguration(completionHandler: @escaping (Bool) -> Void) {
-
+        os_log("============= %@", "loadFilterConfiguration")
         NEFilterManager.shared().loadFromPreferences { loadError in
             DispatchQueue.main.async {
                 var success = true
@@ -232,7 +235,7 @@ class ViewController: NSViewController {
     }
 
     func enableFilterConfiguration() {
-
+        os_log("============= %@", "enableFilterConfiguration")
         let filterManager = NEFilterManager.shared()
 
         guard !filterManager.isEnabled else {
@@ -276,7 +279,7 @@ class ViewController: NSViewController {
     // MARK: ProviderCommunication
 
     func registerWithProvider() {
-
+        os_log("============= %@", "registerWithProvider")
         IPCConnection.shared.register(withExtension: extensionBundle, delegate: self) { success in
             DispatchQueue.main.async {
                 self.status = (success ? .running : .stopped)
