@@ -4,6 +4,7 @@ struct FirewallEvent: Hashable {
     var time: Date = .now
     var address: String
     var port: String
+    var sourceAppIdentifier: String
     
     var timeFormatted: String {
         let dateFormatter = DateFormatter()

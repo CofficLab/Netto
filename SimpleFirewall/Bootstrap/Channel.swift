@@ -3,7 +3,7 @@ import NetworkExtension
 import SystemExtensions
 import os.log
 
-class Angel: NSViewController {
+class Channel: NSViewController {
 
     enum Status {
         case stopped
@@ -32,8 +32,6 @@ class Angel: NSViewController {
     // Get the Bundle of the system extension.
     lazy var extensionBundle: Bundle = {
         let extensionsDirectoryURL = URL(fileURLWithPath: "Contents/Library/SystemExtensions", relativeTo: Bundle.main.bundleURL)
-        
-        print(extensionsDirectoryURL)
         let extensionURLs: [URL]
         do {
             extensionURLs = try FileManager.default.contentsOfDirectory(at: extensionsDirectoryURL,
@@ -79,7 +77,6 @@ class Angel: NSViewController {
     }
 
     override func viewWillDisappear() {
-
         super.viewWillDisappear()
 
         guard let changeObserver = observer else {
@@ -92,7 +89,6 @@ class Angel: NSViewController {
     // MARK: Update the UI
 
     func updateStatus() {
-
         if NEFilterManager.shared().isEnabled {
             registerWithProvider()
         } else {
@@ -101,7 +97,6 @@ class Angel: NSViewController {
     }
 
     func logFlow(_ flowInfo: [String: String], at date: Date, userAllowed: Bool) {
-
         guard let localPort = flowInfo[FlowInfoKey.localPort.rawValue],
             let remoteAddress = flowInfo[FlowInfoKey.remoteAddress.rawValue],
             let font = NSFont.userFixedPitchFont(ofSize: 12.0) else {
@@ -119,25 +114,6 @@ class Angel: NSViewController {
     }
 
     // MARK: UI Event Handlers
-
-    @IBAction func startFilter(_ sender: Any) {
-
-        status = .indeterminate
-        guard !NEFilterManager.shared().isEnabled else {
-            registerWithProvider()
-            return
-        }
-
-        guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
-            self.status = .stopped
-            return
-        }
-
-        // Start by activating the system extension
-        let activationRequest = OSSystemExtensionRequest.activationRequest(forExtensionWithIdentifier: extensionIdentifier, queue: .main)
-        activationRequest.delegate = self
-        OSSystemExtensionManager.shared.submitRequest(activationRequest)
-    }
     
     func startFilter2() {
         status = .indeterminate
@@ -155,39 +131,6 @@ class Angel: NSViewController {
         let activationRequest = OSSystemExtensionRequest.activationRequest(forExtensionWithIdentifier: extensionIdentifier, queue: .main)
         activationRequest.delegate = self
         OSSystemExtensionManager.shared.submitRequest(activationRequest)
-    }
-
-    @IBAction func stopFilter(_ sender: Any) {
-
-        let filterManager = NEFilterManager.shared()
-
-        status = .indeterminate
-
-        guard filterManager.isEnabled else {
-            status = .stopped
-            return
-        }
-
-        loadFilterConfiguration { success in
-            guard success else {
-                self.status = .running
-                return
-            }
-
-            // Disable the content filter configuration
-            filterManager.isEnabled = false
-            filterManager.saveToPreferences { saveError in
-                DispatchQueue.main.async {
-                    if let error = saveError {
-                        os_log("Failed to disable the filter configuration: %@", error.localizedDescription)
-                        self.status = .running
-                        return
-                    }
-
-                    self.status = .stopped
-                }
-            }
-        }
     }
     
     func stopFilter2() {
@@ -293,7 +236,7 @@ class Angel: NSViewController {
     }
 }
 
-extension Angel: OSSystemExtensionRequestDelegate {
+extension Channel: OSSystemExtensionRequestDelegate {
 
     // MARK: OSSystemExtensionActivationRequestDelegate
 
@@ -328,15 +271,16 @@ extension Angel: OSSystemExtensionRequestDelegate {
     }
 }
 
-extension Angel: AppCommunication {
-
+extension Channel: AppCommunication {
     // MARK: AppCommunication
 
-    func promptUser(aboutFlow flowInfo: [String: String], responseHandler: @escaping (Bool) -> Void) {
+    func promptUser(aboutFlow flowInfo: [String: String], flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
         Event().emitSpeak([
             "port": flowInfo[FlowInfoKey.localPort.rawValue]!,
             "address": flowInfo[FlowInfoKey.remoteAddress.rawValue]!
         ])
+        
+        print(flow)
 
         guard let localPort = flowInfo[FlowInfoKey.localPort.rawValue],
             let remoteAddress = flowInfo[FlowInfoKey.remoteAddress.rawValue],

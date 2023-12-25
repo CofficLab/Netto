@@ -8,6 +8,7 @@ This file contains the implementation of the app <-> provider IPC connection
 import Foundation
 import os.log
 import Network
+import NetworkExtension
 
 /// App --> Provider IPC
 @objc protocol ProviderCommunication {
@@ -18,7 +19,7 @@ import Network
 /// Provider --> App IPC
 @objc protocol AppCommunication {
 
-    func promptUser(aboutFlow flowInfo: [String: String], responseHandler: @escaping (Bool) -> Void)
+    func promptUser(aboutFlow flowInfo: [String: String], flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void)
 }
 
 enum FlowInfoKey: String {
@@ -104,7 +105,7 @@ class IPCConnection: NSObject {
         This method is called by the provider to cause the app (if it is registered) to display a prompt to the user asking
         for a decision about a connection.
     */
-    func promptUser(aboutFlow flowInfo: [String: String], responseHandler:@escaping (Bool) -> Void) -> Bool {
+    func promptUser(aboutFlow flowInfo: [String: String], flow: NEFilterFlow, responseHandler:@escaping (Bool) -> Void) -> Bool {
 
         guard let connection = currentConnection else {
             os_log("Cannot prompt user because the app isn't registered")
@@ -119,7 +120,7 @@ class IPCConnection: NSObject {
             fatalError("Failed to create a remote object proxy for the app")
         }
 
-        appProxy.promptUser(aboutFlow: flowInfo, responseHandler: responseHandler)
+        appProxy.promptUser(aboutFlow: flowInfo, flow: flow, responseHandler: responseHandler)
 
         return true
     }

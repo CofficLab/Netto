@@ -67,7 +67,7 @@ class FilterDataProvider: NEFilterDataProvider {
         ]
         
         // Ask the app to prompt the user
-        let prompted = IPCConnection.shared.promptUser(aboutFlow: flowInfo) { allow in
+        let prompted = IPCConnection.shared.promptUser(aboutFlow: flowInfo, flow: flow) { allow in
             let userVerdict: NEFilterNewFlowVerdict = allow ? .allow() : .drop()
             os_log("====resumeFlow====")
             self.resumeFlow(flow, with: userVerdict)

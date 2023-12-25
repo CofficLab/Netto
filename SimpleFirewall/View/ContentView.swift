@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var app:AppManager
-    private var angel = Angel()
+    private var angel = Channel()
     private var firewallEvents: [FirewallEvent] {
         app.events.reversed()
     }

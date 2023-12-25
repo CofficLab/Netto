@@ -9,11 +9,12 @@
 /* Begin PBXBuildFile section */
 		0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CA72B385BF30002421E /* TravelModeApp.swift */; };
 		0B3399262B3907F6005CC627 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CA92B385BF30002421E /* ContentView.swift */; };
-		0B3399272B3907F8005CC627 /* Angel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CBF2B3865F90002421E /* Angel.swift */; };
+		0B3399272B3907F8005CC627 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CBF2B3865F90002421E /* Channel.swift */; };
 		0B33992A2B390D44005CC627 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399292B390D44005CC627 /* Event.swift */; };
 		0B33992D2B3911F1005CC627 /* FirewallEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B33992C2B3911F1005CC627 /* FirewallEvent.swift */; };
 		0B3399302B3914EF005CC627 /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B33992F2B3914EF005CC627 /* AppManager.swift */; };
 		0B3399332B391619005CC627 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399322B391619005CC627 /* RootView.swift */; };
+		0B3399362B391AE4005CC627 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399352B391AE4005CC627 /* Logger.swift */; };
 		0B5B1CC12B3866250002421E /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
 		0B5B1CC22B386B580002421E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		0B5B1CCB2B387C3F0002421E /* com.yueyi.TravelMode.Extension.systemextension in Copy Files */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -23,7 +24,6 @@
 		C40A5C56229DD92E00627D50 /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
 		C40A5C57229DD93200627D50 /* FilterDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E0DBB42273BEA0005B02F4 /* FilterDataProvider.swift */; };
 		C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
-		C4B45DBB22739FFF0050C59B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B45DBA22739FFF0050C59B /* ViewController.swift */; };
 		C4B45DBD2273A0020050C59B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C4B45DBC2273A0020050C59B /* Assets.xcassets */; };
 		C4B45DDE2273A3450050C59B /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 /* End PBXBuildFile section */
@@ -75,10 +75,11 @@
 		0B33992C2B3911F1005CC627 /* FirewallEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirewallEvent.swift; sourceTree = "<group>"; };
 		0B33992F2B3914EF005CC627 /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
 		0B3399322B391619005CC627 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		0B3399352B391AE4005CC627 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		0B5B1CA52B385BF30002421E /* TravelMode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelMode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B5B1CA72B385BF30002421E /* TravelModeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelModeApp.swift; sourceTree = "<group>"; };
 		0B5B1CA92B385BF30002421E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		0B5B1CBF2B3865F90002421E /* Angel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Angel.swift; sourceTree = "<group>"; };
+		0B5B1CBF2B3865F90002421E /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
 		6ED719E06ED6DED000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		C40A5C4A229DD6A500627D50 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -86,7 +87,6 @@
 		C40A5C4D229DD6A500627D50 /* Signing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Signing.entitlements; sourceTree = "<group>"; };
 		C4B1415A227A396500B26560 /* IPCConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPCConnection.swift; sourceTree = "<group>"; };
 		C4B45DB522739FFF0050C59B /* SimpleFirewall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleFirewall.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C4B45DBA22739FFF0050C59B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		C4B45DBC2273A0020050C59B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C4B45DC12273A0020050C59B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C4B45DC22273A0020050C59B /* Signing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Signing.entitlements; sourceTree = "<group>"; };
@@ -143,9 +143,9 @@
 			isa = PBXGroup;
 			children = (
 				0B5B1CA72B385BF30002421E /* TravelModeApp.swift */,
-				C4B45DBA22739FFF0050C59B /* ViewController.swift */,
 				0B3399322B391619005CC627 /* RootView.swift */,
-				0B5B1CBF2B3865F90002421E /* Angel.swift */,
+				0B5B1CBF2B3865F90002421E /* Channel.swift */,
+				0B3399352B391AE4005CC627 /* Logger.swift */,
 			);
 			path = Bootstrap;
 			sourceTree = "<group>";
@@ -384,11 +384,11 @@
 				0B33992D2B3911F1005CC627 /* FirewallEvent.swift in Sources */,
 				C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */,
 				0B3399262B3907F6005CC627 /* ContentView.swift in Sources */,
-				C4B45DBB22739FFF0050C59B /* ViewController.swift in Sources */,
 				0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */,
+				0B3399362B391AE4005CC627 /* Logger.swift in Sources */,
 				0B3399332B391619005CC627 /* RootView.swift in Sources */,
 				0B33992A2B390D44005CC627 /* Event.swift in Sources */,
-				0B3399272B3907F8005CC627 /* Angel.swift in Sources */,
+				0B3399272B3907F8005CC627 /* Channel.swift in Sources */,
 				0B3399302B3914EF005CC627 /* AppManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
