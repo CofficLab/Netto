@@ -27,7 +27,6 @@ struct AppHelper {
     }
     
     static func getApp(_ id: String) -> AppWrapper? {
-        Logger.app.debug("getApp: \(id)")
         var workId = id
         
         if workId.hasPrefix(".") {
@@ -37,7 +36,7 @@ struct AppHelper {
         let apps = getRunningAppList()
         
         for app in apps {
-            if app.bundleIdentifier == workId {
+            if app.bundleIdentifier == workId || app.bundleIdentifier == id {
                 return AppWrapper(app: app)
             }
         }
