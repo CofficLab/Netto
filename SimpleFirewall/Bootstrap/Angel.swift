@@ -1,22 +1,8 @@
-/*
-See LICENSE folder for this sample’s licensing information.
-
-Abstract:
-This file contains the implementation of the primary NSViewController class.
-*/
-
 import Cocoa
 import NetworkExtension
 import SystemExtensions
 import os.log
 
-/**
-    The ViewController class implements the UI functions of the app, including:
-      - Activating the system extension and enabling the content filter configuration when the user clicks on the Start button
-      - Disabling the content filter configuration when the user clicks on the Stop button
-      - Prompting the user to allow or deny connections at the behest of the system extension
-      - Logging connections in a NSTextView
- */
 class Angel: NSViewController {
 
     enum Status {
@@ -347,6 +333,10 @@ extension Angel: AppCommunication {
     // MARK: AppCommunication
 
     func promptUser(aboutFlow flowInfo: [String: String], responseHandler: @escaping (Bool) -> Void) {
+        Event().emitSpeak([
+            "port": flowInfo[FlowInfoKey.localPort.rawValue]!,
+            "address": flowInfo[FlowInfoKey.remoteAddress.rawValue]!
+        ])
 
         guard let localPort = flowInfo[FlowInfoKey.localPort.rawValue],
             let remoteAddress = flowInfo[FlowInfoKey.remoteAddress.rawValue],
