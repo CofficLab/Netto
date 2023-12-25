@@ -9,16 +9,6 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Button("开始") {
-                    angel.startFilter2()
-                }
-                
-                Button("停止") {
-                    angel.stopFilter2()
-                }
-            }
-            
             List {
                 ForEach(firewallEvents, id: \.self) { e in
                     HStack(content: {
@@ -37,6 +27,15 @@ struct ContentView: View {
                 app.appendEvent($0)
             })
         }
+        .toolbar(content: {
+            Button("开始") {
+                angel.startFilter2()
+            }
+            
+            Button("停止") {
+                angel.stopFilter2()
+            }
+        })
     }
 }
 
