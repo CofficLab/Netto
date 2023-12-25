@@ -14,7 +14,10 @@ struct EventList: View {
                 TableColumn("APP", value: \.sourceAppIdentifier)
                 TableColumn("地址", value: \.address)
                 TableColumn("端口", value: \.port)
-                TableColumn("状态", value: \.statusDescription)
+                TableColumn("状态") { e in
+                    Text(e.statusDescription)
+                        .foregroundStyle(e.isAllowed ? .green : .red)
+                }
             })
         }
         .onAppear {

@@ -13,6 +13,10 @@ struct FirewallEvent: Hashable, Identifiable {
     var sourceAppIdentifier: String = ""
     var status: Status
     
+    var isAllowed: Bool {
+        status == .allowed
+    }
+    
     var timeFormatted: String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"

@@ -304,9 +304,8 @@ extension Channel: AppCommunication {
 //                responseHandler(userAllowed)
 //            }
             
-            // let blackList = ["0", "5353"]
-            let blackList = []
-            if blackList.contains(flowInfo["localPort"]!) {
+            let blackList: [String] = []
+            if blackList.contains(flowInfo["localPort"] ?? "") {
                 self.logFlow(flowInfo, at: connectionDate, userAllowed: false)
                 Event().emitNetworkFilterFlow(flow, allowed: false)
                 responseHandler(false)
