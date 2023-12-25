@@ -18,9 +18,6 @@
 		0B3399382B39277B005CC627 /* EventList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399372B39277B005CC627 /* EventList.swift */; };
 		0B33993A2B392B20005CC627 /* FilterStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399392B392B20005CC627 /* FilterStatus.swift */; };
 		0B33993C2B39334E005CC627 /* FirewallAllowEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B33993B2B39334E005CC627 /* FirewallAllowEvent.swift */; };
-		0B5B1CC12B3866250002421E /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
-		0B5B1CC22B386B580002421E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
-		0B5B1CCB2B387C3F0002421E /* com.yueyi.TravelMode.Extension.systemextension in Copy Files */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		C40A5C4B229DD6A500627D50 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A5C4A229DD6A500627D50 /* main.swift */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -32,13 +29,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0B5B1CC62B387B930002421E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C4B45DAD22739FFF0050C59B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C40A5C44229DD6A500627D50;
-			remoteInfo = Extension;
-		};
 		C40A5C4E229DD6A500627D50 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C4B45DAD22739FFF0050C59B /* Project object */;
@@ -49,17 +39,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		0B5B1CCA2B387C170002421E /* Copy Files */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
-			dstSubfolderSpec = 16;
-			files = (
-				0B5B1CCB2B387C3F0002421E /* com.yueyi.TravelMode.Extension.systemextension in Copy Files */,
-			);
-			name = "Copy Files";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C40A5C51229DD6A500627D50 /* Embed System Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -82,7 +61,6 @@
 		0B3399372B39277B005CC627 /* EventList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventList.swift; sourceTree = "<group>"; };
 		0B3399392B392B20005CC627 /* FilterStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterStatus.swift; sourceTree = "<group>"; };
 		0B33993B2B39334E005CC627 /* FirewallAllowEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirewallAllowEvent.swift; sourceTree = "<group>"; };
-		0B5B1CA52B385BF30002421E /* TravelMode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelMode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B5B1CA72B385BF30002421E /* TravelModeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelModeApp.swift; sourceTree = "<group>"; };
 		0B5B1CA92B385BF30002421E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		0B5B1CBF2B3865F90002421E /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
@@ -101,14 +79,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0B5B1CA22B385BF30002421E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0B5B1CC22B386B580002421E /* NetworkExtension.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C40A5C42229DD6A500627D50 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -203,7 +173,6 @@
 			children = (
 				C4B45DB522739FFF0050C59B /* SimpleFirewall.app */,
 				C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */,
-				0B5B1CA52B385BF30002421E /* TravelMode.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -232,37 +201,7 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		0B5B1CC92B387C100002421E /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
-		0B5B1CA42B385BF30002421E /* TravelMode */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0B5B1CB32B385BF60002421E /* Build configuration list for PBXNativeTarget "TravelMode" */;
-			buildPhases = (
-				0B5B1CC92B387C100002421E /* Headers */,
-				0B5B1CA12B385BF30002421E /* Sources */,
-				0B5B1CA22B385BF30002421E /* Frameworks */,
-				0B5B1CA32B385BF30002421E /* Resources */,
-				0B5B1CCA2B387C170002421E /* Copy Files */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0B5B1CC72B387B930002421E /* PBXTargetDependency */,
-			);
-			name = TravelMode;
-			productName = TravelMode;
-			productReference = 0B5B1CA52B385BF30002421E /* TravelMode.app */;
-			productType = "com.apple.product-type.application";
-		};
 		C40A5C44229DD6A500627D50 /* Extension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C40A5C54229DD6A500627D50 /* Build configuration list for PBXNativeTarget "Extension" */;
@@ -311,9 +250,6 @@
 				LastUpgradeCheck = 1510;
 				ORGANIZATIONNAME = Apple;
 				TargetAttributes = {
-					0B5B1CA42B385BF30002421E = {
-						CreatedOnToolsVersion = 15.1;
-					};
 					C40A5C44229DD6A500627D50 = {
 						CreatedOnToolsVersion = 11.0;
 					};
@@ -337,19 +273,11 @@
 			targets = (
 				C4B45DB422739FFF0050C59B /* SimpleFirewall */,
 				C40A5C44229DD6A500627D50 /* Extension */,
-				0B5B1CA42B385BF30002421E /* TravelMode */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0B5B1CA32B385BF30002421E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C40A5C43229DD6A500627D50 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -368,14 +296,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		0B5B1CA12B385BF30002421E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0B5B1CC12B3866250002421E /* IPCConnection.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C40A5C41229DD6A500627D50 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -408,11 +328,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0B5B1CC72B387B930002421E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C40A5C44229DD6A500627D50 /* Extension */;
-			targetProxy = 0B5B1CC62B387B930002421E /* PBXContainerItemProxy */;
-		};
 		C40A5C4F229DD6A500627D50 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C40A5C44229DD6A500627D50 /* Extension */;
@@ -421,79 +336,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0B5B1CB12B385BF60002421E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_ENTITLEMENTS = TravelMode/Signing.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"TravelMode/Preview Content\"";
-				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_PREVIEWS = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				INFOPLIST_FILE = TravelMode/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TravelMode2;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Apple. All rights reserved.";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				MARKETING_VERSION = 1.0;
-				NEW_SETTING = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		0B5B1CB22B385BF60002421E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_ENTITLEMENTS = TravelMode/Signing.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"TravelMode/Preview Content\"";
-				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_PREVIEWS = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				INFOPLIST_FILE = TravelMode/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TravelMode2;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Apple. All rights reserved.";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				MARKETING_VERSION = 1.0;
-				NEW_SETTING = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
 		C40A5C52229DD6A500627D50 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6ED719E06ED6DED000000001 /* SampleCode.xcconfig */;
@@ -728,15 +570,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0B5B1CB32B385BF60002421E /* Build configuration list for PBXNativeTarget "TravelMode" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0B5B1CB12B385BF60002421E /* Debug */,
-				0B5B1CB22B385BF60002421E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		C40A5C54229DD6A500627D50 /* Build configuration list for PBXNativeTarget "Extension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
