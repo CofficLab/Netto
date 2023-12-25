@@ -8,10 +8,19 @@ final class Event: ObservableObject {
     enum EventList {
         case Speak
         case NetWorkFilterFlow
+        case FilterStatusChanged
         
         var name: String {
             String(describing: self)
         }
+    }
+    
+    func emitFilterStatusChanged(_ status: FilterStatus) {
+        NotificationCenter.default.post(
+            name: NSNotification.Name(EventList.FilterStatusChanged.name),
+            object: status,
+            userInfo: nil
+        )
     }
     
     func emitNetworkFilterFlow(_ flow: NEFilterFlow) {
@@ -61,6 +70,17 @@ final class Event: ObservableObject {
                     port: localEndpoint?.port ?? "",
                     sourceAppIdentifier: flow.value(forKey: "sourceAppIdentifier") as! String
                 ))
+            })
+    }
+    
+    func onFilterStatusChanged(_ callback: @escaping (_ e: FilterStatus) -> Void) {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name(EventList.FilterStatusChanged.name),
+            object: nil,
+            queue: .main,
+            using: { notification in
+                let status = notification.object as! FilterStatus
+                callback(status)
             })
     }
 }

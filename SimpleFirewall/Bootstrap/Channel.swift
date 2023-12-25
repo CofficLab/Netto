@@ -114,7 +114,9 @@ class Channel: NSViewController {
     // MARK: UI Event Handlers
     
     func startFilter() {
+        Logger.app.debug("开启过滤器")
         status = .indeterminate
+        Event().emitFilterStatusChanged(.indeterminate)
         guard !NEFilterManager.shared().isEnabled else {
             registerWithProvider()
             return
@@ -122,6 +124,7 @@ class Channel: NSViewController {
 
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
             self.status = .stopped
+            Event().emitFilterStatusChanged(.stopped)
             return
         }
 
@@ -135,15 +138,18 @@ class Channel: NSViewController {
         let filterManager = NEFilterManager.shared()
 
         status = .indeterminate
+        Event().emitFilterStatusChanged(.indeterminate)
 
         guard filterManager.isEnabled else {
             status = .stopped
+            Event().emitFilterStatusChanged(.stopped)
             return
         }
 
         loadFilterConfiguration { success in
             guard success else {
                 self.status = .running
+                Event().emitFilterStatusChanged(.running)
                 return
             }
 
@@ -154,10 +160,12 @@ class Channel: NSViewController {
                     if let error = saveError {
                         os_log("Failed to disable the filter configuration: %@", error.localizedDescription)
                         self.status = .running
+                        Event().emitFilterStatusChanged(.running)
                         return
                     }
 
                     self.status = .stopped
+                    Event().emitFilterStatusChanged(.stopped)
                 }
             }
         }
@@ -192,6 +200,7 @@ class Channel: NSViewController {
 
             guard success else {
                 self.status = .stopped
+                Event().emitFilterStatusChanged(.stopped)
                 return
             }
 
@@ -212,6 +221,7 @@ class Channel: NSViewController {
                     if let error = saveError {
                         os_log("Failed to save the filter configuration: %@", error.localizedDescription)
                         self.status = .stopped
+                        Event().emitFilterStatusChanged(.stopped)
                         return
                     }
 
@@ -228,6 +238,7 @@ class Channel: NSViewController {
         IPCConnection.shared.register(withExtension: extensionBundle, delegate: self) { success in
             DispatchQueue.main.async {
                 self.status = (success ? .running : .stopped)
+                Event().emitFilterStatusChanged(success ? .running : .stopped)
             }
         }
     }
@@ -242,6 +253,7 @@ extension Channel: OSSystemExtensionRequestDelegate {
         guard result == .completed else {
             os_log("Unexpected result %d for system extension request", result.rawValue)
             status = .stopped
+            Event().emitFilterStatusChanged(.stopped)
             return
         }
 
@@ -252,6 +264,7 @@ extension Channel: OSSystemExtensionRequestDelegate {
 
         os_log("System extension request failed: %@", error.localizedDescription)
         status = .stopped
+        Event().emitFilterStatusChanged(.stopped)
     }
 
     func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {

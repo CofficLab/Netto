@@ -25,6 +25,12 @@ struct EventList: View {
     }
 }
 
+#Preview("APP") {
+    RootView {
+        ContentView()
+    }
+}
+
 #Preview {
     RootView {
         EventList()
