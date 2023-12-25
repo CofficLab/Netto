@@ -10,7 +10,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "# Copy to run from the Applications directory&#10;# This is needed for Network Extensions&#10;&#10;if [ &quot;$CONFIGURATION&quot; == &quot;Debug&quot; ]; then&#10;    ditto &quot;${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}&quot; &quot;/Applications/${FULL_PRODUCT_NAME}&quot;&#10;else&#10;    echo &quot;Not in Debug mode&quot;&#10;fi&#10;">
+               scriptText = "# Copy to run from the Applications directory&#10;# This is needed for Network Extensions&#10;&#10;#if [ &quot;$CONFIGURATION&quot; == &quot;Debug&quot; ]; then&#10;ditto &quot;${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}&quot; &quot;/Applications/${FULL_PRODUCT_NAME}&quot;&#10;#else&#10;    #echo &quot;Not in Debug mode&quot;&#10;#fi&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
