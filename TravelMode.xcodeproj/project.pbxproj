@@ -18,6 +18,7 @@
 		0B3399382B39277B005CC627 /* EventList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399372B39277B005CC627 /* EventList.swift */; };
 		0B33993A2B392B20005CC627 /* FilterStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399392B392B20005CC627 /* FilterStatus.swift */; };
 		0B33993C2B39334E005CC627 /* FirewallAllowEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B33993B2B39334E005CC627 /* FirewallAllowEvent.swift */; };
+		0B408A2C2B395A77000E77DB /* NEFilterFlowExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B408A2B2B395A77000E77DB /* NEFilterFlowExt.swift */; };
 		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		C40A5C4B229DD6A500627D50 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A5C4A229DD6A500627D50 /* main.swift */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -61,6 +62,7 @@
 		0B3399372B39277B005CC627 /* EventList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventList.swift; sourceTree = "<group>"; };
 		0B3399392B392B20005CC627 /* FilterStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterStatus.swift; sourceTree = "<group>"; };
 		0B33993B2B39334E005CC627 /* FirewallAllowEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirewallAllowEvent.swift; sourceTree = "<group>"; };
+		0B408A2B2B395A77000E77DB /* NEFilterFlowExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NEFilterFlowExt.swift; sourceTree = "<group>"; };
 		0B5B1CA72B385BF30002421E /* TravelModeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelModeApp.swift; sourceTree = "<group>"; };
 		0B5B1CA92B385BF30002421E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		0B5B1CBF2B3865F90002421E /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
@@ -137,6 +139,14 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		0B408A2A2B395A68000E77DB /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				0B408A2B2B395A77000E77DB /* NEFilterFlowExt.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		6ED613506ED6B88000000001 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
@@ -182,6 +192,7 @@
 			children = (
 				0B3399312B39160B005CC627 /* Bootstrap */,
 				0B33992B2B3911D9005CC627 /* Event */,
+				0B408A2A2B395A68000E77DB /* Helpers */,
 				0B3399342B3916B2005CC627 /* View */,
 				0B3399282B390D30005CC627 /* ViewModel */,
 				C4B45DBC2273A0020050C59B /* Assets.xcassets */,
@@ -312,6 +323,7 @@
 			files = (
 				0B33993A2B392B20005CC627 /* FilterStatus.swift in Sources */,
 				0B33992D2B3911F1005CC627 /* FirewallEvent.swift in Sources */,
+				0B408A2C2B395A77000E77DB /* NEFilterFlowExt.swift in Sources */,
 				C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */,
 				0B3399262B3907F6005CC627 /* ContentView.swift in Sources */,
 				0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */,
@@ -343,6 +355,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extension/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 11;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -352,6 +365,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode.Extension;
 				PRODUCT_NAME = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -367,6 +381,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extension/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 11;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -376,6 +391,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode.Extension;
 				PRODUCT_NAME = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -438,7 +454,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -496,7 +512,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -522,7 +538,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = TravelMode/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -553,7 +569,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = TravelMode/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
