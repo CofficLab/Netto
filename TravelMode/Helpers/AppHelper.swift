@@ -3,6 +3,10 @@ import Foundation
 import OSLog
 import SwiftUI
 
+let systemApps: [String:String] = [
+    ".com.apple.mDNSResponder": "DNS"
+]
+
 struct AppHelper {
     struct AppWrapper: Identifiable {
         var id: String = UUID().uuidString
