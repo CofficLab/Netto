@@ -1,5 +1,6 @@
 import Foundation
 import NetworkExtension
+import SwiftUI
 
 extension NEFilterFlow {
     func getLocalPort() -> String {
@@ -23,6 +24,16 @@ extension NEFilterFlow {
     }
     
     func getAppId() -> String {
-        self.value(forKey: "sourceAppIdentifier") as! String
+        return self.value(forKey: "sourceAppIdentifier") as? String ?? ""
     }
+    
+    func getAppUniqueId() -> String {
+        return ""
+    }
+}
+
+#Preview("APP") {
+    RootView(content: {
+        ContentView()
+    }).frame(width: 700)
 }

@@ -1,11 +1,12 @@
 import SwiftUI
+import OSLog
 
 struct AppList: View {
     @State private var apps: [Activity] = []
     private var channel = Channel()
     private var appsVisible: [Activity] {
         apps.filter({
-            $0.events.count > 0
+            $0.events.count > -1
         })
     }
     
@@ -33,7 +34,6 @@ struct AppList: View {
     
     private func onNewEvent() {
         EventManager().onNetworkFilterFlow({ e in
-            print(e.description)
             if let app = AppHelper.getApp(e.sourceAppIdentifier) {
                 for (i, a) in apps.enumerated() {
                     if a.appId == app.appId {
