@@ -70,7 +70,7 @@
 		C40A5C4C229DD6A500627D50 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C40A5C4D229DD6A500627D50 /* Signing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Signing.entitlements; sourceTree = "<group>"; };
 		C4B1415A227A396500B26560 /* IPCConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPCConnection.swift; sourceTree = "<group>"; };
-		C4B45DB522739FFF0050C59B /* SimpleFirewall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleFirewall.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4B45DB522739FFF0050C59B /* TavelMode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TavelMode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4B45DBC2273A0020050C59B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C4B45DC12273A0020050C59B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C4B45DC22273A0020050C59B /* Signing.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Signing.entitlements; sourceTree = "<group>"; };
@@ -160,7 +160,7 @@
 		C4B45DAC22739FFF0050C59B = {
 			isa = PBXGroup;
 			children = (
-				C4B45DB722739FFF0050C59B /* SimpleFirewall */,
+				C4B45DB722739FFF0050C59B /* TravelMode */,
 				C40A5C47229DD6A500627D50 /* Extension */,
 				C4B45DB622739FFF0050C59B /* Products */,
 				C4B45DDC2273A3450050C59B /* Frameworks */,
@@ -171,13 +171,13 @@
 		C4B45DB622739FFF0050C59B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C4B45DB522739FFF0050C59B /* SimpleFirewall.app */,
+				C4B45DB522739FFF0050C59B /* TavelMode.app */,
 				C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C4B45DB722739FFF0050C59B /* SimpleFirewall */ = {
+		C4B45DB722739FFF0050C59B /* TravelMode */ = {
 			isa = PBXGroup;
 			children = (
 				0B3399312B39160B005CC627 /* Bootstrap */,
@@ -188,7 +188,7 @@
 				C4B45DC12273A0020050C59B /* Info.plist */,
 				C4B45DC22273A0020050C59B /* Signing.entitlements */,
 			);
-			path = SimpleFirewall;
+			path = TravelMode;
 			sourceTree = "<group>";
 		};
 		C4B45DDC2273A3450050C59B /* Frameworks */ = {
@@ -219,9 +219,9 @@
 			productReference = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */;
 			productType = "com.apple.product-type.system-extension";
 		};
-		C4B45DB422739FFF0050C59B /* SimpleFirewall */ = {
+		C4B45DB422739FFF0050C59B /* TavelMode */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C4B45DC52273A0020050C59B /* Build configuration list for PBXNativeTarget "SimpleFirewall" */;
+			buildConfigurationList = C4B45DC52273A0020050C59B /* Build configuration list for PBXNativeTarget "TavelMode" */;
 			buildPhases = (
 				C4B45DB122739FFF0050C59B /* Sources */,
 				C4B45DB222739FFF0050C59B /* Frameworks */,
@@ -233,9 +233,9 @@
 			dependencies = (
 				C40A5C4F229DD6A500627D50 /* PBXTargetDependency */,
 			);
-			name = SimpleFirewall;
+			name = TavelMode;
 			productName = SimpleFirewall;
-			productReference = C4B45DB522739FFF0050C59B /* SimpleFirewall.app */;
+			productReference = C4B45DB522739FFF0050C59B /* TavelMode.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -271,7 +271,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C4B45DB422739FFF0050C59B /* SimpleFirewall */,
+				C4B45DB422739FFF0050C59B /* TavelMode */,
 				C40A5C44229DD6A500627D50 /* Extension */,
 			);
 		};
@@ -511,7 +511,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SimpleFirewall/Signing.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TravelMode/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -520,7 +520,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = SimpleFirewall/Info.plist;
+				INFOPLIST_FILE = TravelMode/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -542,7 +542,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = SimpleFirewall/Signing.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TravelMode/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -551,7 +551,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = SimpleFirewall/Info.plist;
+				INFOPLIST_FILE = TravelMode/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -588,7 +588,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C4B45DC52273A0020050C59B /* Build configuration list for PBXNativeTarget "SimpleFirewall" */ = {
+		C4B45DC52273A0020050C59B /* Build configuration list for PBXNativeTarget "TavelMode" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C4B45DC62273A0020050C59B /* Debug */,
