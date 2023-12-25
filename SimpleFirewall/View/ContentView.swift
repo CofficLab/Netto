@@ -25,7 +25,7 @@ struct ContentView: View {
         .padding()
         .onAppear {
             angel.viewWillAppear()
-            Event().onSpeak({
+            Event().onNetworkFilterFlow({
                 app.appendEvent($0)
             })
         }

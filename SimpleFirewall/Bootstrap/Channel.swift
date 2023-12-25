@@ -2,6 +2,7 @@ import Cocoa
 import NetworkExtension
 import SystemExtensions
 import os.log
+import SwiftUI
 
 class Channel: NSViewController {
 
@@ -275,14 +276,7 @@ extension Channel: AppCommunication {
     // MARK: AppCommunication
 
     func promptUser(aboutFlow flowInfo: [String: String], flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
-        Event().emitSpeak([
-            "port": flowInfo[FlowInfoKey.localPort.rawValue]!,
-            "address": flowInfo[FlowInfoKey.remoteAddress.rawValue]!,
-            "sourceAppIdentifier": flow.value(forKey: "sourceAppIdentifier") as? String ?? ""
-        ])
-        
-        print(flow)
-        print(flow.value(forKey: "sourceAppIdentifier"))
+        Event().emitNetworkFilterFlow(flow)
 
         guard let localPort = flowInfo[FlowInfoKey.localPort.rawValue],
             let remoteAddress = flowInfo[FlowInfoKey.remoteAddress.rawValue],
@@ -312,4 +306,10 @@ extension Channel: AppCommunication {
             responseHandler(true)
         }
     }
+}
+
+#Preview("APP") {
+    RootView(content: {
+        ContentView()
+    }).frame(width: 700)
 }
