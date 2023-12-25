@@ -7,7 +7,7 @@ class AppManager: ObservableObject {
     func appendEvent(_ e: FirewallEvent) {
         self.events.append(e)
         
-        if self.events.count > 10 {
+        if self.events.count > 100 {
             self.events.removeFirst()
         }
     }

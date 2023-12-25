@@ -13,6 +13,8 @@ struct ContentView: View {
                 ForEach(firewallEvents, id: \.self) { e in
                     HStack(content: {
                         Text(e.timeFormatted)
+                        Spacer()
+                        Text(e.sourceAppIdentifier)
                         Text(e.address)
                         Spacer()
                         Text(e.port)

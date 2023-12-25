@@ -28,12 +28,16 @@ final class Event: ObservableObject {
             using: { notification in
                 let data = notification.userInfo as! [String: String]
                 callback(FirewallEvent(
-                    address: data["address"]!, port: data["port"]!
+                    address: data["address"]!, 
+                    port: data["port"]!,
+                    sourceAppIdentifier: data["sourceAppIdentifier"]!
                 ))
             })
     }
 }
 
 #Preview {
-    ContentView()
+    RootView {
+        ContentView()
+    }
 }

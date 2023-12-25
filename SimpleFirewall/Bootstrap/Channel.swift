@@ -277,10 +277,12 @@ extension Channel: AppCommunication {
     func promptUser(aboutFlow flowInfo: [String: String], flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
         Event().emitSpeak([
             "port": flowInfo[FlowInfoKey.localPort.rawValue]!,
-            "address": flowInfo[FlowInfoKey.remoteAddress.rawValue]!
+            "address": flowInfo[FlowInfoKey.remoteAddress.rawValue]!,
+            "sourceAppIdentifier": flow.value(forKey: "sourceAppIdentifier") as? String ?? ""
         ])
         
         print(flow)
+        print(flow.value(forKey: "sourceAppIdentifier"))
 
         guard let localPort = flowInfo[FlowInfoKey.localPort.rawValue],
             let remoteAddress = flowInfo[FlowInfoKey.remoteAddress.rawValue],
