@@ -6,7 +6,6 @@ import OSLog
 
 final class Event: ObservableObject {
     enum EventList {
-        case Speak
         case NetWorkFilterFlow
         case FilterStatusChanged
         
@@ -31,29 +30,6 @@ final class Event: ObservableObject {
         )
     }
     
-    func emitSpeak(_ data: [String: String]) {
-        NotificationCenter.default.post(
-            name: NSNotification.Name(EventList.Speak.name),
-            object: nil,
-            userInfo: data
-        )
-    }
-    
-    func onSpeak(_ callback: @escaping (_ e: FirewallEvent) -> Void) {
-        NotificationCenter.default.addObserver(
-            forName: NSNotification.Name(EventList.Speak.name),
-            object: nil,
-            queue: .main,
-            using: { notification in
-                let data = notification.userInfo as! [String: String]
-                callback(FirewallEvent(
-                    address: data["address"]!, 
-                    port: data["port"]!,
-                    sourceAppIdentifier: data["sourceAppIdentifier"]!
-                ))
-            })
-    }
-    
     func onNetworkFilterFlow(_ callback: @escaping (_ e: FirewallEvent) -> Void) {
         NotificationCenter.default.addObserver(
             forName: NSNotification.Name(EventList.NetWorkFilterFlow.name),
@@ -68,7 +44,8 @@ final class Event: ObservableObject {
                 callback(FirewallEvent(
                     address: localEndpoint?.hostname ?? "",
                     port: localEndpoint?.port ?? "",
-                    sourceAppIdentifier: flow.value(forKey: "sourceAppIdentifier") as! String
+                    sourceAppIdentifier: flow.value(forKey: "sourceAppIdentifier") as! String,
+                    status: .allowed
                 ))
             })
     }

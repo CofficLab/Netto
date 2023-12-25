@@ -14,6 +14,7 @@ struct EventList: View {
                 TableColumn("APP", value: \.sourceAppIdentifier)
                 TableColumn("地址", value: \.address)
                 TableColumn("端口", value: \.port)
+                TableColumn("状态", value: \.statusDescription)
             })
         }
         .onAppear {
