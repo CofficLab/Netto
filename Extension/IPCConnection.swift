@@ -19,7 +19,7 @@ import NetworkExtension
 /// Provider --> App IPC
 @objc protocol AppCommunication {
 
-    func promptUser(aboutFlow flowInfo: [String: String], flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void)
+    func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void)
 }
 
 enum FlowInfoKey: String {
@@ -120,7 +120,7 @@ class IPCConnection: NSObject {
             fatalError("Failed to create a remote object proxy for the app")
         }
 
-        appProxy.promptUser(aboutFlow: flowInfo, flow: flow, responseHandler: responseHandler)
+        appProxy.promptUser(flow: flow, responseHandler: responseHandler)
 
         return true
     }

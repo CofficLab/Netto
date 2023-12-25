@@ -94,19 +94,6 @@ class Channel: NSViewController {
         }
     }
 
-    func logFlow(_ flowInfo: [String: String], at date: Date, userAllowed: Bool) {
-        guard let localPort = flowInfo[FlowInfoKey.localPort.rawValue],
-            let remoteAddress = flowInfo[FlowInfoKey.remoteAddress.rawValue],
-            let font = NSFont.userFixedPitchFont(ofSize: 12.0) else {
-                return
-        }
-
-        let dateString = dateFormatter.string(from: date)
-        let message = "\(dateString) \(userAllowed ? "ALLOW" : "DENY") \(localPort) <-- \(remoteAddress)\n"
-
-        os_log("============= %@", message)
-    }
-
     // MARK: UI Event Handlers
     
     func startFilter() {
@@ -280,37 +267,26 @@ extension Channel: OSSystemExtensionRequestDelegate {
 extension Channel: AppCommunication {
     // MARK: AppCommunication
 
-    func promptUser(aboutFlow flowInfo: [String: String], flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
-        guard let localPort = flowInfo[FlowInfoKey.localPort.rawValue],
-            let remoteAddress = flowInfo[FlowInfoKey.remoteAddress.rawValue]  else {
-                os_log("Got a promptUser call without valid flow info: %@", flowInfo)
-                responseHandler(true)
-                return
-        }
-
-        let connectionDate = Date()
-
+    func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
         DispatchQueue.main.async {
-            let alert = NSAlert()
-            alert.alertStyle = .informational
-            alert.messageText = "New incoming connection"
-            alert.informativeText = "A new connection on port \(localPort) has been received from \(remoteAddress)."
-            alert.addButton(withTitle: "Allow")
-            alert.addButton(withTitle: "Deny")
+            guard let socketFlow = flow as? NEFilterSocketFlow,
+                let remoteEndpoint = socketFlow.remoteEndpoint as? NWHostEndpoint,
+                let localEndpoint = socketFlow.localEndpoint as? NWHostEndpoint else {
+                    return
+            }
 
-//            alert.beginSheetModal(for: window) { userResponse in
-//                let userAllowed = (userResponse == .alertFirstButtonReturn)
-//                self.logFlow(flowInfo, at: connectionDate, userAllowed: userAllowed)
-//                responseHandler(userAllowed)
-//            }
+            os_log("Got a new flow with local endpoint %@, remote endpoint %@", localEndpoint, remoteEndpoint)
+
+            let flowInfo = [
+                FlowInfoKey.localPort.rawValue: localEndpoint.port,
+                FlowInfoKey.remoteAddress.rawValue: remoteEndpoint.hostname
+            ]
             
             let blackList: [String] = []
             if blackList.contains(flowInfo["localPort"] ?? "") {
-                self.logFlow(flowInfo, at: connectionDate, userAllowed: false)
                 Event().emitNetworkFilterFlow(flow, allowed: false)
                 responseHandler(false)
             } else {
-                self.logFlow(flowInfo, at: connectionDate, userAllowed: true)
                 Event().emitNetworkFilterFlow(flow, allowed: true)
                 responseHandler(true)
             }
