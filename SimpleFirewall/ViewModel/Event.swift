@@ -5,6 +5,11 @@ import SwiftUI
 import OSLog
 
 final class Event: ObservableObject {
+    struct FlowWrapper {
+        var flow: NEFilterFlow
+        var allowed: Bool
+    }
+    
     enum EventList {
         case NetWorkFilterFlow
         case FilterStatusChanged
@@ -22,10 +27,10 @@ final class Event: ObservableObject {
         )
     }
     
-    func emitNetworkFilterFlow(_ flow: NEFilterFlow) {
+    func emitNetworkFilterFlow(_ flow: NEFilterFlow, allowed: Bool) {
         NotificationCenter.default.post(
             name: NSNotification.Name(EventList.NetWorkFilterFlow.name),
-            object: flow,
+            object: FlowWrapper(flow: flow, allowed: allowed),
             userInfo: nil
         )
     }
@@ -36,7 +41,8 @@ final class Event: ObservableObject {
             object: nil,
             queue: .main,
             using: { notification in
-                let flow = notification.object as! NEFilterFlow
+                let wrapper = notification.object as! FlowWrapper
+                let flow = wrapper.flow
                 let socketFlow = flow as! NEFilterSocketFlow
                 let remoteEndpoint = socketFlow.remoteEndpoint as? NWHostEndpoint
                 let localEndpoint = socketFlow.localEndpoint as? NWHostEndpoint
@@ -45,7 +51,7 @@ final class Event: ObservableObject {
                     address: localEndpoint?.hostname ?? "",
                     port: localEndpoint?.port ?? "",
                     sourceAppIdentifier: flow.value(forKey: "sourceAppIdentifier") as! String,
-                    status: .allowed
+                    status: wrapper.allowed ? .allowed : .rejected
                 ))
             })
     }

@@ -105,10 +105,6 @@ class Channel: NSViewController {
         let message = "\(dateString) \(userAllowed ? "ALLOW" : "DENY") \(localPort) <-- \(remoteAddress)\n"
 
         os_log("============= %@", message)
-
-        let logAttributes: [NSAttributedString.Key: Any] = [ .font: font, .foregroundColor: NSColor.textColor ]
-        let attributedString = NSAttributedString(string: message, attributes: logAttributes)
-        logTextView.textStorage?.append(attributedString)
     }
 
     // MARK: UI Event Handlers
@@ -285,11 +281,8 @@ extension Channel: AppCommunication {
     // MARK: AppCommunication
 
     func promptUser(aboutFlow flowInfo: [String: String], flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
-        Event().emitNetworkFilterFlow(flow)
-
         guard let localPort = flowInfo[FlowInfoKey.localPort.rawValue],
-            let remoteAddress = flowInfo[FlowInfoKey.remoteAddress.rawValue],
-            let window = view.window else {
+            let remoteAddress = flowInfo[FlowInfoKey.remoteAddress.rawValue]  else {
                 os_log("Got a promptUser call without valid flow info: %@", flowInfo)
                 responseHandler(true)
                 return
@@ -311,8 +304,17 @@ extension Channel: AppCommunication {
 //                responseHandler(userAllowed)
 //            }
             
-            self.logFlow(flowInfo, at: connectionDate, userAllowed: true)
-            responseHandler(true)
+            // let blackList = ["0", "5353"]
+            let blackList = []
+            if blackList.contains(flowInfo["localPort"]!) {
+                self.logFlow(flowInfo, at: connectionDate, userAllowed: false)
+                Event().emitNetworkFilterFlow(flow, allowed: false)
+                responseHandler(false)
+            } else {
+                self.logFlow(flowInfo, at: connectionDate, userAllowed: true)
+                Event().emitNetworkFilterFlow(flow, allowed: true)
+                responseHandler(true)
+            }
         }
     }
 }
