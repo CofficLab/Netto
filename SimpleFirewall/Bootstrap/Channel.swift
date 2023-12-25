@@ -157,7 +157,7 @@ class Channel: NSViewController {
     // MARK: Content Filter Configuration Management
 
     func loadFilterConfiguration(completionHandler: @escaping (Bool) -> Void) {
-        os_log("============= %@", "loadFilterConfiguration")
+        Logger.app.debug("loadFilterConfiguration")
         NEFilterManager.shared().loadFromPreferences { loadError in
             DispatchQueue.main.async {
                 var success = true
@@ -171,7 +171,7 @@ class Channel: NSViewController {
     }
 
     func enableFilterConfiguration() {
-        os_log("============= %@", "enableFilterConfiguration")
+        Logger.app.debug("enableFilterConfiguration")
         let filterManager = NEFilterManager.shared()
 
         guard !filterManager.isEnabled else {
@@ -217,7 +217,7 @@ class Channel: NSViewController {
     // MARK: ProviderCommunication
 
     func registerWithProvider() {
-        os_log("============= %@", "registerWithProvider")
+        Logger.app.debug("registerWithProvider")
         IPCConnection.shared.register(withExtension: extensionBundle, delegate: self) { success in
             DispatchQueue.main.async {
                 self.status = (success ? .running : .stopped)
@@ -274,8 +274,6 @@ extension Channel: AppCommunication {
                 let localEndpoint = socketFlow.localEndpoint as? NWHostEndpoint else {
                     return
             }
-
-            os_log("Got a new flow with local endpoint %@, remote endpoint %@", localEndpoint, remoteEndpoint)
 
             let flowInfo = [
                 FlowInfoKey.localPort.rawValue: localEndpoint.port,
