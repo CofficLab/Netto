@@ -59,6 +59,7 @@
       allowLocationSimulation = "YES">
       <PathRunnable
          runnableDebuggingMode = "0"
+         BundleIdentifier = "com.yueyi.TravelMode"
          FilePath = "/Applications/TavelMode.app">
       </PathRunnable>
       <MacroExpansion>
