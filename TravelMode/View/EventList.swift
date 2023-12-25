@@ -11,12 +11,10 @@ struct EventList: View {
             Table(events, columns: {
                 TableColumn("时间", value: \.timeFormatted)
                 TableColumn("APP") { event in
-                    let wrapper = AppHelper.getApp(event.sourceAppIdentifier)
+                    let smartApp = SmartApp.fromId(event.sourceAppIdentifier)
                     HStack {
-                        if let wrapper = wrapper {
-                            Image(nsImage: wrapper.appIcon)
-                            Text(wrapper.appName)
-                        }
+                        smartApp.image.frame(width: 33)
+                        smartApp.nameView
                     }
                 }
                 TableColumn("ID", value: \.sourceAppIdentifier)

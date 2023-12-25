@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0B01598F2B397A4B005D2628 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B01598E2B397A4B005D2628 /* Activity.swift */; };
+		0B1C33FC2B39C1E7004A5E36 /* SmartApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */; };
+		0B1C33FE2B39C2AA004A5E36 /* Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */; };
 		0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CA72B385BF30002421E /* TravelModeApp.swift */; };
 		0B3399262B3907F6005CC627 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CA92B385BF30002421E /* ContentView.swift */; };
 		0B3399272B3907F8005CC627 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CBF2B3865F90002421E /* Channel.swift */; };
@@ -56,7 +57,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0B01598E2B397A4B005D2628 /* Activity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
+		0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartApp.swift; sourceTree = "<group>"; };
+		0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toolbar.swift; sourceTree = "<group>"; };
 		0B3399292B390D44005CC627 /* EventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventManager.swift; sourceTree = "<group>"; };
 		0B33992C2B3911F1005CC627 /* FirewallEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirewallEvent.swift; sourceTree = "<group>"; };
 		0B33992F2B3914EF005CC627 /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
@@ -107,7 +109,7 @@
 		0B0159902B397BA1005D2628 /* Entity */ = {
 			isa = PBXGroup;
 			children = (
-				0B01598E2B397A4B005D2628 /* Activity.swift */,
+				0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -147,6 +149,7 @@
 				0B5B1CA92B385BF30002421E /* ContentView.swift */,
 				0B3399372B39277B005CC627 /* EventList.swift */,
 				0B40CE412B39646100DC6771 /* AppList.swift */,
+				0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -336,6 +339,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B33993A2B392B20005CC627 /* FilterStatus.swift in Sources */,
+				0B1C33FC2B39C1E7004A5E36 /* SmartApp.swift in Sources */,
 				0B33992D2B3911F1005CC627 /* FirewallEvent.swift in Sources */,
 				0B408A2C2B395A77000E77DB /* NEFilterFlowExt.swift in Sources */,
 				C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */,
@@ -344,10 +348,10 @@
 				0B3399362B391AE4005CC627 /* Logger.swift in Sources */,
 				0B3399332B391619005CC627 /* RootView.swift in Sources */,
 				0B33992A2B390D44005CC627 /* EventManager.swift in Sources */,
+				0B1C33FE2B39C2AA004A5E36 /* Toolbar.swift in Sources */,
 				0B408A302B39612B000E77DB /* AppHelper.swift in Sources */,
 				0B3399272B3907F8005CC627 /* Channel.swift in Sources */,
 				0B3399382B39277B005CC627 /* EventList.swift in Sources */,
-				0B01598F2B397A4B005D2628 /* Activity.swift in Sources */,
 				0B40CE422B39646100DC6771 /* AppList.swift in Sources */,
 				0B3399302B3914EF005CC627 /* AppManager.swift in Sources */,
 			);

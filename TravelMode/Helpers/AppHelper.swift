@@ -3,28 +3,7 @@ import Foundation
 import OSLog
 import SwiftUI
 
-let systemApps: [String:String] = [
-    ".com.apple.mDNSResponder": "DNS"
-]
-
 struct AppHelper {
-    struct AppWrapper: Identifiable {
-        var id: String = UUID().uuidString
-        var app: NSRunningApplication
-
-        var appName: String {
-            app.localizedName ?? ""
-        }
-
-        var appId: String {
-            app.bundleIdentifier ?? ""
-        }
-
-        var appIcon: NSImage {
-            app.icon ?? NSImage()
-        }
-    }
-
     static func getRunningAppList() -> [NSRunningApplication] {
         let workspace = NSWorkspace.shared
         let runningApps = workspace.runningApplications
@@ -32,7 +11,7 @@ struct AppHelper {
         return runningApps
     }
 
-    static func getApp(_ id: String) -> AppWrapper? {
+    static func getApp(_ id: String) -> NSRunningApplication? {
         //print("getApp for \(id)")
         var workId = id
 
@@ -54,7 +33,7 @@ struct AppHelper {
                 bundleIdentifier == workId ||
                 bundleIdentifier == id ||
                 id.hasSuffix(bundleIdentifier) {
-                return AppWrapper(app: app)
+                return app
             }
         }
 
