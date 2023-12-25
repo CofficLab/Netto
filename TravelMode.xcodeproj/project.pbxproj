@@ -7,17 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B01598F2B397A4B005D2628 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B01598E2B397A4B005D2628 /* Activity.swift */; };
 		0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CA72B385BF30002421E /* TravelModeApp.swift */; };
 		0B3399262B3907F6005CC627 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CA92B385BF30002421E /* ContentView.swift */; };
 		0B3399272B3907F8005CC627 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CBF2B3865F90002421E /* Channel.swift */; };
-		0B33992A2B390D44005CC627 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399292B390D44005CC627 /* Event.swift */; };
+		0B33992A2B390D44005CC627 /* EventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399292B390D44005CC627 /* EventManager.swift */; };
 		0B33992D2B3911F1005CC627 /* FirewallEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B33992C2B3911F1005CC627 /* FirewallEvent.swift */; };
 		0B3399302B3914EF005CC627 /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B33992F2B3914EF005CC627 /* AppManager.swift */; };
 		0B3399332B391619005CC627 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399322B391619005CC627 /* RootView.swift */; };
 		0B3399362B391AE4005CC627 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399352B391AE4005CC627 /* Logger.swift */; };
 		0B3399382B39277B005CC627 /* EventList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399372B39277B005CC627 /* EventList.swift */; };
 		0B33993A2B392B20005CC627 /* FilterStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399392B392B20005CC627 /* FilterStatus.swift */; };
-		0B33993C2B39334E005CC627 /* FirewallAllowEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B33993B2B39334E005CC627 /* FirewallAllowEvent.swift */; };
 		0B408A2C2B395A77000E77DB /* NEFilterFlowExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B408A2B2B395A77000E77DB /* NEFilterFlowExt.swift */; };
 		0B408A302B39612B000E77DB /* AppHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B408A2F2B39612B000E77DB /* AppHelper.swift */; };
 		0B40CE422B39646100DC6771 /* AppList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B40CE412B39646100DC6771 /* AppList.swift */; };
@@ -56,14 +56,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0B3399292B390D44005CC627 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		0B01598E2B397A4B005D2628 /* Activity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
+		0B3399292B390D44005CC627 /* EventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventManager.swift; sourceTree = "<group>"; };
 		0B33992C2B3911F1005CC627 /* FirewallEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirewallEvent.swift; sourceTree = "<group>"; };
 		0B33992F2B3914EF005CC627 /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
 		0B3399322B391619005CC627 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		0B3399352B391AE4005CC627 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		0B3399372B39277B005CC627 /* EventList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventList.swift; sourceTree = "<group>"; };
 		0B3399392B392B20005CC627 /* FilterStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterStatus.swift; sourceTree = "<group>"; };
-		0B33993B2B39334E005CC627 /* FirewallAllowEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirewallAllowEvent.swift; sourceTree = "<group>"; };
 		0B408A2B2B395A77000E77DB /* NEFilterFlowExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NEFilterFlowExt.swift; sourceTree = "<group>"; };
 		0B408A2F2B39612B000E77DB /* AppHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppHelper.swift; sourceTree = "<group>"; };
 		0B40CE412B39646100DC6771 /* AppList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppList.swift; sourceTree = "<group>"; };
@@ -104,10 +104,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0B0159902B397BA1005D2628 /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				0B01598E2B397A4B005D2628 /* Activity.swift */,
+			);
+			path = Entity;
+			sourceTree = "<group>";
+		};
 		0B3399282B390D30005CC627 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				0B3399292B390D44005CC627 /* Event.swift */,
+				0B3399292B390D44005CC627 /* EventManager.swift */,
 				0B33992F2B3914EF005CC627 /* AppManager.swift */,
 			);
 			path = ViewModel;
@@ -117,7 +125,6 @@
 			isa = PBXGroup;
 			children = (
 				0B33992C2B3911F1005CC627 /* FirewallEvent.swift */,
-				0B33993B2B39334E005CC627 /* FirewallAllowEvent.swift */,
 			);
 			path = Event;
 			sourceTree = "<group>";
@@ -197,6 +204,7 @@
 			isa = PBXGroup;
 			children = (
 				0B3399312B39160B005CC627 /* Bootstrap */,
+				0B0159902B397BA1005D2628 /* Entity */,
 				0B33992B2B3911D9005CC627 /* Event */,
 				0B408A2A2B395A68000E77DB /* Helpers */,
 				0B3399342B3916B2005CC627 /* View */,
@@ -335,11 +343,11 @@
 				0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */,
 				0B3399362B391AE4005CC627 /* Logger.swift in Sources */,
 				0B3399332B391619005CC627 /* RootView.swift in Sources */,
-				0B33992A2B390D44005CC627 /* Event.swift in Sources */,
+				0B33992A2B390D44005CC627 /* EventManager.swift in Sources */,
 				0B408A302B39612B000E77DB /* AppHelper.swift in Sources */,
 				0B3399272B3907F8005CC627 /* Channel.swift in Sources */,
 				0B3399382B39277B005CC627 /* EventList.swift in Sources */,
-				0B33993C2B39334E005CC627 /* FirewallAllowEvent.swift in Sources */,
+				0B01598F2B397A4B005D2628 /* Activity.swift in Sources */,
 				0B40CE422B39646100DC6771 /* AppList.swift in Sources */,
 				0B3399302B3914EF005CC627 /* AppManager.swift in Sources */,
 			);

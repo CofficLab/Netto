@@ -1,22 +1,8 @@
 import SwiftUI
 
 struct AppList: View {
-    struct AppWrapper: Identifiable {
-        var id: String = UUID().uuidString
-        var app: NSRunningApplication
-        
-        var appName: String {
-            app.localizedName ?? ""
-        }
-        var appId: String {
-            app.bundleIdentifier ?? ""
-        }
-        var appIcon: NSImage {
-            app.icon ?? NSImage()
-        }
-    }
-    
-    @State private var apps: [AppWrapper] = []
+    private var channel = Channel()
+    @State private var apps: [Activity] = []
     
     var body: some View {
         VStack {
@@ -26,11 +12,29 @@ struct AppList: View {
                 }
                 TableColumn("名称", value: \.appName)
                 TableColumn("ID", value: \.appId)
+                TableColumn("事件") { app in
+                    Text("\(app.events.count)")
+                }
             })
         }
         .onAppear {
             apps = AppHelper.getRunningAppList().map({
-                AppWrapper(app: $0)
+                Activity(app: $0)
+            })
+            
+            EventManager().onNetworkFilterFlow({ e in
+                print(e.description)
+                if let app = AppHelper.getApp(e.sourceAppIdentifier) {
+                    for (i, a) in apps.enumerated() {
+                        if a.appId == app.appId {
+                            apps[i] = a.appendEvent(e)
+                        }
+                    }
+                    
+                    apps = apps.sorted(by: {
+                        $0.events.count > $1.events.count
+                    })
+                }
             })
         }
     }
@@ -42,8 +46,14 @@ struct AppList: View {
     }
 }
 
-#Preview {
+#Preview("AppList") {
     RootView {
         AppList()
+    }
+}
+
+#Preview("EventList") {
+    RootView {
+        EventList()
     }
 }

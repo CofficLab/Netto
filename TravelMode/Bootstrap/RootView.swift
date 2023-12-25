@@ -11,6 +11,8 @@ struct RootView<Content>: View where Content: View {
     var body: some View {
         content
             .environmentObject(AppManager())
+            .environmentObject(Channel())
+            .environmentObject(EventManager())
     }
 }
 

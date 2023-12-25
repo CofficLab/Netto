@@ -2,12 +2,13 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var app: AppManager
-    private var channel = Channel()
+    @EnvironmentObject private var channel: Channel
     
     var body: some View {
-        EventList()
+        AppList()
             .onAppear {
-                Event().onFilterStatusChanged({
+                channel.viewWillAppear()
+                EventManager().onFilterStatusChanged({
                     app.setFilterStatus($0)
                 })
             }

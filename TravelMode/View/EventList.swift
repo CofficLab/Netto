@@ -1,12 +1,11 @@
 import SwiftUI
 
 struct EventList: View {
-    @EnvironmentObject private var app:AppManager
-    private var angel = Channel()
+    @EnvironmentObject private var app: AppManager
     private var events: [FirewallEvent] {
         app.events.reversed()
     }
-    
+
     var body: some View {
         VStack {
             Table(events, columns: {
@@ -30,8 +29,7 @@ struct EventList: View {
             })
         }
         .onAppear {
-            angel.viewWillAppear()
-            Event().onNetworkFilterFlow({
+            EventManager().onNetworkFilterFlow({
                 app.appendEvent($0)
             })
         }

@@ -4,7 +4,7 @@ import SwiftData
 import SwiftUI
 import OSLog
 
-final class Event: ObservableObject {
+final class EventManager: ObservableObject {
     struct FlowWrapper {
         var flow: NEFilterFlow
         var allowed: Bool
@@ -43,14 +43,11 @@ final class Event: ObservableObject {
             using: { notification in
                 let wrapper = notification.object as! FlowWrapper
                 let flow = wrapper.flow
-                let socketFlow = flow as! NEFilterSocketFlow
-                let remoteEndpoint = socketFlow.remoteEndpoint as? NWHostEndpoint
-                let localEndpoint = socketFlow.localEndpoint as? NWHostEndpoint
                 
                 callback(FirewallEvent(
-                    address: localEndpoint?.hostname ?? "",
-                    port: localEndpoint?.port ?? "",
-                    sourceAppIdentifier: flow.value(forKey: "sourceAppIdentifier") as! String,
+                    address: flow.getHostname(),
+                    port: flow.getLocalPort(),
+                    sourceAppIdentifier: flow.getAppId(),
                     status: wrapper.allowed ? .allowed : .rejected
                 ))
             })
