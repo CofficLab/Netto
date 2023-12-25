@@ -7,11 +7,11 @@ struct ContentView: View {
         EventList()
         .toolbar(content: {
             Button("开始") {
-                channel.startFilter2()
+                channel.startFilter()
             }
             
             Button("停止") {
-                channel.stopFilter2()
+                channel.stopFilter()
             }
         })
     }

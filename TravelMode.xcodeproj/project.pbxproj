@@ -205,9 +205,9 @@
 		C4B45DB722739FFF0050C59B /* SimpleFirewall */ = {
 			isa = PBXGroup;
 			children = (
-				0B3399342B3916B2005CC627 /* View */,
 				0B3399312B39160B005CC627 /* Bootstrap */,
 				0B33992B2B3911D9005CC627 /* Event */,
+				0B3399342B3916B2005CC627 /* View */,
 				0B3399282B390D30005CC627 /* ViewModel */,
 				C4B45DBC2273A0020050C59B /* Assets.xcassets */,
 				C4B45DC12273A0020050C59B /* Info.plist */,

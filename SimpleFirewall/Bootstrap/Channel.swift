@@ -56,9 +56,6 @@ class Channel: NSViewController {
     // MARK: NSViewController
 
     override func viewWillAppear() {
-
-        super.viewWillAppear()
-
         status = .indeterminate
 
         loadFilterConfiguration { success in
@@ -116,7 +113,7 @@ class Channel: NSViewController {
 
     // MARK: UI Event Handlers
     
-    func startFilter2() {
+    func startFilter() {
         status = .indeterminate
         guard !NEFilterManager.shared().isEnabled else {
             registerWithProvider()
@@ -134,8 +131,7 @@ class Channel: NSViewController {
         OSSystemExtensionManager.shared.submitRequest(activationRequest)
     }
     
-    func stopFilter2() {
-
+    func stopFilter() {
         let filterManager = NEFilterManager.shared()
 
         status = .indeterminate
