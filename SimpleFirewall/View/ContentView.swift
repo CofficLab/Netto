@@ -1,41 +1,17 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject private var app:AppManager
-    private var angel = Channel()
-    private var firewallEvents: [FirewallEvent] {
-        app.events.reversed()
-    }
+    private var channel = Channel()
     
     var body: some View {
-        VStack {
-            List {
-                ForEach(firewallEvents, id: \.self) { e in
-                    HStack(content: {
-                        Text(e.timeFormatted)
-                        Spacer()
-                        Text(e.sourceAppIdentifier)
-                        Text(e.address)
-                        Spacer()
-                        Text(e.port)
-                    })
-                }
-            }
-        }
-        .padding()
-        .onAppear {
-            angel.viewWillAppear()
-            Event().onNetworkFilterFlow({
-                app.appendEvent($0)
-            })
-        }
+        EventList()
         .toolbar(content: {
             Button("开始") {
-                angel.startFilter2()
+                channel.startFilter2()
             }
             
             Button("停止") {
-                angel.stopFilter2()
+                channel.stopFilter2()
             }
         })
     }

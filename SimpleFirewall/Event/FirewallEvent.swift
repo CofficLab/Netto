@@ -1,6 +1,8 @@
 import Foundation
 
-struct FirewallEvent: Hashable {
+struct FirewallEvent: Hashable, Identifiable {
+    var id: String = UUID().uuidString
+    
     var time: Date = .now
     var address: String
     var port: String

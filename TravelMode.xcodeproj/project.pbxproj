@@ -15,6 +15,7 @@
 		0B3399302B3914EF005CC627 /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B33992F2B3914EF005CC627 /* AppManager.swift */; };
 		0B3399332B391619005CC627 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399322B391619005CC627 /* RootView.swift */; };
 		0B3399362B391AE4005CC627 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399352B391AE4005CC627 /* Logger.swift */; };
+		0B3399382B39277B005CC627 /* EventList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399372B39277B005CC627 /* EventList.swift */; };
 		0B5B1CC12B3866250002421E /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
 		0B5B1CC22B386B580002421E /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		0B5B1CCB2B387C3F0002421E /* com.yueyi.TravelMode.Extension.systemextension in Copy Files */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -76,6 +77,7 @@
 		0B33992F2B3914EF005CC627 /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
 		0B3399322B391619005CC627 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		0B3399352B391AE4005CC627 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		0B3399372B39277B005CC627 /* EventList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventList.swift; sourceTree = "<group>"; };
 		0B5B1CA52B385BF30002421E /* TravelMode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelMode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B5B1CA72B385BF30002421E /* TravelModeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelModeApp.swift; sourceTree = "<group>"; };
 		0B5B1CA92B385BF30002421E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				0B5B1CA92B385BF30002421E /* ContentView.swift */,
+				0B3399372B39277B005CC627 /* EventList.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -389,6 +392,7 @@
 				0B3399332B391619005CC627 /* RootView.swift in Sources */,
 				0B33992A2B390D44005CC627 /* Event.swift in Sources */,
 				0B3399272B3907F8005CC627 /* Channel.swift in Sources */,
+				0B3399382B39277B005CC627 /* EventList.swift in Sources */,
 				0B3399302B3914EF005CC627 /* AppManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
