@@ -5,34 +5,29 @@ import SwiftUI
 import WebKit
 
 struct DBConfig {
-    static var dbFileName = "db_private.sqlite"
-
-    static var label = "com.yueyi.kuaiyizhi"
-
+    static var dbFileName = "db.sqlite"
+    static var label = "com.yueyi.TravelMode"
+    
     static var documentsURL: URL {
         FileManager.default
             .urls(for: .documentDirectory, in: .userDomainMask)
             .first!
     }
     
-    static var appURL: URL {
-        documentsURL.appendingPathComponent("Kuaiyizhi", isDirectory: true)
-    }
-
-    var databaseFolder: URL {
+    static var databaseFolder: URL {
         DBConfig.databaseURL.deletingLastPathComponent()
     }
-
+    
     static var databaseURL: URL {
         getDatabaseURL()
     }
-
+    
     private static func getDatabaseURL() -> URL {
         let fileName = dbFileName
-        let databaseFolder = appURL
+        let databaseFolder = databaseFolder
             .appendingPathComponent("production", isDirectory: true)
             .appendingPathComponent(fileName)
-        let databaseFolderDebug = appURL
+        let databaseFolderDebug = databaseFolder
             .appendingPathComponent("debug", isDirectory: true)
             .appendingPathComponent(fileName)
 
