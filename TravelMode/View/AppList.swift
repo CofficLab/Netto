@@ -13,11 +13,22 @@ struct AppList: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                ForEach(appsVisible) { app in
-                    AppLine(app: app)
-                    Divider()
+        ZStack {
+            if appsVisible.count == 0 {
+                VStack {
+                    Spacer()
+                    Text("开始监控后").font(.title)
+                    Text("联网的 APP 将会出现在这里").font(.title)
+                    Spacer()
+                }.frame(maxWidth: .infinity,maxHeight: .infinity)
+            } else {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        ForEach(appsVisible) { app in
+                            AppLine(app: app)
+                            Divider()
+                        }
+                    }
                 }
             }
         }
