@@ -5,7 +5,7 @@ struct ContentView: View {
     @EnvironmentObject private var channel: Channel
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             VSplitView {
                 AppList()
                 if app.logVisible {
@@ -13,7 +13,7 @@ struct ContentView: View {
                 }
             }
         }
-        .background(BackgroundView.forest)
+        .background(BackgroundView.type2A)
         .onAppear {
             channel.viewWillAppear()
             EventManager().onFilterStatusChanged({

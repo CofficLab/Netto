@@ -6,15 +6,15 @@ struct Toolbar: View {
 
     var body: some View {
         HStack {
-            Button("数据库") {
-                app.databaseVisible.toggle()
-            }
-            .popover(isPresented: $app.databaseVisible, arrowEdge: .bottom) {
-                DatabaseView()
-                    .frame(width: 500, height: 500)
-                    .background(BackgroundView.type1)
-                    .cornerRadius(10)
-            }
+//            Button("数据库") {
+//                app.databaseVisible.toggle()
+//            }
+//            .popover(isPresented: $app.databaseVisible, arrowEdge: .bottom) {
+//                DatabaseView()
+//                    .frame(width: 500, height: 500)
+//                    .background(BackgroundView.type1)
+//                    .cornerRadius(10)
+//            }
 
             if app.logVisible {
                 Button("隐藏日志") {
@@ -51,5 +51,7 @@ struct Toolbar: View {
 }
 
 #Preview {
-    Toolbar()
+    RootView {
+        ContentView()
+    }
 }

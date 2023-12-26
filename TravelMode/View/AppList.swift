@@ -13,40 +13,17 @@ struct AppList: View {
     }
 
     var body: some View {
-        VStack {
-            Table(appsVisible, columns: {
-                TableColumn("名称") { smartApp in
-                    HStack {
-                        smartApp.icon.frame(width: 33)
-                        smartApp.nameView
-                    }
+        ScrollView {
+            VStack(spacing: 0) {
+                ForEach(appsVisible) { app in
+                    AppLine(app: app)
+                    Divider()
                 }
-                TableColumn("ID", value: \.id)
-                TableColumn("事件") { app in
-                    Text("\(app.events.count)")
-                }
-                TableColumn("操作") { i in
-                    if AppSetting.shouldAllow(i.id) {
-                        HStack {
-                            Image("dot_green").scaleEffect(0.5)
-                            Button("禁止") {
-                                AppSetting.setDeny(i.id)
-                            }
-                        }
-                    } else {
-                        HStack {
-                            Image("dot_red").scaleEffect(0.5)
-                            Button("允许") {
-                                AppSetting.setAllow(i.id)
-                            }
-                        }
-                    }
-                }
-            })
+            }
         }
+        .background(Color.white.opacity(0.95))
         .onAppear {
             apps = SmartApp.appList
-
             onNewEvent()
         }
     }

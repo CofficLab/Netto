@@ -14,6 +14,7 @@ struct RootView<Content>: View where Content: View {
             .environmentObject(Channel())
             .environmentObject(EventManager())
             .modelContainer(DBConfig.container)
+            .frame(minWidth: 500, minHeight: 200)
     }
 }
 

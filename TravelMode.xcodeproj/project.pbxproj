@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B19F0C52B3AB6AB002D8FAC /* AppLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */; };
 		0B1C33FC2B39C1E7004A5E36 /* SmartApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */; };
 		0B1C33FE2B39C2AA004A5E36 /* Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */; };
 		0B1D14982B3A63A3005A3D65 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1D14972B3A63A3005A3D65 /* BackgroundView.swift */; };
@@ -63,6 +64,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLine.swift; sourceTree = "<group>"; };
 		0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartApp.swift; sourceTree = "<group>"; };
 		0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toolbar.swift; sourceTree = "<group>"; };
 		0B1D14972B3A63A3005A3D65 /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 			children = (
 				0B5B1CA92B385BF30002421E /* ContentView.swift */,
 				0B3399372B39277B005CC627 /* EventList.swift */,
+				0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */,
 				0B40CE412B39646100DC6771 /* AppList.swift */,
 				0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */,
 				0B1D14A32B3A9ED0005A3D65 /* DatabaseView.swift */,
@@ -382,6 +385,7 @@
 			files = (
 				0B33993A2B392B20005CC627 /* FilterStatus.swift in Sources */,
 				0B1C33FC2B39C1E7004A5E36 /* SmartApp.swift in Sources */,
+				0B19F0C52B3AB6AB002D8FAC /* AppLine.swift in Sources */,
 				0B33992D2B3911F1005CC627 /* FirewallEvent.swift in Sources */,
 				0B408A2C2B395A77000E77DB /* NEFilterFlowExt.swift in Sources */,
 				C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */,
