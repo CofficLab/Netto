@@ -15,19 +15,27 @@ struct Toolbar: View {
                     app.logVisible = true
                 }
             }
-            switch app.status {
-            case .stopped:
+            
+
+            ZStack {
                 Button("开始") {
                     channel.startFilter()
-                }
-            case .indeterminate:
-                Button("开始") {
-                    channel.startFilter()
-                }
-            case .running:
+                }.opacity(app.status == .stopped || app.status == .indeterminate ? 1 : 0)
                 Button("停止") {
                     channel.stopFilter()
-                }
+                }.opacity(app.status == .running ? 1 : 0)
+            }
+            
+            ZStack {
+                Image("dot_green")
+                    .opacity(app.status == .running ? 1 : 0)
+                    .scaleEffect(0.7)
+                Image("dot_red")
+                    .opacity(app.status == .stopped ? 1: 0)
+                    .scaleEffect(0.7)
+                Image("dot_yellow")
+                    .opacity(app.status == .indeterminate ? 1:0)
+                    .scaleEffect(0.7)
             }
         }
     }
