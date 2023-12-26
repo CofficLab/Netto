@@ -32,7 +32,6 @@ struct AppList: View {
                 }
             }
         }
-        .background(Color.white.opacity(0.95))
         .onAppear {
             apps = SmartApp.appList
             onNewEvent()

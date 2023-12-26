@@ -13,7 +13,6 @@ struct ContentView: View {
                 }
             }
         }
-        .background(BackgroundView.type2A)
         .onAppear {
             channel.viewWillAppear()
             EventManager().onFilterStatusChanged({
