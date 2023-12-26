@@ -48,7 +48,8 @@ final class EventManager: ObservableObject {
                     address: flow.getHostname(),
                     port: flow.getLocalPort(),
                     sourceAppIdentifier: flow.getAppId(),
-                    status: wrapper.allowed ? .allowed : .rejected
+                    status: wrapper.allowed ? .allowed : .rejected,
+                    direction: flow.direction
                 ))
             })
     }

@@ -5,30 +5,12 @@ import os.log
 import SwiftUI
 
 class Channel: NSViewController, ObservableObject {
-
-    enum Status {
-        case stopped
-        case indeterminate
-        case running
-    }
-
-    // MARK: Properties
-
-    @IBOutlet var statusIndicator: NSImageView!
-    @IBOutlet var statusSpinner: NSProgressIndicator!
-    @IBOutlet var startButton: NSButton!
-    @IBOutlet var stopButton: NSButton!
-    @IBOutlet var logTextView: NSTextView!
-
     var observer: Any?
-
-    lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return formatter
-    }()
-
-    var status: Status = .stopped
+    var status: FilterStatus = .stopped {
+        didSet {
+            EventManager().emitFilterStatusChanged(status)
+        }
+    }
 
     // Get the Bundle of the system extension.
     lazy var extensionBundle: Bundle = {
@@ -99,7 +81,6 @@ class Channel: NSViewController, ObservableObject {
     func startFilter() {
         Logger.app.debug("开启过滤器")
         status = .indeterminate
-        EventManager().emitFilterStatusChanged(.indeterminate)
         guard !NEFilterManager.shared().isEnabled else {
             registerWithProvider()
             return
@@ -107,7 +88,6 @@ class Channel: NSViewController, ObservableObject {
 
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
             self.status = .stopped
-            EventManager().emitFilterStatusChanged(.stopped)
             return
         }
 
@@ -121,18 +101,15 @@ class Channel: NSViewController, ObservableObject {
         let filterManager = NEFilterManager.shared()
 
         status = .indeterminate
-        EventManager().emitFilterStatusChanged(.indeterminate)
 
         guard filterManager.isEnabled else {
             status = .stopped
-            EventManager().emitFilterStatusChanged(.stopped)
             return
         }
 
         loadFilterConfiguration { success in
             guard success else {
                 self.status = .running
-                EventManager().emitFilterStatusChanged(.running)
                 return
             }
 
@@ -143,12 +120,10 @@ class Channel: NSViewController, ObservableObject {
                     if let error = saveError {
                         os_log("Failed to disable the filter configuration: %@", error.localizedDescription)
                         self.status = .running
-                        EventManager().emitFilterStatusChanged(.running)
                         return
                     }
 
                     self.status = .stopped
-                    EventManager().emitFilterStatusChanged(.stopped)
                 }
             }
         }
@@ -183,7 +158,6 @@ class Channel: NSViewController, ObservableObject {
 
             guard success else {
                 self.status = .stopped
-                EventManager().emitFilterStatusChanged(.stopped)
                 return
             }
 
@@ -204,7 +178,6 @@ class Channel: NSViewController, ObservableObject {
                     if let error = saveError {
                         os_log("Failed to save the filter configuration: %@", error.localizedDescription)
                         self.status = .stopped
-                        EventManager().emitFilterStatusChanged(.stopped)
                         return
                     }
 
@@ -221,7 +194,6 @@ class Channel: NSViewController, ObservableObject {
         IPCConnection.shared.register(withExtension: extensionBundle, delegate: self) { success in
             DispatchQueue.main.async {
                 self.status = (success ? .running : .stopped)
-                EventManager().emitFilterStatusChanged(success ? .running : .stopped)
             }
         }
     }
@@ -236,7 +208,6 @@ extension Channel: OSSystemExtensionRequestDelegate {
         guard result == .completed else {
             os_log("Unexpected result %d for system extension request", result.rawValue)
             status = .stopped
-            EventManager().emitFilterStatusChanged(.stopped)
             return
         }
 
@@ -247,7 +218,6 @@ extension Channel: OSSystemExtensionRequestDelegate {
 
         os_log("System extension request failed: %@", error.localizedDescription)
         status = .stopped
-        EventManager().emitFilterStatusChanged(.stopped)
     }
 
     func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {

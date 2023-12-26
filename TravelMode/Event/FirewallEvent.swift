@@ -1,4 +1,5 @@
 import Foundation
+import NetworkExtension
 
 struct FirewallEvent: Hashable, Identifiable {
     enum Status {
@@ -12,15 +13,14 @@ struct FirewallEvent: Hashable, Identifiable {
     var port: String
     var sourceAppIdentifier: String = ""
     var status: Status
+    var direction: NETrafficDirection
     
     var isAllowed: Bool {
         status == .allowed
     }
     
     var timeFormatted: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return dateFormatter.string(from: self.time)
+        self.time.timeFormatted
     }
     
     var description: String {
