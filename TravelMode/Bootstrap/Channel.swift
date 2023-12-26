@@ -1,10 +1,10 @@
 import Cocoa
 import NetworkExtension
-import SystemExtensions
 import os.log
 import SwiftUI
+import SystemExtensions
 
-class Channel: NSViewController, ObservableObject {
+class Channel: NSObject, ObservableObject {
     var observer: Any?
     var status: FilterStatus = .stopped {
         didSet {
@@ -17,9 +17,10 @@ class Channel: NSViewController, ObservableObject {
         let extensionsDirectoryURL = URL(fileURLWithPath: "Contents/Library/SystemExtensions", relativeTo: Bundle.main.bundleURL)
         let extensionURLs: [URL]
         do {
-            extensionURLs = try FileManager.default.contentsOfDirectory(at: extensionsDirectoryURL,
-                                                                        includingPropertiesForKeys: nil,
-                                                                        options: .skipsHiddenFiles)
+            extensionURLs = try FileManager.default.contentsOfDirectory(
+                at: extensionsDirectoryURL,
+                includingPropertiesForKeys: nil,
+                options: .skipsHiddenFiles)
         } catch let error {
             fatalError("Failed to get the contents of \(extensionsDirectoryURL.absoluteString): \(error.localizedDescription)")
         }
@@ -35,9 +36,7 @@ class Channel: NSViewController, ObservableObject {
         return extensionBundle
     }()
 
-    // MARK: NSViewController
-
-    override func viewWillAppear() {
+    func viewWillAppear() {
         status = .indeterminate
 
         loadFilterConfiguration { success in
@@ -56,9 +55,7 @@ class Channel: NSViewController, ObservableObject {
         }
     }
 
-    override func viewWillDisappear() {
-        super.viewWillDisappear()
-
+    func viewWillDisappear() {
         guard let changeObserver = observer else {
             return
         }
@@ -77,7 +74,7 @@ class Channel: NSViewController, ObservableObject {
     }
 
     // MARK: UI Event Handlers
-    
+
     func startFilter() {
         Logger.app.debug("开启过滤器")
         status = .indeterminate
@@ -87,7 +84,7 @@ class Channel: NSViewController, ObservableObject {
         }
 
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
-            self.status = .stopped
+            status = .stopped
             return
         }
 
@@ -96,7 +93,7 @@ class Channel: NSViewController, ObservableObject {
         activationRequest.delegate = self
         OSSystemExtensionManager.shared.submitRequest(activationRequest)
     }
-    
+
     func stopFilter() {
         let filterManager = NEFilterManager.shared()
 
@@ -200,11 +197,9 @@ class Channel: NSViewController, ObservableObject {
 }
 
 extension Channel: OSSystemExtensionRequestDelegate {
-
     // MARK: OSSystemExtensionActivationRequestDelegate
 
     func request(_ request: OSSystemExtensionRequest, didFinishWithResult result: OSSystemExtensionRequest.Result) {
-
         guard result == .completed else {
             os_log("Unexpected result %d for system extension request", result.rawValue)
             status = .stopped
@@ -215,20 +210,17 @@ extension Channel: OSSystemExtensionRequestDelegate {
     }
 
     func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
-
         os_log("System extension request failed: %@", error.localizedDescription)
         status = .stopped
     }
 
     func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
-
         os_log("Extension %@ requires user approval", request.identifier)
     }
 
     func request(_ request: OSSystemExtensionRequest,
                  actionForReplacingExtension existing: OSSystemExtensionProperties,
                  withExtension extension: OSSystemExtensionProperties) -> OSSystemExtensionRequest.ReplacementAction {
-
         os_log("Replacing extension %@ version %@ with version %@", request.identifier, existing.bundleShortVersion, `extension`.bundleShortVersion)
         return .replace
     }
@@ -240,16 +232,16 @@ extension Channel: AppCommunication {
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
         DispatchQueue.main.async {
             guard let socketFlow = flow as? NEFilterSocketFlow,
-                let remoteEndpoint = socketFlow.remoteEndpoint as? NWHostEndpoint,
-                let localEndpoint = socketFlow.localEndpoint as? NWHostEndpoint else {
-                    return
+                  let remoteEndpoint = socketFlow.remoteEndpoint as? NWHostEndpoint,
+                  let localEndpoint = socketFlow.localEndpoint as? NWHostEndpoint else {
+                return
             }
 
             let flowInfo = [
                 FlowInfoKey.localPort.rawValue: localEndpoint.port,
-                FlowInfoKey.remoteAddress.rawValue: remoteEndpoint.hostname
+                FlowInfoKey.remoteAddress.rawValue: remoteEndpoint.hostname,
             ]
-            
+
             let blackList: [String] = []
             if blackList.contains(flowInfo["localPort"] ?? "") {
                 EventManager().emitNetworkFilterFlow(flow, allowed: false)
