@@ -24,7 +24,7 @@ struct DBConfig {
     
     private static func getDatabaseURL() -> URL {
         let fileName = dbFileName
-        let databaseFolder = databaseFolder
+        let databaseFolder = documentsURL
             .appendingPathComponent("production", isDirectory: true)
             .appendingPathComponent(fileName)
         let databaseFolderDebug = databaseFolder
