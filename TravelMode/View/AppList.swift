@@ -7,6 +7,8 @@ struct AppList: View {
     private var appsVisible: [SmartApp] {
         apps.sorted(by: {
             $0.events.count > $1.events.count
+        }).filter({
+            $0.events.count > 0
         })
     }
 

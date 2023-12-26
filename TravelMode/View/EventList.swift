@@ -26,6 +26,7 @@ struct EventList: View {
                 }
             })
         }
+        .background(BackgroundView.type1)
         .onAppear {
             EventManager().onNetworkFilterFlow({
                 app.appendEvent($0)

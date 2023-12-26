@@ -9,10 +9,11 @@ struct ContentView: View {
             VSplitView {
                 AppList()
                 if app.logVisible {
-                    EventList()
+                    EventList().shadow(radius: 10)
                 }
             }
         }
+        .background(BackgroundView.forest)
         .onAppear {
             channel.viewWillAppear()
             EventManager().onFilterStatusChanged({
