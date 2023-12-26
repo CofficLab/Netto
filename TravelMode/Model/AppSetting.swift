@@ -43,11 +43,18 @@ final class AppSetting {
     }
     
     static func shouldAllow(_ id: String) -> Bool {
-        let setting = find(id)
+        var targetId = id
+        let appId = AppHelper.getApp(id)
+        if let app = appId {
+            // 当前进程id属于某个APP，结算到该APP头上
+            targetId = app.bundleIdentifier ?? ""
+        }
+        
+        let setting = find(targetId)
         if let s = setting {
             return s.allowed
         } else {
-            create(id)
+            create(targetId)
             
             return true
         }
