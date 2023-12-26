@@ -15,7 +15,7 @@ struct AppList: View {
             Table(appsVisible, columns: {
                 TableColumn("名称") { smartApp in
                     HStack {
-                        smartApp.image.frame(width: 33)
+                        smartApp.icon.frame(width: 33)
                         smartApp.nameView
                     }
                 }

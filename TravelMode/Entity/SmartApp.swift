@@ -3,19 +3,32 @@ import SwiftUI
 import AppKit
 
 struct SmartApp: Identifiable {
-    var id: String
-    var name: String
-    var icon: NSImage? = nil
-    var events: [FirewallEvent] = []
-    var image: some View {
-        ZStack {
-            if let i = icon {
-                Image(nsImage: i).resizable()
-            } else {
-                Image("dot_yellow").scaleEffect(0.7)
-            }
+    init(id: String, name: String) {
+        self.id = id
+        self.name = name
+    }
+    
+    init(id: String, name: String, icon: NSImage? = nil) {
+        self.id = id
+        self.name = name
+        if let i = icon {
+            self.icon = Image(nsImage: i).resizable()
         }
     }
+    
+    init(id: String, name: String, icon: Image? = nil) {
+        self.id = id
+        self.name = name
+        self.icon = nil
+        if let i = icon {
+            self.icon = i.resizable()
+        }
+    }
+    
+    var id: String
+    var name: String
+    var icon: Image? = nil
+    var events: [FirewallEvent] = []
     var nameView: some View {
         Text(name)
     }
@@ -40,7 +53,7 @@ struct SmartApp: Identifiable {
             return dnsApp
         }
         
-        return SmartApp(id: id, name: "未知")
+        return SmartApp(id: id, name: "未知", icon: Image("Unknown"))
     }
     
     static func fromRunningApp(_ app: NSRunningApplication) -> Self {
@@ -59,7 +72,7 @@ struct SmartApp: Identifiable {
     
     // MARK: 系统软件
     
-    static let dnsApp = Self(id: ".com.apple.mDNSResponder", name: "DNS服务")
+    static let dnsApp = Self(id: ".com.apple.mDNSResponder", name: "DNS服务", icon: Image("DNS"))
 }
 
 #Preview("APP") {

@@ -13,7 +13,7 @@ struct EventList: View {
                 TableColumn("APP") { event in
                     let smartApp = SmartApp.fromId(event.sourceAppIdentifier)
                     HStack {
-                        smartApp.image.frame(width: 33)
+                        smartApp.icon.frame(width: 33)
                         smartApp.nameView
                     }
                 }
