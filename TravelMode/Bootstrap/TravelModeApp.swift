@@ -8,5 +8,8 @@ struct TravelModeApp: App {
                 ContentView()
             }
         }
+        .commands(content: {
+            DebugCommands()
+        })
     }
 }

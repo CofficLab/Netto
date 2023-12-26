@@ -241,14 +241,13 @@ extension Channel: AppCommunication {
                 FlowInfoKey.localPort.rawValue: localEndpoint.port,
                 FlowInfoKey.remoteAddress.rawValue: remoteEndpoint.hostname,
             ]
-
-            let blackList: [String] = []
-            if blackList.contains(flowInfo["localPort"] ?? "") {
-                EventManager().emitNetworkFilterFlow(flow, allowed: false)
-                responseHandler(false)
-            } else {
+            
+            if AppSetting.shouldAllow(flow.getAppId()) {
                 EventManager().emitNetworkFilterFlow(flow, allowed: true)
                 responseHandler(true)
+            } else {
+                EventManager().emitNetworkFilterFlow(flow, allowed: false)
+                responseHandler(false)
             }
         }
     }

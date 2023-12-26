@@ -32,6 +32,7 @@ struct AppHelper {
             if
                 bundleIdentifier == workId ||
                 bundleIdentifier == id ||
+                id.contains(bundleIdentifier) ||
                 id.hasSuffix(bundleIdentifier) {
                 return app
             }

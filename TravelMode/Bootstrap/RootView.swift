@@ -13,6 +13,7 @@ struct RootView<Content>: View where Content: View {
             .environmentObject(AppManager())
             .environmentObject(Channel())
             .environmentObject(EventManager())
+            .modelContainer(DBConfig.container)
     }
 }
 

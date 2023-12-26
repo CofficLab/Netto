@@ -25,6 +25,23 @@ struct AppList: View {
                 TableColumn("事件") { app in
                     Text("\(app.events.count)")
                 }
+                TableColumn("操作") { i in
+                    if AppSetting.shouldAllow(i.id) {
+                        HStack {
+                            Image("dot_green").scaleEffect(0.5)
+                            Button("禁止") {
+                                AppSetting.setDeny(i.id)
+                            }
+                        }
+                    } else {
+                        HStack {
+                            Image("dot_red").scaleEffect(0.5)
+                            Button("允许") {
+                                AppSetting.setAllow(i.id)
+                            }
+                        }
+                    }
+                }
             })
         }
         .onAppear {
