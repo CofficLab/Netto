@@ -5,6 +5,7 @@ import SwiftUI
 import WebKit
 
 struct DBConfig {
+    static private var fileManager = FileManager.default
     static var dbFileName = "db.sqlite"
     static var label = "com.yueyi.TravelMode"
     
@@ -24,18 +25,24 @@ struct DBConfig {
     
     private static func getDatabaseURL() -> URL {
         let fileName = dbFileName
-        let databaseFolder = documentsURL
-            .appendingPathComponent("production", isDirectory: true)
-            .appendingPathComponent(fileName)
-        let databaseFolderDebug = databaseFolder
-            .appendingPathComponent("debug", isDirectory: true)
-            .appendingPathComponent(fileName)
-
         #if DEBUG
-            return databaseFolderDebug
+            let dirName = "debug"
         #else
-            return databaseFolder
+            let dirName = "production"
         #endif
+        
+        var isDir: ObjCBool = true
+        let dbDir = documentsURL            .appendingPathComponent(dirName, isDirectory: true)
+        
+        if !fileManager.fileExists(atPath: dbDir.path, isDirectory: &isDir) {
+            do {
+                try fileManager.createDirectory(atPath: dbDir.path, withIntermediateDirectories: true)
+            } catch (let error) {
+                fatalError("新建数据库文件夹发生错误：\(error.localizedDescription)")
+            }
+        }
+        
+        return dbDir.appendingPathComponent(fileName)
     }
 
     static var container: ModelContainer = {
