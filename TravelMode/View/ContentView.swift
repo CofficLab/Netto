@@ -5,7 +5,9 @@ struct ContentView: View {
     @EnvironmentObject private var channel: Channel
     
     var body: some View {
-        VStack(spacing: 0) {
+        ZStack {
+            BackgroundView.type1.opacity(0.2)
+            
             VSplitView {
                 AppList()
                 if app.logVisible {
