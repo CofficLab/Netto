@@ -236,11 +236,6 @@ extension Channel: AppCommunication {
                   let localEndpoint = socketFlow.localEndpoint as? NWHostEndpoint else {
                 return
             }
-
-            let flowInfo = [
-                FlowInfoKey.localPort.rawValue: localEndpoint.port,
-                FlowInfoKey.remoteAddress.rawValue: remoteEndpoint.hostname,
-            ]
             
             if AppSetting.shouldAllow(flow.getAppId()) {
                 EventManager().emitNetworkFilterFlow(flow, allowed: true)
