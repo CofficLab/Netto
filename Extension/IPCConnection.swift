@@ -1,6 +1,4 @@
 /*
-See LICENSE folder for this sample’s licensing information.
-
 Abstract:
 This file contains the implementation of the app <-> provider IPC connection
 */
@@ -12,14 +10,14 @@ import NetworkExtension
 
 /// App --> Provider IPC
 @objc protocol ProviderCommunication {
-
     func register(_ completionHandler: @escaping (Bool) -> Void)
 }
 
 /// Provider --> App IPC
 @objc protocol AppCommunication {
-
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void)
+    
+    func needApproval()
 }
 
 enum FlowInfoKey: String {

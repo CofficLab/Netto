@@ -3,6 +3,23 @@ import SwiftUI
 struct Toolbar: View {
     @EnvironmentObject private var app: AppManager
     @EnvironmentObject private var channel: Channel
+    
+    var iconName: String {
+        switch app.status {
+        case .stopped:
+            "dot_red"
+        case .indeterminate:
+            "dot_yellow"
+        case .running:
+            "dot_green"
+        case .rejected:
+            "dot_red"
+        case .notInstalled:
+            "dot_yellow"
+        case .needApproval:
+            "dot_yellow"
+        }
+    }
 
     var body: some View {
         HStack {
@@ -29,21 +46,14 @@ struct Toolbar: View {
             ZStack {
                 Button("开始") {
                     channel.startFilter()
-                }.opacity(app.status == .stopped || app.status == .indeterminate ? 1 : 0)
+                }.opacity(app.status == .running ? 0 : 1)
                 Button("停止") {
                     channel.stopFilter()
                 }.opacity(app.status == .running ? 1 : 0)
             }
 
             ZStack {
-                Image("dot_green")
-                    .opacity(app.status == .running ? 1 : 0)
-                    .scaleEffect(0.7)
-                Image("dot_red")
-                    .opacity(app.status == .stopped ? 1 : 0)
-                    .scaleEffect(0.7)
-                Image("dot_yellow")
-                    .opacity(app.status == .indeterminate ? 1 : 0)
+                Image(iconName)
                     .scaleEffect(0.7)
             }
         }

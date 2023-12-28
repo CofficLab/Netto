@@ -227,16 +227,14 @@ extension Channel: OSSystemExtensionRequestDelegate {
 }
 
 extension Channel: AppCommunication {
+    func needApproval() {
+        EventManager().emitNeedApproval()
+    }
+    
     // MARK: AppCommunication
 
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
-        DispatchQueue.main.async {
-            guard let socketFlow = flow as? NEFilterSocketFlow,
-                  let remoteEndpoint = socketFlow.remoteEndpoint as? NWHostEndpoint,
-                  let localEndpoint = socketFlow.localEndpoint as? NWHostEndpoint else {
-                return
-            }
-            
+        DispatchQueue.main.async {            
             if AppSetting.shouldAllow(flow.getAppId()) {
                 EventManager().emitNetworkFilterFlow(flow, allowed: true)
                 responseHandler(true)

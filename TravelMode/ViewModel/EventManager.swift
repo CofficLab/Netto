@@ -13,6 +13,7 @@ final class EventManager: ObservableObject {
     enum EventList {
         case NetWorkFilterFlow
         case FilterStatusChanged
+        case NeedApproval
         
         var name: String {
             String(describing: self)
@@ -31,6 +32,14 @@ final class EventManager: ObservableObject {
         NotificationCenter.default.post(
             name: NSNotification.Name(EventList.NetWorkFilterFlow.name),
             object: FlowWrapper(flow: flow, allowed: allowed),
+            userInfo: nil
+        )
+    }
+    
+    func emitNeedApproval() {
+        NotificationCenter.default.post(
+            name: NSNotification.Name(EventList.NeedApproval.name),
+            object: nil,
             userInfo: nil
         )
     }
@@ -62,6 +71,16 @@ final class EventManager: ObservableObject {
             using: { notification in
                 let status = notification.object as! FilterStatus
                 callback(status)
+            })
+    }
+    
+    func onNeedApproval(_ callback: @escaping () -> Void) {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name(EventList.NeedApproval.name),
+            object: nil,
+            queue: .main,
+            using: { _ in
+                callback()
             })
     }
 }

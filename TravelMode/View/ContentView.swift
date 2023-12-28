@@ -20,6 +20,13 @@ struct ContentView: View {
             EventManager().onFilterStatusChanged({
                 app.setFilterStatus($0)
             })
+            
+            EventManager().onNeedApproval {
+                app.setFilterStatus(.needApproval)
+            }
+        }
+        .onDisappear {
+            channel.viewWillDisappear()
         }
         .toolbar{
             Toolbar()
