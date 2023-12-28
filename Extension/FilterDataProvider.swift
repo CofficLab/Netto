@@ -1,6 +1,4 @@
 /*
-See LICENSE folder for this sample’s licensing information.
-
 Abstract:
 This file contains the implementation of the NEFilterDataProvider sub-class.
 */
@@ -22,7 +20,6 @@ class FilterDataProvider: NEFilterDataProvider {
     // MARK: NEFilterDataProvider
 
     override func startFilter(completionHandler: @escaping (Error?) -> Void) {
-
         // Filter incoming TCP connections on port 8888
         let filterRules = ["0.0.0.0", "::"].map { address -> NEFilterRule in
             let localNetwork = NWHostEndpoint(hostname: address, port: FilterDataProvider.localPort)
@@ -47,12 +44,10 @@ class FilterDataProvider: NEFilterDataProvider {
     }
     
     override func stopFilter(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
-
         completionHandler()
     }
     
     override func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
-
         guard let socketFlow = flow as? NEFilterSocketFlow,
             let remoteEndpoint = socketFlow.remoteEndpoint as? NWHostEndpoint,
             let localEndpoint = socketFlow.localEndpoint as? NWHostEndpoint else {

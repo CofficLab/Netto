@@ -43,7 +43,6 @@ class IPCConnection: NSObject {
         Any process in the same app group can use the Mach service to communicate with the system extension.
      */
     private func extensionMachServiceName(from bundle: Bundle) -> String {
-
         guard let networkExtensionKeys = bundle.object(forInfoDictionaryKey: "NetworkExtension") as? [String: Any],
             let machServiceName = networkExtensionKeys["NEMachServiceName"] as? String else {
                 fatalError("Mach service name is missing from the Info.plist")
@@ -53,7 +52,6 @@ class IPCConnection: NSObject {
     }
 
     func startListener() {
-
         let machServiceName = extensionMachServiceName(from: Bundle.main)
         os_log("Starting XPC listener for mach service %@", machServiceName)
 
@@ -69,8 +67,8 @@ class IPCConnection: NSObject {
         self.delegate = delegate
 
         guard currentConnection == nil else {
-            os_log("Already registered with the provider")
-            completionHandler(true)
+            os_log("IPCConnection.register->Already registered with the provider")
+            completionHandler(false)
             return
         }
 
@@ -96,6 +94,7 @@ class IPCConnection: NSObject {
             fatalError("Failed to create a remote object proxy for the provider")
         }
 
+        os_log("providerProxy.register")
         providerProxy.register(completionHandler)
     }
 
@@ -129,7 +128,7 @@ extension IPCConnection: NSXPCListenerDelegate {
     // MARK: NSXPCListenerDelegate
 
     func listener(_ listener: NSXPCListener, shouldAcceptNewConnection newConnection: NSXPCConnection) -> Bool {
-
+        os_log("IPCConnection.shouldAcceptNewConnection")
         // The exported object is this IPCConnection instance.
         newConnection.exportedInterface = NSXPCInterface(with: ProviderCommunication.self)
         newConnection.exportedObject = self
@@ -153,12 +152,10 @@ extension IPCConnection: NSXPCListenerDelegate {
 }
 
 extension IPCConnection: ProviderCommunication {
-
     // MARK: ProviderCommunication
 
     func register(_ completionHandler: @escaping (Bool) -> Void) {
-
-        os_log("App registered")
+        os_log("IPCConnection.App registered")
         completionHandler(true)
     }
 }

@@ -5,6 +5,7 @@ import SwiftUI
 import SystemExtensions
 
 class Channel: NSObject, ObservableObject {
+    private var ipc = IPCConnection.shared
     var observer: Any?
     var status: FilterStatus = .stopped {
         didSet {
@@ -47,11 +48,15 @@ class Channel: NSObject, ObservableObject {
 
             self.updateStatus()
 
-            self.observer = NotificationCenter.default.addObserver(forName: .NEFilterConfigurationDidChange,
-                                                                   object: NEFilterManager.shared(),
-                                                                   queue: .main) { [weak self] _ in
+            self.observer = NotificationCenter.default.addObserver(
+                forName: .NEFilterConfigurationDidChange,
+                object: NEFilterManager.shared(),
+                queue: .main
+            ) { [weak self] _ in
                 self?.updateStatus()
             }
+            
+            self.registerWithProvider()
         }
     }
 
@@ -66,9 +71,11 @@ class Channel: NSObject, ObservableObject {
     // MARK: Update the UI
 
     func updateStatus() {
+        Logger.app.debug("Channel.updateStatus")
         if NEFilterManager.shared().isEnabled {
             registerWithProvider()
         } else {
+            Logger.app.debug("Channel.updateStatus->stopped")
             status = .stopped
         }
     }
@@ -115,8 +122,8 @@ class Channel: NSObject, ObservableObject {
             filterManager.saveToPreferences { saveError in
                 DispatchQueue.main.async {
                     if let error = saveError {
-                        os_log("Failed to disable the filter configuration: %@", error.localizedDescription)
-                        self.status = .running
+                        os_log("saveToPreferences: %@", error.localizedDescription)
+                        self.status = .stopped
                         return
                     }
 
@@ -136,9 +143,8 @@ class Channel: NSObject, ObservableObject {
                 if let error = loadError {
                     os_log("Failed to load the filter configuration: %@", error.localizedDescription)
                     success = false
-                } else {
-                    Logger.app.debug("loadFilterConfiguration->no error")
                 }
+                
                 completionHandler(success)
             }
         }
@@ -176,7 +182,7 @@ class Channel: NSObject, ObservableObject {
             filterManager.saveToPreferences { saveError in
                 DispatchQueue.main.async {
                     if let error = saveError {
-                        os_log("enableFilterConfiguration->Failed to save the filter configuration: %@", error.localizedDescription)
+                        os_log("enableFilterConfiguration->%@", error.localizedDescription)
                         self.status = .stopped
                         return
                     }
@@ -190,10 +196,13 @@ class Channel: NSObject, ObservableObject {
     // MARK: ProviderCommunication
 
     func registerWithProvider() {
-        Logger.app.debug("registerWithProvider")
-        IPCConnection.shared.register(withExtension: extensionBundle, delegate: self) { success in
+        Logger.app.debug("Channel.registerWithProvider")
+        ipc.register(withExtension: extensionBundle, delegate: self) { success in
+            Logger.app.debug("Channel.registerWithProvider->\(success)")
             DispatchQueue.main.async {
-                self.status = (success ? .running : .stopped)
+                if !success {
+                    self.status = .stopped
+                }
             }
         }
     }
