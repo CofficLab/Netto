@@ -76,7 +76,7 @@ class Channel: NSObject, ObservableObject {
     // MARK: UI Event Handlers
 
     func startFilter() {
-        Logger.app.debug("开启过滤器")
+        Logger.app.debug("Channel.开启过滤器")
         status = .indeterminate
         guard !NEFilterManager.shared().isEnabled else {
             registerWithProvider()
@@ -136,6 +136,8 @@ class Channel: NSObject, ObservableObject {
                 if let error = loadError {
                     os_log("Failed to load the filter configuration: %@", error.localizedDescription)
                     success = false
+                } else {
+                    Logger.app.debug("loadFilterConfiguration->no error")
                 }
                 completionHandler(success)
             }
@@ -152,7 +154,6 @@ class Channel: NSObject, ObservableObject {
         }
 
         loadFilterConfiguration { success in
-
             guard success else {
                 self.status = .stopped
                 return
@@ -168,12 +169,14 @@ class Channel: NSObject, ObservableObject {
                 }
             }
 
+            // 如果true，加载到系统设置中后就是启动状态
             filterManager.isEnabled = true
-
+            
+            // 将过滤器加载到系统设置中
             filterManager.saveToPreferences { saveError in
                 DispatchQueue.main.async {
                     if let error = saveError {
-                        os_log("Failed to save the filter configuration: %@", error.localizedDescription)
+                        os_log("enableFilterConfiguration->Failed to save the filter configuration: %@", error.localizedDescription)
                         self.status = .stopped
                         return
                     }
@@ -196,10 +199,16 @@ class Channel: NSObject, ObservableObject {
     }
 }
 
-extension Channel: OSSystemExtensionRequestDelegate {
-    // MARK: OSSystemExtensionActivationRequestDelegate
+// MARK: OSSystemExtensionActivationRequestDelegate
 
-    func request(_ request: OSSystemExtensionRequest, didFinishWithResult result: OSSystemExtensionRequest.Result) {
+extension Channel: OSSystemExtensionRequestDelegate {
+    // 调起授权请求后
+    func request(
+        _ request: OSSystemExtensionRequest,
+        didFinishWithResult result: OSSystemExtensionRequest.Result
+    ) {
+        Logger.app.debug("Channel.didFinishWithResult->\(String(describing: result))")
+        
         guard result == .completed else {
             os_log("Unexpected result %d for system extension request", result.rawValue)
             status = .stopped
@@ -209,19 +218,26 @@ extension Channel: OSSystemExtensionRequestDelegate {
         enableFilterConfiguration()
     }
 
-    func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
-        os_log("System extension request failed: %@", error.localizedDescription)
+    func request(
+        _ request: OSSystemExtensionRequest,
+        didFailWithError error: Error
+    ) {
+        Logger.app.debug("Channel.didFailWithError->\(error.localizedDescription)")
+        
         status = .stopped
     }
 
     func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
-        os_log("Extension %@ requires user approval", request.identifier)
+        Logger.app.debug("Channel.requestNeedsUserApproval")
     }
 
-    func request(_ request: OSSystemExtensionRequest,
-                 actionForReplacingExtension existing: OSSystemExtensionProperties,
-                 withExtension extension: OSSystemExtensionProperties) -> OSSystemExtensionRequest.ReplacementAction {
-        os_log("Replacing extension %@ version %@ with version %@", request.identifier, existing.bundleShortVersion, `extension`.bundleShortVersion)
+    func request(
+        _ request: OSSystemExtensionRequest,
+        actionForReplacingExtension existing: OSSystemExtensionProperties,
+        withExtension extension: OSSystemExtensionProperties
+    ) -> OSSystemExtensionRequest.ReplacementAction {
+        Logger.app.debug("actionForReplacingExtension")
+        
         return .replace
     }
 }
@@ -234,7 +250,7 @@ extension Channel: AppCommunication {
     // MARK: AppCommunication
 
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
-        DispatchQueue.main.async {            
+        DispatchQueue.main.async {
             if AppSetting.shouldAllow(flow.getAppId()) {
                 EventManager().emitNetworkFilterFlow(flow, allowed: true)
                 responseHandler(true)
