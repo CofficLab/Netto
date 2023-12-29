@@ -177,14 +177,8 @@ class Channel: NSObject, ObservableObject {
     // MARK: ProviderCommunication
 
     func registerWithProvider() {
-        Logger.app.debug("Channel.registerWithProvider")
         ipc.register(withExtension: extensionBundle, delegate: self) { success in
             Logger.app.debug("Channel.registerWithProvider->\(success)")
-            DispatchQueue.main.async {
-                if !success {
-                    self.status = .stopped
-                }
-            }
         }
     }
 }

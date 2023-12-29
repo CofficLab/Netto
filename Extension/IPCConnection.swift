@@ -62,14 +62,14 @@ class IPCConnection: NSObject {
 
     /// This method is called by the app to register with the provider running in the system extension.
     func register(withExtension bundle: Bundle, delegate: AppCommunication, completionHandler: @escaping (Bool) -> Void) {
-        os_log("IPCConnection.register")
+        os_log("IPC.register")
         self.delegate = delegate
 
-//        guard currentConnection == nil else {
-//            os_log("IPCConnection.register->Already registered with the provider")
-//            completionHandler(false)
-//            return
-//        }
+        guard currentConnection == nil else {
+            os_log("IPCConnection.register->Already registered with the provider")
+            completionHandler(true)
+            return
+        }
 
         let machServiceName = extensionMachServiceName(from: bundle)
         let newConnection = NSXPCConnection(machServiceName: machServiceName, options: [])
@@ -154,7 +154,7 @@ extension IPCConnection: ProviderCommunication {
     // MARK: ProviderCommunication
 
     func register(_ completionHandler: @escaping (Bool) -> Void) {
-        os_log("IPCConnection.App registered")
+        os_log("IPC.App registered")
         completionHandler(true)
     }
 }
