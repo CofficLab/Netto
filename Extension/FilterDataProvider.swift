@@ -11,12 +11,8 @@ import os.log
     the user to allow or deny the connections.
  */
 class FilterDataProvider: NEFilterDataProvider {
-
-    // MARK: Properties
-
-    // The TCP port which the filter is interested in.
-	static let localPort = "8888"
-
+    private var ipc = IPCConnection.shared
+ 
     // MARK: NEFilterDataProvider
 
     override func startFilter(completionHandler: @escaping (Error?) -> Void) {
@@ -44,7 +40,7 @@ class FilterDataProvider: NEFilterDataProvider {
         os_log("Got a new flow with local endpoint %@, remote endpoint %@", localEndpoint, remoteEndpoint)
         
         // Ask the app to prompt the user
-        let prompted = IPCConnection.shared.promptUser(flow: flow) { allow in
+        let prompted = ipc.promptUser(flow: flow) { allow in
             let userVerdict: NEFilterNewFlowVerdict = allow ? .allow() : .drop()
             os_log("====resumeFlow====")
             self.resumeFlow(flow, with: userVerdict)
