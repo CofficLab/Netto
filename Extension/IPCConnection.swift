@@ -27,14 +27,10 @@ enum FlowInfoKey: String {
 
 /// The IPCConnection class is used by both the app and the system extension to communicate with each other
 class IPCConnection: NSObject {
-    // MARK: Properties
-
     var listener: NSXPCListener?
     var currentConnection: NSXPCConnection?
     weak var delegate: AppCommunication?
     static let shared = IPCConnection()
-
-    // MARK: Methods
 
     /**
         The NetworkExtension framework registers a Mach service with the name in the system extension's NEMachServiceName Info.plist key.
@@ -42,6 +38,8 @@ class IPCConnection: NSObject {
         Any process in the same app group can use the Mach service to communicate with the system extension.
      */
     private func extensionMachServiceName(from bundle: Bundle) -> String {
+        os_log("IPC.extensionMachServiceName")
+        
         guard let networkExtensionKeys = bundle.object(forInfoDictionaryKey: "NetworkExtension") as? [String: Any],
             let machServiceName = networkExtensionKeys["NEMachServiceName"] as? String else {
                 fatalError("Mach service name is missing from the Info.plist")
@@ -101,8 +99,7 @@ class IPCConnection: NSObject {
         This method is called by the provider to cause the app (if it is registered) to display a prompt to the user asking
         for a decision about a connection.
     */
-    func promptUser(aboutFlow flowInfo: [String: String], flow: NEFilterFlow, responseHandler:@escaping (Bool) -> Void) -> Bool {
-
+    func promptUser(flow: NEFilterFlow, responseHandler:@escaping (Bool) -> Void) -> Bool {
         guard let connection = currentConnection else {
             os_log("Cannot prompt user because the app isn't registered")
             return false

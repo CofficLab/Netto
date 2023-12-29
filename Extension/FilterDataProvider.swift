@@ -42,14 +42,9 @@ class FilterDataProvider: NEFilterDataProvider {
         }
 
         os_log("Got a new flow with local endpoint %@, remote endpoint %@", localEndpoint, remoteEndpoint)
-
-        let flowInfo = [
-            FlowInfoKey.localPort.rawValue: localEndpoint.port,
-            FlowInfoKey.remoteAddress.rawValue: remoteEndpoint.hostname
-        ]
         
         // Ask the app to prompt the user
-        let prompted = IPCConnection.shared.promptUser(aboutFlow: flowInfo, flow: flow) { allow in
+        let prompted = IPCConnection.shared.promptUser(flow: flow) { allow in
             let userVerdict: NEFilterNewFlowVerdict = allow ? .allow() : .drop()
             os_log("====resumeFlow====")
             self.resumeFlow(flow, with: userVerdict)
