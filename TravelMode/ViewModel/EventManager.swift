@@ -16,10 +16,20 @@ final class EventManager: ObservableObject {
         case NeedApproval
         case WaitingForApproval
         case PermissionDenied
+        case ProviderSaid
         
         var name: String {
             String(describing: self)
         }
+    }
+    
+    func emitProviderSaid(_ words: String) {
+        Logger.app.debug("provider said: \(words)")
+        NotificationCenter.default.post(
+            name: NSNotification.Name(EventList.WaitingForApproval.name),
+            object: words,
+            userInfo: nil
+        )
     }
     
     func emitWaitingForApproval() {

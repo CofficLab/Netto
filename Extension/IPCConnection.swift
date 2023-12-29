@@ -16,13 +16,8 @@ import NetworkExtension
 /// Provider --> App IPC
 @objc protocol AppCommunication {
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void)
-    
     func needApproval()
-}
-
-enum FlowInfoKey: String {
-    case localPort
-    case remoteAddress
+    func providerSaid(_ words: String)
 }
 
 /// The IPCConnection class is used by both the app and the system extension to communicate with each other
@@ -38,8 +33,6 @@ class IPCConnection: NSObject {
         Any process in the same app group can use the Mach service to communicate with the system extension.
      */
     private func extensionMachServiceName(from bundle: Bundle) -> String {
-        os_log("IPC.extensionMachServiceName")
-        
         guard let networkExtensionKeys = bundle.object(forInfoDictionaryKey: "NetworkExtension") as? [String: Any],
             let machServiceName = networkExtensionKeys["NEMachServiceName"] as? String else {
                 fatalError("Mach service name is missing from the Info.plist")
@@ -100,6 +93,7 @@ class IPCConnection: NSObject {
         for a decision about a connection.
     */
     func promptUser(flow: NEFilterFlow, responseHandler:@escaping (Bool) -> Void) -> Bool {
+        os_log("IPC.promptUser")
         guard let connection = currentConnection else {
             os_log("Cannot prompt user because the app isn't registered")
             return false
@@ -116,6 +110,22 @@ class IPCConnection: NSObject {
         appProxy.promptUser(flow: flow, responseHandler: responseHandler)
 
         return true
+    }
+    
+    func providerSay(_ words: String) {
+        os_log("IPC.providerSay")
+        guard let connection = currentConnection else {
+            os_log("Cannot prompt user because the app isn't registered")
+            return
+        }
+        
+        guard let appProxy = connection.remoteObjectProxyWithErrorHandler({ promptError in
+            os_log("Failed to prompt the user: %@", promptError.localizedDescription)
+        }) as? AppCommunication else {
+            fatalError("Failed to create a remote object proxy for the app")
+        }
+        appProxy.providerSaid(words)
+        os_log("Provider Said: \(words)")
     }
 }
 

@@ -17,7 +17,7 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            channel.viewWillAppear()
+            channel.boot()
             event.onFilterStatusChanged({
                 app.setFilterStatus($0)
             })

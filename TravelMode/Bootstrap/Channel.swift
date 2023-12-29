@@ -5,17 +5,20 @@ import SwiftUI
 import SystemExtensions
 
 class Channel: NSObject, ObservableObject {
+    private var event = EventManager()
     private var ipc = IPCConnection.shared
     private var filterManager = NEFilterManager.shared()
     private var extensionBundle = ExtConfig.extensionBundle
+    
     var observer: Any?
     var status: FilterStatus = .stopped {
         didSet {
-            EventManager().emitFilterStatusChanged(status)
+            event.emitFilterStatusChanged(status)
         }
     }
 
-    func viewWillAppear() {
+    func boot() {
+        Logger.app.debug("Channel.boot 🛫")
         status = .indeterminate
 
         loadFilterConfiguration { success in
@@ -30,12 +33,10 @@ class Channel: NSObject, ObservableObject {
                 forName: .NEFilterConfigurationDidChange,
                 object: self.filterManager,
                 queue: .main
-            ) { [weak self] _ in
+            ) { _ in
                 Logger.app.debug("Channel.NEFilterConfigurationDidChange 🚀")
-                self?.updateStatus()
+                self.updateStatus()
             }
-            
-            self.registerWithProvider()
         }
     }
 
@@ -50,8 +51,6 @@ class Channel: NSObject, ObservableObject {
         )
     }
 
-    // MARK: Update the UI
-
     func updateStatus() {
         Logger.app.debug("Channel.updateStatus")
         if filterManager.isEnabled {
@@ -62,8 +61,6 @@ class Channel: NSObject, ObservableObject {
             status = .stopped
         }
     }
-
-    // MARK: UI Event Handlers
 
     func startFilter() {
         Logger.app.debug("Channel.开启过滤器")
@@ -180,11 +177,10 @@ class Channel: NSObject, ObservableObject {
         }
     }
 
-    // MARK: ProviderCommunication
-
     func registerWithProvider() {
         ipc.register(withExtension: extensionBundle, delegate: self) { success in
             Logger.app.debug("Channel.registerWithProvider->\(success)")
+            self.status = success ? .running : .stopped
         }
     }
 }
@@ -233,6 +229,14 @@ extension Channel: OSSystemExtensionRequestDelegate {
 }
 
 extension Channel: AppCommunication {
+    func providerSaid(_ words: String) {
+        Logger.app.info("Provider said: \(words)")
+    }
+    
+    func providerSay(_ words: String) {
+        Logger.app.info("Provider: \(words)")
+    }
+    
     func needApproval() {
         EventManager().emitNeedApproval()
     }
@@ -240,6 +244,7 @@ extension Channel: AppCommunication {
     // MARK: AppCommunication
 
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
+        // Logger.app.info("Channel.promptUser")
         DispatchQueue.main.async {
             if AppSetting.shouldAllow(flow.getAppId()) {
                 EventManager().emitNetworkFilterFlow(flow, allowed: true)
