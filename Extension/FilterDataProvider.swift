@@ -20,20 +20,7 @@ class FilterDataProvider: NEFilterDataProvider {
     // MARK: NEFilterDataProvider
 
     override func startFilter(completionHandler: @escaping (Error?) -> Void) {
-        // Filter incoming TCP connections on port 8888
-        let filterRules = ["0.0.0.0", "::"].map { address -> NEFilterRule in
-            let localNetwork = NWHostEndpoint(hostname: address, port: FilterDataProvider.localPort)
-            let inboundNetworkRule = NENetworkRule(remoteNetwork: nil,
-                                                   remotePrefix: 0,
-                                                   localNetwork: localNetwork,
-                                                   localPrefix: 0,
-                                                   protocol: .any,
-                                                   direction: .any)
-            return NEFilterRule(networkRule: inboundNetworkRule, action: .filterData)
-        }
-
-        // Allow all flows that do not match the filter rules.
-        let filterSettings = NEFilterSettings(rules: filterRules, defaultAction: .filterData)
+        let filterSettings = NEFilterSettings(rules: [], defaultAction: .filterData)
 
         apply(filterSettings) { error in
             if let applyError = error {
