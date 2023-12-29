@@ -17,22 +17,22 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            channel.boot()
             event.onFilterStatusChanged({
                 app.setFilterStatus($0)
             })
+            channel.boot()
             
-            event.onNeedApproval {
-                app.setFilterStatus(.needApproval)
-            }
-            
-            event.onWaitingForApproval {
-                app.setFilterStatus(.waitingForApproval)
-            }
-            
-            event.onPermissionDenied {
-                app.setFilterStatus(.needApproval)
-            }
+//            event.onNeedApproval {
+//                app.setFilterStatus(.needApproval)
+//            }
+//            
+//            event.onWaitingForApproval {
+//                app.setFilterStatus(.waitingForApproval)
+//            }
+//            
+//            event.onPermissionDenied {
+//                app.setFilterStatus(.needApproval)
+//            }
         }
         .onDisappear {
             channel.viewWillDisappear()

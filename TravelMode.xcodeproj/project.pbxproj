@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		0B09F6852B3E51F900B90A59 /* ExtConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B09F6842B3E51F900B90A59 /* ExtConfig.swift */; };
 		0B09F68F2B3EAD8900B90A59 /* BtnInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B09F68D2B3EAD7400B90A59 /* BtnInstall.swift */; };
+		0B09F6912B3EB6DF00B90A59 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B09F6902B3EB6DF00B90A59 /* Location.swift */; };
+		0B09F6922B3EB84100B90A59 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B09F6902B3EB6DF00B90A59 /* Location.swift */; };
 		0B19F0C52B3AB6AB002D8FAC /* AppLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */; };
 		0B1C33FC2B39C1E7004A5E36 /* SmartApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */; };
 		0B1C33FE2B39C2AA004A5E36 /* Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */; };
@@ -69,6 +71,7 @@
 /* Begin PBXFileReference section */
 		0B09F6842B3E51F900B90A59 /* ExtConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtConfig.swift; sourceTree = "<group>"; };
 		0B09F68D2B3EAD7400B90A59 /* BtnInstall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnInstall.swift; sourceTree = "<group>"; };
+		0B09F6902B3EB6DF00B90A59 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLine.swift; sourceTree = "<group>"; };
 		0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartApp.swift; sourceTree = "<group>"; };
 		0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toolbar.swift; sourceTree = "<group>"; };
@@ -131,6 +134,7 @@
 			children = (
 				0B3399392B392B20005CC627 /* FilterStatus.swift */,
 				0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */,
+				0B09F6902B3EB6DF00B90A59 /* Location.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -394,6 +398,7 @@
 				C40A5C57229DD93200627D50 /* FilterDataProvider.swift in Sources */,
 				C40A5C56229DD92E00627D50 /* IPCConnection.swift in Sources */,
 				C40A5C4B229DD6A500627D50 /* main.swift in Sources */,
+				0B09F6912B3EB6DF00B90A59 /* Location.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,6 +419,7 @@
 				0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */,
 				0B1D14982B3A63A3005A3D65 /* BackgroundView.swift in Sources */,
 				0B3399362B391AE4005CC627 /* Logger.swift in Sources */,
+				0B09F6922B3EB84100B90A59 /* Location.swift in Sources */,
 				0B09F6852B3E51F900B90A59 /* ExtConfig.swift in Sources */,
 				0B1D149F2B3A78EC005A3D65 /* AppSetting.swift in Sources */,
 				0B3399332B391619005CC627 /* RootView.swift in Sources */,

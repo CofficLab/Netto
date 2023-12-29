@@ -19,30 +19,30 @@ class Channel: NSObject, ObservableObject {
     }
 
     func boot() {
-        Logger.app.debug("Channel.boot 🛫")
-        status = .indeterminate
+        Logger.app.info("\(Location.did(.Boot))")
+//        status = .indeterminate
 
-        loadFilterConfiguration { success in
-            guard success else {
-                Logger.app.error("Channel.boot 请求加载到系统设置中失败")
-                self.status = .stopped
-                return
-            }
+//        loadFilterConfiguration { success in
+//            guard success else {
+//                Logger.app.error("APP: 请求加载到系统设置中失败")
+//                self.status = .stopped
+//                return
+//            }
+//
             
-            Logger.app.info("加载配置成功 🎉🎉🎉")
 
-            self.updateStatus()
-
-            Logger.app.info("Channel.boot 添加监听")
+            Logger.app.info("APP: 添加监听")
             self.observer = NotificationCenter.default.addObserver(
                 forName: .NEFilterConfigurationDidChange,
                 object: self.filterManager,
                 queue: .main
             ) { _ in
-                Logger.app.debug("Channel.NEFilterConfigurationDidChange 🚀")
+                Logger.app.debug("APP: NEFilterConfigurationDidChange 发生变化 🚀")
                 self.updateStatus()
             }
-        }
+        
+        self.updateStatus()
+//        }
     }
 
     func viewWillDisappear() {
@@ -58,16 +58,16 @@ class Channel: NSObject, ObservableObject {
 
     func updateStatus() {
         if filterManager.isEnabled {
-            Logger.app.debug("Channel.updateStatus.registerWithProvider")
+            Logger.app.debug("APP: updateStatus.registerWithProvider")
             registerWithProvider()
         } else {
-            Logger.app.debug("过滤器未安装")
+            Logger.app.debug("APP: 过滤器未安装")
             status = .notInstalled
         }
     }
     
     func installFilter() {
-        Logger.app.debug("安装过滤器")
+        Logger.app.debug("\(Location.did(.InstallFilter))")
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
             status = .stopped
             return
@@ -83,7 +83,7 @@ class Channel: NSObject, ObservableObject {
     }
 
     func startFilter() {
-        Logger.app.debug("Channel.开启过滤器")
+        Logger.app.debug("APP: 开启过滤器")
         status = .indeterminate
         guard !filterManager.isEnabled else {
             registerWithProvider()
@@ -136,6 +136,8 @@ class Channel: NSObject, ObservableObject {
     // MARK: Content Filter Configuration Management
 
     func loadFilterConfiguration(completionHandler: @escaping (Bool) -> Void) {
+        Logger.app.info("\(Location.did(.LoadFilterConfiguration))")
+        // You must call this method at least once before calling saveToPreferencesWithCompletionHandler: for the first time after your app launches.
         filterManager.loadFromPreferences { loadError in
             DispatchQueue.main.async {
                 var success = true
@@ -152,7 +154,7 @@ class Channel: NSObject, ObservableObject {
     }
 
     func enableFilterConfiguration() {
-        Logger.app.debug("Channel.enableFilterConfiguration")
+        Logger.app.debug("\(Location.did(.EnableFilterConfiguration))")
         let filterManager = self.filterManager
 
         guard !filterManager.isEnabled else {
@@ -181,7 +183,8 @@ class Channel: NSObject, ObservableObject {
             filterManager.isEnabled = true
             
             // 将过滤器加载到系统设置中
-            Logger.app.debug("将要弹出授权对话框")
+            // Logger.app.debug("APP: 将要弹出授权对话框")
+            Logger.app.debug("\(Location.did(.SaveToPreferences))")
             filterManager.saveToPreferences { saveError in
                 DispatchQueue.main.async {
                     if let error = saveError {
@@ -189,7 +192,7 @@ class Channel: NSObject, ObservableObject {
                         self.status = .needApproval
                         return
                     } else {
-                        Logger.app.debug("用户点击了允许 🎉🎉🎉")
+                        Logger.app.debug("\(Location.did(.UserApproved))")
                     }
 
                     //self.registerWithProvider()
@@ -199,8 +202,9 @@ class Channel: NSObject, ObservableObject {
     }
 
     func registerWithProvider() {
+        Logger.app.debug("APP: registerWithProvider，让 APP 和 Provider 关联起来")
         ipc.register(withExtension: extensionBundle, delegate: self) { success in
-            Logger.app.debug("Channel.registerWithProvider -> \(success)")
+            Logger.app.debug("APP: 和 Provider 关联成功")
             self.status = success ? .running : .stopped
         }
     }
@@ -235,7 +239,7 @@ extension Channel: OSSystemExtensionRequestDelegate {
     }
 
     func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
-        Logger.app.debug("OSSystemExtensionRequestDelegate -> 需要在系统设置中点击允许运行")
+        Logger.app.debug("\(Location.did(.RequestNeedsUserApproval))")
         status = .needApproval
     }
 
