@@ -20,6 +20,8 @@ struct WelcomeView: View {
                 Text("点击“开始”以安装扩展").font(.title)
             case .needApproval:
                 Text("点击“开始”以安装扩展").font(.title)
+            case .waitingForApproval:
+                Text("点击“允许”以安装扩展")
             }
             Spacer()
         }.frame(maxWidth: .infinity, maxHeight: .infinity)

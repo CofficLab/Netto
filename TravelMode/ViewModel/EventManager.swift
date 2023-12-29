@@ -14,10 +14,28 @@ final class EventManager: ObservableObject {
         case NetWorkFilterFlow
         case FilterStatusChanged
         case NeedApproval
+        case WaitingForApproval
+        case PermissionDenied
         
         var name: String {
             String(describing: self)
         }
+    }
+    
+    func emitWaitingForApproval() {
+        NotificationCenter.default.post(
+            name: NSNotification.Name(EventList.WaitingForApproval.name),
+            object: nil,
+            userInfo: nil
+        )
+    }
+    
+    func emitPermissionDenied() {
+        NotificationCenter.default.post(
+            name: NSNotification.Name(EventList.PermissionDenied.name),
+            object: nil,
+            userInfo: nil
+        )
     }
     
     func emitFilterStatusChanged(_ status: FilterStatus) {
@@ -77,6 +95,26 @@ final class EventManager: ObservableObject {
     func onNeedApproval(_ callback: @escaping () -> Void) {
         NotificationCenter.default.addObserver(
             forName: NSNotification.Name(EventList.NeedApproval.name),
+            object: nil,
+            queue: .main,
+            using: { _ in
+                callback()
+            })
+    }
+    
+    func onWaitingForApproval(_ callback: @escaping () -> Void) {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name(EventList.WaitingForApproval.name),
+            object: nil,
+            queue: .main,
+            using: { _ in
+                callback()
+            })
+    }
+    
+    func onPermissionDenied(_ callback: @escaping () -> Void) {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name(EventList.PermissionDenied.name),
             object: nil,
             queue: .main,
             using: { _ in

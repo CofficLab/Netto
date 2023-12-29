@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B09F6852B3E51F900B90A59 /* ExtConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B09F6842B3E51F900B90A59 /* ExtConfig.swift */; };
 		0B19F0C52B3AB6AB002D8FAC /* AppLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */; };
 		0B1C33FC2B39C1E7004A5E36 /* SmartApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */; };
 		0B1C33FE2B39C2AA004A5E36 /* Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */; };
@@ -65,6 +66,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0B09F6842B3E51F900B90A59 /* ExtConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtConfig.swift; sourceTree = "<group>"; };
 		0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLine.swift; sourceTree = "<group>"; };
 		0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartApp.swift; sourceTree = "<group>"; };
 		0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toolbar.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 			isa = PBXGroup;
 			children = (
 				0B1D14A12B3A99AC005A3D65 /* DBConfig.swift */,
+				0B09F6842B3E51F900B90A59 /* ExtConfig.swift */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -399,6 +402,7 @@
 				0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */,
 				0B1D14982B3A63A3005A3D65 /* BackgroundView.swift in Sources */,
 				0B3399362B391AE4005CC627 /* Logger.swift in Sources */,
+				0B09F6852B3E51F900B90A59 /* ExtConfig.swift in Sources */,
 				0B1D149F2B3A78EC005A3D65 /* AppSetting.swift in Sources */,
 				0B3399332B391619005CC627 /* RootView.swift in Sources */,
 				0B33992A2B390D44005CC627 /* EventManager.swift in Sources */,

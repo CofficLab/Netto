@@ -27,7 +27,6 @@ enum FlowInfoKey: String {
 
 /// The IPCConnection class is used by both the app and the system extension to communicate with each other
 class IPCConnection: NSObject {
-
     // MARK: Properties
 
     var listener: NSXPCListener?
@@ -66,11 +65,11 @@ class IPCConnection: NSObject {
         os_log("IPCConnection.register")
         self.delegate = delegate
 
-        guard currentConnection == nil else {
-            os_log("IPCConnection.register->Already registered with the provider")
-            completionHandler(false)
-            return
-        }
+//        guard currentConnection == nil else {
+//            os_log("IPCConnection.register->Already registered with the provider")
+//            completionHandler(false)
+//            return
+//        }
 
         let machServiceName = extensionMachServiceName(from: bundle)
         let newConnection = NSXPCConnection(machServiceName: machServiceName, options: [])

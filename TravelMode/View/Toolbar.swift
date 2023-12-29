@@ -18,6 +18,8 @@ struct Toolbar: View {
             "dot_yellow"
         case .needApproval:
             "dot_yellow"
+        case .waitingForApproval:
+            "dot_yellow"
         }
     }
 

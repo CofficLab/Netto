@@ -7,6 +7,7 @@ enum FilterStatus {
     case notInstalled
     case rejected
     case needApproval
+    case waitingForApproval
     
     var description: String {
         switch self {
@@ -22,6 +23,8 @@ enum FilterStatus {
             "被拒绝"
         case .needApproval:
             "待授权"
+        case .waitingForApproval:
+            "请在弹出的对话框中点击“允许”"
         }
     }
 }

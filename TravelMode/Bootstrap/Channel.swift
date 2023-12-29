@@ -6,36 +6,13 @@ import SystemExtensions
 
 class Channel: NSObject, ObservableObject {
     private var ipc = IPCConnection.shared
+    private var extensionBundle = ExtConfig.extensionBundle
     var observer: Any?
     var status: FilterStatus = .stopped {
         didSet {
             EventManager().emitFilterStatusChanged(status)
         }
     }
-
-    // Get the Bundle of the system extension.
-    lazy var extensionBundle: Bundle = {
-        let extensionsDirectoryURL = URL(fileURLWithPath: "Contents/Library/SystemExtensions", relativeTo: Bundle.main.bundleURL)
-        let extensionURLs: [URL]
-        do {
-            extensionURLs = try FileManager.default.contentsOfDirectory(
-                at: extensionsDirectoryURL,
-                includingPropertiesForKeys: nil,
-                options: .skipsHiddenFiles)
-        } catch let error {
-            fatalError("Failed to get the contents of \(extensionsDirectoryURL.absoluteString): \(error.localizedDescription)")
-        }
-
-        guard let extensionURL = extensionURLs.first else {
-            fatalError("Failed to find any system extensions")
-        }
-
-        guard let extensionBundle = Bundle(url: extensionURL) else {
-            fatalError("Failed to create a bundle with URL \(extensionURL.absoluteString)")
-        }
-
-        return extensionBundle
-    }()
 
     func viewWillAppear() {
         status = .indeterminate
@@ -136,13 +113,17 @@ class Channel: NSObject, ObservableObject {
     // MARK: Content Filter Configuration Management
 
     func loadFilterConfiguration(completionHandler: @escaping (Bool) -> Void) {
-        Logger.app.debug("loadFilterConfiguration")
+        Logger.app.debug("Channel.loadFilterConfiguration")
         NEFilterManager.shared().loadFromPreferences { loadError in
             DispatchQueue.main.async {
                 var success = true
                 if let error = loadError {
                     os_log("Failed to load the filter configuration: %@", error.localizedDescription)
                     success = false
+                } else {
+                    // 此时请求授权的对话框已经显示了
+                    Logger.app.debug("Channel.loadFromPreferences->success")
+                    self.status = .waitingForApproval
                 }
                 
                 completionHandler(success)
@@ -151,7 +132,7 @@ class Channel: NSObject, ObservableObject {
     }
 
     func enableFilterConfiguration() {
-        Logger.app.debug("enableFilterConfiguration")
+        Logger.app.debug("Channel.enableFilterConfiguration")
         let filterManager = NEFilterManager.shared()
 
         guard !filterManager.isEnabled else {
@@ -182,8 +163,8 @@ class Channel: NSObject, ObservableObject {
             filterManager.saveToPreferences { saveError in
                 DispatchQueue.main.async {
                     if let error = saveError {
-                        os_log("enableFilterConfiguration->%@", error.localizedDescription)
-                        self.status = .stopped
+                        os_log("Channel.enableFilterConfiguration->%@", error.localizedDescription)
+                        self.status = .rejected
                         return
                     }
 
