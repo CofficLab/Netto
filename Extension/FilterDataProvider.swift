@@ -1,19 +1,8 @@
-/*
-Abstract:
-This file contains the implementation of the NEFilterDataProvider sub-class.
-*/
-
 import NetworkExtension
 import os.log
 
-/**
-    The FilterDataProvider class handles connections that match the installed rules by prompting
-    the user to allow or deny the connections.
- */
 class FilterDataProvider: NEFilterDataProvider {
     private var ipc = IPCConnection.shared
- 
-    // MARK: NEFilterDataProvider
 
     override func startFilter(completionHandler: @escaping (Error?) -> Void) {
         let filterSettings = NEFilterSettings(rules: [], defaultAction: .filterData)
@@ -31,27 +20,19 @@ class FilterDataProvider: NEFilterDataProvider {
     }
     
     override func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
-        guard let socketFlow = flow as? NEFilterSocketFlow,
-            let remoteEndpoint = socketFlow.remoteEndpoint as? NWHostEndpoint,
-            let localEndpoint = socketFlow.localEndpoint as? NWHostEndpoint else {
-                return .allow()
-        }
-
-        os_log("Got a new flow with local endpoint %@, remote endpoint %@", localEndpoint, remoteEndpoint)
-        
         // Ask the app to prompt the user
         let prompted = ipc.promptUser(flow: flow) { allow in
             let userVerdict: NEFilterNewFlowVerdict = allow ? .allow() : .drop()
-            os_log("====resumeFlow====")
+
             self.resumeFlow(flow, with: userVerdict)
         }
 
         guard prompted else {
-            os_log("====allow====")
+            os_log("FilterDataProvider->调用promptUser失败，放行")
             return .allow()
         }
 
-        os_log("====pause====")
+        os_log("FilterDataProvider->暂停")
         return .pause()
     }
 }

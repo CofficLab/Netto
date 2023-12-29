@@ -6,6 +6,7 @@ import SystemExtensions
 
 class Channel: NSObject, ObservableObject {
     private var ipc = IPCConnection.shared
+    private var filterManager = NEFilterManager.shared()
     private var extensionBundle = ExtConfig.extensionBundle
     var observer: Any?
     var status: FilterStatus = .stopped {
@@ -27,9 +28,10 @@ class Channel: NSObject, ObservableObject {
 
             self.observer = NotificationCenter.default.addObserver(
                 forName: .NEFilterConfigurationDidChange,
-                object: NEFilterManager.shared(),
+                object: self.filterManager,
                 queue: .main
             ) { [weak self] _ in
+                Logger.app.debug("Channel.NEFilterConfigurationDidChange 🚀")
                 self?.updateStatus()
             }
             
@@ -42,14 +44,18 @@ class Channel: NSObject, ObservableObject {
             return
         }
 
-        NotificationCenter.default.removeObserver(changeObserver, name: .NEFilterConfigurationDidChange, object: NEFilterManager.shared())
+        NotificationCenter.default.removeObserver(changeObserver, 
+            name: .NEFilterConfigurationDidChange,
+            object: filterManager
+        )
     }
 
     // MARK: Update the UI
 
     func updateStatus() {
         Logger.app.debug("Channel.updateStatus")
-        if NEFilterManager.shared().isEnabled {
+        if filterManager.isEnabled {
+            Logger.app.debug("Channel.updateStatus.registerWithProvider")
             registerWithProvider()
         } else {
             Logger.app.debug("Channel.updateStatus->stopped")
