@@ -2,6 +2,7 @@ import Foundation
 
 enum Location: CaseIterable {
     case Boot
+    case IfReady
     case InstallFilter
     case RequestNeedsUserApproval
     case EnableFilterConfiguration

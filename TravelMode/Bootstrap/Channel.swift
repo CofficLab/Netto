@@ -10,39 +10,66 @@ class Channel: NSObject, ObservableObject {
     private var filterManager = NEFilterManager.shared()
     private var extensionManager = OSSystemExtensionManager.shared
     private var extensionBundle = ExtConfig.extensionBundle
-    
+
     var observer: Any?
     var status: FilterStatus = .stopped {
         didSet {
+            if status == oldValue {
+                return
+            }
+
+            if status == .running {
+                registerWithProvider()
+            }
+
             event.emitFilterStatusChanged(status)
         }
     }
 
     func boot() {
         Logger.app.info("\(Location.did(.Boot))")
-//        status = .indeterminate
+        self.status = .indeterminate
+        self.setObserver()
 
-//        loadFilterConfiguration { success in
-//            guard success else {
-//                Logger.app.error("APP: 请求加载到系统设置中失败")
-//                self.status = .stopped
-//                return
-//            }
-//
-            
-
-            Logger.app.info("APP: 添加监听")
-            self.observer = NotificationCenter.default.addObserver(
-                forName: .NEFilterConfigurationDidChange,
-                object: self.filterManager,
-                queue: .main
-            ) { _ in
-                Logger.app.debug("APP: NEFilterConfigurationDidChange 发生变化 🚀")
-                self.updateStatus()
+        Logger.app.info("\(Location.did(.IfReady))")
+        // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
+        loadFilterConfiguration { _ in
+            if self.filterManager.isEnabled {
+                self.status = .running
+            } else {
+                // 扩展未启用，有两种情况
+                // 1. 未安装
+                // 2. 安装了但未启用
+                self.status = .notInstalled
             }
-        
-        self.updateStatus()
-//        }
+        }
+    }
+    
+    func setObserver() {
+        // Logger.app.info("APP: 添加监听")
+        observer = NotificationCenter.default.addObserver(
+            forName: .NEFilterConfigurationDidChange,
+            object: filterManager,
+            queue: .main
+        ) { _ in
+            let enabled = self.filterManager.isEnabled
+            Logger.app.debug("Observer: \(enabled ? "扩展已打开" : "扩展已关闭") 🚀")
+            self.status = self.filterManager.isEnabled ? .running : .stopped
+        }
+    }
+
+    // 过滤器是否已经启动了
+    func ifFilterReady(completionHandler: @escaping (Bool) -> Void) {
+        Logger.app.debug("\(Location.did(.IfReady))")
+
+        if filterManager.isEnabled {
+            registerWithProvider()
+            status = .running
+
+            completionHandler(true)
+        } else {
+            completionHandler(false)
+        }
     }
 
     func viewWillDisappear() {
@@ -50,22 +77,22 @@ class Channel: NSObject, ObservableObject {
             return
         }
 
-        NotificationCenter.default.removeObserver(changeObserver, 
-            name: .NEFilterConfigurationDidChange,
-            object: filterManager
+        NotificationCenter.default.removeObserver(changeObserver,
+                                                  name: .NEFilterConfigurationDidChange,
+                                                  object: filterManager
         )
     }
 
-    func updateStatus() {
-        if filterManager.isEnabled {
-            Logger.app.debug("APP: updateStatus.registerWithProvider")
-            registerWithProvider()
-        } else {
-            Logger.app.debug("APP: 过滤器未安装")
-            status = .notInstalled
-        }
-    }
-    
+//    func updateStatus() {
+//        if filterManager.isEnabled {
+//            Logger.app.debug("APP: updateStatus.registerWithProvider")
+//            registerWithProvider()
+//        } else {
+//            Logger.app.debug("APP: 过滤器未启用")
+//            status = .notInstalled
+//        }
+//    }
+
     func installFilter() {
         Logger.app.debug("\(Location.did(.InstallFilter))")
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
@@ -147,7 +174,7 @@ class Channel: NSObject, ObservableObject {
                 } else {
                     self.status = .waitingForApproval
                 }
-                
+
                 completionHandler(success)
             }
         }
@@ -155,8 +182,6 @@ class Channel: NSObject, ObservableObject {
 
     func enableFilterConfiguration() {
         Logger.app.debug("\(Location.did(.EnableFilterConfiguration))")
-        let filterManager = self.filterManager
-
         guard !filterManager.isEnabled else {
             Logger.app.debug("FilterManager is Disabled, registerWithProvider")
             registerWithProvider()
@@ -169,23 +194,23 @@ class Channel: NSObject, ObservableObject {
                 return
             }
 
-            if filterManager.providerConfiguration == nil {
+            if self.filterManager.providerConfiguration == nil {
                 let providerConfiguration = NEFilterProviderConfiguration()
                 providerConfiguration.filterSockets = true
                 providerConfiguration.filterPackets = false
-                filterManager.providerConfiguration = providerConfiguration
+                self.filterManager.providerConfiguration = providerConfiguration
                 if let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String {
-                    filterManager.localizedDescription = appName
+                    self.filterManager.localizedDescription = appName
                 }
             }
 
             // 如果true，加载到系统设置中后就是启动状态
-            filterManager.isEnabled = true
-            
+            self.filterManager.isEnabled = true
+
             // 将过滤器加载到系统设置中
             // Logger.app.debug("APP: 将要弹出授权对话框")
             Logger.app.debug("\(Location.did(.SaveToPreferences))")
-            filterManager.saveToPreferences { saveError in
+            self.filterManager.saveToPreferences { saveError in
                 DispatchQueue.main.async {
                     if let error = saveError {
                         os_log("授权对话框报错 -> %@", error.localizedDescription)
@@ -195,7 +220,7 @@ class Channel: NSObject, ObservableObject {
                         Logger.app.debug("\(Location.did(.UserApproved))")
                     }
 
-                    //self.registerWithProvider()
+                    // self.registerWithProvider()
                 }
             }
         }
@@ -234,7 +259,7 @@ extension Channel: OSSystemExtensionRequestDelegate {
         didFailWithError error: Error
     ) {
         Logger.app.debug("OSSystemExtensionRequestDelegate -> didFailWithError -> \(error.localizedDescription)")
-        
+
         status = .stopped
     }
 
@@ -249,7 +274,7 @@ extension Channel: OSSystemExtensionRequestDelegate {
         withExtension extension: OSSystemExtensionProperties
     ) -> OSSystemExtensionRequest.ReplacementAction {
         Logger.app.debug("actionForReplacingExtension")
-        
+
         return .replace
     }
 }
@@ -258,15 +283,15 @@ extension Channel: AppCommunication {
     func providerSaid(_ words: String) {
         Logger.app.info("Provider said: \(words)")
     }
-    
+
     func providerSay(_ words: String) {
         Logger.app.info("Provider: \(words)")
     }
-    
+
     func needApproval() {
         EventManager().emitNeedApproval()
     }
-    
+
     // MARK: AppCommunication
 
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
