@@ -31,7 +31,7 @@ struct ContentView: View {
             }
             
             event.onPermissionDenied {
-                app.setFilterStatus(.rejected)
+                app.setFilterStatus(.needApproval)
             }
         }
         .onDisappear {

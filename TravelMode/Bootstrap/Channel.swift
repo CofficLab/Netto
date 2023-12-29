@@ -8,6 +8,7 @@ class Channel: NSObject, ObservableObject {
     private var event = EventManager()
     private var ipc = IPCConnection.shared
     private var filterManager = NEFilterManager.shared()
+    private var extensionManager = OSSystemExtensionManager.shared
     private var extensionBundle = ExtConfig.extensionBundle
     
     var observer: Any?
@@ -23,12 +24,16 @@ class Channel: NSObject, ObservableObject {
 
         loadFilterConfiguration { success in
             guard success else {
+                Logger.app.error("Channel.boot 请求加载到系统设置中失败")
                 self.status = .stopped
                 return
             }
+            
+            Logger.app.info("加载配置成功 🎉🎉🎉")
 
             self.updateStatus()
 
+            Logger.app.info("Channel.boot 添加监听")
             self.observer = NotificationCenter.default.addObserver(
                 forName: .NEFilterConfigurationDidChange,
                 object: self.filterManager,
@@ -52,20 +57,35 @@ class Channel: NSObject, ObservableObject {
     }
 
     func updateStatus() {
-        Logger.app.debug("Channel.updateStatus")
         if filterManager.isEnabled {
             Logger.app.debug("Channel.updateStatus.registerWithProvider")
             registerWithProvider()
         } else {
-            Logger.app.debug("Channel.updateStatus->stopped")
-            status = .stopped
+            Logger.app.debug("过滤器未安装")
+            status = .notInstalled
         }
+    }
+    
+    func installFilter() {
+        Logger.app.debug("安装过滤器")
+        guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
+            status = .stopped
+            return
+        }
+
+        // Start by activating the system extension
+        let activationRequest = OSSystemExtensionRequest.activationRequest(
+            forExtensionWithIdentifier: extensionIdentifier,
+            queue: .main
+        )
+        activationRequest.delegate = self
+        extensionManager.submitRequest(activationRequest)
     }
 
     func startFilter() {
         Logger.app.debug("Channel.开启过滤器")
         status = .indeterminate
-        guard !NEFilterManager.shared().isEnabled else {
+        guard !filterManager.isEnabled else {
             registerWithProvider()
             return
         }
@@ -116,16 +136,13 @@ class Channel: NSObject, ObservableObject {
     // MARK: Content Filter Configuration Management
 
     func loadFilterConfiguration(completionHandler: @escaping (Bool) -> Void) {
-        Logger.app.debug("Channel.loadFilterConfiguration")
-        NEFilterManager.shared().loadFromPreferences { loadError in
+        filterManager.loadFromPreferences { loadError in
             DispatchQueue.main.async {
                 var success = true
                 if let error = loadError {
-                    os_log("Failed to load the filter configuration: %@", error.localizedDescription)
+                    Logger.app.error("\(error.localizedDescription)")
                     success = false
                 } else {
-                    // 此时请求授权的对话框已经显示了
-                    Logger.app.debug("Channel.loadFromPreferences->success")
                     self.status = .waitingForApproval
                 }
                 
@@ -167,7 +184,7 @@ class Channel: NSObject, ObservableObject {
                 DispatchQueue.main.async {
                     if let error = saveError {
                         os_log("Channel.enableFilterConfiguration->%@", error.localizedDescription)
-                        self.status = .rejected
+                        self.status = .needApproval
                         return
                     }
 
@@ -193,13 +210,13 @@ extension Channel: OSSystemExtensionRequestDelegate {
         _ request: OSSystemExtensionRequest,
         didFinishWithResult result: OSSystemExtensionRequest.Result
     ) {
-        Logger.app.debug("Channel.didFinishWithResult->\(String(describing: result))")
-        
         guard result == .completed else {
             os_log("Unexpected result %d for system extension request", result.rawValue)
             status = .stopped
             return
         }
+        
+        Logger.app.debug("弹出了允许或不允许的对话框")
 
         enableFilterConfiguration()
     }
@@ -214,7 +231,8 @@ extension Channel: OSSystemExtensionRequestDelegate {
     }
 
     func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
-        Logger.app.debug("Channel.requestNeedsUserApproval")
+        Logger.app.debug("需要在系统设置中点击允许运行")
+        status = .needApproval
     }
 
     func request(

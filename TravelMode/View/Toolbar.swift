@@ -12,8 +12,6 @@ struct Toolbar: View {
             "dot_yellow"
         case .running:
             "dot_green"
-        case .rejected:
-            "dot_red"
         case .notInstalled:
             "dot_yellow"
         case .needApproval:
@@ -46,12 +44,26 @@ struct Toolbar: View {
             }
 
             ZStack {
-                Button("开始") {
-                    channel.startFilter()
-                }.opacity(app.status == .running ? 0 : 1)
-                Button("停止") {
-                    channel.stopFilter()
-                }.opacity(app.status == .running ? 1 : 0)
+                switch app.status {
+                case .stopped:
+                    Button("开始") {
+                        channel.startFilter()
+                    }
+                case .indeterminate:
+                    Button("状态未知") {}
+                case .running:
+                    Button("停止") {
+                        channel.stopFilter()
+                    }
+                case .notInstalled:
+                    Button("安装") {
+                        channel.installFilter()
+                    }
+                case .needApproval:
+                    Button("需要授权") { }
+                case .waitingForApproval:
+                    Button("等待授权") { }
+                }
             }
 
             ZStack {
