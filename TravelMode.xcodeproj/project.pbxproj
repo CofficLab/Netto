@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0B09F6852B3E51F900B90A59 /* ExtConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B09F6842B3E51F900B90A59 /* ExtConfig.swift */; };
+		0B09F68F2B3EAD8900B90A59 /* BtnInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B09F68D2B3EAD7400B90A59 /* BtnInstall.swift */; };
 		0B19F0C52B3AB6AB002D8FAC /* AppLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */; };
 		0B1C33FC2B39C1E7004A5E36 /* SmartApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */; };
 		0B1C33FE2B39C2AA004A5E36 /* Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */; };
@@ -67,6 +68,7 @@
 
 /* Begin PBXFileReference section */
 		0B09F6842B3E51F900B90A59 /* ExtConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtConfig.swift; sourceTree = "<group>"; };
+		0B09F68D2B3EAD7400B90A59 /* BtnInstall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnInstall.swift; sourceTree = "<group>"; };
 		0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLine.swift; sourceTree = "<group>"; };
 		0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartApp.swift; sourceTree = "<group>"; };
 		0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toolbar.swift; sourceTree = "<group>"; };
@@ -133,6 +135,14 @@
 			path = Entity;
 			sourceTree = "<group>";
 		};
+		0B09F68C2B3EAD6400B90A59 /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				0B09F68D2B3EAD7400B90A59 /* BtnInstall.swift */,
+			);
+			path = Buttons;
+			sourceTree = "<group>";
+		};
 		0B1D149D2B3A7891005A3D65 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -189,6 +199,7 @@
 		0B3399342B3916B2005CC627 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				0B09F68C2B3EAD6400B90A59 /* Buttons */,
 				0B5B1CA92B385BF30002421E /* ContentView.swift */,
 				0B3399372B39277B005CC627 /* EventList.swift */,
 				0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */,
@@ -392,6 +403,7 @@
 			files = (
 				0B33993A2B392B20005CC627 /* FilterStatus.swift in Sources */,
 				0B1C33FC2B39C1E7004A5E36 /* SmartApp.swift in Sources */,
+				0B09F68F2B3EAD8900B90A59 /* BtnInstall.swift in Sources */,
 				0B19F0C52B3AB6AB002D8FAC /* AppLine.swift in Sources */,
 				0B33992D2B3911F1005CC627 /* FirewallEvent.swift in Sources */,
 				0B408A2C2B395A77000E77DB /* NEFilterFlowExt.swift in Sources */,

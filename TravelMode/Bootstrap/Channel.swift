@@ -153,9 +153,10 @@ class Channel: NSObject, ObservableObject {
 
     func enableFilterConfiguration() {
         Logger.app.debug("Channel.enableFilterConfiguration")
-        let filterManager = NEFilterManager.shared()
+        let filterManager = self.filterManager
 
         guard !filterManager.isEnabled else {
+            Logger.app.debug("FilterManager is Disabled, registerWithProvider")
             registerWithProvider()
             return
         }
@@ -180,15 +181,18 @@ class Channel: NSObject, ObservableObject {
             filterManager.isEnabled = true
             
             // 将过滤器加载到系统设置中
+            Logger.app.debug("将要弹出授权对话框")
             filterManager.saveToPreferences { saveError in
                 DispatchQueue.main.async {
                     if let error = saveError {
-                        os_log("Channel.enableFilterConfiguration->%@", error.localizedDescription)
+                        os_log("授权对话框报错 -> %@", error.localizedDescription)
                         self.status = .needApproval
                         return
+                    } else {
+                        Logger.app.debug("用户点击了允许 🎉🎉🎉")
                     }
 
-                    self.registerWithProvider()
+                    //self.registerWithProvider()
                 }
             }
         }
@@ -196,7 +200,7 @@ class Channel: NSObject, ObservableObject {
 
     func registerWithProvider() {
         ipc.register(withExtension: extensionBundle, delegate: self) { success in
-            Logger.app.debug("Channel.registerWithProvider->\(success)")
+            Logger.app.debug("Channel.registerWithProvider -> \(success)")
             self.status = success ? .running : .stopped
         }
     }
@@ -205,18 +209,18 @@ class Channel: NSObject, ObservableObject {
 // MARK: OSSystemExtensionActivationRequestDelegate
 
 extension Channel: OSSystemExtensionRequestDelegate {
-    // 调起授权请求后
     func request(
         _ request: OSSystemExtensionRequest,
         didFinishWithResult result: OSSystemExtensionRequest.Result
     ) {
-        guard result == .completed else {
-            os_log("Unexpected result %d for system extension request", result.rawValue)
-            status = .stopped
-            return
+        switch result {
+        case .completed:
+            Logger.app.debug("OSSystemExtensionRequestDelegate -> completed")
+        case .willCompleteAfterReboot:
+            Logger.app.debug("willCompleteAfterReboot")
+        @unknown default:
+            Logger.app.debug("\(result.rawValue)")
         }
-        
-        Logger.app.debug("弹出了允许或不允许的对话框")
 
         enableFilterConfiguration()
     }
@@ -225,13 +229,13 @@ extension Channel: OSSystemExtensionRequestDelegate {
         _ request: OSSystemExtensionRequest,
         didFailWithError error: Error
     ) {
-        Logger.app.debug("Channel.didFailWithError->\(error.localizedDescription)")
+        Logger.app.debug("OSSystemExtensionRequestDelegate -> didFailWithError -> \(error.localizedDescription)")
         
         status = .stopped
     }
 
     func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
-        Logger.app.debug("需要在系统设置中点击允许运行")
+        Logger.app.debug("OSSystemExtensionRequestDelegate -> 需要在系统设置中点击允许运行")
         status = .needApproval
     }
 

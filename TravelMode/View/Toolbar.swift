@@ -56,9 +56,7 @@ struct Toolbar: View {
                         channel.stopFilter()
                     }
                 case .notInstalled:
-                    Button("安装") {
-                        channel.installFilter()
-                    }
+                    BtnInstall()
                 case .needApproval:
                     Button("需要授权") { }
                 case .waitingForApproval:

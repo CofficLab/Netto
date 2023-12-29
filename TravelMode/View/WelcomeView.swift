@@ -15,7 +15,8 @@ struct WelcomeView: View {
                 Text("正在监控").font(.title)
                 Text("联网的 APP 将会出现在这里").font(.title)
             case .notInstalled:
-                Text("点击“开始”以安装扩展").font(.title)
+                Text("安装系统扩展以继续").font(.title)
+                BtnInstall()
             case .needApproval:
                 Text("请在系统设置中允许运行").font(.title)
                 Image("NeedApproval").resizable().scaledToFit()
