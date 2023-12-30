@@ -2,15 +2,28 @@ import OSLog
 import SwiftUI
 
 struct AppList: View {
-    @State private var displayType: DisplayType = .All
+    @EnvironmentObject private var appManager: AppManager
+    
     @State private var apps: [SmartApp] = []
+    private var displayType: DisplayType {
+        appManager.displayType
+    }
     private var channel = Channel()
     private var appsVisible: [SmartApp] {
         apps.sorted(by: {
             $0.events.count > $1.events.count
         }).filter({
             $0.events.count > 0
-        })
+        }).filter {
+            switch displayType {
+            case .All:
+                true
+            case .Allowed:
+                AppSetting.shouldAllow($0.id)
+            case .Rejected:
+                !AppSetting.shouldAllow($0.id)
+            }
+        }
     }
 
     var body: some View {
