@@ -21,6 +21,7 @@
 		0B1D14A42B3A9ED0005A3D65 /* DatabaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1D14A32B3A9ED0005A3D65 /* DatabaseView.swift */; };
 		0B1D14A72B3AA062005A3D65 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1D14A62B3AA062005A3D65 /* DebugCommand.swift */; };
 		0B2551722B3FBFBE0005096C /* AppListSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2551712B3FBFBE0005096C /* AppListSample.swift */; };
+		0B2551742B3FD3C30005096C /* DisplayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2551732B3FD3C30005096C /* DisplayType.swift */; };
 		0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CA72B385BF30002421E /* TravelModeApp.swift */; };
 		0B3399262B3907F6005CC627 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CA92B385BF30002421E /* ContentView.swift */; };
 		0B3399272B3907F8005CC627 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CBF2B3865F90002421E /* Channel.swift */; };
@@ -83,6 +84,7 @@
 		0B1D14A32B3A9ED0005A3D65 /* DatabaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseView.swift; sourceTree = "<group>"; };
 		0B1D14A62B3AA062005A3D65 /* DebugCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugCommand.swift; sourceTree = "<group>"; };
 		0B2551712B3FBFBE0005096C /* AppListSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppListSample.swift; sourceTree = "<group>"; };
+		0B2551732B3FD3C30005096C /* DisplayType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayType.swift; sourceTree = "<group>"; };
 		0B3399292B390D44005CC627 /* EventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventManager.swift; sourceTree = "<group>"; };
 		0B33992C2B3911F1005CC627 /* FirewallEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirewallEvent.swift; sourceTree = "<group>"; };
 		0B33992F2B3914EF005CC627 /* AppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppManager.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 				0B3399392B392B20005CC627 /* FilterStatus.swift */,
 				0B1C33FB2B39C1E7004A5E36 /* SmartApp.swift */,
 				0B09F6902B3EB6DF00B90A59 /* Location.swift */,
+				0B2551732B3FD3C30005096C /* DisplayType.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -418,6 +421,7 @@
 				C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */,
 				0B1D14A22B3A99AC005A3D65 /* DBConfig.swift in Sources */,
 				0B3399262B3907F6005CC627 /* ContentView.swift in Sources */,
+				0B2551742B3FD3C30005096C /* DisplayType.swift in Sources */,
 				0B2551722B3FBFBE0005096C /* AppListSample.swift in Sources */,
 				0B1D14A42B3A9ED0005A3D65 /* DatabaseView.swift in Sources */,
 				0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */,

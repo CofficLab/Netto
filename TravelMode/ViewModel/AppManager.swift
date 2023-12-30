@@ -6,6 +6,7 @@ class AppManager: ObservableObject {
     @Published var events: [FirewallEvent] = []
     @Published var logVisible: Bool = false
     @Published var dbVisible: Bool = false
+    @Published var displayType: DisplayType = .All
     
     func appendEvent(_ e: FirewallEvent) {
         self.events.append(e)

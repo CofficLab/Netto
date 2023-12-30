@@ -2,6 +2,7 @@ import OSLog
 import SwiftUI
 
 struct AppList: View {
+    @State private var displayType: DisplayType = .All
     @State private var apps: [SmartApp] = []
     private var channel = Channel()
     private var appsVisible: [SmartApp] {
