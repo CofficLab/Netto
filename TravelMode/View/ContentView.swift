@@ -11,6 +11,7 @@ struct ContentView: View {
 
             VSplitView {
                 AppList()
+                Divider()
                 if app.logVisible {
                     EventList().shadow(radius: 10)
                 }
