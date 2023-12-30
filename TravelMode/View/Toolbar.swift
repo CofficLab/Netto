@@ -4,6 +4,23 @@ struct Toolbar: View {
     @EnvironmentObject private var app: AppManager
     @EnvironmentObject private var channel: Channel
     
+    private var shouldShowLogButton: Bool {
+        switch app.status {
+        case .stopped:
+            true
+        case .indeterminate:
+            false
+        case .running:
+            true
+        case .notInstalled:
+            false
+        case .needApproval:
+            false
+        case .waitingForApproval:
+            false
+        }
+    }
+    
     var iconName: String {
         switch app.status {
         case .stopped:
@@ -33,13 +50,15 @@ struct Toolbar: View {
 //                    .cornerRadius(10)
 //            }
 
-            if app.logVisible {
-                Button("隐藏日志") {
-                    app.logVisible = false
-                }
-            } else {
-                Button("显示日志") {
-                    app.logVisible = true
+            if shouldShowLogButton {
+                if app.logVisible {
+                    Button("隐藏日志") {
+                        app.logVisible = false
+                    }
+                } else {
+                    Button("显示日志") {
+                        app.logVisible = true
+                    }
                 }
             }
 
@@ -56,7 +75,7 @@ struct Toolbar: View {
                         channel.stopFilter()
                     }
                 case .notInstalled:
-                    BtnInstall()
+                    EmptyView()
                 case .needApproval:
                     Button("需要授权") { }
                 case .waitingForApproval:

@@ -14,25 +14,13 @@ struct ContentView: View {
                 if app.logVisible {
                     EventList().shadow(radius: 10)
                 }
-            }
+            }.background(.clear)
         }
         .onAppear {
             event.onFilterStatusChanged({
                 app.setFilterStatus($0)
             })
             channel.boot()
-            
-//            event.onNeedApproval {
-//                app.setFilterStatus(.needApproval)
-//            }
-//            
-//            event.onWaitingForApproval {
-//                app.setFilterStatus(.waitingForApproval)
-//            }
-//            
-//            event.onPermissionDenied {
-//                app.setFilterStatus(.needApproval)
-//            }
         }
         .onDisappear {
             channel.viewWillDisappear()
