@@ -21,6 +21,23 @@ struct Toolbar: View {
         }
     }
     
+    private var shouldShowStatusIcon: Bool {
+        switch app.status {
+        case .stopped:
+            true
+        case .indeterminate:
+            false
+        case .running:
+            true
+        case .notInstalled:
+            false
+        case .needApproval:
+            false
+        case .waitingForApproval:
+            false
+        }
+    }
+    
     var iconName: String {
         switch app.status {
         case .stopped:
@@ -83,9 +100,11 @@ struct Toolbar: View {
                 }
             }
 
-            ZStack {
-                Image(iconName)
-                    .scaleEffect(0.7)
+            if shouldShowStatusIcon {
+                ZStack {
+                    Image(iconName)
+                        .scaleEffect(0.7)
+                }
             }
         }
     }
