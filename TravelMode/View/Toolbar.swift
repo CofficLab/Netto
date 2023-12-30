@@ -94,9 +94,9 @@ struct Toolbar: View {
                 case .notInstalled:
                     EmptyView()
                 case .needApproval:
-                    Button("需要授权") { }
+                    EmptyView()
                 case .waitingForApproval:
-                    Button("等待授权") { }
+                    EmptyView()
                 }
             }
 
