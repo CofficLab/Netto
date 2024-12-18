@@ -33,8 +33,6 @@ jobs:
 
           echo "版本号->$version"
 
-          build=$(agvtool what-version -terse)
-
           echo "tag=v$version" >> $GITHUB_ENV
       - name: Generate Changelog
         run: echo ""> ${{ github.workspace }}-CHANGELOG.txt
