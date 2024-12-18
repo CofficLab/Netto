@@ -66,12 +66,8 @@
             </ActionContent>
          </ExecutionAction>
       </PreActions>
-      <PathRunnable
-         runnableDebuggingMode = "0"
-         BundleIdentifier = "com.yueyi.TravelMode"
-         FilePath = "/Applications/TavelMode.app">
-      </PathRunnable>
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
@@ -79,7 +75,7 @@
             BlueprintName = "TavelMode"
             ReferencedContainer = "container:TravelMode.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
