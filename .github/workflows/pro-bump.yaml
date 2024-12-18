@@ -1,0 +1,74 @@
+name: Pro Bump
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+env:
+  tag: ${{ github.event.head_commit.id }}
+
+jobs:
+  bump:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: 更新版本号
+        run: |
+
+          # 读取配置文件路径
+          projectFile=$(find $(pwd) ! -path "*Resources*" -type f -name "*.pbxproj" | head -n 1)
+
+          # 读取文件中的版本号
+          version=$(grep -o 'MARKETING_VERSION = [^"]*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+
+          echo "旧版本号->$version"
+
+          # 将版本号拆分为数组
+          IFS='.' read -r -a versionArray <<< "$version"
+
+          # 递增最后一位数字
+          ((versionArray[2]++))
+
+          # 重新组合版本号
+          newVersion="${versionArray[0]}.${versionArray[1]}.${versionArray[2]}"
+
+          echo "新版本号->$newVersion"
+
+          # 新版本号写入文件
+          echo "新版本号将要写入文件->$projectFile"
+
+          sed -i '' "s/MARKETING_VERSION = $version/MARKETING_VERSION = $newVersion/" "$projectFile"
+
+          updatedVersion=$(grep -o 'MARKETING_VERSION = [^"]*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+          echo "更新后的版本号->$updatedVersion"
+
+          git status
+      - name: 更新构建号
+        uses: yanamura/ios-bump-version@v1
+      - name: 生成标签
+        run: |
+
+          # 读取配置文件路径
+          projectFile=$(find $(pwd) ! -path "*Resources*" -type f -name "*.pbxproj" | head -n 1)
+
+          # 读取文件中的版本号
+          version=$(grep -o 'MARKETING_VERSION = [^"]*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+
+          echo "版本号->$version"
+
+          build=$(agvtool what-version -terse)
+
+          # echo "tag=v$version($build)" >> $GITHUB_ENV
+          echo "tag=v$version" >> $GITHUB_ENV
+      - name: 打标签并推送到仓库
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: '🎨 Bump a new version'
+          commit_user_name: GitHub Action
+          tagging_message: ${{ env.tag }}
