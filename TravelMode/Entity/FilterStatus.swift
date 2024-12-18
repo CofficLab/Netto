@@ -7,6 +7,7 @@ enum FilterStatus {
     case notInstalled
     case needApproval
     case waitingForApproval
+    case error(Error)
     
     var description: String {
         switch self {
@@ -22,6 +23,18 @@ enum FilterStatus {
             "待授权"
         case .waitingForApproval:
             "请在弹出的对话框中点击“允许”"
+        case .error(let error):
+            "错误: \(error.localizedDescription)"
+        }
+}
+
+    func isRunning() -> Bool {
+        switch self {
+        case .running:
+            true
+        default:
+            false
         }
     }
 }
+

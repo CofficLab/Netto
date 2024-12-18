@@ -24,7 +24,7 @@
 		0B2551742B3FD3C30005096C /* DisplayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2551732B3FD3C30005096C /* DisplayType.swift */; };
 		0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CA72B385BF30002421E /* TravelModeApp.swift */; };
 		0B3399262B3907F6005CC627 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CA92B385BF30002421E /* ContentView.swift */; };
-		0B3399272B3907F8005CC627 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CBF2B3865F90002421E /* Channel.swift */; };
+		0B3399272B3907F8005CC627 /* ChannelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5B1CBF2B3865F90002421E /* ChannelProvider.swift */; };
 		0B33992A2B390D44005CC627 /* EventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B3399292B390D44005CC627 /* EventManager.swift */; };
 		0B33992D2B3911F1005CC627 /* FirewallEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B33992C2B3911F1005CC627 /* FirewallEvent.swift */; };
 		0B3399302B3914EF005CC627 /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B33992F2B3914EF005CC627 /* AppManager.swift */; };
@@ -37,6 +37,10 @@
 		0B40CE422B39646100DC6771 /* AppList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B40CE412B39646100DC6771 /* AppList.swift */; };
 		0B737BAA2D12EA6700712ABA /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BA92D12EA6700712ABA /* MagicKit */; };
 		0B737BAC2D12ECF000712ABA /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAB2D12ECF000712ABA /* MagicKit */; };
+		0B737BAF2D12F1EC00712ABA /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAE2D12F1EC00712ABA /* AlertToast */; };
+		0B737BB22D12F22500712ABA /* MessageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB12D12F22500712ABA /* MessageProvider.swift */; };
+		0B737BB42D12F24A00712ABA /* SmartMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB32D12F24A00712ABA /* SmartMessage.swift */; };
+		0B737BB72D12F2AF00712ABA /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB62D12F2AF00712ABA /* SuperEvent.swift */; };
 		0B81F59B2B3D008C00F65A4B /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */; };
 		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		C40A5C4B229DD6A500627D50 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A5C4A229DD6A500627D50 /* main.swift */; };
@@ -99,7 +103,10 @@
 		0B40CE412B39646100DC6771 /* AppList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppList.swift; sourceTree = "<group>"; };
 		0B5B1CA72B385BF30002421E /* TravelModeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelModeApp.swift; sourceTree = "<group>"; };
 		0B5B1CA92B385BF30002421E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		0B5B1CBF2B3865F90002421E /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
+		0B5B1CBF2B3865F90002421E /* ChannelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelProvider.swift; sourceTree = "<group>"; };
+		0B737BB12D12F22500712ABA /* MessageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProvider.swift; sourceTree = "<group>"; };
+		0B737BB32D12F24A00712ABA /* SmartMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartMessage.swift; sourceTree = "<group>"; };
+		0B737BB62D12F2AF00712ABA /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
 		0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		6ED719E06ED6DED000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -129,6 +136,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B737BAF2D12F1EC00712ABA /* AlertToast in Frameworks */,
 				C4B45DDE2273A3450050C59B /* NetworkExtension.framework in Frameworks */,
 				0B737BAA2D12EA6700712ABA /* MagicKit in Frameworks */,
 			);
@@ -201,9 +209,9 @@
 		0B3399312B39160B005CC627 /* Bootstrap */ = {
 			isa = PBXGroup;
 			children = (
+				0B737BB32D12F24A00712ABA /* SmartMessage.swift */,
 				0B5B1CA72B385BF30002421E /* TravelModeApp.swift */,
 				0B3399322B391619005CC627 /* RootView.swift */,
-				0B5B1CBF2B3865F90002421E /* Channel.swift */,
 				0B3399352B391AE4005CC627 /* Logger.swift */,
 			);
 			path = Bootstrap;
@@ -234,6 +242,23 @@
 				0B1D149B2B3A69F1005A3D65 /* DateExt.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		0B737BB02D12F21C00712ABA /* Providers */ = {
+			isa = PBXGroup;
+			children = (
+				0B737BB12D12F22500712ABA /* MessageProvider.swift */,
+				0B5B1CBF2B3865F90002421E /* ChannelProvider.swift */,
+			);
+			path = Providers;
+			sourceTree = "<group>";
+		};
+		0B737BB52D12F2A500712ABA /* Contract */ = {
+			isa = PBXGroup;
+			children = (
+				0B737BB62D12F2AF00712ABA /* SuperEvent.swift */,
+			);
+			path = Contract;
 			sourceTree = "<group>";
 		};
 		6ED613506ED6B88000000001 /* Configuration */ = {
@@ -279,18 +304,20 @@
 		C4B45DB722739FFF0050C59B /* TravelMode */ = {
 			isa = PBXGroup;
 			children = (
+				C4B45DBC2273A0020050C59B /* Assets.xcassets */,
 				0B3399312B39160B005CC627 /* Bootstrap */,
 				0B1D14A52B3AA051005A3D65 /* Commands */,
 				0B1D14A02B3A999E005A3D65 /* Config */,
+				0B737BB52D12F2A500712ABA /* Contract */,
 				0B0159902B397BA1005D2628 /* Entity */,
 				0B33992B2B3911D9005CC627 /* Event */,
 				0B408A2A2B395A68000E77DB /* Helpers */,
+				C4B45DC12273A0020050C59B /* Info.plist */,
 				0B1D149D2B3A7891005A3D65 /* Model */,
+				0B737BB02D12F21C00712ABA /* Providers */,
+				C4B45DC22273A0020050C59B /* Signing.entitlements */,
 				0B3399342B3916B2005CC627 /* View */,
 				0B3399282B390D30005CC627 /* ViewModel */,
-				C4B45DBC2273A0020050C59B /* Assets.xcassets */,
-				C4B45DC12273A0020050C59B /* Info.plist */,
-				C4B45DC22273A0020050C59B /* Signing.entitlements */,
 			);
 			path = TravelMode;
 			sourceTree = "<group>";
@@ -374,6 +401,7 @@
 			mainGroup = C4B45DAC22739FFF0050C59B;
 			packageReferences = (
 				0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */,
+				0B737BAD2D12F1EC00712ABA /* XCRemoteSwiftPackageReference "AlertToast" */,
 			);
 			productRefGroup = C4B45DB622739FFF0050C59B /* Products */;
 			projectDirPath = "";
@@ -434,6 +462,7 @@
 				0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */,
 				0B1D14982B3A63A3005A3D65 /* BackgroundView.swift in Sources */,
 				0B3399362B391AE4005CC627 /* Logger.swift in Sources */,
+				0B737BB42D12F24A00712ABA /* SmartMessage.swift in Sources */,
 				0B09F6922B3EB84100B90A59 /* Location.swift in Sources */,
 				0B09F6852B3E51F900B90A59 /* ExtConfig.swift in Sources */,
 				0B1D149F2B3A78EC005A3D65 /* AppSetting.swift in Sources */,
@@ -441,12 +470,14 @@
 				0B33992A2B390D44005CC627 /* EventManager.swift in Sources */,
 				0B1C33FE2B39C2AA004A5E36 /* Toolbar.swift in Sources */,
 				0B408A302B39612B000E77DB /* AppHelper.swift in Sources */,
-				0B3399272B3907F8005CC627 /* Channel.swift in Sources */,
+				0B3399272B3907F8005CC627 /* ChannelProvider.swift in Sources */,
 				0B1D14A72B3AA062005A3D65 /* DebugCommand.swift in Sources */,
 				0B81F59B2B3D008C00F65A4B /* WelcomeView.swift in Sources */,
 				0B3399382B39277B005CC627 /* EventList.swift in Sources */,
 				0B40CE422B39646100DC6771 /* AppList.swift in Sources */,
+				0B737BB72D12F2AF00712ABA /* SuperEvent.swift in Sources */,
 				0B3399302B3914EF005CC627 /* AppManager.swift in Sources */,
+				0B737BB22D12F22500712ABA /* MessageProvider.swift in Sources */,
 				0B1D149C2B3A69F1005A3D65 /* DateExt.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -738,6 +769,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		0B737BAD2D12F1EC00712ABA /* XCRemoteSwiftPackageReference "AlertToast" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/elai950/AlertToast";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.9;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -750,6 +789,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicKit;
+		};
+		0B737BAE2D12F1EC00712ABA /* AlertToast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B737BAD2D12F1EC00712ABA /* XCRemoteSwiftPackageReference "AlertToast" */;
+			productName = AlertToast;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

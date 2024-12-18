@@ -3,7 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var app: AppManager
     @EnvironmentObject private var event: EventManager
-    @EnvironmentObject private var channel: Channel
+    @EnvironmentObject private var channel: ChannelProvider
 
     var body: some View {
         ZStack {

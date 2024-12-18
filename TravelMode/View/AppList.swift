@@ -8,7 +8,7 @@ struct AppList: View {
     private var displayType: DisplayType {
         appManager.displayType
     }
-    private var channel = Channel()
+    private var channel = ChannelProvider()
     private var appsVisible: [SmartApp] {
         apps.sorted(by: {
             $0.events.count > $1.events.count

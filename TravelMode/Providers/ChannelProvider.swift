@@ -1,27 +1,25 @@
 import Cocoa
+import MagicKit
 import NetworkExtension
 import OSLog
 import SwiftUI
 import SystemExtensions
-import MagicKit
 
-class Channel: NSObject, ObservableObject, SuperLog {
+class ChannelProvider: NSObject, ObservableObject, SuperLog {
     let emoji = "🫙"
-    
+
     private var event = EventManager()
     private var ipc = IPCConnection.shared
     private var filterManager = NEFilterManager.shared()
     private var extensionManager = OSSystemExtensionManager.shared
     private var extensionBundle = ExtConfig.extensionBundle
+    
+    @Published var error: Error?
 
     var observer: Any?
     var status: FilterStatus = .stopped {
         didSet {
-            if status == oldValue {
-                return
-            }
-
-            if status == .running {
+            if oldValue.isRunning() == false && status.isRunning() {
                 registerWithProvider()
             }
 
@@ -47,7 +45,15 @@ class Channel: NSObject, ObservableObject, SuperLog {
             }
         }
     }
-    
+
+    func clearError() {
+        self.error = nil
+    }
+
+    func setError(_ error: Error) {
+        self.error = error
+    }
+
     func setObserver() {
         // Logger.app.info("APP: 添加监听")
         observer = NotificationCenter.default.addObserver(
@@ -98,6 +104,9 @@ class Channel: NSObject, ObservableObject, SuperLog {
 
     func installFilter() {
         os_log("\(self.t)\(Location.did(.InstallFilter))")
+        
+        self.clearError()
+        
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
             status = .stopped
             return
@@ -240,7 +249,7 @@ class Channel: NSObject, ObservableObject, SuperLog {
 
 // MARK: OSSystemExtensionActivationRequestDelegate
 
-extension Channel: OSSystemExtensionRequestDelegate {
+extension ChannelProvider: OSSystemExtensionRequestDelegate {
     func request(
         _ request: OSSystemExtensionRequest,
         didFinishWithResult result: OSSystemExtensionRequest.Result
@@ -261,9 +270,10 @@ extension Channel: OSSystemExtensionRequestDelegate {
         _ request: OSSystemExtensionRequest,
         didFailWithError error: Error
     ) {
-        os_log("\(self.t)OSSystemExtensionRequestDelegate -> didFailWithError -> \(error.localizedDescription)")
+        os_log(.error, "\(self.t)didFailWithError -> \(error.localizedDescription)")
+        setError(error)
 
-        status = .stopped
+        status = .error(error)
     }
 
     func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
@@ -282,7 +292,7 @@ extension Channel: OSSystemExtensionRequestDelegate {
     }
 }
 
-extension Channel: AppCommunication {
+extension ChannelProvider: AppCommunication {
     func providerSaid(_ words: String) {
         Logger.app.info("Provider said: \(words)")
     }

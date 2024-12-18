@@ -2,7 +2,7 @@ import SwiftUI
 
 struct Toolbar: View {
     @EnvironmentObject private var app: AppManager
-    @EnvironmentObject private var channel: Channel
+    @EnvironmentObject private var channel: ChannelProvider
     
     private var shouldShowLogButton: Bool {
         switch app.status {
@@ -17,6 +17,8 @@ struct Toolbar: View {
         case .needApproval:
             false
         case .waitingForApproval:
+            false
+        case .error:
             false
         }
     }
@@ -35,6 +37,8 @@ struct Toolbar: View {
             false
         case .waitingForApproval:
             false
+        case .error:
+            false
         }
     }
     
@@ -52,6 +56,8 @@ struct Toolbar: View {
             "dot_yellow"
         case .waitingForApproval:
             "dot_yellow"
+        case .error:
+            "dot_red"
         }
     }
 
@@ -97,6 +103,8 @@ struct Toolbar: View {
                 case .needApproval:
                     EmptyView()
                 case .waitingForApproval:
+                    EmptyView()
+                case .error:
                     EmptyView()
                 }
             }

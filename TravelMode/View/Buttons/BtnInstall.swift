@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct BtnInstall: View {
-    @EnvironmentObject private var channel: Channel
+    @EnvironmentObject private var channel: ChannelProvider
 
     var body: some View {
         Button("安装系统扩展") {
