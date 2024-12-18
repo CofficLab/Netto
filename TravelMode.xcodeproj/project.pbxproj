@@ -500,7 +500,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extension/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 26;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -511,6 +511,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode.Extension;
 				PRODUCT_NAME = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -526,7 +527,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extension/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 26;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -537,6 +538,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode.Extension;
 				PRODUCT_NAME = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -678,7 +680,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 26;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -690,7 +692,11 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.1;
+<<<<<<< Updated upstream
+				MARKETING_VERSION = 1.0.0;
+=======
+				MARKETING_VERSION = 1.0.2;
+>>>>>>> Stashed changes
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -708,7 +714,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 26;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -720,7 +726,11 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.1;
+<<<<<<< Updated upstream
+				MARKETING_VERSION = 1.0.0;
+=======
+				MARKETING_VERSION = 1.0.2;
+>>>>>>> Stashed changes
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
