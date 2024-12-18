@@ -1,10 +1,13 @@
 import Cocoa
 import NetworkExtension
-import os.log
+import OSLog
 import SwiftUI
 import SystemExtensions
+import MagicKit
 
-class Channel: NSObject, ObservableObject {
+class Channel: NSObject, ObservableObject, SuperLog {
+    let emoji = "🫙"
+    
     private var event = EventManager()
     private var ipc = IPCConnection.shared
     private var filterManager = NEFilterManager.shared()
@@ -27,11 +30,11 @@ class Channel: NSObject, ObservableObject {
     }
 
     func boot() {
-        Logger.app.info("\(Location.did(.Boot))")
+        os_log("\(self.t)\(Location.did(.Boot))")
         self.status = .indeterminate
         self.setObserver()
 
-        Logger.app.info("\(Location.did(.IfReady))")
+        os_log("\(self.t)\(Location.did(.IfReady))")
         // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
         loadFilterConfiguration { _ in
             if self.filterManager.isEnabled {
@@ -53,14 +56,14 @@ class Channel: NSObject, ObservableObject {
             queue: .main
         ) { _ in
             let enabled = self.filterManager.isEnabled
-            Logger.app.debug("Observer: \(enabled ? "扩展已打开" : "扩展已关闭") 🚀")
+            os_log("\(self.t)Observer: \(enabled ? "扩展已打开" : "扩展已关闭") 🚀")
             self.status = self.filterManager.isEnabled ? .running : .stopped
         }
     }
 
     // 过滤器是否已经启动了
     func ifFilterReady(completionHandler: @escaping (Bool) -> Void) {
-        Logger.app.debug("\(Location.did(.IfReady))")
+        os_log("\(self.t)\(Location.did(.IfReady))")
 
         if filterManager.isEnabled {
             registerWithProvider()
@@ -85,16 +88,16 @@ class Channel: NSObject, ObservableObject {
 
 //    func updateStatus() {
 //        if filterManager.isEnabled {
-//            Logger.app.debug("APP: updateStatus.registerWithProvider")
+//            os_log("\(self.t)APP: updateStatus.registerWithProvider")
 //            registerWithProvider()
 //        } else {
-//            Logger.app.debug("APP: 过滤器未启用")
+//            os_log("\(self.t)APP: 过滤器未启用")
 //            status = .notInstalled
 //        }
 //    }
 
     func installFilter() {
-        Logger.app.debug("\(Location.did(.InstallFilter))")
+        os_log("\(self.t)\(Location.did(.InstallFilter))")
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
             status = .stopped
             return
@@ -110,7 +113,7 @@ class Channel: NSObject, ObservableObject {
     }
 
     func startFilter() {
-        Logger.app.debug("APP: 开启过滤器")
+        os_log("\(self.t)APP: 开启过滤器")
         status = .indeterminate
         guard !filterManager.isEnabled else {
             registerWithProvider()
@@ -163,7 +166,7 @@ class Channel: NSObject, ObservableObject {
     // MARK: Content Filter Configuration Management
 
     func loadFilterConfiguration(completionHandler: @escaping (Bool) -> Void) {
-        Logger.app.info("\(Location.did(.LoadFilterConfiguration))")
+        os_log("\(self.t)\(Location.did(.LoadFilterConfiguration))")
         // You must call this method at least once before calling saveToPreferencesWithCompletionHandler: for the first time after your app launches.
         filterManager.loadFromPreferences { loadError in
             DispatchQueue.main.async {
@@ -181,9 +184,9 @@ class Channel: NSObject, ObservableObject {
     }
 
     func enableFilterConfiguration() {
-        Logger.app.debug("\(Location.did(.EnableFilterConfiguration))")
+        os_log("\(self.t)\(Location.did(.EnableFilterConfiguration))")
         guard !filterManager.isEnabled else {
-            Logger.app.debug("FilterManager is Disabled, registerWithProvider")
+            os_log("\(self.t)FilterManager is Disabled, registerWithProvider")
             registerWithProvider()
             return
         }
@@ -208,8 +211,8 @@ class Channel: NSObject, ObservableObject {
             self.filterManager.isEnabled = true
 
             // 将过滤器加载到系统设置中
-            // Logger.app.debug("APP: 将要弹出授权对话框")
-            Logger.app.debug("\(Location.did(.SaveToPreferences))")
+            // os_log("\(self.t)APP: 将要弹出授权对话框")
+            os_log("\(self.t)\(Location.did(.SaveToPreferences))")
             self.filterManager.saveToPreferences { saveError in
                 DispatchQueue.main.async {
                     if let error = saveError {
@@ -217,7 +220,7 @@ class Channel: NSObject, ObservableObject {
                         self.status = .needApproval
                         return
                     } else {
-                        Logger.app.debug("\(Location.did(.UserApproved))")
+                        os_log("\(self.t)\(Location.did(.UserApproved))")
                     }
 
                     // self.registerWithProvider()
@@ -227,9 +230,9 @@ class Channel: NSObject, ObservableObject {
     }
 
     func registerWithProvider() {
-        Logger.app.debug("APP: registerWithProvider，让 APP 和 Provider 关联起来")
+        os_log("\(self.t)APP: registerWithProvider，让 APP 和 Provider 关联起来")
         ipc.register(withExtension: extensionBundle, delegate: self) { success in
-            Logger.app.debug("APP: 和 Provider 关联成功")
+            os_log("\(self.t)APP: 和 Provider 关联成功")
             self.status = success ? .running : .stopped
         }
     }
@@ -244,11 +247,11 @@ extension Channel: OSSystemExtensionRequestDelegate {
     ) {
         switch result {
         case .completed:
-            Logger.app.debug("OSSystemExtensionRequestDelegate -> completed")
+            os_log("\(self.t)OSSystemExtensionRequestDelegate -> completed")
         case .willCompleteAfterReboot:
-            Logger.app.debug("willCompleteAfterReboot")
+            os_log("\(self.t)willCompleteAfterReboot")
         @unknown default:
-            Logger.app.debug("\(result.rawValue)")
+            os_log("\(self.t)\(result.rawValue)")
         }
 
         enableFilterConfiguration()
@@ -258,13 +261,13 @@ extension Channel: OSSystemExtensionRequestDelegate {
         _ request: OSSystemExtensionRequest,
         didFailWithError error: Error
     ) {
-        Logger.app.debug("OSSystemExtensionRequestDelegate -> didFailWithError -> \(error.localizedDescription)")
+        os_log("\(self.t)OSSystemExtensionRequestDelegate -> didFailWithError -> \(error.localizedDescription)")
 
         status = .stopped
     }
 
     func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
-        Logger.app.debug("\(Location.did(.RequestNeedsUserApproval))")
+        os_log("\(self.t)\(Location.did(.RequestNeedsUserApproval))")
         status = .needApproval
     }
 
@@ -273,7 +276,7 @@ extension Channel: OSSystemExtensionRequestDelegate {
         actionForReplacingExtension existing: OSSystemExtensionProperties,
         withExtension extension: OSSystemExtensionProperties
     ) -> OSSystemExtensionRequest.ReplacementAction {
-        Logger.app.debug("actionForReplacingExtension")
+        os_log("\(self.t)actionForReplacingExtension")
 
         return .replace
     }

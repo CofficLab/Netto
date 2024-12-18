@@ -4,9 +4,10 @@ This file contains the implementation of the app <-> provider IPC connection
 */
 
 import Foundation
-import os.log
+import OSLog
 import Network
 import NetworkExtension
+import MagicKit
 
 /// App --> Provider IPC
 @objc protocol ProviderCommunication {
@@ -21,7 +22,8 @@ import NetworkExtension
 }
 
 /// The IPCConnection class is used by both the app and the system extension to communicate with each other
-class IPCConnection: NSObject {
+class IPCConnection: NSObject, SuperLog {
+    let emoji = "📢"
     var listener: NSXPCListener?
     var currentConnection: NSXPCConnection?
     weak var delegate: AppCommunication?
@@ -43,7 +45,7 @@ class IPCConnection: NSObject {
 
     func startListener() {
         let machServiceName = extensionMachServiceName(from: Bundle.main)
-        os_log("Starting XPC listener for mach service %@", machServiceName)
+        os_log("\(self.t)Starting XPC listener for mach service \(machServiceName)")
 
         let newListener = NSXPCListener(machServiceName: machServiceName)
         newListener.delegate = self
@@ -56,12 +58,12 @@ class IPCConnection: NSObject {
         self.delegate = delegate
 
         guard currentConnection == nil else {
-            os_log("IPC.register: Already registered with the provider")
+            os_log("\(self.t)IPC.register: Already registered with the provider")
             completionHandler(true)
             return
         }
         
-        os_log("IPC.register")
+        os_log("\(self.t)IPC.register")
 
         let machServiceName = extensionMachServiceName(from: bundle)
         let newConnection = NSXPCConnection(machServiceName: machServiceName, options: [])
@@ -85,7 +87,7 @@ class IPCConnection: NSObject {
             fatalError("Failed to create a remote object proxy for the provider")
         }
 
-        os_log("providerProxy.register")
+        os_log("\(self.t)providerProxy.register")
         providerProxy.register(completionHandler)
     }
 
