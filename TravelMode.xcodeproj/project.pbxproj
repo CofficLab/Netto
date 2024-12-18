@@ -42,8 +42,6 @@
 		0B737BB42D12F24A00712ABA /* SmartMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB32D12F24A00712ABA /* SmartMessage.swift */; };
 		0B737BB72D12F2AF00712ABA /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB62D12F2AF00712ABA /* SuperEvent.swift */; };
 		0B81F59B2B3D008C00F65A4B /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */; };
-		0BACD3312D130BC100D2C447 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0BACD3302D130BC000D2C447 /* Info.plist */; };
-		0BACD3332D130BCA00D2C447 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0BACD3322D130BCA00D2C447 /* Info.plist */; };
 		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		C40A5C4B229DD6A500627D50 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A5C4A229DD6A500627D50 /* main.swift */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -110,8 +108,6 @@
 		0B737BB32D12F24A00712ABA /* SmartMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartMessage.swift; sourceTree = "<group>"; };
 		0B737BB62D12F2AF00712ABA /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
 		0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
-		0BACD3302D130BC000D2C447 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0BACD3322D130BCA00D2C447 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6ED719E06ED6DED000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		C40A5C4A229DD6A500627D50 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -274,7 +270,6 @@
 		C40A5C47229DD6A500627D50 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
-				0BACD3302D130BC000D2C447 /* Info.plist */,
 				C4E0DBB42273BEA0005B02F4 /* FilterDataProvider.swift */,
 				C4B1415A227A396500B26560 /* IPCConnection.swift */,
 				C40A5C4A229DD6A500627D50 /* main.swift */,
@@ -306,7 +301,6 @@
 		C4B45DB722739FFF0050C59B /* TravelMode */ = {
 			isa = PBXGroup;
 			children = (
-				0BACD3322D130BCA00D2C447 /* Info.plist */,
 				C4B45DBC2273A0020050C59B /* Assets.xcassets */,
 				0B3399312B39160B005CC627 /* Bootstrap */,
 				0B1D14A52B3AA051005A3D65 /* Commands */,
@@ -420,7 +414,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0BACD3312D130BC100D2C447 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,7 +421,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0BACD3332D130BCA00D2C447 /* Info.plist in Resources */,
 				C4B45DBD2273A0020050C59B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
