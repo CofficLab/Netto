@@ -49,8 +49,6 @@ jobs:
           echo "更新后的版本号->$updatedVersion"
 
           git status
-      - name: 更新构建号
-        uses: yanamura/ios-bump-version@v1
       - name: 生成标签
         run: |
 

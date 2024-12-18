@@ -20,7 +20,10 @@ jobs:
   release:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/download-artifact@v3
       - run: ls -alhR
       - name: 读取版本号
