@@ -13,7 +13,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
     private var filterManager = NEFilterManager.shared()
     private var extensionManager = OSSystemExtensionManager.shared
     private var extensionBundle = AppConfig.extensionBundle
-    
+
     @Published var error: Error?
 
     var observer: Any?
@@ -55,7 +55,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
     }
 
     func setObserver() {
-        // Logger.app.info("APP: 添加监听")
+        os_log("\(self.t)添加监听")
         observer = NotificationCenter.default.addObserver(
             forName: .NEFilterConfigurationDidChange,
             object: filterManager,
@@ -106,7 +106,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
         os_log("\(self.t)\(Location.did(.InstallFilter))")
         self.clearError()
         self.emit(.willInstall)
-        
+
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
             status = .stopped
             return
@@ -123,6 +123,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
 
     func startFilter() {
         os_log("\(self.t)APP: 开启过滤器")
+        
         self.emit(.willStart)
         status = .indeterminate
         guard !filterManager.isEnabled else {
