@@ -51,6 +51,7 @@
 		C4B45DBD2273A0020050C59B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C4B45DBC2273A0020050C59B /* Assets.xcassets */; };
 		C4B45DDE2273A3450050C59B /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		F589B5BD2D13A10700C7E449 /* OSExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F589B5BC2D13A10300C7E449 /* OSExt.swift */; };
+		F589B5BF2D13A4AA00C7E449 /* InstallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F589B5BE2D13A4AA00C7E449 /* InstallView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +121,7 @@
 		C4B45DDD2273A3450050C59B /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		C4E0DBB42273BEA0005B02F4 /* FilterDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDataProvider.swift; sourceTree = "<group>"; };
 		F589B5BC2D13A10300C7E449 /* OSExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSExt.swift; sourceTree = "<group>"; };
+		F589B5BE2D13A4AA00C7E449 /* InstallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -221,14 +223,15 @@
 		0B3399342B3916B2005CC627 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				0B09F68C2B3EAD6400B90A59 /* Buttons */,
-				0B5B1CA92B385BF30002421E /* ContentView.swift */,
-				0B3399372B39277B005CC627 /* EventList.swift */,
 				0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */,
 				0B40CE412B39646100DC6771 /* AppList.swift */,
 				0B2551712B3FBFBE0005096C /* AppListSample.swift */,
-				0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */,
+				0B09F68C2B3EAD6400B90A59 /* Buttons */,
+				0B5B1CA92B385BF30002421E /* ContentView.swift */,
 				0B1D14A32B3A9ED0005A3D65 /* DatabaseView.swift */,
+				0B3399372B39277B005CC627 /* EventList.swift */,
+				F589B5BE2D13A4AA00C7E449 /* InstallView.swift */,
+				0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */,
 				0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */,
 			);
 			path = View;
@@ -457,6 +460,7 @@
 				0B3399262B3907F6005CC627 /* ContentView.swift in Sources */,
 				0B2551742B3FD3C30005096C /* DisplayType.swift in Sources */,
 				0B2551722B3FBFBE0005096C /* AppListSample.swift in Sources */,
+				F589B5BF2D13A4AA00C7E449 /* InstallView.swift in Sources */,
 				0B1D14A42B3A9ED0005A3D65 /* DatabaseView.swift in Sources */,
 				0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */,
 				0B1D14982B3A63A3005A3D65 /* BackgroundView.swift in Sources */,

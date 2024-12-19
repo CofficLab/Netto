@@ -4,7 +4,7 @@ struct BtnInstall: View {
     @EnvironmentObject private var channel: ChannelProvider
 
     var body: some View {
-        Button("安装系统扩展") {
+        Button("安装") {
             channel.installFilter()
         }.controlSize(.extraLarge)
     }
