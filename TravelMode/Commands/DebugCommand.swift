@@ -7,7 +7,7 @@ struct DebugCommands: Commands {
 
         CommandMenu("调试") {
             Button("打开数据文件夹") {
-                let folderPath = DBConfig.databaseURL.deletingLastPathComponent()
+                let folderPath = AppConfig.databaseURL.deletingLastPathComponent()
 
                 NSWorkspace.shared.open(folderPath)
             }

@@ -19,7 +19,7 @@ struct RootView<Content>: View where Content: View {
             .environmentObject(appManager)
             .environmentObject(channel)
             .environmentObject(eventManager)
-            .modelContainer(DBConfig.container)
+            .modelContainer(AppConfig.container)
             .environmentObject(m)
             .frame(minWidth: 500, minHeight: 200)
             .toast(isPresenting: $m.showToast, alert: {
