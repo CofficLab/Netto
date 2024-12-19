@@ -332,16 +332,24 @@ extension ChannelProvider: AppCommunication {
     // MARK: AppCommunication
 
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
-        os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId())")
+        let verbose = false 
+
+        if verbose {
+            os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId())")
+        }
 
         self.main.async {
             if AppSetting.shouldAllow(flow.getAppId()) {
-                os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Allow")
+                if verbose {
+                    os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Allow")
+                }
 
                 EventManager().emitNetworkFilterFlow(flow, allowed: true)
                 responseHandler(true)
             } else {
-                os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Deny")
+                if verbose {
+                    os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Deny")
+                }
 
                 EventManager().emitNetworkFilterFlow(flow, allowed: false)
                 responseHandler(false)

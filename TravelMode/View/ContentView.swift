@@ -6,22 +6,18 @@ struct ContentView: View {
     @EnvironmentObject private var channel: ChannelProvider
 
     var body: some View {
-        ZStack {
-            BackgroundView.type1.opacity(0.1)
+        VStack(spacing: 0) {
+            VSplitView {
+                AppList()
 
-            VStack(spacing: 0) {
-                VSplitView {
-                    AppList()
-                    
-                    Divider()
-                    
-                    if app.logVisible {
-                        EventList().shadow(radius: 10)
-                    }
-                }.background(.clear)
-                
-                StatusBar()
-            }
+                Divider()
+
+                if app.logVisible {
+                    EventList().shadow(radius: 10)
+                }
+            }.background(.clear)
+
+//            StatusBar()
         }
         .onAppear {
             event.onFilterStatusChanged({

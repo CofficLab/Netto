@@ -96,8 +96,6 @@ class IPCConnection: NSObject, SuperLog {
         for a decision about a connection.
     */
     func promptUser(flow: NEFilterFlow, responseHandler:@escaping (Bool) -> Void) -> Bool {
-        os_log("IPC.promptUser")
-        
         guard let connection = currentConnection else {
             os_log("Cannot prompt user because the app isn't registered")
             return false
@@ -138,7 +136,7 @@ extension IPCConnection: NSXPCListenerDelegate {
     // MARK: NSXPCListenerDelegate
 
     func listener(_ listener: NSXPCListener, shouldAcceptNewConnection newConnection: NSXPCConnection) -> Bool {
-        os_log("IPCConnection.shouldAcceptNewConnection")
+        providerSay("IPCConnection.shouldAcceptNewConnection")
         // The exported object is this IPCConnection instance.
         newConnection.exportedInterface = NSXPCInterface(with: ProviderCommunication.self)
         newConnection.exportedObject = self

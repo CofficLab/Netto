@@ -1,6 +1,6 @@
 # TravelMode
 
-macOS 连网控制。
+macOS 平台的 APP 联网控制。
 
 <a href="https://cofficlab.github.io/products/travelmode" target="_blank">产品介绍</a>
 
@@ -13,3 +13,4 @@ macOS 连网控制。
 ## Reference
 
 - <https://www.avanderlee.com/debugging/network-extension-debugging-macos/>
+- <https://developer.apple.com/documentation/networkextension/filtering-network-traffic>

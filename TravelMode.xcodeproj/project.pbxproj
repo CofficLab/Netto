@@ -64,6 +64,8 @@
 		F5E3D9DD2D13C34100D9C9D3 /* DisabledView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9DC2D13C34100D9C9D3 /* DisabledView.swift */; };
 		F5E3D9DF2D13CA7C00D9C9D3 /* UnkownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9DE2D13CA7C00D9C9D3 /* UnkownView.swift */; };
 		F5E3D9E22D13D7AD00D9C9D3 /* ExtensionNotReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E12D13D7AD00D9C9D3 /* ExtensionNotReady.swift */; };
+		F5E3D9E82D14003400D9C9D3 /* BtnDeny.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E72D14003400D9C9D3 /* BtnDeny.swift */; };
+		F5E3D9EA2D1401E400D9C9D3 /* BtnAllow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E92D1401E400D9C9D3 /* BtnAllow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -146,6 +148,8 @@
 		F5E3D9DC2D13C34100D9C9D3 /* DisabledView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledView.swift; sourceTree = "<group>"; };
 		F5E3D9DE2D13CA7C00D9C9D3 /* UnkownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnkownView.swift; sourceTree = "<group>"; };
 		F5E3D9E12D13D7AD00D9C9D3 /* ExtensionNotReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionNotReady.swift; sourceTree = "<group>"; };
+		F5E3D9E72D14003400D9C9D3 /* BtnDeny.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDeny.swift; sourceTree = "<group>"; };
+		F5E3D9E92D1401E400D9C9D3 /* BtnAllow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnAllow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +189,8 @@
 		0B09F68C2B3EAD6400B90A59 /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
+				F5E3D9E92D1401E400D9C9D3 /* BtnAllow.swift */,
+				F5E3D9E72D14003400D9C9D3 /* BtnDeny.swift */,
 				F5E3D9DA2D13C01E00D9C9D3 /* BtnStop.swift */,
 				F5E3D9D82D13BFA400D9C9D3 /* BtnStart.swift */,
 				0B09F68D2B3EAD7400B90A59 /* BtnInstall.swift */,
@@ -525,6 +531,7 @@
 				F5E3D9DD2D13C34100D9C9D3 /* DisabledView.swift in Sources */,
 				0B2551742B3FD3C30005096C /* DisplayType.swift in Sources */,
 				0B2551722B3FBFBE0005096C /* AppListSample.swift in Sources */,
+				F5E3D9EA2D1401E400D9C9D3 /* BtnAllow.swift in Sources */,
 				F589B5BF2D13A4AA00C7E449 /* InstallView.swift in Sources */,
 				0B1D14A42B3A9ED0005A3D65 /* DatabaseView.swift in Sources */,
 				0B3399252B3907F3005CC627 /* TravelModeApp.swift in Sources */,
@@ -555,6 +562,7 @@
 				0B3399302B3914EF005CC627 /* AppManager.swift in Sources */,
 				0B737BB22D12F22500712ABA /* MessageProvider.swift in Sources */,
 				0B1D149C2B3A69F1005A3D65 /* DateExt.swift in Sources */,
+				F5E3D9E82D14003400D9C9D3 /* BtnDeny.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

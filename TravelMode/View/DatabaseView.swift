@@ -17,13 +17,9 @@ struct DatabaseView: View {
             }
             TableColumn("操作") { i in
                 if i.allowed {
-                    Button("禁止") {
-                        AppSetting.setDeny(i.appId)
-                    }
+                    BtnDeny(appId: i.appId)
                 } else {
-                    Button("允许") {
-                        AppSetting.setAllow(i.appId)
-                    }
+                    BtnAllow(appId: i.appId)
                 }
             }
         })

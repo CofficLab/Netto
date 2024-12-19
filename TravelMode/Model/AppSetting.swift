@@ -5,7 +5,7 @@ import OSLog
 import MagicKit
 
 @Model
-final class AppSetting: SuperLog {
+final class AppSetting: SuperLog, SuperEvent {
     @Transient let emoji = "🦆"
 
     @Attribute(.unique)
@@ -63,7 +63,7 @@ final class AppSetting: SuperLog {
         }
     }
     
-    static func setDeny(_ id: String) {
+    static func setDeny(_ id: String) throws {
         let context = ModelContext(AppConfig.container)
         
         let setting = find(id)
@@ -73,14 +73,12 @@ final class AppSetting: SuperLog {
             create(id, allowed: false)
         }
         
-        do {
-            try context.save()
-        } catch (let error) {
-            Logger.app.error("\(error.localizedDescription)")
-        }
+        try context.save()
+
+        self.emitDidSetDeny(id)
     }
     
-    static func setAllow(_ id: String) {
+    static func setAllow(_ id: String) throws {
         let context = ModelContext(AppConfig.container)
         
         let setting = find(id)
@@ -90,11 +88,28 @@ final class AppSetting: SuperLog {
             create(id, allowed: true)
         }
         
-        do {
-            try context.save()
-        } catch (let error) {
-            Logger.app.error("\(error.localizedDescription)")
-        }
+        try context.save()
+
+        self.emitDidSetAllow(id)
+    }
+}
+
+extension Notification.Name {
+    static let didSetAllow = Notification.Name("didSetAllow")
+    static let didSetDeny = Notification.Name("didSetDeny")
+}
+
+extension AppSetting {
+    static func emitDidSetAllow(_ appId: String) {
+        NotificationCenter.default.post(name: .didSetAllow, object: nil, userInfo: [
+            "appId": appId
+        ])
+    }
+
+    static func emitDidSetDeny(_ appId: String) {
+        NotificationCenter.default.post(name: .didSetDeny, object: nil, userInfo: [
+            "appId": appId
+        ])
     }
 }
 
