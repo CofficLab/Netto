@@ -29,6 +29,8 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
 
     func boot() {
         os_log("\(self.t)\(Location.did(.Boot))")
+
+        self.emit(.willBoot)
         self.status = .indeterminate
         self.setObserver()
 
@@ -184,7 +186,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
             DispatchQueue.main.async {
                 var success = true
                 if let error = loadError {
-                    Logger.app.error("\(error.localizedDescription)")
+                    os_log(.error, "\(error.localizedDescription)")
                     success = false
                 } else {
                     self.status = .waitingForApproval
@@ -324,6 +326,7 @@ extension ChannelProvider: AppCommunication {
 
 extension Notification.Name {
     static let willInstall = Notification.Name("willInstall")
+    static let willBoot = Notification.Name("willBoot")
     static let didInstall = Notification.Name("didInstall")
     static let didFailWithError = Notification.Name("didFailWithError")
     static let willStart = Notification.Name("willStart")
