@@ -21,6 +21,8 @@ struct Toolbar: View, SuperLog {
             false
         case .error:
             false
+        case .disabled, .extensionNotReady:
+            false
         }
     }
     
@@ -40,6 +42,8 @@ struct Toolbar: View, SuperLog {
             false
         case .error:
             false
+        case .disabled, .extensionNotReady:
+            false
         }
     }
     
@@ -58,6 +62,8 @@ struct Toolbar: View, SuperLog {
         case .waitingForApproval:
             "dot_yellow"
         case .error:
+            "dot_red"
+        case .disabled, .extensionNotReady:
             "dot_red"
         }
     }
@@ -90,15 +96,11 @@ struct Toolbar: View, SuperLog {
             ZStack {
                 switch app.status {
                 case .stopped:
-                    Button("开始") {
-                        channel.startFilter()
-                    }
+                    BtnStart()
                 case .indeterminate:
                     Button("状态未知") {}
                 case .running:
-                    Button("停止") {
-                        channel.stopFilter(reason: self.className)
-                    }
+                    BtnStop()
                 case .notInstalled:
                     EmptyView()
                 case .needApproval:
@@ -106,6 +108,8 @@ struct Toolbar: View, SuperLog {
                 case .waitingForApproval:
                     EmptyView()
                 case .error:
+                    EmptyView()
+                case .disabled, .extensionNotReady:
                     EmptyView()
                 }
             }

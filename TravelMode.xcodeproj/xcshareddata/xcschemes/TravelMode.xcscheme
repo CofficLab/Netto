@@ -66,8 +66,11 @@
             </ActionContent>
          </ExecutionAction>
       </PreActions>
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <PathRunnable
+         runnableDebuggingMode = "0"
+         FilePath = "/Applications/TavelMode.app">
+      </PathRunnable>
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
@@ -75,7 +78,7 @@
             BlueprintName = "TavelMode"
             ReferencedContainer = "container:TravelMode.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

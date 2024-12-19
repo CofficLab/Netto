@@ -7,6 +7,8 @@ enum FilterStatus {
     case notInstalled
     case needApproval
     case waitingForApproval
+    case disabled
+    case extensionNotReady
     case error(Error)
     
     var description: String {
@@ -23,6 +25,10 @@ enum FilterStatus {
             "待授权"
         case .waitingForApproval:
             "请在弹出的对话框中点击“允许”"
+        case .disabled:
+            "disabled"
+        case .extensionNotReady:
+            "extensionNotReady"
         case .error(let error):
             "错误: \(error.localizedDescription)"
         }

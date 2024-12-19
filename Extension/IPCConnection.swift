@@ -63,7 +63,7 @@ class IPCConnection: NSObject, SuperLog {
             return
         }
         
-        os_log("\(self.t)IPC.register")
+        os_log("\(self.t)IPC.register 🛫")
 
         let machServiceName = extensionMachServiceName(from: bundle)
         let newConnection = NSXPCConnection(machServiceName: machServiceName, options: [])
@@ -79,7 +79,7 @@ class IPCConnection: NSObject, SuperLog {
         newConnection.resume()
 
         guard let providerProxy = newConnection.remoteObjectProxyWithErrorHandler({ registerError in
-            os_log("Failed to register with the provider: %@", registerError.localizedDescription)
+            os_log(.error, "Failed to register with the provider: %@", registerError.localizedDescription)
             self.currentConnection?.invalidate()
             self.currentConnection = nil
             completionHandler(false)
@@ -87,7 +87,7 @@ class IPCConnection: NSObject, SuperLog {
             fatalError("Failed to create a remote object proxy for the provider")
         }
 
-        os_log("\(self.t)providerProxy.register")
+        os_log("\(self.t)providerProxy.register 🛫")
         providerProxy.register(completionHandler)
     }
 
@@ -97,6 +97,7 @@ class IPCConnection: NSObject, SuperLog {
     */
     func promptUser(flow: NEFilterFlow, responseHandler:@escaping (Bool) -> Void) -> Bool {
         os_log("IPC.promptUser")
+        
         guard let connection = currentConnection else {
             os_log("Cannot prompt user because the app isn't registered")
             return false
