@@ -15,7 +15,7 @@ final class AppSetting {
     }
     
     static func create(_ id:String, allowed: Bool = true) {
-        let context = ModelContext(DBConfig.container)
+        let context = ModelContext(AppConfig.container)
         context.insert(AppSetting(appId: id, allowed: allowed))
         do {
             try context.save()
@@ -25,7 +25,7 @@ final class AppSetting {
     }
     
     static func find(_ id:String) -> AppSetting? {
-        let context = ModelContext(DBConfig.container)
+        let context = ModelContext(AppConfig.container)
         let predicate = #Predicate<AppSetting> { item in
             item.appId == id
         }
@@ -61,7 +61,7 @@ final class AppSetting {
     }
     
     static func setDeny(_ id: String) {
-        let context = ModelContext(DBConfig.container)
+        let context = ModelContext(AppConfig.container)
         
         let setting = find(id)
         if let s = setting {
@@ -78,7 +78,7 @@ final class AppSetting {
     }
     
     static func setAllow(_ id: String) {
-        let context = ModelContext(DBConfig.container)
+        let context = ModelContext(AppConfig.container)
         
         let setting = find(id)
         if let s = setting {

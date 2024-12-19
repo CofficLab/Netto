@@ -12,7 +12,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog {
     private var ipc = IPCConnection.shared
     private var filterManager = NEFilterManager.shared()
     private var extensionManager = OSSystemExtensionManager.shared
-    private var extensionBundle = ExtConfig.extensionBundle
+    private var extensionBundle = AppConfig.extensionBundle
     
     @Published var error: Error?
 

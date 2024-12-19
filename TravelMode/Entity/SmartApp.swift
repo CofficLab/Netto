@@ -12,22 +12,19 @@ struct SmartApp: Identifiable {
         self.id = id
         self.name = name
         if let i = icon {
-            self.icon = Image(nsImage: i).resizable()
+            self.icon = AnyView(Image(nsImage: i).resizable())
         }
     }
     
-    init(id: String, name: String, icon: Image? = nil) {
+    init(id: String, name: String, icon: some View) {
         self.id = id
         self.name = name
-        self.icon = nil
-        if let i = icon {
-            self.icon = i.resizable()
-        }
+        self.icon = AnyView(icon)
     }
     
     var id: String
     var name: String
-    var icon: Image? = nil
+    var icon: AnyView? = nil
     var events: [FirewallEvent] = []
     var nameView: some View {
         Text(name)
@@ -78,5 +75,7 @@ struct SmartApp: Identifiable {
 #Preview("APP") {
     RootView(content: {
         ContentView()
-    }).frame(width: 700)
+    })
+    .frame(width: 700)
+    .frame(height: 800)
 }

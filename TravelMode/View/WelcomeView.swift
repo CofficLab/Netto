@@ -23,10 +23,26 @@ struct WelcomeView: View {
                         Text("安装系统扩展以继续")
                             .font(.headline)
                             .padding(.top, 20)
+                        
+                        Text("操作系统版本 \(AppConfig.osVersion)")
+                            .padding(.top, 20)
                     }.padding(30).background(BackgroundView.type2).cornerRadius(16)
                 case .needApproval:
-                    Text("请在系统设置中允许运行").font(.title)
-                    Image("NeedApproval").resizable().scaledToFit()
+                    if AppConfig.osVersion < 15 {
+                        Text("请在系统设置中允许运行").font(.title)
+                        Image("NeedApproval").resizable().scaledToFit()
+                    } else {
+                        VStack {
+                            BtnInstall()
+                            Text("安装系统扩展以继续")
+                                .font(.headline)
+                                .padding(.top, 20)
+                            
+                            Text("操作系统版本 \(AppConfig.osVersion)")
+                                .padding(.top, 20)
+                        }.padding(30).background(BackgroundView.type2).cornerRadius(16)
+                    }
+                    
                 case .waitingForApproval:
                     Text("点击“允许”以安装扩展").font(.title)
                     Image("Ask")
@@ -46,4 +62,5 @@ struct WelcomeView: View {
     RootView {
         ContentView()
     }
+    .frame(height: 800)
 }

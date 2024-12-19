@@ -4,7 +4,7 @@ import SwiftData
 import SwiftUI
 import WebKit
 
-struct DBConfig {
+struct AppConfig {
     static private var fileManager = FileManager.default
     static var dbFileName = "db.sqlite"
     static var label = "com.yueyi.TravelMode"
@@ -16,7 +16,7 @@ struct DBConfig {
     }
     
     static var databaseFolder: URL {
-        DBConfig.databaseURL.deletingLastPathComponent()
+        AppConfig.databaseURL.deletingLastPathComponent()
     }
     
     static var databaseURL: URL {
