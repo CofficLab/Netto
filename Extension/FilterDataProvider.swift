@@ -84,10 +84,8 @@ class FilterDataProvider: NEFilterDataProvider {
             ipc.providerSay("调用promptUser失败，放行")
             return .allow()
         }
-        
-        return .allow()
 
         // 因为等待用户决策是异步的，所以这里先暂停，等待决策结果
-//        return .pause()
+        return .pause()
     }
 }
