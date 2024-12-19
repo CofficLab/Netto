@@ -5,7 +5,7 @@ import OSLog
 import SwiftUI
 import SystemExtensions
 
-class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
+class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
     let emoji = "🫙"
 
     private var event = EventManager()
@@ -15,9 +15,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
     private var extensionBundle = AppConfig.extensionBundle
 
     @Published var error: Error?
-
-    var observer: Any?
-    var status: FilterStatus = .stopped {
+    @Published var status: FilterStatus = .stopped {
         didSet {
             if oldValue.isRunning() == false && status.isRunning() {
                 registerWithProvider()
@@ -26,6 +24,8 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
             event.emitFilterStatusChanged(status)
         }
     }
+
+    var observer: Any?
 
     func boot() {
         os_log("\(self.t)\(Location.did(.Boot))")
@@ -70,16 +70,16 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
     }
 
     // 过滤器是否已经启动了
-    func ifFilterReady(completionHandler: @escaping (Bool) -> Void) {
+    func ifFilterReady() -> Bool {
         os_log("\(self.t)\(Location.did(.IfReady))")
 
         if filterManager.isEnabled {
             registerWithProvider()
             status = .running
 
-            completionHandler(true)
+            return true
         } else {
-            completionHandler(false)
+            return false
         }
     }
 
@@ -88,9 +88,9 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
             return
         }
 
-        NotificationCenter.default.removeObserver(changeObserver,
-                                                  name: .NEFilterConfigurationDidChange,
-                                                  object: filterManager
+        nc.removeObserver(changeObserver,
+                          name: .NEFilterConfigurationDidChange,
+                          object: filterManager
         )
     }
 
@@ -106,6 +106,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
 
     func installFilter() {
         os_log("\(self.t)\(Location.did(.InstallFilter))")
+        
         self.clearError()
         self.emit(.willInstall)
 
@@ -125,7 +126,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
 
     func startFilter() {
         os_log("\(self.t)APP: 开启过滤器")
-        
+
         self.emit(.willStart)
         status = .indeterminate
         guard !filterManager.isEnabled else {
@@ -144,7 +145,9 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
         OSSystemExtensionManager.shared.submitRequest(activationRequest)
     }
 
-    func stopFilter() {
+    func stopFilter(reason: String) {
+        os_log("\(self.t)停止过滤器 🐛 \(reason)")
+
         self.emit(.willStop)
         let filterManager = NEFilterManager.shared()
 
@@ -183,7 +186,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
         os_log("\(self.t)\(Location.did(.LoadFilterConfiguration))")
         // You must call this method at least once before calling saveToPreferencesWithCompletionHandler: for the first time after your app launches.
         filterManager.loadFromPreferences { loadError in
-            DispatchQueue.main.async {
+            self.main.async {
                 var success = true
                 if let error = loadError {
                     os_log(.error, "\(error.localizedDescription)")
@@ -245,9 +248,14 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
     }
 
     func registerWithProvider() {
-        os_log("\(self.t)APP: registerWithProvider，让 APP 和 Provider 关联起来")
+        os_log("\(self.t)registerWithProvider，让 APP 和 Provider 关联起来")
+
+        self.emit(.willRegisterWithProvider)
+        
         ipc.register(withExtension: extensionBundle, delegate: self) { success in
-            os_log("\(self.t)APP: 和 Provider 关联成功")
+            os_log("\(self.t)APP 和 Provider 关联成功")
+
+            self.emit(.didRegisterWithProvider)
             self.status = success ? .running : .stopped
         }
     }
@@ -297,11 +305,11 @@ extension ChannelProvider: OSSystemExtensionRequestDelegate {
 
 extension ChannelProvider: AppCommunication {
     func providerSaid(_ words: String) {
-        Logger.app.info("Provider said: \(words)")
+        os_log("\(self.t)Provider said: \(words)")
     }
 
     func providerSay(_ words: String) {
-        Logger.app.info("Provider: \(words)")
+        os_log("\(self.t)Provider: \(words)")
     }
 
     func needApproval() {
@@ -311,8 +319,8 @@ extension ChannelProvider: AppCommunication {
     // MARK: AppCommunication
 
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
-        // Logger.app.info("Channel.promptUser")
-        DispatchQueue.main.async {
+        os_log("\(self.t)Channel.promptUser")
+        self.main.async {
             if AppSetting.shouldAllow(flow.getAppId()) {
                 EventManager().emitNetworkFilterFlow(flow, allowed: true)
                 responseHandler(true)
@@ -336,6 +344,8 @@ extension Notification.Name {
     static let configurationChanged = Notification.Name("configurationChanged")
     static let needApproval = Notification.Name("needApproval")
     static let error = Notification.Name("error")
+    static let willRegisterWithProvider = Notification.Name("willRegisterWithProvider")
+    static let didRegisterWithProvider = Notification.Name("didRegisterWithProvider")
 }
 
 #Preview("APP") {

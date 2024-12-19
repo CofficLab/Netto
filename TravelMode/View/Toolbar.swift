@@ -1,6 +1,7 @@
 import SwiftUI
+import MagicKit
 
-struct Toolbar: View {
+struct Toolbar: View, SuperLog {
     @EnvironmentObject private var app: AppManager
     @EnvironmentObject private var channel: ChannelProvider
     
@@ -96,7 +97,7 @@ struct Toolbar: View {
                     Button("状态未知") {}
                 case .running:
                     Button("停止") {
-                        channel.stopFilter()
+                        channel.stopFilter(reason: self.className)
                     }
                 case .notInstalled:
                     EmptyView()

@@ -54,6 +54,8 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
             .onReceive(nc.publisher(for: .didStop), perform: onDidStop)
             .onReceive(nc.publisher(for: .configurationChanged), perform: onConfigurationChanged)
             .onReceive(nc.publisher(for: .needApproval), perform: onNeedApproval)
+            .onReceive(nc.publisher(for: .willRegisterWithProvider), perform: onWillRegisterWithProvider)
+            .onReceive(nc.publisher(for: .didRegisterWithProvider), perform: onDidRegisterWithProvider)
     }
 }
 
@@ -88,6 +90,14 @@ extension RootView {
 
     func onNeedApproval(_ n: Notification) {
         self.m.append("需要用户批准")
+    }
+
+    func onWillRegisterWithProvider(_ n: Notification) {
+        self.m.append("将要注册系统扩展")
+    }
+
+    func onDidRegisterWithProvider(_ n: Notification) {
+        self.m.append("注册系统扩展成功")
     }
 
     func onDidFailWithError(_ n: Notification) {
