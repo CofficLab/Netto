@@ -5,7 +5,7 @@ import OSLog
 import SwiftUI
 import SystemExtensions
 
-class ChannelProvider: NSObject, ObservableObject, SuperLog {
+class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
     let emoji = "🫙"
 
     private var event = EventManager()
@@ -104,8 +104,8 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog {
 
     func installFilter() {
         os_log("\(self.t)\(Location.did(.InstallFilter))")
-        
         self.clearError()
+        self.emit(.willInstall)
         
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
             status = .stopped
@@ -123,6 +123,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog {
 
     func startFilter() {
         os_log("\(self.t)APP: 开启过滤器")
+        self.emit(.willStart)
         status = .indeterminate
         guard !filterManager.isEnabled else {
             registerWithProvider()
@@ -141,6 +142,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog {
     }
 
     func stopFilter() {
+        self.emit(.willStop)
         let filterManager = NEFilterManager.shared()
 
         status = .indeterminate
@@ -194,6 +196,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog {
 
     func enableFilterConfiguration() {
         os_log("\(self.t)\(Location.did(.EnableFilterConfiguration))")
+        self.emit(.configurationChanged)
         guard !filterManager.isEnabled else {
             os_log("\(self.t)FilterManager is Disabled, registerWithProvider")
             registerWithProvider()
@@ -266,13 +269,10 @@ extension ChannelProvider: OSSystemExtensionRequestDelegate {
         enableFilterConfiguration()
     }
 
-    func request(
-        _ request: OSSystemExtensionRequest,
-        didFailWithError error: Error
-    ) {
+    func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
         os_log(.error, "\(self.t)didFailWithError -> \(error.localizedDescription)")
         setError(error)
-
+        self.emit(.didFailWithError, userInfo: ["error": error])
         status = .error(error)
     }
 
@@ -319,6 +319,19 @@ extension ChannelProvider: AppCommunication {
             }
         }
     }
+}
+
+extension Notification.Name {
+    static let willInstall = Notification.Name("willInstall")
+    static let didInstall = Notification.Name("didInstall")
+    static let didFailWithError = Notification.Name("didFailWithError")
+    static let willStart = Notification.Name("willStart")
+    static let didStart = Notification.Name("didStart")
+    static let willStop = Notification.Name("willStop")
+    static let didStop = Notification.Name("didStop")
+    static let configurationChanged = Notification.Name("configurationChanged")
+    static let needApproval = Notification.Name("needApproval")
+    static let error = Notification.Name("error")
 }
 
 #Preview("APP") {
