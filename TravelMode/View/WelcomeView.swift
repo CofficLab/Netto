@@ -6,7 +6,8 @@ struct WelcomeView: View {
     var body: some View {
         ZStack {
             AppListSample()
-            Color.black.opacity(0.65)
+            
+            Color.black.opacity(0.4)
 
             VStack(spacing: 0) {
                 switch app.status {
@@ -24,12 +25,18 @@ struct WelcomeView: View {
                     Image("Ask")
                 case let .error(error):
                     VStack {
-                        BtnInstall()
+                        InstallView()
 
-                        Text("错误: \(error.localizedDescription)").font(.title)
-                    }.padding(30).background(BackgroundView.type2).cornerRadius(16)
+                        Text("错误: \(error.localizedDescription)")
+                            .font(.callout)
+                            .padding(20)
+                            .background(BackgroundView.type2A.rotationEffect(.degrees(180)))
+                    }
                 }
-            }.frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .padding(20)
+            .background(BackgroundView.type2A)
+            .cornerRadius(16)
         }
     }
 }

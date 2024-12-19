@@ -33,11 +33,6 @@ struct InstallView: View {
                         .offset(y: isAnimating ? 0 : 10)
                 }
                 .padding(30)
-                .background {
-                    BackgroundView.type2
-                        .opacity(0.8)
-                        .blur(radius: 0.5)
-                }
                 .cornerRadius(16)
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
             }

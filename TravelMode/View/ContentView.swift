@@ -7,12 +7,14 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            BackgroundView.type1.opacity(0.2)
+            BackgroundView.type1.opacity(0.1)
 
-            VStack {
+            VStack(spacing: 0) {
                 VSplitView {
                     AppList()
+                    
                     Divider()
+                    
                     if app.logVisible {
                         EventList().shadow(radius: 10)
                     }
