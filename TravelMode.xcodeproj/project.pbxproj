@@ -52,6 +52,10 @@
 		C4B45DDE2273A3450050C59B /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		F589B5BD2D13A10700C7E449 /* OSExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F589B5BC2D13A10300C7E449 /* OSExt.swift */; };
 		F589B5BF2D13A4AA00C7E449 /* InstallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F589B5BE2D13A4AA00C7E449 /* InstallView.swift */; };
+		F5E3D9C92D13A84500D9C9D3 /* MessageTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9C82D13A84500D9C9D3 /* MessageTable.swift */; };
+		F5E3D9CD2D13A86600D9C9D3 /* TileMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9CC2D13A86600D9C9D3 /* TileMessage.swift */; };
+		F5E3D9CF2D13A89B00D9C9D3 /* PluginProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9CE2D13A89B00D9C9D3 /* PluginProvider.swift */; };
+		F5E3D9D12D13A8D800D9C9D3 /* StatusBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9D02D13A8D800D9C9D3 /* StatusBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,6 +126,10 @@
 		C4E0DBB42273BEA0005B02F4 /* FilterDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDataProvider.swift; sourceTree = "<group>"; };
 		F589B5BC2D13A10300C7E449 /* OSExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSExt.swift; sourceTree = "<group>"; };
 		F589B5BE2D13A4AA00C7E449 /* InstallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallView.swift; sourceTree = "<group>"; };
+		F5E3D9C82D13A84500D9C9D3 /* MessageTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTable.swift; sourceTree = "<group>"; };
+		F5E3D9CC2D13A86600D9C9D3 /* TileMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMessage.swift; sourceTree = "<group>"; };
+		F5E3D9CE2D13A89B00D9C9D3 /* PluginProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginProvider.swift; sourceTree = "<group>"; };
+		F5E3D9D02D13A8D800D9C9D3 /* StatusBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -231,6 +239,7 @@
 				0B1D14A32B3A9ED0005A3D65 /* DatabaseView.swift */,
 				0B3399372B39277B005CC627 /* EventList.swift */,
 				F589B5BE2D13A4AA00C7E449 /* InstallView.swift */,
+				F5E3D9D02D13A8D800D9C9D3 /* StatusBar.swift */,
 				0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */,
 				0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */,
 			);
@@ -251,6 +260,7 @@
 		0B737BB02D12F21C00712ABA /* Providers */ = {
 			isa = PBXGroup;
 			children = (
+				F5E3D9CE2D13A89B00D9C9D3 /* PluginProvider.swift */,
 				0B737BB12D12F22500712ABA /* MessageProvider.swift */,
 				0B5B1CBF2B3865F90002421E /* ChannelProvider.swift */,
 			);
@@ -316,6 +326,7 @@
 				0B33992B2B3911D9005CC627 /* Event */,
 				0B408A2A2B395A68000E77DB /* Helpers */,
 				0B1D149D2B3A7891005A3D65 /* Model */,
+				F5E3D9C62D13A81300D9C9D3 /* Plugins */,
 				0B737BB02D12F21C00712ABA /* Providers */,
 				C4B45DC22273A0020050C59B /* Signing.entitlements */,
 				0B3399342B3916B2005CC627 /* View */,
@@ -330,6 +341,23 @@
 				C4B45DDD2273A3450050C59B /* NetworkExtension.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F5E3D9C62D13A81300D9C9D3 /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				F5E3D9C72D13A82D00D9C9D3 /* SmartMessage */,
+			);
+			path = Plugins;
+			sourceTree = "<group>";
+		};
+		F5E3D9C72D13A82D00D9C9D3 /* SmartMessage */ = {
+			isa = PBXGroup;
+			children = (
+				F5E3D9CC2D13A86600D9C9D3 /* TileMessage.swift */,
+				F5E3D9C82D13A84500D9C9D3 /* MessageTable.swift */,
+			);
+			path = SmartMessage;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -458,6 +486,7 @@
 				C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */,
 				0B1D14A22B3A99AC005A3D65 /* AppConfig.swift in Sources */,
 				0B3399262B3907F6005CC627 /* ContentView.swift in Sources */,
+				F5E3D9D12D13A8D800D9C9D3 /* StatusBar.swift in Sources */,
 				0B2551742B3FD3C30005096C /* DisplayType.swift in Sources */,
 				0B2551722B3FBFBE0005096C /* AppListSample.swift in Sources */,
 				F589B5BF2D13A4AA00C7E449 /* InstallView.swift in Sources */,
@@ -466,11 +495,13 @@
 				0B1D14982B3A63A3005A3D65 /* BackgroundView.swift in Sources */,
 				0B3399362B391AE4005CC627 /* Logger.swift in Sources */,
 				0B737BB42D12F24A00712ABA /* SmartMessage.swift in Sources */,
+				F5E3D9CF2D13A89B00D9C9D3 /* PluginProvider.swift in Sources */,
 				0B09F6922B3EB84100B90A59 /* Location.swift in Sources */,
 				0B09F6852B3E51F900B90A59 /* ExtConfig.swift in Sources */,
 				0B1D149F2B3A78EC005A3D65 /* AppSetting.swift in Sources */,
 				0B3399332B391619005CC627 /* RootView.swift in Sources */,
 				F589B5BD2D13A10700C7E449 /* OSExt.swift in Sources */,
+				F5E3D9CD2D13A86600D9C9D3 /* TileMessage.swift in Sources */,
 				0B33992A2B390D44005CC627 /* EventManager.swift in Sources */,
 				0B1C33FE2B39C2AA004A5E36 /* Toolbar.swift in Sources */,
 				0B408A302B39612B000E77DB /* AppHelper.swift in Sources */,
@@ -480,6 +511,7 @@
 				0B3399382B39277B005CC627 /* EventList.swift in Sources */,
 				0B40CE422B39646100DC6771 /* AppList.swift in Sources */,
 				0B737BB72D12F2AF00712ABA /* SuperEvent.swift in Sources */,
+				F5E3D9C92D13A84500D9C9D3 /* MessageTable.swift in Sources */,
 				0B3399302B3914EF005CC627 /* AppManager.swift in Sources */,
 				0B737BB22D12F22500712ABA /* MessageProvider.swift in Sources */,
 				0B1D149C2B3A69F1005A3D65 /* DateExt.swift in Sources */,

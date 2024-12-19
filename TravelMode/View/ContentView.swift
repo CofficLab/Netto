@@ -9,13 +9,17 @@ struct ContentView: View {
         ZStack {
             BackgroundView.type1.opacity(0.2)
 
-            VSplitView {
-                AppList()
-                Divider()
-                if app.logVisible {
-                    EventList().shadow(radius: 10)
-                }
-            }.background(.clear)
+            VStack {
+                VSplitView {
+                    AppList()
+                    Divider()
+                    if app.logVisible {
+                        EventList().shadow(radius: 10)
+                    }
+                }.background(.clear)
+                
+                StatusBar()
+            }
         }
         .onAppear {
             event.onFilterStatusChanged({
@@ -45,5 +49,7 @@ struct ContentView: View {
 #Preview("APP") {
     RootView(content: {
         ContentView()
-    }).frame(width: 700)
+    })
+    .frame(width: 700)
+    .frame(height: 800)
 }

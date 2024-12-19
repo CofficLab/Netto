@@ -6,6 +6,7 @@ struct RootView<Content>: View where Content: View {
     private var content: Content
     private var appManager = AppManager()
     private var eventManager = EventManager()
+    private var p = PluginProvider()
     
     @StateObject var m = MessageProvider()
     @StateObject var channel = ChannelProvider()
@@ -21,6 +22,7 @@ struct RootView<Content>: View where Content: View {
             .environmentObject(eventManager)
             .modelContainer(AppConfig.container)
             .environmentObject(m)
+            .environmentObject(p)
             .frame(minWidth: 500, minHeight: 200)
             .toast(isPresenting: $m.showToast, alert: {
                 AlertToast(type: .systemImage("info.circle", .blue), title: m.toast)
