@@ -9,3 +9,7 @@ macOS 连网控制。
 ## 开发
 
 在运行前，有脚本将构建后的APP移动到Application目录下。
+
+## Reference
+
+- <https://www.avanderlee.com/debugging/network-extension-debugging-macos/>
