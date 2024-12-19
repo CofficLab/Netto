@@ -5,7 +5,7 @@ import OSLog
 import SwiftUI
 import SystemExtensions
 
-class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
+class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
     let emoji = "🫙"
 
     private var event = EventManager()
@@ -15,9 +15,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
     private var extensionBundle = AppConfig.extensionBundle
 
     @Published var error: Error?
-
-    var observer: Any?
-    var status: FilterStatus = .stopped {
+    @Published var status: FilterStatus = .stopped {
         didSet {
             if oldValue.isRunning() == false && status.isRunning() {
                 registerWithProvider()
@@ -27,21 +25,37 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
         }
     }
 
+    var observer: Any?
+
     func boot() {
         os_log("\(self.t)\(Location.did(.Boot))")
+
+        self.emit(.willBoot)
         self.status = .indeterminate
         self.setObserver()
 
         os_log("\(self.t)\(Location.did(.IfReady))")
+
         // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
-        loadFilterConfiguration { _ in
+        Task {
+            do {
+                try await loadFilterConfiguration(reason: "Boot")
+            } catch {
+                os_log(.error, "\(self.t)Boot -> \(error)")
+            }
+
             if self.filterManager.isEnabled {
-                self.status = .running
+                os_log("\(self.t)Boot -> 过滤器已启用 ✅")
+
+                self.main.async {
+                    self.status = .running
+                }
             } else {
-                // 扩展未启用，有两种情况
-                // 1. 未安装
-                // 2. 安装了但未启用
-                self.status = .notInstalled
+                os_log("\(self.t)Boot -> 过滤器未启用 ❎")
+
+                self.main.async {
+                    self.status = .disabled
+                }
             }
         }
     }
@@ -56,28 +70,28 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
 
     func setObserver() {
         os_log("\(self.t)添加监听")
-        observer = NotificationCenter.default.addObserver(
+        observer = nc.addObserver(
             forName: .NEFilterConfigurationDidChange,
             object: filterManager,
             queue: .main
         ) { _ in
             let enabled = self.filterManager.isEnabled
-            os_log("\(self.t)Observer: \(enabled ? "扩展已打开" : "扩展已关闭") 🚀")
+            os_log("\(self.t)\(enabled ? "Filter 已打开 🎉" : "Fitler 已关闭 ❎")")
             self.status = self.filterManager.isEnabled ? .running : .stopped
         }
     }
 
     // 过滤器是否已经启动了
-    func ifFilterReady(completionHandler: @escaping (Bool) -> Void) {
+    func ifFilterReady() -> Bool {
         os_log("\(self.t)\(Location.did(.IfReady))")
 
         if filterManager.isEnabled {
             registerWithProvider()
             status = .running
 
-            completionHandler(true)
+            return true
         } else {
-            completionHandler(false)
+            return false
         }
     }
 
@@ -86,9 +100,9 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
             return
         }
 
-        NotificationCenter.default.removeObserver(changeObserver,
-                                                  name: .NEFilterConfigurationDidChange,
-                                                  object: filterManager
+        nc.removeObserver(changeObserver,
+                          name: .NEFilterConfigurationDidChange,
+                          object: filterManager
         )
     }
 
@@ -104,6 +118,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
 
     func installFilter() {
         os_log("\(self.t)\(Location.did(.InstallFilter))")
+
         self.clearError()
         self.emit(.willInstall)
 
@@ -121,20 +136,29 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
         extensionManager.submitRequest(activationRequest)
     }
 
-    func startFilter() {
-        os_log("\(self.t)APP: 开启过滤器")
-        
+    func startFilter(reason: String) async throws {
+        os_log("\(self.t)开启过滤器 🐛 \(reason)")
+        os_log("  ➡️ Current Status: \(self.status.description)")
+
         self.emit(.willStart)
-        status = .indeterminate
+        
+        guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
+            os_log("\(self.t)extensionBundle.bundleIdentifier 为空")
+            status = .stopped
+            return
+        }
+        
+        // macOS 15， 系统设置 - 网络 - 过滤器，用户能删除过滤器，所以要确保过滤器已加载
+        
+        try await loadFilterConfiguration(reason: reason)
+        
         guard !filterManager.isEnabled else {
+            os_log("\(self.t)过滤器已启用，直接关联")
             registerWithProvider()
             return
         }
 
-        guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
-            status = .stopped
-            return
-        }
+        os_log("\(self.t)开始激活系统扩展 ⚙️")
 
         // Start by activating the system extension
         let activationRequest = OSSystemExtensionRequest.activationRequest(forExtensionWithIdentifier: extensionIdentifier, queue: .main)
@@ -142,111 +166,110 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent {
         OSSystemExtensionManager.shared.submitRequest(activationRequest)
     }
 
-    func stopFilter() {
-        self.emit(.willStop)
-        let filterManager = NEFilterManager.shared()
+    func stopFilter(reason: String) async throws {
+        os_log("\(self.t)停止过滤器 🐛 \(reason)")
 
-        status = .indeterminate
+        self.emit(.willStop)
 
         guard filterManager.isEnabled else {
             status = .stopped
             return
         }
 
-        loadFilterConfiguration { success in
-            guard success else {
-                self.status = .running
-                return
-            }
+        try await loadFilterConfiguration(reason: reason)
 
-            // Disable the content filter configuration
-            filterManager.isEnabled = false
-            filterManager.saveToPreferences { saveError in
-                DispatchQueue.main.async {
-                    if let error = saveError {
-                        os_log("saveToPreferences: %@", error.localizedDescription)
-                        self.status = .stopped
-                        return
-                    }
+        filterManager.isEnabled = false
+        try await filterManager.saveToPreferences()
 
-                    self.status = .stopped
-                }
-            }
+        self.main.async {
+            self.status = .stopped
         }
     }
 
     // MARK: Content Filter Configuration Management
 
-    func loadFilterConfiguration(completionHandler: @escaping (Bool) -> Void) {
+    func loadFilterConfiguration(reason: String) async throws {
+        os_log("\(self.t)loadFilterConfiguration 读取过滤器配置 🐛 \(reason)")
         os_log("\(self.t)\(Location.did(.LoadFilterConfiguration))")
-        // You must call this method at least once before calling saveToPreferencesWithCompletionHandler: for the first time after your app launches.
-        filterManager.loadFromPreferences { loadError in
-            DispatchQueue.main.async {
-                var success = true
-                if let error = loadError {
-                    Logger.app.error("\(error.localizedDescription)")
-                    success = false
-                } else {
-                    self.status = .waitingForApproval
-                }
 
-                completionHandler(success)
-            }
-        }
+        // You must call this method at least once before calling saveToPreferencesWithCompletionHandler: for the first time after your app launches.
+        try await filterManager.loadFromPreferences()
     }
 
-    func enableFilterConfiguration() {
+    func enableFilterConfiguration(reason: String) {
         os_log("\(self.t)\(Location.did(.EnableFilterConfiguration))")
+
         self.emit(.configurationChanged)
+
         guard !filterManager.isEnabled else {
             os_log("\(self.t)FilterManager is Disabled, registerWithProvider")
             registerWithProvider()
             return
         }
 
-        loadFilterConfiguration { success in
-            guard success else {
-                self.status = .stopped
-                return
-            }
+        Task {
+            do {
+                try await loadFilterConfiguration(reason: reason)
 
-            if self.filterManager.providerConfiguration == nil {
-                let providerConfiguration = NEFilterProviderConfiguration()
-                providerConfiguration.filterSockets = true
-                providerConfiguration.filterPackets = false
-                self.filterManager.providerConfiguration = providerConfiguration
-                if let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String {
-                    self.filterManager.localizedDescription = appName
-                }
-            }
+                os_log("\(self.t)加载过滤器配置成功 🎉")
 
-            // 如果true，加载到系统设置中后就是启动状态
-            self.filterManager.isEnabled = true
-
-            // 将过滤器加载到系统设置中
-            // os_log("\(self.t)APP: 将要弹出授权对话框")
-            os_log("\(self.t)\(Location.did(.SaveToPreferences))")
-            self.filterManager.saveToPreferences { saveError in
-                DispatchQueue.main.async {
-                    if let error = saveError {
-                        os_log("授权对话框报错 -> %@", error.localizedDescription)
-                        self.status = .needApproval
-                        return
-                    } else {
-                        os_log("\(self.t)\(Location.did(.UserApproved))")
+                if self.filterManager.providerConfiguration == nil {
+                    let providerConfiguration = NEFilterProviderConfiguration()
+                    providerConfiguration.filterSockets = true
+                    providerConfiguration.filterPackets = false
+                    self.filterManager.providerConfiguration = providerConfiguration
+                    if let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String {
+                        self.filterManager.localizedDescription = appName
                     }
-
-                    // self.registerWithProvider()
                 }
+
+                // 如果true，加载到系统设置中后就是启动状态
+                self.filterManager.isEnabled = true
+
+                // 将过滤器加载到系统设置中
+                os_log("\(self.t)将要弹出授权对话框来加载到系统设置中 📺")
+                os_log("\(self.t)\(Location.did(.SaveToPreferences))")
+                self.filterManager.saveToPreferences { saveError in
+                    self.main.async {
+                        if let error = saveError {
+                            os_log(.error, "\(self.t)授权对话框报错 -> \(error.localizedDescription)")
+                            self.status = .disabled
+                            return
+                        } else {
+                            os_log("\(self.t)\(Location.did(.UserApproved))")
+                        }
+
+                        // self.registerWithProvider()
+                    }
+                }
+            } catch {
+                os_log("\(self.t)APP: 加载过滤器配置失败")
+                self.status = .stopped
             }
         }
     }
 
     func registerWithProvider() {
-        os_log("\(self.t)APP: registerWithProvider，让 APP 和 Provider 关联起来")
+        os_log("\(self.t)registerWithProvider，让 APP 和 Provider 关联起来 🛫")
+
+        self.emit(.willRegisterWithProvider)
+
         ipc.register(withExtension: extensionBundle, delegate: self) { success in
-            os_log("\(self.t)APP: 和 Provider 关联成功")
-            self.status = success ? .running : .stopped
+            if success {
+                os_log("\(self.t)APP 和 Provider 关联成功 🎉")
+                
+                self.emit(.didRegisterWithProvider)
+                
+                self.main.async {
+                    self.status = .running
+                }
+            } else {
+                os_log("\(self.t)APP 和 Provider 关联失败 💔")
+                
+                self.main.async {
+                    self.status = .extensionNotReady
+                }
+            }
         }
     }
 }
@@ -267,7 +290,7 @@ extension ChannelProvider: OSSystemExtensionRequestDelegate {
             os_log("\(self.t)\(result.rawValue)")
         }
 
-        enableFilterConfiguration()
+        enableFilterConfiguration(reason: "didFinishWithResult")
     }
 
     func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
@@ -295,11 +318,11 @@ extension ChannelProvider: OSSystemExtensionRequestDelegate {
 
 extension ChannelProvider: AppCommunication {
     func providerSaid(_ words: String) {
-        Logger.app.info("Provider said: \(words)")
+        os_log("\(self.t)Provider said -> \(words)")
     }
 
     func providerSay(_ words: String) {
-        Logger.app.info("Provider: \(words)")
+        os_log("\(self.t)Provider -> \(words)")
     }
 
     func needApproval() {
@@ -309,12 +332,17 @@ extension ChannelProvider: AppCommunication {
     // MARK: AppCommunication
 
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
-        // Logger.app.info("Channel.promptUser")
-        DispatchQueue.main.async {
+        os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId())")
+
+        self.main.async {
             if AppSetting.shouldAllow(flow.getAppId()) {
+                os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Allow")
+
                 EventManager().emitNetworkFilterFlow(flow, allowed: true)
                 responseHandler(true)
             } else {
+                os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Deny")
+
                 EventManager().emitNetworkFilterFlow(flow, allowed: false)
                 responseHandler(false)
             }
@@ -324,6 +352,7 @@ extension ChannelProvider: AppCommunication {
 
 extension Notification.Name {
     static let willInstall = Notification.Name("willInstall")
+    static let willBoot = Notification.Name("willBoot")
     static let didInstall = Notification.Name("didInstall")
     static let didFailWithError = Notification.Name("didFailWithError")
     static let willStart = Notification.Name("willStart")
@@ -333,6 +362,8 @@ extension Notification.Name {
     static let configurationChanged = Notification.Name("configurationChanged")
     static let needApproval = Notification.Name("needApproval")
     static let error = Notification.Name("error")
+    static let willRegisterWithProvider = Notification.Name("willRegisterWithProvider")
+    static let didRegisterWithProvider = Notification.Name("didRegisterWithProvider")
 }
 
 #Preview("APP") {

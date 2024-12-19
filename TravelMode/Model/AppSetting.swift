@@ -2,9 +2,12 @@ import Foundation
 import SwiftData
 import SwiftUI
 import OSLog
+import MagicKit
 
 @Model
-final class AppSetting {
+final class AppSetting: SuperLog {
+    @Transient let emoji = "🦆"
+
     @Attribute(.unique)
     var appId: String
     var allowed: Bool

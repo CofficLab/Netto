@@ -1,6 +1,7 @@
 import SwiftUI
+import MagicKit
 
-struct Toolbar: View {
+struct Toolbar: View, SuperLog {
     @EnvironmentObject private var app: AppManager
     @EnvironmentObject private var channel: ChannelProvider
     
@@ -19,6 +20,8 @@ struct Toolbar: View {
         case .waitingForApproval:
             false
         case .error:
+            false
+        case .disabled, .extensionNotReady:
             false
         }
     }
@@ -39,6 +42,8 @@ struct Toolbar: View {
             false
         case .error:
             false
+        case .disabled, .extensionNotReady:
+            false
         }
     }
     
@@ -57,6 +62,8 @@ struct Toolbar: View {
         case .waitingForApproval:
             "dot_yellow"
         case .error:
+            "dot_red"
+        case .disabled, .extensionNotReady:
             "dot_red"
         }
     }
@@ -89,15 +96,11 @@ struct Toolbar: View {
             ZStack {
                 switch app.status {
                 case .stopped:
-                    Button("开始") {
-                        channel.startFilter()
-                    }
+                    BtnStart()
                 case .indeterminate:
                     Button("状态未知") {}
                 case .running:
-                    Button("停止") {
-                        channel.stopFilter()
-                    }
+                    BtnStop()
                 case .notInstalled:
                     EmptyView()
                 case .needApproval:
@@ -105,6 +108,8 @@ struct Toolbar: View {
                 case .waitingForApproval:
                     EmptyView()
                 case .error:
+                    EmptyView()
+                case .disabled, .extensionNotReady:
                     EmptyView()
                 }
             }

@@ -5,7 +5,7 @@ class FilterDataProvider: NEFilterDataProvider {
     private var ipc = IPCConnection.shared
 
     override func startFilter(completionHandler: @escaping (Error?) -> Void) {
-        ipc.providerSay("startFilter")
+        ipc.providerSay("startFilter 🚛")
         let filterSettings = NEFilterSettings(rules: [], defaultAction: .filterData)
 
         apply(filterSettings) { error in
@@ -17,11 +17,14 @@ class FilterDataProvider: NEFilterDataProvider {
     }
     
     override func stopFilter(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
-        ipc.providerSay("stopFilter")
+        ipc.providerSay("stopFilter 📢 with reason -> \(reason)")
+        
         completionHandler()
     }
     
     override func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
+        ipc.providerSay("handleNewFlow")
+        
         // Ask the app to prompt the user
         // WWDC2019视频中说，这是一个异步的过程
         let prompted = ipc.promptUser(flow: flow) { allow in
