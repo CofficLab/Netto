@@ -42,5 +42,14 @@ enum FilterStatus {
             false
         }
     }
+
+    func isStopped() -> Bool {
+        switch self {
+        case .stopped:
+            true
+        default:
+            false
+        }
+    }
 }
 

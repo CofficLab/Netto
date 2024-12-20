@@ -28,7 +28,7 @@ struct AppList: View {
 
     var body: some View {
         ZStack {
-            if appsVisible.count == 0 {
+            if appsVisible.count == 0 || appManager.status.isStopped() {
                 WelcomeView()
             } else {
                 ScrollView {

@@ -31,6 +31,7 @@ struct DisabledView: View {
                     
                     BtnStart()
                         .scaleEffect(isAnimating ? 1 : 0.9)
+                        .labelStyle(.titleOnly)
                 }
                 .padding()
             }

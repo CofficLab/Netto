@@ -7,7 +7,7 @@ struct BtnStart: View, SuperLog {
     @EnvironmentObject var m: MessageProvider
 
     var body: some View {
-        Button("开始") {
+        Button {
             Task {
                 do {
                     try await channel.startFilter(reason: self.className)
@@ -16,7 +16,16 @@ struct BtnStart: View, SuperLog {
                     m.error(error)
                 }
             }
-        }.controlSize(.extraLarge)
+        } label: {
+            Label {
+                            Text("开始")
+                        } icon: {
+                            Image("dot_green")
+                        .scaleEffect(0.55)
+                        }
+            
+        }
+        .controlSize(.extraLarge)
     }
 }
 

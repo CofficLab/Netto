@@ -7,7 +7,7 @@ struct StopView: View {
         VStack(spacing: 24) {
             Text("已停止监控").font(.title)
             
-            BtnStart()
+            BtnStart().labelStyle(.titleOnly)
         }
         .padding()
 

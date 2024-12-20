@@ -66,6 +66,7 @@
 		F5E3D9E22D13D7AD00D9C9D3 /* ExtensionNotReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E12D13D7AD00D9C9D3 /* ExtensionNotReady.swift */; };
 		F5E3D9E82D14003400D9C9D3 /* BtnDeny.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E72D14003400D9C9D3 /* BtnDeny.swift */; };
 		F5E3D9EA2D1401E400D9C9D3 /* BtnAllow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E92D1401E400D9C9D3 /* BtnAllow.swift */; };
+		F5E3D9F42D15198100D9C9D3 /* BtnToggleLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9F32D15197D00D9C9D3 /* BtnToggleLog.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -150,6 +151,7 @@
 		F5E3D9E12D13D7AD00D9C9D3 /* ExtensionNotReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionNotReady.swift; sourceTree = "<group>"; };
 		F5E3D9E72D14003400D9C9D3 /* BtnDeny.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDeny.swift; sourceTree = "<group>"; };
 		F5E3D9E92D1401E400D9C9D3 /* BtnAllow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnAllow.swift; sourceTree = "<group>"; };
+		F5E3D9F32D15197D00D9C9D3 /* BtnToggleLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnToggleLog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +191,7 @@
 		0B09F68C2B3EAD6400B90A59 /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
+				F5E3D9F32D15197D00D9C9D3 /* BtnToggleLog.swift */,
 				F5E3D9E92D1401E400D9C9D3 /* BtnAllow.swift */,
 				F5E3D9E72D14003400D9C9D3 /* BtnDeny.swift */,
 				F5E3D9DA2D13C01E00D9C9D3 /* BtnStop.swift */,
@@ -518,6 +521,7 @@
 				F5E3D9D72D13BEFB00D9C9D3 /* StopView.swift in Sources */,
 				0B33993A2B392B20005CC627 /* FilterStatus.swift in Sources */,
 				F5E3D9D52D13BE2C00D9C9D3 /* RunningView.swift in Sources */,
+				F5E3D9F42D15198100D9C9D3 /* BtnToggleLog.swift in Sources */,
 				0B1C33FC2B39C1E7004A5E36 /* SmartApp.swift in Sources */,
 				0B09F68F2B3EAD8900B90A59 /* BtnInstall.swift in Sources */,
 				0B19F0C52B3AB6AB002D8FAC /* AppLine.swift in Sources */,
