@@ -8,7 +8,7 @@ struct BtnToggleLog: View {
             app.logVisible.toggle()
         } label: {
             Label(
-                app.logVisible ? "隐藏日志" : "显示日志",
+                app.logVisible ? "Hide Log" : "Show Log",
                 systemImage: app.logVisible ? "list.bullet.rectangle" : "list.bullet.rectangle"
             )
         }

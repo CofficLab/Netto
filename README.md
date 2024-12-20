@@ -10,7 +10,8 @@ macOS 平台的 APP 联网控制。
 
 ## 开发
 
-在运行前，有脚本将构建后的APP移动到Application目录下。
+确保已卸载应用目录中的软件。  
+在运行前，有脚本将构建后的 APP 移动到 Application 目录下。
 
 ## Reference
 

@@ -31,10 +31,10 @@ struct ContentView: View {
         .navigationTitle("")
         .toolbar {
             ToolbarItem(placement: .navigation, content: {
-                Picker("类型", selection: $app.displayType) {
-                    Text("全部").tag(DisplayType.All)
-                    Text("允许的").tag(DisplayType.Allowed)
-                    Text("禁止的").tag(DisplayType.Rejected)
+                Picker("Type", selection: $app.displayType) {
+                    Text("All").tag(DisplayType.All)
+                    Text("Allowed").tag(DisplayType.Allowed)
+                    Text("Rejected").tag(DisplayType.Rejected)
                 }
             })
             ToolbarItem {

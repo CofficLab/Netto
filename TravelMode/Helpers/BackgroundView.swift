@@ -123,7 +123,7 @@ struct BackgroundView: View {
                 endPoint: .bottomTrailing
             )
             
-            Text("Preview 专用背景").opacity(0.4).font(.title)
+            Text("Preview").opacity(0.4).font(.title)
 
             Color.black.opacity(0.4).blur(radius: 2)
         }

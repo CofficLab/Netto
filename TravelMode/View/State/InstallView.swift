@@ -7,7 +7,7 @@ struct InstallView: View {
         Group {
             if AppConfig.osVersion < 15 {
                 VStack(spacing: 24) {
-                    Text("请在系统设置中允许运行")
+                    Text("Please allow TravelMode to run in System Settings")
                         .font(.system(size: 24, weight: .medium))
                         .foregroundStyle(.primary)
                         .opacity(isAnimating ? 1 : 0)
@@ -26,7 +26,7 @@ struct InstallView: View {
                     BtnInstall()
                         .scaleEffect(isAnimating ? 1 : 0.9)
 
-                    Text("安装系统扩展以继续")
+                    Text("Install System Extension to continue")
                         .font(.headline)
                         .foregroundStyle(.secondary)
                         .opacity(isAnimating ? 1 : 0)

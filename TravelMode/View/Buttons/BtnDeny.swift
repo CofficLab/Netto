@@ -12,13 +12,13 @@ struct BtnDeny: View, SuperLog {
         Button {
             do {
                 try AppSetting.setDeny(appId)
-                self.m.toast("已禁止")
+                self.m.toast("Denied")
             } catch (let error) {
                 os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
                 m.error(error)
             }
         } label: {
-            Label("禁止", systemImage: "xmark.circle.fill")
+            Label("Deny", systemImage: "xmark.circle.fill")
         }
         .controlSize(.extraLarge)
         .foregroundColor(.red)

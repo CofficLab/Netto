@@ -5,8 +5,8 @@ struct DebugCommands: Commands {
     var body: some Commands {
         SidebarCommands()
 
-        CommandMenu("调试") {
-            Button("打开数据文件夹") {
+        CommandMenu("Debug") {
+            Button("Open Data Folder") {
                 let folderPath = AppConfig.databaseURL.deletingLastPathComponent()
 
                 NSWorkspace.shared.open(folderPath)

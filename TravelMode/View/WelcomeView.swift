@@ -26,13 +26,14 @@ struct WelcomeView: View {
                 case .extensionNotReady:
                     ExtensionNotReady()
                 case .waitingForApproval:
-                    Text("点击“允许”以安装扩展").font(.title)
+                    Text("Click \"Allow\" to install extension")
+                        .font(.title)
                     Image("Ask")
                 case let .error(error):
                     VStack {
                         InstallView()
 
-                        Text("错误: \(error.localizedDescription)")
+                        Text("Error: \(error.localizedDescription)")
                             .font(.callout)
                             .padding(20)
                             .background(BackgroundView.type2A.rotationEffect(.degrees(180)))

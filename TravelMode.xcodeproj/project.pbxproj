@@ -42,6 +42,7 @@
 		0B737BB42D12F24A00712ABA /* SmartMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB32D12F24A00712ABA /* SmartMessage.swift */; };
 		0B737BB72D12F2AF00712ABA /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB62D12F2AF00712ABA /* SuperEvent.swift */; };
 		0B81F59B2B3D008C00F65A4B /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */; };
+		0BE2F0512D159D0E008BC604 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 0BE2F0502D159D0E008BC604 /* Localizable.xcstrings */; };
 		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		C40A5C4B229DD6A500627D50 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A5C4A229DD6A500627D50 /* main.swift */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -125,6 +126,7 @@
 		0B737BB32D12F24A00712ABA /* SmartMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartMessage.swift; sourceTree = "<group>"; };
 		0B737BB62D12F2AF00712ABA /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
 		0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		0BE2F0502D159D0E008BC604 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		6ED719E06ED6DED000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		C40A5C4A229DD6A500627D50 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -346,6 +348,7 @@
 			isa = PBXGroup;
 			children = (
 				C4B45DBC2273A0020050C59B /* Assets.xcassets */,
+				0BE2F0502D159D0E008BC604 /* Localizable.xcstrings */,
 				0B3399312B39160B005CC627 /* Bootstrap */,
 				0B1D14A52B3AA051005A3D65 /* Commands */,
 				0B1D14A02B3A999E005A3D65 /* Config */,
@@ -462,7 +465,7 @@
 			};
 			buildConfigurationList = C4B45DB022739FFF0050C59B /* Build configuration list for PBXProject "TravelMode" */;
 			compatibilityVersion = "Xcode 9.3";
-			developmentRegion = "zh-Hans";
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -496,6 +499,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0BE2F0512D159D0E008BC604 /* Localizable.xcstrings in Resources */,
 				C4B45DBD2273A0020050C59B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -696,6 +700,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -754,6 +759,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Release;

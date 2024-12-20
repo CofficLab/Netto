@@ -12,13 +12,13 @@ struct BtnAllow: View, SuperLog {
         Button {
             do {
                 try AppSetting.setAllow(appId)
-                self.m.done("已允许")
+                self.m.done("Allowed")
             } catch (let error) {
                 os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
                 m.error(error)
             }
         } label: {
-            Label("允许", systemImage: "checkmark.circle.fill")
+            Label("Allow", systemImage: "checkmark.circle.fill")
         }
         .controlSize(.extraLarge)
         .foregroundColor(.green)

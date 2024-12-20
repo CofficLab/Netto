@@ -9,7 +9,7 @@ struct EventList: View {
     var body: some View {
         VStack {
             Table(events, columns: {
-                TableColumn("时间", value: \.timeFormatted).width(132)
+                TableColumn("Time", value: \.timeFormatted).width(132)
                 TableColumn("APP") { event in
                     let smartApp = SmartApp.fromId(event.sourceAppIdentifier)
                     HStack {
@@ -18,12 +18,12 @@ struct EventList: View {
                     }
                 }
                 TableColumn("ID", value: \.sourceAppIdentifier)
-                TableColumn("地址", value: \.address)
-                TableColumn("端口", value: \.port).width(60)
-                TableColumn("方向") { event in
-                    Text("\(event.direction == .inbound ? "入" : "出")")
+                TableColumn("Address", value: \.address)
+                TableColumn("Port", value: \.port).width(60)
+                TableColumn("Direction") { event in
+                    Text("\(event.direction == .inbound ? "In" : "Out")")
                 }.width(30)
-                TableColumn("状态") { e in
+                TableColumn("Status") { e in
                     Text(e.statusDescription)
                         .foregroundStyle(e.isAllowed ? .green : .red)
                 }.width(30)

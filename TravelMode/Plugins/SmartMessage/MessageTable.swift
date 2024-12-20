@@ -19,7 +19,7 @@ struct MessageTable: View, SuperLog, SuperThread {
         GroupBox {
             HStack {
                 Picker("", selection: $selectedChannel) {
-                    Text("全部").tag("all")
+                    Text("All").tag("all")
                     ForEach(m.getAllChannels(), id: \.self) { channel in
                         Text(channel)
                     }
@@ -29,21 +29,21 @@ struct MessageTable: View, SuperLog, SuperThread {
                 Button(action: {
                     m.clearMessages()
                 }) {
-                    Text("清空")
+                    Text("Clear")
                 }
             }
             Table(messages, selection: $selection, columns: {
-                TableColumn("类型") { message in
+                TableColumn("Type") { message in
                     Text(message.channel)
                 }
                 .width(80)
 
-                TableColumn("消息") { message in
+                TableColumn("Message") { message in
                     Text(message.description)
                         .foregroundColor(message.isError ? .red : .primary)
                 }
 
-                TableColumn("时间") { message in
+                TableColumn("Time") { message in
                     Text(message.createdAt.string)
                 }
                 .width(180)

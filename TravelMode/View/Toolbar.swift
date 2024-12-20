@@ -37,7 +37,7 @@ struct Toolbar: View, SuperLog {
                 case .stopped:
                     BtnStart().labelStyle(.iconOnly)
                 case .indeterminate:
-                    Button("状态未知") {}
+                    Button("Status Unknown") {}
                 case .running:
                     BtnStop().labelStyle(.iconOnly)
                 case .notInstalled, .disabled, .extensionNotReady, .needApproval, .waitingForApproval, .error:

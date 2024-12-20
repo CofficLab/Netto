@@ -7,7 +7,7 @@ struct ApprovalView: View {
         Group {
             if AppConfig.osVersion < 15 {
                 VStack(spacing: 24) {
-                    Text("请在系统设置中允许运行")
+                    Text("Please allow TravelMode to run in System Settings")
                         .font(.system(size: 24, weight: .medium))
                         .foregroundStyle(.primary)
                         .opacity(isAnimating ? 1 : 0)
@@ -23,13 +23,13 @@ struct ApprovalView: View {
                 .padding()
             } else {
                 VStack(spacing: 24) {
-                    Text("请在系统设置中允许运行")
+                    Text("Please allow TravelMode to run in System Settings")
                         .font(.system(size: 24, weight: .medium))
                         .foregroundStyle(.primary)
                         .opacity(isAnimating ? 1 : 0)
                         .offset(y: isAnimating ? 0 : 20)
 
-                    Text("通用 -> 登录项与扩展 -> 网络扩展 -> TravelMode")
+                    Text("General -> Login Items & Extensions -> Network Extension -> TravelMode")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(.secondary)
                         .opacity(isAnimating ? 1 : 0)

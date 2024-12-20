@@ -5,8 +5,8 @@ struct RunningView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Text("正在监控").font(.title)
-            Text("联网的 APP 将会出现在这里").font(.title)
+            Text("Monitoring").font(.title)
+            Text("Apps connected to the internet will appear here").font(.title)
         }
         .padding()
 

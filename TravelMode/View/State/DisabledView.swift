@@ -7,7 +7,7 @@ struct DisabledView: View {
         Group {
             if AppConfig.osVersion < 15 {
                 VStack(spacing: 24) {
-                    Text("请在系统设置中允许运行")
+                    Text("Please allow TravelMode to run in System Settings")
                         .font(.system(size: 24, weight: .medium))
                         .foregroundStyle(.primary)
                         .opacity(isAnimating ? 1 : 0)
@@ -23,7 +23,7 @@ struct DisabledView: View {
                 .padding()
             } else {
                 VStack(spacing: 24) {
-                    Text("过滤器已停用")
+                    Text("Filter is disabled")
                         .font(.system(size: 24, weight: .medium))
                         .foregroundStyle(.primary)
                         .opacity(isAnimating ? 1 : 0)

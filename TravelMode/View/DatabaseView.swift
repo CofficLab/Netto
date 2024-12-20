@@ -8,14 +8,14 @@ struct DatabaseView: View {
     var body: some View {
         Table(items, columns: {
             TableColumn("ID", value: \.appId)
-            TableColumn("允许") {
+            TableColumn("Allowed") {
                 if $0.allowed {
-                    Text("是").foregroundStyle(.green)
+                    Text("Yes").foregroundStyle(.green)
                 } else {
-                    Text("否").foregroundStyle(.red)
+                    Text("No").foregroundStyle(.red)
                 }
             }
-            TableColumn("操作") { i in
+            TableColumn("Action") { i in
                 if i.allowed {
                     BtnDeny(appId: i.appId)
                 } else {

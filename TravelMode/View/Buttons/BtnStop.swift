@@ -18,7 +18,7 @@ struct BtnStop: View, SuperLog {
             }
         } label: {
             Label {
-                Text("停止")
+                Text("Stop")
             } icon: {
                 Image("dot_red")
             .scaleEffect(0.55)

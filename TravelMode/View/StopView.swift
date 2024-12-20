@@ -5,7 +5,7 @@ struct StopView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Text("已停止监控").font(.title)
+            Text("Monitoring Stopped").font(.title)
             
             BtnStart().labelStyle(.titleOnly)
         }

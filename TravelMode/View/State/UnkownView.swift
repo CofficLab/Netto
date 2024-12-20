@@ -5,7 +5,7 @@ struct UnkownView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Text("状态未知")
+            Text("Unknown")
                 .font(.system(size: 24, weight: .medium))
                 .foregroundStyle(.primary)
                 .opacity(isAnimating ? 1 : 0)

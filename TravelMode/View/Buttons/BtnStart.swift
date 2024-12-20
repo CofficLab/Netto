@@ -18,7 +18,7 @@ struct BtnStart: View, SuperLog {
             }
         } label: {
             Label {
-                            Text("开始")
+                            Text("Start")
                         } icon: {
                             Image("dot_green")
                         .scaleEffect(0.55)
