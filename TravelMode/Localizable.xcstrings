@@ -129,7 +129,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. 系统偏好设置 -> 登录项与扩展 -> 网络扩展, 启用"
+            "value" : "1. 通用 -> 登录项与扩展 -> 网络扩展, 启用"
           }
         }
       }
@@ -289,7 +289,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "系统偏好设置 -> 登录项与扩展 -> 网络扩展 -> TravelMode"
+            "value" : "通用 -> 登录项与扩展 -> 网络扩展 -> TravelMode"
           }
         }
       }
