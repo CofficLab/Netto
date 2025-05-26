@@ -9,60 +9,91 @@ struct ExtensionNotReady: View {
             Text("按下图的引导进行设置")
                 .font(.title)
                 .padding()
-            
-            // 步骤
+
+            // 导航按钮
             HStack {
                 Button(action: {
-                    withAnimation {
+                    withAnimation(.spring()) {
                         currentStep -= 1
                     }
                 }) {
-                    HStack {
+                    HStack(spacing: 8) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 14, weight: .semibold))
                         Text("上一步")
-                        Image(systemName: "arrow.right")
+                            .font(.system(size: 14, weight: .medium))
                     }
-                    .padding()
-                }.disabled(currentStep == 1)
+                    .foregroundColor(currentStep == 1 ? .gray : .blue)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(currentStep == 1 ? Color.gray.opacity(0.1) : Color.blue.opacity(0.1))
+                    .cornerRadius(20)
+                }
+                .buttonStyle(.plain)
+                .disabled(currentStep == 1)
 
                 Spacer()
 
-                Text("步骤 \(currentStep)/2")
-                    .foregroundColor(.gray)
+                // 进度指示器
+                HStack(spacing: 4) {
+                    ForEach(1 ... 2, id: \.self) { step in
+                        Circle()
+                            .fill(step == currentStep ? Color.blue : Color.gray.opacity(0.3))
+                            .frame(width: 8, height: 8)
+                            .overlay(
+                                Circle()
+                                    .stroke(step == currentStep ? Color.blue.opacity(0.3) : Color.clear, lineWidth: 2)
+                                    .scaleEffect(1.5)
+                            )
+                    }
+                }
 
                 Spacer()
 
                 Button(action: {
-                    withAnimation {
+                    withAnimation(.spring()) {
                         currentStep += 1
                     }
                 }) {
-                    HStack {
+                    HStack(spacing: 8) {
                         Text("下一步")
-                        Image(systemName: "arrow.right")
+                            .font(.system(size: 14, weight: .medium))
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .semibold))
                     }
-                    .padding()
-                }.disabled(currentStep == 2)
+                    .foregroundColor(currentStep == 2 ? .gray : .blue)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(currentStep == 2 ? Color.gray.opacity(0.1) : Color.blue.opacity(0.1))
+                    .cornerRadius(20)
+                }
+                .buttonStyle(.plain)
+                .disabled(currentStep == 2)
             }
-            .background(.orange.opacity(0.05))
-            .cornerRadius(8)
-            .padding()
+            .padding(20)
+            .background(Color.white)
+            .cornerRadius(16)
+            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 2)
+            .padding(.horizontal)
 
             // 示意图
-            if currentStep == 1 {
-                step1()
-                    .transition(.opacity)
-            } else if currentStep == 2 {
-                step2()
-                    .transition(.opacity)
-            }
+            VStack {
+                if currentStep == 1 {
+                    step1()
+                        .transition(.opacity)
+                } else if currentStep == 2 {
+                    step2()
+                        .transition(.opacity)
+                }
+            }.border(.blue)
         }
-            .onAppear {
+        .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                 isAnimating = true
             }
         }
     }
-    
+
     func step1() -> some View {
         NavigationSplitView {
             sidebarView()
@@ -148,26 +179,24 @@ struct ExtensionNotReady: View {
 
                 ScrollView {
                     VStack(spacing: 0) {
-                
-                            HStack {
-                                Text("向下滚动")
-                                    .font(.headline)
-                                Image(systemName: "arrow.down")
-                                    .font(.headline)
-                                    .foregroundColor(.blue)
-                                    .scaleEffect(isAnimating ? 1.2 : 1.0)
-                                    .animation(
-                                        Animation
-                                            .easeInOut(duration: 1.0)
-                                            .repeatForever(autoreverses: true),
-                                        value: isAnimating
-                                    )
-                            }
-                            .padding(.vertical, 12)
-                            .padding(.horizontal, 16)
-                            .background(Color.blue.opacity(0.1))
-                            .cornerRadius(8)
-                        
+                        HStack {
+                            Text("向下滚动")
+                                .font(.headline)
+                            Image(systemName: "arrow.down")
+                                .font(.headline)
+                                .foregroundColor(.blue)
+                                .scaleEffect(isAnimating ? 1.2 : 1.0)
+                                .animation(
+                                    Animation
+                                        .easeInOut(duration: 1.0)
+                                        .repeatForever(autoreverses: true),
+                                    value: isAnimating
+                                )
+                        }
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 16)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(8)
 
                         Group {
                             Text("扩展")
