@@ -1,4 +1,4 @@
-import MagicKit
+import MagicCore
 import SwiftUI
 
 struct Toolbar: View, SuperLog {
@@ -35,11 +35,11 @@ struct Toolbar: View, SuperLog {
             ZStack {
                 switch app.status {
                 case .stopped:
-                    BtnStart().labelStyle(.iconOnly)
+                    BtnStart(asToolbarItem: true).labelStyle(.iconOnly)
                 case .indeterminate:
                     Button("Status Unknown") {}
                 case .running:
-                    BtnStop().labelStyle(.iconOnly)
+                    BtnStop(asToolbarItem: true).labelStyle(.iconOnly)
                 case .notInstalled, .disabled, .extensionNotReady, .needApproval, .waitingForApproval, .error:
                     EmptyView()
                 }

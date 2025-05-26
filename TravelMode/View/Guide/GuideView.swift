@@ -1,12 +1,10 @@
 import SwiftUI
 
-struct WelcomeView: View {
+struct GuideView: View {
     @EnvironmentObject private var app: AppManager
 
     var body: some View {
         ZStack {
-            AppListSample()
-            
             Color.black.opacity(0.4)
 
             VStack(spacing: 0) {
@@ -40,7 +38,7 @@ struct WelcomeView: View {
                     }
                 }
             }
-            .background(BackgroundView.type2A)
+            .background(.background)
             .cornerRadius(16)
             .padding(20)
         }

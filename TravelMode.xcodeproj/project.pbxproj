@@ -35,13 +35,12 @@
 		0B408A2C2B395A77000E77DB /* NEFilterFlowExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B408A2B2B395A77000E77DB /* NEFilterFlowExt.swift */; };
 		0B408A302B39612B000E77DB /* AppHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B408A2F2B39612B000E77DB /* AppHelper.swift */; };
 		0B40CE422B39646100DC6771 /* AppList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B40CE412B39646100DC6771 /* AppList.swift */; };
-		0B737BAA2D12EA6700712ABA /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BA92D12EA6700712ABA /* MagicKit */; };
 		0B737BAC2D12ECF000712ABA /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAB2D12ECF000712ABA /* MagicKit */; };
 		0B737BAF2D12F1EC00712ABA /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAE2D12F1EC00712ABA /* AlertToast */; };
 		0B737BB22D12F22500712ABA /* MessageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB12D12F22500712ABA /* MessageProvider.swift */; };
 		0B737BB42D12F24A00712ABA /* SmartMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB32D12F24A00712ABA /* SmartMessage.swift */; };
 		0B737BB72D12F2AF00712ABA /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB62D12F2AF00712ABA /* SuperEvent.swift */; };
-		0B81F59B2B3D008C00F65A4B /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */; };
+		0B81F59B2B3D008C00F65A4B /* GuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B81F59A2B3D008C00F65A4B /* GuideView.swift */; };
 		0BE2F0512D159D0E008BC604 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 0BE2F0502D159D0E008BC604 /* Localizable.xcstrings */; };
 		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		C40A5C4B229DD6A500627D50 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A5C4A229DD6A500627D50 /* main.swift */; };
@@ -51,6 +50,8 @@
 		C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
 		C4B45DBD2273A0020050C59B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C4B45DBC2273A0020050C59B /* Assets.xcassets */; };
 		C4B45DDE2273A3450050C59B /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
+		F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3ED2DE463A1009CC54C /* MagicCore */; };
+		F500B3F02DE4684F009CC54C /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3EF2DE4684F009CC54C /* MagicKit */; };
 		F589B5BD2D13A10700C7E449 /* OSExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F589B5BC2D13A10300C7E449 /* OSExt.swift */; };
 		F589B5BF2D13A4AA00C7E449 /* InstallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F589B5BE2D13A4AA00C7E449 /* InstallView.swift */; };
 		F5E3D9C92D13A84500D9C9D3 /* MessageTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9C82D13A84500D9C9D3 /* MessageTable.swift */; };
@@ -125,7 +126,7 @@
 		0B737BB12D12F22500712ABA /* MessageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProvider.swift; sourceTree = "<group>"; };
 		0B737BB32D12F24A00712ABA /* SmartMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartMessage.swift; sourceTree = "<group>"; };
 		0B737BB62D12F2AF00712ABA /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
-		0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		0B81F59A2B3D008C00F65A4B /* GuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideView.swift; sourceTree = "<group>"; };
 		0BE2F0502D159D0E008BC604 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		6ED719E06ED6DED000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -171,8 +172,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B737BAF2D12F1EC00712ABA /* AlertToast in Frameworks */,
+				F500B3F02DE4684F009CC54C /* MagicKit in Frameworks */,
+				F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */,
 				C4B45DDE2273A3450050C59B /* NetworkExtension.framework in Frameworks */,
-				0B737BAA2D12EA6700712ABA /* MagicKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,15 +231,6 @@
 			path = Commands;
 			sourceTree = "<group>";
 		};
-		0B3399282B390D30005CC627 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				0B3399292B390D44005CC627 /* EventManager.swift */,
-				0B33992F2B3914EF005CC627 /* AppManager.swift */,
-			);
-			path = ViewModel;
-			sourceTree = "<group>";
-		};
 		0B33992B2B3911D9005CC627 /* Event */ = {
 			isa = PBXGroup;
 			children = (
@@ -291,6 +284,8 @@
 			children = (
 				F5E3D9CE2D13A89B00D9C9D3 /* PluginProvider.swift */,
 				0B737BB12D12F22500712ABA /* MessageProvider.swift */,
+				0B33992F2B3914EF005CC627 /* AppManager.swift */,
+				0B3399292B390D44005CC627 /* EventManager.swift */,
 				0B5B1CBF2B3865F90002421E /* ChannelProvider.swift */,
 			);
 			path = Providers;
@@ -313,7 +308,7 @@
 				F589B5BE2D13A4AA00C7E449 /* InstallView.swift */,
 				F5E3D9D42D13BE2C00D9C9D3 /* RunningView.swift */,
 				F5E3D9D22D13BC2400D9C9D3 /* ApprovalView.swift */,
-				0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */,
+				0B81F59A2B3D008C00F65A4B /* GuideView.swift */,
 			);
 			path = Guide;
 			sourceTree = "<group>";
@@ -374,7 +369,6 @@
 				0B737BB02D12F21C00712ABA /* Providers */,
 				C4B45DC22273A0020050C59B /* Signing.entitlements */,
 				0B3399342B3916B2005CC627 /* View */,
-				0B3399282B390D30005CC627 /* ViewModel */,
 			);
 			path = TravelMode;
 			sourceTree = "<group>";
@@ -465,7 +459,7 @@
 			};
 			buildConfigurationList = C4B45DB022739FFF0050C59B /* Build configuration list for PBXProject "TravelMode" */;
 			compatibilityVersion = "Xcode 9.3";
-			developmentRegion = en;
+			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -561,7 +555,7 @@
 				F5E3D9E22D13D7AD00D9C9D3 /* ExtNotReady.swift in Sources */,
 				0B3399272B3907F8005CC627 /* ChannelProvider.swift in Sources */,
 				0B1D14A72B3AA062005A3D65 /* DebugCommand.swift in Sources */,
-				0B81F59B2B3D008C00F65A4B /* WelcomeView.swift in Sources */,
+				0B81F59B2B3D008C00F65A4B /* GuideView.swift in Sources */,
 				0B3399382B39277B005CC627 /* EventList.swift in Sources */,
 				0B40CE422B39646100DC6771 /* AppList.swift in Sources */,
 				0B737BB72D12F2AF00712ABA /* SuperEvent.swift in Sources */,
@@ -603,7 +597,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 1.0.18;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode.Extension;
 				PRODUCT_NAME = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -630,7 +624,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 1.0.18;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode.Extension;
 				PRODUCT_NAME = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -861,8 +855,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/MagicKit";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = dev;
+				kind = branch;
 			};
 		};
 		0B737BAD2D12F1EC00712ABA /* XCRemoteSwiftPackageReference "AlertToast" */ = {
@@ -876,11 +870,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0B737BA92D12EA6700712ABA /* MagicKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
-			productName = MagicKit;
-		};
 		0B737BAB2D12ECF000712ABA /* MagicKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
@@ -890,6 +879,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0B737BAD2D12F1EC00712ABA /* XCRemoteSwiftPackageReference "AlertToast" */;
 			productName = AlertToast;
+		};
+		F500B3ED2DE463A1009CC54C /* MagicCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicCore;
+		};
+		F500B3EF2DE4684F009CC54C /* MagicKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

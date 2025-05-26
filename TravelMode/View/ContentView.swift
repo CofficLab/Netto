@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicCore
 
 struct ContentView: View {
     @EnvironmentObject private var app: AppManager
@@ -17,7 +18,9 @@ struct ContentView: View {
                 }
             }.background(.clear)
 
-//            StatusBar()
+            if MagicApp.isDebug {
+                StatusBar()
+            }
         }
         .onAppear {
             event.onFilterStatusChanged({

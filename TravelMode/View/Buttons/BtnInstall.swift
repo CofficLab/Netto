@@ -1,12 +1,17 @@
+import MagicCore
 import SwiftUI
 
 struct BtnInstall: View {
     @EnvironmentObject private var channel: ChannelProvider
 
     var body: some View {
-        Button("Install") {
+        MagicButton(icon: "puzzlepiece.extension", size: .auto, action: {
             channel.installFilter()
-        }.controlSize(.extraLarge)
+        })
+        .magicTitle("安装系统扩展")
+        .magicShape(.roundedRectangle)
+        .frame(width: 150)
+        .frame(height: 50)
     }
 }
 
@@ -20,4 +25,5 @@ struct BtnInstall: View {
     RootView {
         BtnInstall()
     }
+    .frame(height: 800)
 }

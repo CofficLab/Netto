@@ -71,9 +71,9 @@ struct ExtensionNotReady: View {
                 .disabled(currentStep == 2)
             }
             .padding(20)
-            .background(Color.white)
+            .background(.background)
             .cornerRadius(16)
-            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 2)
+            .shadow(color: Color.orange.opacity(0.1), radius: 10, x: 0, y: 2)
             .padding(.horizontal)
 
             // 示意图
@@ -268,32 +268,21 @@ struct ExtensionNotReady: View {
             }
 
             Section {
-                NavigationLink(destination: Text("Wi-Fi")) {
-                    Label("Wi-Fi", systemImage: "wifi")
+                Label("Wi-Fi", systemImage: "wifi")
                         .opacity(0.6)
-                }
-                NavigationLink(destination: Text("网络")) {
-                    Label("网络", systemImage: "network")
+                Label("网络", systemImage: "network")
                         .opacity(0.6)
-                }
             }
 
             Section {
-                NavigationLink(destination: Text("通用")) {
-                    Label("通用", systemImage: "gear")
+                Label("通用", systemImage: "gear")
                         .foregroundColor(.red)
-                }
-                NavigationLink(destination: Text("辅助功能")) {
-                    Label("辅助功能", systemImage: "accessibility")
+                Label("辅助功能", systemImage: "accessibility")
                         .opacity(0.6)
-                }
-                NavigationLink(destination: Text("聚焦")) {
-                    Label("聚焦", systemImage: "magnifyingglass")
+                Label("聚焦", systemImage: "magnifyingglass")
                         .opacity(0.6)
-                }
             }
         }
-        .navigationTitle("设置")
     }
 
     private func appRow(icon: String, iconColor: Color, title: String, description: String, isEnabled: Bool = false, showReload: Bool = false) -> some View {
