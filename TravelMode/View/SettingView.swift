@@ -140,44 +140,7 @@ struct SettingView: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         Group {
-                            Text("登录项")
-                                .font(.headline)
-                                .padding(.horizontal)
-                                .padding(.vertical, 8)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-
-                            appRow(
-                                icon: "circle.fill",
-                                iconColor: .purple,
-                                title: "OrbStack",
-                                description: "1个项目 · 1个项目影响所有用户",
-                                isEnabled: true
-                            )
-
-                            appRow(
-                                icon: "square.fill",
-                                iconColor: .black,
-                                title: "redis-server",
-                                description: "项目来自自动脚本的开发者。",
-                                isEnabled: true,
-                                showReload: true
-                            )
-
-                            appRow(
-                                icon: "circle.fill",
-                                iconColor: .yellow,
-                                title: "Tencent Lemon",
-                                description: "5个项目 · 3个项目影响所有用户",
-                                isEnabled: true
-                            )
-
-                            appRow(
-                                icon: "square.fill",
-                                iconColor: .cyan,
-                                title: "won fen",
-                                description: "1个项目",
-                                isEnabled: true
-                            )
+                            Text("向下滚动")
                         }
 
                         Group {
@@ -188,20 +151,6 @@ struct SettingView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
 
                             extensionRow(
-                                icon: "square.fill",
-                                iconColor: .gray,
-                                title: "Xcode Source Editor",
-                                description: "Soothe, XCFormat"
-                            )
-
-                            extensionRow(
-                                icon: "square.fill",
-                                iconColor: .gray,
-                                title: "共享",
-                                description: "FMPhotoShareExtension, Instruments及其他20个"
-                            )
-
-                            extensionRow(
                                 icon: "eye.fill",
                                 iconColor: .gray,
                                 title: "快速查看",
@@ -210,10 +159,11 @@ struct SettingView: View {
 
                             extensionRow(
                                 icon: "puzzlepiece.extension",
-                                iconColor: .red,
+                                iconColor: .gray,
                                 title: "网络扩展",
-                                description: "输记"
-                            )
+                                description: "TravelMode",
+                                infoIconColor: .red
+                            ).foregroundStyle(.red)
 
                             extensionRow(
                                 icon: "doc.fill",
@@ -314,7 +264,13 @@ struct SettingView: View {
         .contentShape(Rectangle())
     }
 
-    private func extensionRow(icon: String, iconColor: Color, title: String, description: String) -> some View {
+    private func extensionRow(
+        icon: String,
+        iconColor: Color,
+        title: String,
+        description: String,
+        infoIconColor: Color = .gray
+    ) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .resizable()
@@ -333,7 +289,7 @@ struct SettingView: View {
             Spacer()
 
             Image(systemName: "info.circle")
-                .foregroundColor(.gray)
+                .foregroundColor(infoIconColor)
         }
         .padding(.horizontal)
         .padding(.vertical, 12)
@@ -365,5 +321,5 @@ struct SettingView: View {
 
 #Preview {
     SettingView()
-        .frame(height: 800)
+        .frame(height: 500)
 }
