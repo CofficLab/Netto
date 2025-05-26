@@ -125,6 +125,7 @@
       "shouldTranslate" : false
     },
     "1. General -> Login Items & Extensions -> Network Extension, enable" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -135,6 +136,7 @@
       }
     },
     "2. Retry to enable" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -204,6 +206,9 @@
         }
       }
     },
+    "Apple ID" : {
+
+    },
     "Apps connected to the internet will appear here" : {
       "localizations" : {
         "zh-Hans" : {
@@ -233,6 +238,12 @@
           }
         }
       }
+    },
+    "Coffic" : {
+
+    },
+    "CofficLab" : {
+
     },
     "Debug" : {
       "localizations" : {
@@ -504,6 +515,9 @@
         }
       }
     },
+    "Wi-Fi" : {
+
+    },
     "Yes" : {
       "localizations" : {
         "zh-Hans" : {
@@ -513,6 +527,45 @@
           }
         }
       }
+    },
+    "上一步" : {
+
+    },
+    "下一步" : {
+
+    },
+    "向下滚动" : {
+
+    },
+    "扩展" : {
+
+    },
+    "扩展可在 Mac 和 App 中添加额外功能。部分扩展需要您在启用后才能运行。" : {
+
+    },
+    "按下图的引导进行设置" : {
+
+    },
+    "登录项与扩展" : {
+
+    },
+    "管理Mac的整体设置和相关设置，视觉控件更新，设置语言，磁盘访问等。" : {
+
+    },
+    "网络" : {
+
+    },
+    "聚焦" : {
+
+    },
+    "设置" : {
+
+    },
+    "辅助功能" : {
+
+    },
+    "通用" : {
+
     }
   },
   "version" : "1.0"
