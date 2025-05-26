@@ -24,8 +24,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
-      - uses: actions/download-artifact@v3
-      - run: ls -alhR
       - name: 读取版本号
         run: |
           # 读取配置文件路径
