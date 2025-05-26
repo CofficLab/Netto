@@ -85,7 +85,12 @@ struct ExtensionNotReady: View {
                     step2()
                         .transition(.opacity)
                 }
-            }.border(.blue)
+            }
+            .overlay(alignment: .top) {
+                Rectangle()
+                    .frame(height: 2)
+                    .foregroundColor(.blue.opacity(0.3))
+            }
         }
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
