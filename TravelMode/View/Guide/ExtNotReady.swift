@@ -351,6 +351,10 @@ struct ExtensionNotReady: View {
             Spacer()
 
             Image(systemName: "info.circle")
+                .overlay(isHero ?
+                    makeHeroCircle()
+                    : nil
+                )
         }
         .opacity(isHero ? 1 : 0.6)
         .foregroundStyle(isHero ? .red : .gray)
@@ -372,13 +376,22 @@ struct ExtensionNotReady: View {
             Spacer()
 
             Image(systemName: "chevron.right")
-                .font(.caption)
+                .font(.caption).overlay(isHero ?
+                    makeHeroCircle()
+                    : nil
+                )
         }
         .opacity(isHero ? 1 : 0.6)
         .foregroundStyle(isHero ? .red : .gray)
         .padding(.horizontal)
         .padding(.vertical, 12)
         .contentShape(Rectangle())
+    }
+
+    private func makeHeroCircle() -> some View {
+        Circle()
+            .stroke(.orange, lineWidth: 2)
+            .frame(width: 30, height: 30)
     }
 }
 
