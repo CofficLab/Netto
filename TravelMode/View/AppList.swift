@@ -3,11 +3,12 @@ import SwiftUI
 
 struct AppList: View {
     @EnvironmentObject private var appManager: AppManager
-    
+
     @State private var apps: [SmartApp] = []
     private var displayType: DisplayType {
         appManager.displayType
     }
+
     private var channel = ChannelProvider()
     private var appsVisible: [SmartApp] {
         apps.sorted(by: {
@@ -40,9 +41,10 @@ struct AppList: View {
             } else {
                 AppListSample()
             }
-            
+
             if appsVisible.count == 0 || appManager.status.isStopped() {
                 GuideView()
+                    .shadow(color: Color.blue.opacity(0.2), radius: 10, x: 0, y: 2)
             }
         }
         .onAppear {
@@ -50,7 +52,11 @@ struct AppList: View {
             onNewEvent()
         }
     }
+}
 
+// MARK: Event
+
+extension AppList {
     private func onNewEvent() {
         EventManager().onNetworkFilterFlow({ e in
             let app = SmartApp.fromId(e.sourceAppIdentifier)
