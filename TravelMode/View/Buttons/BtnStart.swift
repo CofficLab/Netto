@@ -5,22 +5,44 @@ import OSLog
 struct BtnStart: View, SuperLog {
     @EnvironmentObject private var channel: ChannelProvider
     @EnvironmentObject var m: MessageProvider
+    
+    private var asToolbarItem: Bool = false
+    
+    init(asToolbarItem: Bool = false) {
+        self.asToolbarItem = asToolbarItem
+    }
 
     var body: some View {
-        MagicButton(icon: "restart.circle", size: .auto, action: {
-            Task {
-                do {
-                    try await channel.startFilter(reason: self.className)
-                } catch (let error) {
-                    os_log("\(self.t)开启过滤器失败 -> \(error.localizedDescription)")
-                    m.error(error)
+        if asToolbarItem {
+            Button {
+                action()
+            } label: {
+                Label {
+                    Text("开始")
+                } icon: {
+                    Image(systemName: "restart.circle")
                 }
             }
-        })
-        .magicTitle("开启")
-        .magicShape(.roundedRectangle)
-        .frame(width: 150)
-        .frame(height: 50)
+        } else {
+            MagicButton(icon: "restart.circle", size: .auto, action: {
+                action()
+            })
+            .magicTitle("开启")
+            .magicShape(.roundedRectangle)
+            .frame(width: 150)
+            .frame(height: 50)
+        }
+    }
+    
+    private func action() -> Void {
+        Task {
+            do {
+                try await channel.startFilter(reason: self.className)
+            } catch (let error) {
+                os_log("\(self.t)开启过滤器失败 -> \(error.localizedDescription)")
+                m.error(error)
+            }
+        }
     }
 }
 
@@ -32,6 +54,6 @@ struct BtnStart: View, SuperLog {
 
 #Preview {
     RootView {
-        BtnInstall()
+        BtnStart()
     }
 }
