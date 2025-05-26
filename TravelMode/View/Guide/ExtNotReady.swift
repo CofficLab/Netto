@@ -1,3 +1,4 @@
+import MagicCore
 import SwiftUI
 
 struct ExtensionNotReady: View {
@@ -6,34 +7,58 @@ struct ExtensionNotReady: View {
 
     var body: some View {
         VStack {
-            Text("按下图的引导进行设置")
-                .font(.title)
-                .padding()
+            // 步骤
+            stepView
 
-            // 导航按钮
-            HStack {
-                Button(action: {
-                    withAnimation(.spring()) {
-                        currentStep -= 1
-                    }
-                }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 14, weight: .semibold))
-                        Text("上一步")
-                            .font(.system(size: 14, weight: .medium))
-                    }
-                    .foregroundColor(currentStep == 1 ? .gray : .blue)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(currentStep == 1 ? Color.gray.opacity(0.1) : Color.blue.opacity(0.1))
-                    .cornerRadius(20)
+            // 示意图
+            heroView
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                isAnimating = true
+            }
+        }
+    }
+
+    private var heroView: some View {
+        VStack {
+            if currentStep == 1 {
+                step1()
+            } else if currentStep == 2 {
+                step2()
+            }
+        }
+        .cornerRadius(12)
+        .padding()
+    }
+
+    private var stepView: some View {
+        // 导航按钮
+        HStack {
+            Button(action: {
+                withAnimation(.spring()) {
+                    currentStep -= 1
                 }
-                .buttonStyle(.plain)
-                .disabled(currentStep == 1)
+            }) {
+                HStack(spacing: 8) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 14, weight: .semibold))
+                    Text("上一步")
+                        .font(.system(size: 14, weight: .medium))
+                }
+                .foregroundColor(currentStep == 1 ? .gray : .blue)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(currentStep == 1 ? Color.gray.opacity(0.1) : Color.blue.opacity(0.1))
+                .cornerRadius(20)
+            }
+            .buttonStyle(.plain)
+            .disabled(currentStep == 1)
 
-                Spacer()
+            Spacer()
 
+            VStack {
+                Text("按下方示意图进行设置").font(.title)
                 // 进度指示器
                 HStack(spacing: 4) {
                     ForEach(1 ... 2, id: \.self) { step in
@@ -47,56 +72,35 @@ struct ExtensionNotReady: View {
                             )
                     }
                 }
+            }
 
-                Spacer()
+            Spacer()
 
-                Button(action: {
-                    withAnimation(.spring()) {
-                        currentStep += 1
-                    }
-                }) {
-                    HStack(spacing: 8) {
-                        Text("下一步")
-                            .font(.system(size: 14, weight: .medium))
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 14, weight: .semibold))
-                    }
-                    .foregroundColor(currentStep == 2 ? .gray : .blue)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(currentStep == 2 ? Color.gray.opacity(0.1) : Color.blue.opacity(0.1))
-                    .cornerRadius(20)
+            Button(action: {
+                withAnimation(.spring()) {
+                    currentStep += 1
                 }
-                .buttonStyle(.plain)
-                .disabled(currentStep == 2)
-            }
-            .padding(20)
-            .background(.background)
-            .cornerRadius(16)
-            .shadow(color: Color.orange.opacity(0.1), radius: 10, x: 0, y: 2)
-            .padding(.horizontal)
-
-            // 示意图
-            VStack {
-                if currentStep == 1 {
-                    step1()
-                        .transition(.opacity)
-                } else if currentStep == 2 {
-                    step2()
-                        .transition(.opacity)
+            }) {
+                HStack(spacing: 8) {
+                    Text("下一步")
+                        .font(.system(size: 14, weight: .medium))
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .semibold))
                 }
+                .foregroundColor(currentStep == 2 ? .gray : .blue)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(currentStep == 2 ? Color.gray.opacity(0.1) : Color.blue.opacity(0.1))
+                .cornerRadius(20)
             }
-            .overlay(alignment: .top) {
-                Rectangle()
-                    .frame(height: 2)
-                    .foregroundColor(.blue.opacity(0.3))
-            }
+            .buttonStyle(.plain)
+            .disabled(currentStep == 2)
         }
-        .onAppear {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                isAnimating = true
-            }
-        }
+        .padding(20)
+        .background(.background)
+        .cornerRadius(16)
+        .shadow(color: Color.orange.opacity(0.1), radius: 10, x: 0, y: 2)
+        .padding(.horizontal)
     }
 
     func step1() -> some View {
@@ -134,21 +138,12 @@ struct ExtensionNotReady: View {
                         settingRow(title: "关于本机", icon: "info.circle")
                         settingRow(title: "软件更新", icon: "arrow.clockwise")
                         settingRow(title: "存储空间", icon: "externaldrive")
-                        settingRow(title: "AppleCare与保修", icon: "applelogo")
-                        settingRow(title: "隐空控制与接力", icon: "hand.raised")
                         settingRow(title: "登录项与扩展", icon: "list.bullet", isHero: true)
                         settingRow(title: "共享", icon: "person.2")
                         settingRow(title: "启动磁盘", icon: "externaldrive.fill")
-                        settingRow(title: "日期与时间", icon: "clock")
-                        settingRow(title: "时间机器", icon: "clock.arrow.circlepath")
-                        settingRow(title: "语言与地区", icon: "globe")
-                        settingRow(title: "自动填充与密码", icon: "key")
-                        settingRow(title: "设备管理", icon: "slider.horizontal.3")
-                        settingRow(title: "传输或还原", icon: "arrow.triangle.2.circlepath")
                     }
                 }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            }.background(MagicBackground.forest.opacity(0.2))
         }
     }
 
@@ -184,25 +179,6 @@ struct ExtensionNotReady: View {
 
                 ScrollView {
                     VStack(spacing: 0) {
-                        HStack {
-                            Text("向下滚动")
-                                .font(.headline)
-                            Image(systemName: "arrow.down")
-                                .font(.headline)
-                                .foregroundColor(.blue)
-                                .scaleEffect(isAnimating ? 1.2 : 1.0)
-                                .animation(
-                                    Animation
-                                        .easeInOut(duration: 1.0)
-                                        .repeatForever(autoreverses: true),
-                                    value: isAnimating
-                                )
-                        }
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 16)
-                        .background(Color.blue.opacity(0.1))
-                        .cornerRadius(8)
-
                         Group {
                             Text("扩展")
                                 .font(.headline)
@@ -242,8 +218,7 @@ struct ExtensionNotReady: View {
                     }
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        }
+        }.background(MagicBackground.forest.opacity(0.3))
     }
 
     private func sidebarView() -> some View {
@@ -269,18 +244,18 @@ struct ExtensionNotReady: View {
 
             Section {
                 Label("Wi-Fi", systemImage: "wifi")
-                        .opacity(0.6)
+                    .opacity(0.6)
                 Label("网络", systemImage: "network")
-                        .opacity(0.6)
+                    .opacity(0.6)
             }
 
             Section {
                 Label("通用", systemImage: "gear")
-                        .foregroundColor(.red)
+                    .foregroundColor(.red)
                 Label("辅助功能", systemImage: "accessibility")
-                        .opacity(0.6)
+                    .opacity(0.6)
                 Label("聚焦", systemImage: "magnifyingglass")
-                        .opacity(0.6)
+                    .opacity(0.6)
             }
         }
     }
