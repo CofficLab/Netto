@@ -71,7 +71,7 @@ struct ExtensionNotReady: View {
                 .disabled(currentStep == 2)
             }
             .padding(20)
-            .background(Color.white)
+            .background(.background)
             .cornerRadius(16)
             .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 2)
             .padding(.horizontal)
