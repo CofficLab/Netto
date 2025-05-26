@@ -148,9 +148,26 @@ struct ExtensionNotReady: View {
 
                 ScrollView {
                     VStack(spacing: 0) {
-                        Group {
-                            Text("向下滚动")
-                        }
+                
+                            HStack {
+                                Text("向下滚动")
+                                    .font(.headline)
+                                Image(systemName: "arrow.down")
+                                    .font(.headline)
+                                    .foregroundColor(.blue)
+                                    .scaleEffect(isAnimating ? 1.2 : 1.0)
+                                    .animation(
+                                        Animation
+                                            .easeInOut(duration: 1.0)
+                                            .repeatForever(autoreverses: true),
+                                        value: isAnimating
+                                    )
+                            }
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 16)
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(8)
+                        
 
                         Group {
                             Text("扩展")
