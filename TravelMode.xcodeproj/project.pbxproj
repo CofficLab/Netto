@@ -42,7 +42,6 @@
 		0B737BB42D12F24A00712ABA /* SmartMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB32D12F24A00712ABA /* SmartMessage.swift */; };
 		0B737BB72D12F2AF00712ABA /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB62D12F2AF00712ABA /* SuperEvent.swift */; };
 		0B81F59B2B3D008C00F65A4B /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */; };
-		0BC7D31E2DE3744400FAE6DB /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC7D31D2DE3744400FAE6DB /* SettingView.swift */; };
 		0BE2F0512D159D0E008BC604 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 0BE2F0502D159D0E008BC604 /* Localizable.xcstrings */; };
 		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		C40A5C4B229DD6A500627D50 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A5C4A229DD6A500627D50 /* main.swift */; };
@@ -127,7 +126,6 @@
 		0B737BB32D12F24A00712ABA /* SmartMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartMessage.swift; sourceTree = "<group>"; };
 		0B737BB62D12F2AF00712ABA /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
 		0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
-		0BC7D31D2DE3744400FAE6DB /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		0BE2F0502D159D0E008BC604 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		6ED719E06ED6DED000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -262,8 +260,7 @@
 		0B3399342B3916B2005CC627 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				0BC7D31D2DE3744400FAE6DB /* SettingView.swift */,
-				F5E3D9E02D13D72800D9C9D3 /* State */,
+				0BC7D31F2DE4105100FAE6DB /* Guide */,
 				0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */,
 				0B40CE412B39646100DC6771 /* AppList.swift */,
 				0B2551712B3FBFBE0005096C /* AppListSample.swift */,
@@ -274,7 +271,6 @@
 				F5E3D9D02D13A8D800D9C9D3 /* StatusBar.swift */,
 				F5E3D9D62D13BEFB00D9C9D3 /* StopView.swift */,
 				0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */,
-				0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -306,6 +302,20 @@
 				0B737BB62D12F2AF00712ABA /* SuperEvent.swift */,
 			);
 			path = Contract;
+			sourceTree = "<group>";
+		};
+		0BC7D31F2DE4105100FAE6DB /* Guide */ = {
+			isa = PBXGroup;
+			children = (
+				F5E3D9E12D13D7AD00D9C9D3 /* ExtensionNotReady.swift */,
+				F5E3D9DE2D13CA7C00D9C9D3 /* UnkownView.swift */,
+				F5E3D9DC2D13C34100D9C9D3 /* DisabledView.swift */,
+				F589B5BE2D13A4AA00C7E449 /* InstallView.swift */,
+				F5E3D9D42D13BE2C00D9C9D3 /* RunningView.swift */,
+				F5E3D9D22D13BC2400D9C9D3 /* ApprovalView.swift */,
+				0B81F59A2B3D008C00F65A4B /* WelcomeView.swift */,
+			);
+			path = Guide;
 			sourceTree = "<group>";
 		};
 		6ED613506ED6B88000000001 /* Configuration */ = {
@@ -392,19 +402,6 @@
 				F5E3D9C82D13A84500D9C9D3 /* MessageTable.swift */,
 			);
 			path = SmartMessage;
-			sourceTree = "<group>";
-		};
-		F5E3D9E02D13D72800D9C9D3 /* State */ = {
-			isa = PBXGroup;
-			children = (
-				F5E3D9E12D13D7AD00D9C9D3 /* ExtensionNotReady.swift */,
-				F5E3D9DE2D13CA7C00D9C9D3 /* UnkownView.swift */,
-				F5E3D9DC2D13C34100D9C9D3 /* DisabledView.swift */,
-				F589B5BE2D13A4AA00C7E449 /* InstallView.swift */,
-				F5E3D9D42D13BE2C00D9C9D3 /* RunningView.swift */,
-				F5E3D9D22D13BC2400D9C9D3 /* ApprovalView.swift */,
-			);
-			path = State;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -556,7 +553,6 @@
 				0B1D149F2B3A78EC005A3D65 /* AppSetting.swift in Sources */,
 				0B3399332B391619005CC627 /* RootView.swift in Sources */,
 				F589B5BD2D13A10700C7E449 /* OSExt.swift in Sources */,
-				0BC7D31E2DE3744400FAE6DB /* SettingView.swift in Sources */,
 				F5E3D9DF2D13CA7C00D9C9D3 /* UnkownView.swift in Sources */,
 				F5E3D9CD2D13A86600D9C9D3 /* TileMessage.swift in Sources */,
 				0B33992A2B390D44005CC627 /* EventManager.swift in Sources */,

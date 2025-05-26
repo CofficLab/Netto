@@ -1,10 +1,15 @@
 import SwiftUI
 
-struct SettingView: View {
+struct ExtensionNotReady: View {
+    @State private var isAnimating = false
     @State private var currentStep = 1
 
     var body: some View {
         VStack {
+            Text("按下图的引导进行设置")
+                .font(.title)
+                .padding()
+            
             // 步骤
             HStack {
                 Button(action: {
@@ -51,8 +56,13 @@ struct SettingView: View {
                     .transition(.opacity)
             }
         }
+            .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                isAnimating = true
+            }
+        }
     }
-
+    
     func step1() -> some View {
         NavigationSplitView {
             sidebarView()
@@ -320,6 +330,15 @@ struct SettingView: View {
 }
 
 #Preview {
-    SettingView()
-        .frame(height: 500)
+    RootView {
+        ContentView()
+    }
+    .frame(height: 800)
+}
+
+#Preview {
+    RootView {
+        ExtensionNotReady()
+    }
+    .frame(height: 800)
 }
