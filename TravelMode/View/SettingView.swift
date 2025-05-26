@@ -111,133 +111,129 @@ struct SettingView: View {
         NavigationSplitView {
             sidebarView()
         } detail: {
-            step2Detail()
-        }
-    }
-
-    private func step2Detail() -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack {
-                    Image(systemName: "list.bullet")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.gray)
-                        .padding(8)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(8)
-
-                    VStack(alignment: .leading) {
-                        Text("登录项与扩展")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        Text("扩展可在 Mac 和 App 中添加额外功能。部分扩展需要您在启用后才能运行。")
-                            .font(.caption)
+            VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack {
+                        Image(systemName: "list.bullet")
+                            .resizable()
+                            .frame(width: 30, height: 30)
                             .foregroundColor(.gray)
+                            .padding(8)
+                            .background(Color.gray.opacity(0.2))
+                            .cornerRadius(8)
+
+                        VStack(alignment: .leading) {
+                            Text("登录项与扩展")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                            Text("扩展可在 Mac 和 App 中添加额外功能。部分扩展需要您在启用后才能运行。")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    .padding(.bottom, 8)
+
+                    Divider()
+                }
+                .padding()
+
+                ScrollView {
+                    VStack(spacing: 0) {
+                        Group {
+                            Text("登录项")
+                                .font(.headline)
+                                .padding(.horizontal)
+                                .padding(.vertical, 8)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+
+                            appRow(
+                                icon: "circle.fill",
+                                iconColor: .purple,
+                                title: "OrbStack",
+                                description: "1个项目 · 1个项目影响所有用户",
+                                isEnabled: true
+                            )
+
+                            appRow(
+                                icon: "square.fill",
+                                iconColor: .black,
+                                title: "redis-server",
+                                description: "项目来自自动脚本的开发者。",
+                                isEnabled: true,
+                                showReload: true
+                            )
+
+                            appRow(
+                                icon: "circle.fill",
+                                iconColor: .yellow,
+                                title: "Tencent Lemon",
+                                description: "5个项目 · 3个项目影响所有用户",
+                                isEnabled: true
+                            )
+
+                            appRow(
+                                icon: "square.fill",
+                                iconColor: .cyan,
+                                title: "won fen",
+                                description: "1个项目",
+                                isEnabled: true
+                            )
+                        }
+
+                        Group {
+                            Text("扩展")
+                                .font(.headline)
+                                .padding(.horizontal)
+                                .padding(.vertical, 8)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+
+                            extensionRow(
+                                icon: "square.fill",
+                                iconColor: .gray,
+                                title: "Xcode Source Editor",
+                                description: "Soothe, XCFormat"
+                            )
+
+                            extensionRow(
+                                icon: "square.fill",
+                                iconColor: .gray,
+                                title: "共享",
+                                description: "FMPhotoShareExtension, Instruments及其他20个"
+                            )
+
+                            extensionRow(
+                                icon: "eye.fill",
+                                iconColor: .gray,
+                                title: "快速查看",
+                                description: "ProvisioningProfileQuicklookExtension, TipsQuicklook"
+                            )
+
+                            extensionRow(
+                                icon: "puzzlepiece.extension",
+                                iconColor: .red,
+                                title: "网络扩展",
+                                description: "输记"
+                            )
+
+                            extensionRow(
+                                icon: "doc.fill",
+                                iconColor: .gray,
+                                title: "文件提供程序",
+                                description: "OSpace, WPS Office, 百度网盘, 豆包"
+                            )
+
+                            extensionRow(
+                                icon: "square.fill",
+                                iconColor: .gray,
+                                title: "文件系统扩展",
+                                description: "msdos, exfat"
+                            )
+                        }
                     }
                 }
-                .padding(.bottom, 8)
-
-                Divider()
             }
-            .padding()
-
-            ScrollView {
-                VStack(spacing: 0) {
-                    Group {
-                        Text("登录项")
-                            .font(.headline)
-                            .padding(.horizontal)
-                            .padding(.vertical, 8)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        appRow(
-                            icon: "circle.fill",
-                            iconColor: .purple,
-                            title: "OrbStack",
-                            description: "1个项目 · 1个项目影响所有用户",
-                            isEnabled: true
-                        )
-
-                        appRow(
-                            icon: "square.fill",
-                            iconColor: .black,
-                            title: "redis-server",
-                            description: "项目来自自动脚本的开发者。",
-                            isEnabled: true,
-                            showReload: true
-                        )
-
-                        appRow(
-                            icon: "circle.fill",
-                            iconColor: .yellow,
-                            title: "Tencent Lemon",
-                            description: "5个项目 · 3个项目影响所有用户",
-                            isEnabled: true
-                        )
-
-                        appRow(
-                            icon: "square.fill",
-                            iconColor: .cyan,
-                            title: "won fen",
-                            description: "1个项目",
-                            isEnabled: true
-                        )
-                    }
-
-                    Group {
-                        Text("扩展")
-                            .font(.headline)
-                            .padding(.horizontal)
-                            .padding(.vertical, 8)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        extensionRow(
-                            icon: "square.fill",
-                            iconColor: .gray,
-                            title: "Xcode Source Editor",
-                            description: "Soothe, XCFormat"
-                        )
-
-                        extensionRow(
-                            icon: "square.fill",
-                            iconColor: .gray,
-                            title: "共享",
-                            description: "FMPhotoShareExtension, Instruments及其他20个"
-                        )
-
-                        extensionRow(
-                            icon: "eye.fill",
-                            iconColor: .gray,
-                            title: "快速查看",
-                            description: "ProvisioningProfileQuicklookExtension, TipsQuicklook"
-                        )
-
-                        extensionRow(
-                            icon: "hand.tap.fill",
-                            iconColor: .gray,
-                            title: "操作",
-                            description: "输记"
-                        )
-
-                        extensionRow(
-                            icon: "doc.fill",
-                            iconColor: .gray,
-                            title: "文件提供程序",
-                            description: "OSpace, WPS Office, 百度网盘, 豆包"
-                        )
-
-                        extensionRow(
-                            icon: "square.fill",
-                            iconColor: .gray,
-                            title: "文件系统扩展",
-                            description: "msdos, exfat"
-                        )
-                    }
-                }
-            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
     private func sidebarView() -> some View {
