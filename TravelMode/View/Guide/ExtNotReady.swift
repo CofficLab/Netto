@@ -100,8 +100,7 @@ struct ExtensionNotReady: View {
                         settingRow(title: "存储空间", icon: "externaldrive")
                         settingRow(title: "AppleCare与保修", icon: "applelogo")
                         settingRow(title: "隐空控制与接力", icon: "hand.raised")
-                        settingRow(title: "登录项与扩展", icon: "list.bullet")
-                            .foregroundColor(.red)
+                        settingRow(title: "登录项与扩展", icon: "list.bullet", isHero: true)
                         settingRow(title: "共享", icon: "person.2")
                         settingRow(title: "启动磁盘", icon: "externaldrive.fill")
                         settingRow(title: "日期与时间", icon: "clock")
@@ -172,7 +171,7 @@ struct ExtensionNotReady: View {
                                 iconColor: .gray,
                                 title: "网络扩展",
                                 description: "TravelMode",
-                                infoIconColor: .red
+                                isHero: true
                             ).foregroundStyle(.red)
 
                             extensionRow(
@@ -206,7 +205,7 @@ struct ExtensionNotReady: View {
                             .frame(width: 40, height: 40)
                             .foregroundColor(.gray)
                         VStack(alignment: .leading) {
-                            Text("林宇")
+                            Text("Coffic")
                                 .font(.headline)
                             Text("CofficLab")
                                 .font(.caption)
@@ -220,9 +219,11 @@ struct ExtensionNotReady: View {
             Section {
                 NavigationLink(destination: Text("Wi-Fi")) {
                     Label("Wi-Fi", systemImage: "wifi")
+                        .opacity(0.6)
                 }
                 NavigationLink(destination: Text("网络")) {
                     Label("网络", systemImage: "network")
+                        .opacity(0.6)
                 }
             }
 
@@ -233,9 +234,11 @@ struct ExtensionNotReady: View {
                 }
                 NavigationLink(destination: Text("辅助功能")) {
                     Label("辅助功能", systemImage: "accessibility")
+                        .opacity(0.6)
                 }
                 NavigationLink(destination: Text("聚焦")) {
                     Label("聚焦", systemImage: "magnifyingglass")
+                        .opacity(0.6)
                 }
             }
         }
@@ -279,13 +282,12 @@ struct ExtensionNotReady: View {
         iconColor: Color,
         title: String,
         description: String,
-        infoIconColor: Color = .gray
+        isHero: Bool = false
     ) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .resizable()
                 .frame(width: 20, height: 20)
-                .foregroundColor(iconColor)
                 .padding(4)
 
             VStack(alignment: .leading, spacing: 4) {
@@ -293,20 +295,20 @@ struct ExtensionNotReady: View {
                     .font(.body)
                 Text(description)
                     .font(.caption)
-                    .foregroundColor(.gray)
             }
 
             Spacer()
 
             Image(systemName: "info.circle")
-                .foregroundColor(infoIconColor)
         }
+        .opacity(isHero ? 1 : 0.6)
+        .foregroundStyle(isHero ? .red : .gray)
         .padding(.horizontal)
         .padding(.vertical, 12)
         .contentShape(Rectangle())
     }
 
-    private func settingRow(title: String, icon: String) -> some View {
+    private func settingRow(title: String, icon: String, isHero: Bool = false) -> some View {
         HStack {
             Label {
                 Text(title)
@@ -314,22 +316,22 @@ struct ExtensionNotReady: View {
             } icon: {
                 Image(systemName: icon)
                     .frame(width: 20)
-                    .foregroundColor(.gray)
             }
 
             Spacer()
 
             Image(systemName: "chevron.right")
                 .font(.caption)
-                .foregroundColor(.gray)
         }
+        .opacity(isHero ? 1 : 0.6)
+        .foregroundStyle(isHero ? .red : .gray)
         .padding(.horizontal)
         .padding(.vertical, 12)
         .contentShape(Rectangle())
     }
 }
 
-#Preview {
+#Preview("App") {
     RootView {
         ContentView()
     }

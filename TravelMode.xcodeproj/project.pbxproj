@@ -64,7 +64,7 @@
 		F5E3D9DB2D13C01E00D9C9D3 /* BtnStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9DA2D13C01E00D9C9D3 /* BtnStop.swift */; };
 		F5E3D9DD2D13C34100D9C9D3 /* DisabledView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9DC2D13C34100D9C9D3 /* DisabledView.swift */; };
 		F5E3D9DF2D13CA7C00D9C9D3 /* UnkownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9DE2D13CA7C00D9C9D3 /* UnkownView.swift */; };
-		F5E3D9E22D13D7AD00D9C9D3 /* ExtensionNotReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E12D13D7AD00D9C9D3 /* ExtensionNotReady.swift */; };
+		F5E3D9E22D13D7AD00D9C9D3 /* ExtNotReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E12D13D7AD00D9C9D3 /* ExtNotReady.swift */; };
 		F5E3D9E82D14003400D9C9D3 /* BtnDeny.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E72D14003400D9C9D3 /* BtnDeny.swift */; };
 		F5E3D9EA2D1401E400D9C9D3 /* BtnAllow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E92D1401E400D9C9D3 /* BtnAllow.swift */; };
 		F5E3D9F42D15198100D9C9D3 /* BtnToggleLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9F32D15197D00D9C9D3 /* BtnToggleLog.swift */; };
@@ -150,7 +150,7 @@
 		F5E3D9DA2D13C01E00D9C9D3 /* BtnStop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnStop.swift; sourceTree = "<group>"; };
 		F5E3D9DC2D13C34100D9C9D3 /* DisabledView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledView.swift; sourceTree = "<group>"; };
 		F5E3D9DE2D13CA7C00D9C9D3 /* UnkownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnkownView.swift; sourceTree = "<group>"; };
-		F5E3D9E12D13D7AD00D9C9D3 /* ExtensionNotReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionNotReady.swift; sourceTree = "<group>"; };
+		F5E3D9E12D13D7AD00D9C9D3 /* ExtNotReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtNotReady.swift; sourceTree = "<group>"; };
 		F5E3D9E72D14003400D9C9D3 /* BtnDeny.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDeny.swift; sourceTree = "<group>"; };
 		F5E3D9E92D1401E400D9C9D3 /* BtnAllow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnAllow.swift; sourceTree = "<group>"; };
 		F5E3D9F32D15197D00D9C9D3 /* BtnToggleLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnToggleLog.swift; sourceTree = "<group>"; };
@@ -307,7 +307,7 @@
 		0BC7D31F2DE4105100FAE6DB /* Guide */ = {
 			isa = PBXGroup;
 			children = (
-				F5E3D9E12D13D7AD00D9C9D3 /* ExtensionNotReady.swift */,
+				F5E3D9E12D13D7AD00D9C9D3 /* ExtNotReady.swift */,
 				F5E3D9DE2D13CA7C00D9C9D3 /* UnkownView.swift */,
 				F5E3D9DC2D13C34100D9C9D3 /* DisabledView.swift */,
 				F589B5BE2D13A4AA00C7E449 /* InstallView.swift */,
@@ -558,7 +558,7 @@
 				0B33992A2B390D44005CC627 /* EventManager.swift in Sources */,
 				0B1C33FE2B39C2AA004A5E36 /* Toolbar.swift in Sources */,
 				0B408A302B39612B000E77DB /* AppHelper.swift in Sources */,
-				F5E3D9E22D13D7AD00D9C9D3 /* ExtensionNotReady.swift in Sources */,
+				F5E3D9E22D13D7AD00D9C9D3 /* ExtNotReady.swift in Sources */,
 				0B3399272B3907F8005CC627 /* ChannelProvider.swift in Sources */,
 				0B1D14A72B3AA062005A3D65 /* DebugCommand.swift in Sources */,
 				0B81F59B2B3D008C00F65A4B /* WelcomeView.swift in Sources */,
