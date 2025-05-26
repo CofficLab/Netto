@@ -52,7 +52,11 @@ struct AppList: View {
             onNewEvent()
         }
     }
+}
 
+// MARK: Event
+
+extension AppList {
     private func onNewEvent() {
         EventManager().onNetworkFilterFlow({ e in
             let app = SmartApp.fromId(e.sourceAppIdentifier)

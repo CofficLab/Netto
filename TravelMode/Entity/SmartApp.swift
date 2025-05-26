@@ -63,9 +63,13 @@ struct SmartApp: Identifiable {
     
     // MARK: 软件列表
     
-    static let appList: [SmartApp] = AppHelper.getRunningAppList().map({
+    static let appList: [SmartApp] = AppHelper.getRunningAppList().map {
         return Self.fromRunningApp($0)
-    })
+    }.reduce(into: []) { result, app in
+        if !result.contains(where: { $0.id == app.id }) {
+            result.append(app)
+        }
+    }
     
     // MARK: 系统软件
     
