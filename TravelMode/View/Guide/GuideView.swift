@@ -40,7 +40,7 @@ struct GuideView: View {
                     }
                 }
             }
-            .background(BackgroundView.type2A)
+            .background(.background)
             .cornerRadius(16)
             .padding(20)
         }

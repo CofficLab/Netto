@@ -5,6 +5,13 @@ struct DisabledView: View {
 
     var body: some View {
         VStack(spacing: 24) {
+            Image(systemName: "xmark.shield")
+                .font(.system(size: 48))
+                .symbolEffect(.bounce.down, value: isAnimating)
+                .foregroundStyle(.red)
+                .opacity(isAnimating ? 1 : 0)
+                .offset(y: isAnimating ? 0 : 20)
+            
             Text("Filter is disabled")
                 .font(.system(size: 24, weight: .medium))
                 .foregroundStyle(.primary)
@@ -13,7 +20,6 @@ struct DisabledView: View {
 
             BtnStart()
                 .scaleEffect(isAnimating ? 1 : 0.9)
-                .labelStyle(.titleOnly)
         }
         .padding()
         .onAppear {

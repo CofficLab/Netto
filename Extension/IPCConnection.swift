@@ -7,7 +7,7 @@ import Foundation
 import OSLog
 import Network
 import NetworkExtension
-import MagicKit
+import MagicCore
 
 /// App --> Provider IPC
 @objc protocol ProviderCommunication {

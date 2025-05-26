@@ -296,6 +296,7 @@
       }
     },
     "General -> Login Items & Extensions -> Network Extension -> TravelMode" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -326,6 +327,7 @@
       }
     },
     "Install" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -356,6 +358,7 @@
       }
     },
     "Monitoring" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -396,6 +399,7 @@
       }
     },
     "Please allow TravelMode to run in System Settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -446,6 +450,7 @@
       }
     },
     "Start" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -546,6 +551,9 @@
     "按下图的引导进行设置" : {
 
     },
+    "正在监控" : {
+
+    },
     "登录项与扩展" : {
 
     },
@@ -556,9 +564,6 @@
 
     },
     "聚焦" : {
-
-    },
-    "设置" : {
 
     },
     "辅助功能" : {

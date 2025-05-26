@@ -1,5 +1,5 @@
 import SwiftUI
-import MagicKit
+import MagicCore
 import OSLog
 
 struct BtnStart: View, SuperLog {
@@ -7,7 +7,7 @@ struct BtnStart: View, SuperLog {
     @EnvironmentObject var m: MessageProvider
 
     var body: some View {
-        Button {
+        MagicButton(icon: "restart.circle", size: .auto, action: {
             Task {
                 do {
                     try await channel.startFilter(reason: self.className)
@@ -16,16 +16,11 @@ struct BtnStart: View, SuperLog {
                     m.error(error)
                 }
             }
-        } label: {
-            Label {
-                            Text("Start")
-                        } icon: {
-                            Image("dot_green")
-                        .scaleEffect(0.55)
-                        }
-            
-        }
-        .controlSize(.extraLarge)
+        })
+        .magicTitle("开启")
+        .magicShape(.roundedRectangle)
+        .frame(width: 150)
+        .frame(height: 50)
     }
 }
 

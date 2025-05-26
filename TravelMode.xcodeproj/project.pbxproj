@@ -35,7 +35,6 @@
 		0B408A2C2B395A77000E77DB /* NEFilterFlowExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B408A2B2B395A77000E77DB /* NEFilterFlowExt.swift */; };
 		0B408A302B39612B000E77DB /* AppHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B408A2F2B39612B000E77DB /* AppHelper.swift */; };
 		0B40CE422B39646100DC6771 /* AppList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B40CE412B39646100DC6771 /* AppList.swift */; };
-		0B737BAA2D12EA6700712ABA /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BA92D12EA6700712ABA /* MagicKit */; };
 		0B737BAC2D12ECF000712ABA /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAB2D12ECF000712ABA /* MagicKit */; };
 		0B737BAF2D12F1EC00712ABA /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAE2D12F1EC00712ABA /* AlertToast */; };
 		0B737BB22D12F22500712ABA /* MessageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB12D12F22500712ABA /* MessageProvider.swift */; };
@@ -51,6 +50,8 @@
 		C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B1415A227A396500B26560 /* IPCConnection.swift */; };
 		C4B45DBD2273A0020050C59B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C4B45DBC2273A0020050C59B /* Assets.xcassets */; };
 		C4B45DDE2273A3450050C59B /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
+		F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3ED2DE463A1009CC54C /* MagicCore */; };
+		F500B3F02DE4684F009CC54C /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3EF2DE4684F009CC54C /* MagicKit */; };
 		F589B5BD2D13A10700C7E449 /* OSExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F589B5BC2D13A10300C7E449 /* OSExt.swift */; };
 		F589B5BF2D13A4AA00C7E449 /* InstallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F589B5BE2D13A4AA00C7E449 /* InstallView.swift */; };
 		F5E3D9C92D13A84500D9C9D3 /* MessageTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9C82D13A84500D9C9D3 /* MessageTable.swift */; };
@@ -171,8 +172,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B737BAF2D12F1EC00712ABA /* AlertToast in Frameworks */,
+				F500B3F02DE4684F009CC54C /* MagicKit in Frameworks */,
+				F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */,
 				C4B45DDE2273A3450050C59B /* NetworkExtension.framework in Frameworks */,
-				0B737BAA2D12EA6700712ABA /* MagicKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -853,8 +855,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/MagicKit";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = dev;
+				kind = branch;
 			};
 		};
 		0B737BAD2D12F1EC00712ABA /* XCRemoteSwiftPackageReference "AlertToast" */ = {
@@ -868,11 +870,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0B737BA92D12EA6700712ABA /* MagicKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
-			productName = MagicKit;
-		};
 		0B737BAB2D12ECF000712ABA /* MagicKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
@@ -882,6 +879,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0B737BAD2D12F1EC00712ABA /* XCRemoteSwiftPackageReference "AlertToast" */;
 			productName = AlertToast;
+		};
+		F500B3ED2DE463A1009CC54C /* MagicCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicCore;
+		};
+		F500B3EF2DE4684F009CC54C /* MagicKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

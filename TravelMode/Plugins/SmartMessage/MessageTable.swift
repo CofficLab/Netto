@@ -1,4 +1,4 @@
-import MagicKit
+import MagicCore
 import OSLog
 import SwiftUI
 
@@ -43,10 +43,10 @@ struct MessageTable: View, SuperLog, SuperThread {
                         .foregroundColor(message.isError ? .red : .primary)
                 }
 
-                TableColumn("Time") { message in
-                    Text(message.createdAt.string)
-                }
-                .width(180)
+//                TableColumn("Time") { message in
+//                    Text(message.createdAt.string)
+//                }
+//                .width(180)
             })
         }
         .padding(10)

@@ -1,5 +1,5 @@
 import Cocoa
-import MagicKit
+import MagicCore
 import NetworkExtension
 import OSLog
 import SwiftUI

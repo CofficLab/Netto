@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 import AlertToast
-import MagicKit
+import MagicCore
 
 struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var content: Content

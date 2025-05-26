@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 import SwiftUI
 import OSLog
-import MagicKit
+import MagicCore
 
 @Model
 final class AppSetting: SuperLog, SuperEvent {
