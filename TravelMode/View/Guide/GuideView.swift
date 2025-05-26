@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct WelcomeView: View {
+struct GuideView: View {
     @EnvironmentObject private var app: AppManager
 
     var body: some View {

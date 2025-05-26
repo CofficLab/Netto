@@ -29,7 +29,7 @@ struct AppList: View {
     var body: some View {
         ZStack {
             if appsVisible.count == 0 || appManager.status.isStopped() {
-                WelcomeView()
+                GuideView()
             } else {
                 ScrollView {
                     VStack(spacing: 0) {

@@ -17,7 +17,7 @@ struct ContentView: View {
                 }
             }.background(.clear)
 
-//            StatusBar()
+            StatusBar()
         }
         .onAppear {
             event.onFilterStatusChanged({

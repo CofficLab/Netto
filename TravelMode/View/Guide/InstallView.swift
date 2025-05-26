@@ -45,9 +45,16 @@ struct InstallView: View {
     }
 }
 
-#Preview {
+#Preview("APP") {
     RootView {
         ContentView()
+    }
+    .frame(height: 800)
+}
+
+#Preview {
+    RootView {
+        InstallView()
     }
     .frame(height: 800)
 }
