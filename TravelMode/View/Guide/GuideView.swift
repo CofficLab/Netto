@@ -5,8 +5,6 @@ struct GuideView: View {
 
     var body: some View {
         ZStack {
-            AppListSample()
-            
             Color.black.opacity(0.4)
 
             VStack(spacing: 0) {

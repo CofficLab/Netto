@@ -28,9 +28,7 @@ struct AppList: View {
 
     var body: some View {
         ZStack {
-            if appsVisible.count == 0 || appManager.status.isStopped() {
-                GuideView()
-            } else {
+            if appsVisible.count > 0 {
                 ScrollView {
                     VStack(spacing: 0) {
                         ForEach(appsVisible) { app in
@@ -39,6 +37,12 @@ struct AppList: View {
                         }
                     }
                 }
+            } else {
+                AppListSample()
+            }
+            
+            if appsVisible.count == 0 || appManager.status.isStopped() {
+                GuideView()
             }
         }
         .onAppear {
