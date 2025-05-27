@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B1C653E2DE5F6C600F982C0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B1C65392DE5F6C600F982C0 /* Assets.xcassets */; };
 		0B1C653F2DE5F6C600F982C0 /* Info_App.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0B1C653A2DE5F6C600F982C0 /* Info_App.plist */; };
 		0B1C65BF2DE5F87500F982C0 /* Info_Ext.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0B1C65B72DE5F87500F982C0 /* Info_Ext.plist */; };
 		0B737BAC2D12ECF000712ABA /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAB2D12ECF000712ABA /* MagicKit */; };
@@ -41,6 +42,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0B1C65392DE5F6C600F982C0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0B1C653A2DE5F6C600F982C0 /* Info_App.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info_App.plist; sourceTree = "<group>"; };
 		0B1C653C2DE5F6C600F982C0 /* Signing_App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Signing_App.entitlements; sourceTree = "<group>"; };
 		0B1C65B72DE5F87500F982C0 /* Info_Ext.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info_Ext.plist; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 				0B1C65BA2DE5F87500F982C0 /* Signing_Ext.entitlements */,
 				0B1C653A2DE5F6C600F982C0 /* Info_App.plist */,
 				0B1C65B72DE5F87500F982C0 /* Info_Ext.plist */,
+				0B1C65392DE5F6C600F982C0 /* Assets.xcassets */,
 			);
 			sourceTree = "<group>";
 		};
@@ -213,6 +216,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B1C653E2DE5F6C600F982C0 /* Assets.xcassets in Resources */,
 				0B1C653F2DE5F6C600F982C0 /* Info_App.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
