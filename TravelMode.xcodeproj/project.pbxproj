@@ -9,9 +9,7 @@
 /* Begin PBXBuildFile section */
 		0B737BAC2D12ECF000712ABA /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAB2D12ECF000712ABA /* MagicKit */; };
 		0B737BAF2D12F1EC00712ABA /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAE2D12F1EC00712ABA /* AlertToast */; };
-		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		C4B45DDE2273A3450050C59B /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3ED2DE463A1009CC54C /* MagicCore */; };
 		F500B3F02DE4684F009CC54C /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3EF2DE4684F009CC54C /* MagicKit */; };
 /* End PBXBuildFile section */
@@ -43,7 +41,6 @@
 /* Begin PBXFileReference section */
 		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4B45DB522739FFF0050C59B /* TavelMode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TavelMode.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C4B45DDD2273A3450050C59B /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -66,7 +63,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */,
 				0B737BAC2D12ECF000712ABA /* MagicKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -78,7 +74,6 @@
 				0B737BAF2D12F1EC00712ABA /* AlertToast in Frameworks */,
 				F500B3F02DE4684F009CC54C /* MagicKit in Frameworks */,
 				F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */,
-				C4B45DDE2273A3450050C59B /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,7 +86,6 @@
 				0B1C653D2DE5F6C600F982C0 /* TravelMode */,
 				0B1C65BB2DE5F87500F982C0 /* Extension */,
 				C4B45DB622739FFF0050C59B /* Products */,
-				C4B45DDC2273A3450050C59B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -102,14 +96,6 @@
 				C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		C4B45DDC2273A3450050C59B /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				C4B45DDD2273A3450050C59B /* NetworkExtension.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
