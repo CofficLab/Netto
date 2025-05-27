@@ -8,11 +8,7 @@ struct TileLog: View, SuperLog, SuperThread {
 
     @State var hovered = false
     @State var isPresented = false
-    @State var live = false
-    @State private var selection: Set<SmartMessage.ID> = []
-    @State private var selectedChannel: String = "all"
-    @State private var messages: [SmartMessage] = []
-    
+
     private var shouldShowLogButton: Bool {
         switch app.status {
         case .stopped:
@@ -34,25 +30,12 @@ struct TileLog: View, SuperLog, SuperThread {
         }
     }
 
-    var firstFlashMessage: SmartMessage? { m.messages.first(where: { $0.shouldFlash }) }
-
     var body: some View {
         HStack {
-            if let m = firstFlashMessage, live {
-                Text(m.description).onAppear {
-                    main.asyncAfter(deadline: .now() + 3, execute: {
-                        self.live = false
-                    })
-                }
-            } else {
-                Image(systemName: "plus.circle")
-            }
+            BtnToggleLog()
+                .labelStyle(.iconOnly)
+                .disabled(!shouldShowLogButton)
         }
-        .onChange(of: firstFlashMessage, {
-            if firstFlashMessage != nil {
-                self.live = true
-            }
-        })
         .onHover(perform: { hovering in
             hovered = hovering
         })
@@ -63,11 +46,6 @@ struct TileLog: View, SuperLog, SuperThread {
         .padding(.horizontal, 8)
         .background(hovered ? Color(.controlAccentColor).opacity(0.2) : .clear)
         .clipShape(RoundedRectangle(cornerRadius: 0))
-        .popover(isPresented: $isPresented, content: {
-            if shouldShowLogButton {
-                BtnToggleLog().labelStyle(.iconOnly)
-            }
-        })
     }
 }
 

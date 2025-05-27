@@ -1,17 +1,8 @@
-//
-//  TileMessage.swift
-//  TravelMode
-//
-//  Created by Colorfy on 2025/5/27.
-//  Copyright © 2025 Apple. All rights reserved.
-//
-
-
 import MagicCore
 import OSLog
 import SwiftUI
 
-struct TileInstall: View, SuperLog, SuperThread {
+struct TileMore: View, SuperLog, SuperThread {
     @EnvironmentObject var m: MessageProvider
 
     @State var hovered = false

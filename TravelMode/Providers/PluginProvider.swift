@@ -12,11 +12,11 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         HStack(spacing: 0) {
             TileSwitcher()
             TileLog()
-            TileInstall()
             Spacer()
             TileState()
             Spacer()
             TileMessage()
+            TileMore()
         }
     }
 }
