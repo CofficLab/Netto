@@ -12,8 +12,9 @@ struct TileMore: View, SuperLog, SuperThread {
         HStack {
             Image(systemName: "ellipsis")
         }
+        .frame(maxHeight: .infinity)
         .onHover(perform: { hovering in
-            hovered = hovering
+            self.hovered = hovering
         })
         .onTapGesture {
             self.isPresented.toggle()
@@ -23,7 +24,12 @@ struct TileMore: View, SuperLog, SuperThread {
         .background(hovered ? Color(.controlAccentColor).opacity(0.2) : .clear)
         .clipShape(RoundedRectangle(cornerRadius: 0))
         .popover(isPresented: $isPresented, content: {
-            BtnInstall()
+            VStack {
+                BtnInstall()
+                BtnStop()
+                BtnStart()
+                BtnToggleLog()
+            }.padding()
         })
     }
 }
@@ -31,5 +37,6 @@ struct TileMore: View, SuperLog, SuperThread {
 #Preview("APP") {
     RootView {
         ContentView()
-    }.frame(width: 700)
+    }
+    .frame(width: 500)
 }

@@ -7,6 +7,7 @@ struct BtnStop: View, SuperLog {
     @EnvironmentObject var app: AppManager
     
     private var asToolbarItem: Bool = false
+    private var icon: String = "stop.circle"
     
     init(asToolbarItem: Bool = false) {
         self.asToolbarItem = asToolbarItem
@@ -20,11 +21,12 @@ struct BtnStop: View, SuperLog {
                 Label {
                     Text("Stop")
                 } icon: {
-                    Image(systemName: "stop.circle")
+                    Image(systemName: icon)
                 }
             }
+            .buttonStyle(.plain)
         } else {
-            MagicButton(icon: "restart.circle", size: .auto, action: {
+            MagicButton(icon: icon, size: .auto, action: {
                 action()
             })
             .magicTitle("停止")
@@ -46,14 +48,19 @@ struct BtnStop: View, SuperLog {
     }
 }
 
+#Preview {
+    RootView {
+        VStack {
+            BtnStop()
+            BtnStop(asToolbarItem: true)
+        }
+    }
+    .frame(height: 500)
+    .frame(width: 500)
+}
+
 #Preview("App") {
     RootView {
         ContentView()
-    }
-}
-
-#Preview {
-    RootView {
-        BtnStop()
     }
 }

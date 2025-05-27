@@ -26,6 +26,7 @@ struct TileMessage: View, SuperLog, SuperThread {
                 Image(systemName: "message")
             }
         }
+        .frame(maxHeight: .infinity)
         .onChange(of: firstFlashMessage, {
             if firstFlashMessage != nil {
                 self.live = true

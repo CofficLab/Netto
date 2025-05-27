@@ -9,7 +9,9 @@ struct Topbar: View {
             p.getPlugins()
                 .padding(.trailing, 10)
                 .labelStyle(.iconOnly)
-        }.background(BackgroundView.type2.opacity(0.2))
+        }
+        .frame(height: 30)
+        .background(BackgroundView.type2.opacity(0.2))
     }
 }
 

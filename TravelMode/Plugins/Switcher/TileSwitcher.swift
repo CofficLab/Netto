@@ -12,13 +12,15 @@ struct TileSwitcher: View, SuperLog, SuperThread {
     var body: some View {
         HStack {
             if app.status.isStopped() {
-                BtnStart(asToolbarItem: true).labelStyle(.iconOnly)
+                BtnStart(asToolbarItem: true)
+                    .labelStyle(.iconOnly)
             }
             
             if app.status.isRunning() {
                 BtnStop(asToolbarItem: true).labelStyle(.iconOnly)
             }
         }
+        .frame(maxHeight: .infinity)
         .onHover(perform: { hovering in
             hovered = hovering
         })

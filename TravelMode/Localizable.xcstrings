@@ -311,6 +311,7 @@
       }
     },
     "Hide Log" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -457,6 +458,7 @@
 
     },
     "Show Log" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

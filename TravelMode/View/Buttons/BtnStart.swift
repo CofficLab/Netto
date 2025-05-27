@@ -23,6 +23,7 @@ struct BtnStart: View, SuperLog {
                     Image(systemName: "restart.circle")
                 }
             }
+            .buttonStyle(.plain)
         } else {
             MagicButton(icon: "restart.circle", size: .auto, action: {
                 action()
@@ -46,10 +47,11 @@ struct BtnStart: View, SuperLog {
     }
 }
 
-#Preview {
+#Preview("APP") {
     RootView {
         ContentView()
     }
+    .frame(height: 500)
 }
 
 #Preview {

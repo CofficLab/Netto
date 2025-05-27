@@ -9,7 +9,7 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             VSplitView {
-                Topbar().frame(maxWidth: .infinity)
+                Topbar()
 
                 AppList()
 

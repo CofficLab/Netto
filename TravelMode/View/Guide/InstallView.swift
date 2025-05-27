@@ -17,7 +17,8 @@ struct InstallView: View {
     RootView {
         InstallView()
     }
-    .frame(height: 800)
+    .frame(height: 500)
+    .frame(width: 500)
 }
 
 #Preview("APP") {

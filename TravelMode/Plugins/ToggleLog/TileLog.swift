@@ -32,10 +32,11 @@ struct TileLog: View, SuperLog, SuperThread {
 
     var body: some View {
         HStack {
-            BtnToggleLog()
+            BtnToggleLog(asToolbarItem: true)
                 .labelStyle(.iconOnly)
                 .disabled(!shouldShowLogButton)
         }
+        .frame(maxHeight: .infinity)
         .onHover(perform: { hovering in
             hovered = hovering
         })

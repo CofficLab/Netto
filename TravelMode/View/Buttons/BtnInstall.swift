@@ -14,7 +14,7 @@ struct BtnInstall: View {
         MagicButton(icon: "puzzlepiece.extension", size: .auto, action: {
             channel.installFilter()
         })
-        .magicTitle("安装系统扩展")
+        .magicTitle("安装")
         .magicShape(.roundedRectangle)
         .frame(width: width)
         .frame(height: 50)
@@ -32,7 +32,7 @@ struct BtnInstall: View {
     .frame(width: 500)
 }
 
-#Preview {
+#Preview("APP") {
     RootView {
         ContentView()
     }

@@ -414,12 +414,12 @@
 			path = More;
 			sourceTree = "<group>";
 		};
-		F5CC78D52DE56E0E00A07EAB /* Log */ = {
+		F5CC78D52DE56E0E00A07EAB /* ToggleLog */ = {
 			isa = PBXGroup;
 			children = (
 				F5CC78D62DE56E1B00A07EAB /* TileLog.swift */,
 			);
-			path = Log;
+			path = ToggleLog;
 			sourceTree = "<group>";
 		};
 		F5CC78D82DE56EA200A07EAB /* Switcher */ = {
@@ -443,7 +443,7 @@
 			children = (
 				F5CC78DB2DE5706700A07EAB /* State */,
 				F5CC78D82DE56EA200A07EAB /* Switcher */,
-				F5CC78D52DE56E0E00A07EAB /* Log */,
+				F5CC78D52DE56E0E00A07EAB /* ToggleLog */,
 				F5CC78D22DE56D0700A07EAB /* More */,
 				F5E3D9C72D13A82D00D9C9D3 /* SmartMessage */,
 			);

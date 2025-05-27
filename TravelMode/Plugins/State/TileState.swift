@@ -34,6 +34,7 @@ struct TileState: View, SuperLog, SuperThread {
                 }
             }
         }
+        .frame(maxHeight: .infinity)
         .onHover(perform: { hovering in
             hovered = hovering
         })
