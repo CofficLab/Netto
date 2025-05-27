@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0B1C653E2DE5F6C600F982C0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B1C65392DE5F6C600F982C0 /* Assets.xcassets */; };
-		0B1C653F2DE5F6C600F982C0 /* Info_App.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0B1C653A2DE5F6C600F982C0 /* Info_App.plist */; };
-		0B1C65BF2DE5F87500F982C0 /* Info_Ext.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0B1C65B72DE5F87500F982C0 /* Info_Ext.plist */; };
 		0B737BAC2D12ECF000712ABA /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAB2D12ECF000712ABA /* MagicKit */; };
 		0B737BAF2D12F1EC00712ABA /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAE2D12F1EC00712ABA /* AlertToast */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -43,9 +41,7 @@
 
 /* Begin PBXFileReference section */
 		0B1C65392DE5F6C600F982C0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0B1C653A2DE5F6C600F982C0 /* Info_App.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info_App.plist; sourceTree = "<group>"; };
 		0B1C653C2DE5F6C600F982C0 /* Signing_App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Signing_App.entitlements; sourceTree = "<group>"; };
-		0B1C65B72DE5F87500F982C0 /* Info_Ext.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info_Ext.plist; sourceTree = "<group>"; };
 		0B1C65BA2DE5F87500F982C0 /* Signing_Ext.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Signing_Ext.entitlements; sourceTree = "<group>"; };
 		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4B45DB522739FFF0050C59B /* TavelMode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TavelMode.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -59,11 +55,25 @@
 			);
 			target = C4B45DB422739FFF0050C59B /* TavelMode */;
 		};
+		0B1C665C2DE5FDB800F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C40A5C44229DD6A500627D50 /* Extension */;
+		};
+		0B1C665D2DE5FDE700F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C4B45DB422739FFF0050C59B /* TavelMode */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		0B1C653D2DE5F6C600F982C0 /* Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Core; sourceTree = "<group>"; };
-		0B1C65BB2DE5F87500F982C0 /* Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0B1C65C12DE5F87500F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Extension; sourceTree = "<group>"; };
+		0B1C653D2DE5F6C600F982C0 /* Core */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0B1C665D2DE5FDE700F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Core; sourceTree = "<group>"; };
+		0B1C65BB2DE5F87500F982C0 /* Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0B1C65C12DE5F87500F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 0B1C665C2DE5FDB800F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Extension; sourceTree = "<group>"; };
 		0B1C65CD2DE5F90800F982C0 /* Plugins */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Plugins; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -98,8 +108,6 @@
 				0B1C65CD2DE5F90800F982C0 /* Plugins */,
 				0B1C653C2DE5F6C600F982C0 /* Signing_App.entitlements */,
 				0B1C65BA2DE5F87500F982C0 /* Signing_Ext.entitlements */,
-				0B1C653A2DE5F6C600F982C0 /* Info_App.plist */,
-				0B1C65B72DE5F87500F982C0 /* Info_Ext.plist */,
 				0B1C65392DE5F6C600F982C0 /* Assets.xcassets */,
 			);
 			sourceTree = "<group>";
@@ -208,7 +216,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B1C65BF2DE5F87500F982C0 /* Info_Ext.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,7 +224,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B1C653E2DE5F6C600F982C0 /* Assets.xcassets in Resources */,
-				0B1C653F2DE5F6C600F982C0 /* Info_App.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,7 +265,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = Info_Ext.plist;
+				INFOPLIST_FILE = Extension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -285,7 +291,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = Info_Ext.plist;
+				INFOPLIST_FILE = Extension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -437,7 +443,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = Info_App.plist;
+				INFOPLIST_FILE = Core/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -466,7 +472,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Y6HZ9JJYV6;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = Info_App.plist;
+				INFOPLIST_FILE = Core/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
