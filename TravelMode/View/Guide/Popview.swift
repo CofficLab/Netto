@@ -3,6 +3,8 @@ import SwiftUI
 
 struct Popview<Content: View>: View {
     @State private var isAnimating = false
+    @State private var isHovered = false
+    @State private var isPressed = false
     
     let iconName: String
     let title: String
@@ -26,9 +28,11 @@ struct Popview<Content: View>: View {
             Image(systemName: iconName)
                 .font(.system(size: 48))
                 .symbolEffect(.bounce.down, value: isAnimating)
+                .symbolEffect(.pulse, value: isHovered)
                 .foregroundStyle(iconColor)
                 .opacity(isAnimating ? 1 : 0)
                 .offset(y: isAnimating ? 0 : 20)
+                .scaleEffect(isPressed ? 0.8 : 1)
             
             Text(title)
                 .font(.system(size: 24, weight: .medium))
@@ -48,27 +52,33 @@ struct Popview<Content: View>: View {
         .frame(minWidth: 400)
         .frame(minHeight: 500)
         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+        .contentShape(Rectangle())
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isHovered = hovering
+            }
+        }
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in
+                    if !isPressed {
+                        withAnimation(.easeInOut(duration: 0.1)) {
+                            isPressed = true
+                        }
+                    }
+                }
+                .onEnded { _ in
+                    withAnimation(.easeInOut(duration: 0.1)) {
+                        isPressed = false
+                    }
+                }
+        )
     }
 }
 
 #Preview {
-    Popview(
-        iconName: "exclamationmark.shield",
-        title: "需要配置系统扩展"
-    ) {
-        HStack {
-            MagicButton(action: {
-                if let url = URL(string: "x-apple.systempreferences:com.apple.ExtensionsPreferences?extensionPointIdentifier=com.apple.system_extension.network_extension.extension-point") {
-                    NSWorkspace.shared.open(url)
-                }
-            })
-            .magicIcon(.iconSettings)
-            .magicTitle("打开系统设置")
-            .magicSize(.auto)
-            .frame(width: 150)
-            .frame(height: 50)
-        }
+    RootView {
+        ExtensionNotReady()
     }
-    .padding()
-    .frame(width: 400)
+    .frame(height: 500)
 }
