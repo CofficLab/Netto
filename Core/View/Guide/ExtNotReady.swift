@@ -7,7 +7,7 @@ struct ExtensionNotReady: View {
             iconName: "exclamationmark.shield",
             title: "需要配置系统扩展"
         ) {
-            HStack {
+            VStack(spacing: 24) {
                 BtnSetting()
                 BtnInstall()
 
