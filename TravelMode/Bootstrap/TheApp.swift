@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct TravelModeApp: App {
+struct TheApp: App {
     @StateObject private var app = AppManager()
     @StateObject private var event = EventManager()
     @StateObject private var channel = ChannelProvider()
@@ -9,20 +9,6 @@ struct TravelModeApp: App {
     @StateObject private var p = PluginProvider()
     
     var body: some Scene {
-//        MenuBarExtra("TravelMode", systemImage: "network") {
-//            Button("Show Window") {
-//                NSApplication.shared.activate(ignoringOtherApps: true)
-//            }
-//            .keyboardShortcut("w")
-//            
-//            Divider()
-//            
-//            Button("Quit") {
-//                NSApplication.shared.terminate(nil)
-//            }
-//            .keyboardShortcut("q")
-//        }
-        
         WindowGroup {
             RootView {
                 ContentView()
@@ -36,5 +22,19 @@ struct TravelModeApp: App {
         .commands(content: {
             DebugCommands()
         })
+        
+        MenuBarExtra("TravelMode", systemImage: "network") {
+            Button("Show Window") {
+                NSApplication.shared.activate(ignoringOtherApps: true)
+            }
+            .keyboardShortcut("w")
+            
+            Divider()
+            
+            Button("Quit") {
+                NSApplication.shared.terminate(nil)
+            }
+            .keyboardShortcut("q")
+        }
     }
 }

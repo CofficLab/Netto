@@ -426,6 +426,9 @@
         }
       }
     },
+    "Quit" : {
+
+    },
     "Rejected" : {
       "localizations" : {
         "zh-Hans" : {
@@ -445,6 +448,9 @@
           }
         }
       }
+    },
+    "Show Window" : {
+
     },
     "Start" : {
       "extractionState" : "stale",
@@ -496,6 +502,9 @@
           }
         }
       }
+    },
+    "TravelMode" : {
+
     },
     "Type" : {
       "localizations" : {
