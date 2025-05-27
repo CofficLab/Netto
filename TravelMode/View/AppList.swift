@@ -45,6 +45,7 @@ struct AppList: View {
             if appsVisible.count == 0 || appManager.status.isStopped() {
                 GuideView()
                     .shadow(color: Color.blue.opacity(0.2), radius: 10, x: 0, y: 2)
+                    .frame(maxWidth: .infinity)
             }
         }
         .onAppear {

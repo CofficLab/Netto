@@ -19,6 +19,7 @@ struct ExtensionNotReady: View {
                 isAnimating = true
             }
         }
+        .frame(minWidth: 600)
     }
 
     private var heroView: some View {
@@ -119,7 +120,7 @@ struct ExtensionNotReady: View {
                         Text("通用")
                             .font(.title2)
                             .fontWeight(.bold)
-                        Text("管理Mac的整体设置和相关设置，视觉控件更新，设置语言，磁盘访问等。")
+                        Text("管理Mac的整体设置和相关设置...")
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
@@ -133,11 +134,9 @@ struct ExtensionNotReady: View {
             ScrollView {
                 VStack(spacing: 0) {
                     settingRow(title: "关于本机", icon: "info.circle")
-                    settingRow(title: "软件更新", icon: "arrow.clockwise")
-                    settingRow(title: "存储空间", icon: "externaldrive")
+                    settingRow(title: "...", icon: "arrow.clockwise")
                     settingRow(title: "登录项与扩展", icon: "list.bullet", isHero: true)
-                    settingRow(title: "共享", icon: "person.2")
-                    settingRow(title: "启动磁盘", icon: "externaldrive.fill")
+                    settingRow(title: "...", icon: "person.2")
                 }
             }
         }.background(MagicBackground.acousticMorning.opacity(0.2))
@@ -159,7 +158,7 @@ struct ExtensionNotReady: View {
                         Text("登录项与扩展")
                             .font(.title2)
                             .fontWeight(.bold)
-                        Text("扩展可在 Mac 和 App 中添加额外功能。部分扩展需要您在启用后才能运行。")
+                        Text("扩展可在 Mac 和 App 中添加额外功能...")
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
@@ -197,15 +196,8 @@ struct ExtensionNotReady: View {
                         extensionRow(
                             icon: "doc.fill",
                             iconColor: .gray,
-                            title: "文件提供程序",
-                            description: "OSpace, WPS Office, 百度网盘, 豆包"
-                        )
-
-                        extensionRow(
-                            icon: "square.fill",
-                            iconColor: .gray,
-                            title: "文件系统扩展",
-                            description: "msdos, exfat"
+                            title: "...",
+                            description: ""
                         )
                     }
                 }
@@ -293,16 +285,12 @@ struct ExtensionNotReady: View {
         isHero: Bool = false
     ) -> some View {
         HStack(spacing: 12) {
-            Image(systemName: icon)
-                .resizable()
-                .frame(width: 20, height: 20)
-                .padding(4)
-
-            VStack(alignment: .leading, spacing: 4) {
+            Label {
                 Text(title)
                     .font(.body)
-                Text(description)
-                    .font(.caption)
+            } icon: {
+                Image(systemName: icon)
+                    .frame(width: 20)
             }
 
             Spacer()

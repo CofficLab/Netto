@@ -9,7 +9,7 @@ struct TheApp: App {
     @StateObject private var p = PluginProvider()
     
     var body: some Scene {
-        WindowGroup {
+        MenuBarExtra("TravelMode", systemImage: "network") {
             RootView {
                 ContentView()
             }
@@ -18,23 +18,6 @@ struct TheApp: App {
             .environmentObject(channel)
             .environmentObject(m)
             .environmentObject(p)
-        }
-        .commands(content: {
-            DebugCommands()
-        })
-        
-        MenuBarExtra("TravelMode", systemImage: "network") {
-            Button("Show Window") {
-                NSApplication.shared.activate(ignoringOtherApps: true)
-            }
-            .keyboardShortcut("w")
-            
-            Divider()
-            
-            Button("Quit") {
-                NSApplication.shared.terminate(nil)
-            }
-            .keyboardShortcut("q")
-        }
+        }.menuBarExtraStyle(.window)
     }
 }

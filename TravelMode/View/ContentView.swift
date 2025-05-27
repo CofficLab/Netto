@@ -17,10 +17,6 @@ struct ContentView: View {
                     EventList().shadow(radius: 10)
                 }
             }.background(.clear)
-
-            if MagicApp.isDebug {
-                StatusBar()
-            }
         }
         .onAppear {
             event.onFilterStatusChanged({

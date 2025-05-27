@@ -24,7 +24,6 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
             .modelContainer(AppConfig.container)
             .environmentObject(m)
             .environmentObject(p)
-            .frame(minWidth: 500, minHeight: 200)
             .toast(isPresenting: $m.showToast, alert: {
                 AlertToast(type: .systemImage("info.circle", .blue), title: m.toast)
             }, completion: {
