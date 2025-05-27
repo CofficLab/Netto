@@ -10,6 +10,13 @@ struct ApprovalView: View {
 
 #Preview {
     RootView {
+        ApprovalView()
+    }
+    .frame(height: 500)
+}
+
+#Preview {
+    RootView {
         ContentView()
     }
     .frame(height: 800)

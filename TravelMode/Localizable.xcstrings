@@ -272,6 +272,12 @@
         }
       }
     },
+    "Disabled" : {
+
+    },
+    "Error" : {
+
+    },
     "Error: %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -283,6 +289,7 @@
       }
     },
     "Filter is disabled" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -304,6 +311,7 @@
       }
     },
     "Hide Log" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -323,6 +331,9 @@
         }
       }
     },
+    "Indeterminate" : {
+
+    },
     "Install" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -335,6 +346,7 @@
       }
     },
     "Install System Extension to continue" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -375,6 +387,9 @@
         }
       }
     },
+    "Need Approval" : {
+
+    },
     "No" : {
       "localizations" : {
         "zh-Hans" : {
@@ -384,6 +399,9 @@
           }
         }
       }
+    },
+    "Not Installed" : {
+
     },
     "Open Data Folder" : {
       "localizations" : {
@@ -436,7 +454,11 @@
         }
       }
     },
+    "Running" : {
+
+    },
     "Show Log" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -487,6 +509,9 @@
         }
       }
     },
+    "Stopped" : {
+
+    },
     "Time" : {
       "localizations" : {
         "zh-Hans" : {
@@ -496,6 +521,9 @@
           }
         }
       }
+    },
+    "TravelMode" : {
+
     },
     "Type" : {
       "localizations" : {
@@ -508,6 +536,7 @@
       }
     },
     "Unknown" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -516,6 +545,9 @@
           }
         }
       }
+    },
+    "Waiting For Approval" : {
+
     },
     "Wi-Fi" : {
 
@@ -542,19 +574,16 @@
     "扩展" : {
 
     },
-    "扩展可在 Mac 和 App 中添加额外功能。部分扩展需要您在启用后才能运行。" : {
+    "扩展可在 Mac 和 App 中添加额外功能..." : {
 
     },
     "按下方示意图进行设置" : {
 
     },
-    "正在监控" : {
-
-    },
     "登录项与扩展" : {
 
     },
-    "管理Mac的整体设置和相关设置，视觉控件更新，设置语言，磁盘访问等。" : {
+    "管理Mac的整体设置和相关设置..." : {
 
     },
     "网络" : {

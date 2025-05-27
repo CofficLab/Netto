@@ -1,25 +1,24 @@
 import SwiftUI
 
-struct DisabledView: View {
+struct UnknownView: View {
     var body: some View {
         Popview(
-            iconName: "pause.circle",
-            title: "已暂停",
-            iconColor: .orange
+            iconName: "questionmark.circle",
+            title: "当前状态未知"
         ) {
-            BtnStart()
+            EmptyView()
         }
     }
 }
 
 #Preview {
     RootView {
-        DisabledView()
+        UnknownView()
     }
     .frame(height: 500)
 }
 
-#Preview("App") {
+#Preview {
     RootView {
         ContentView()
     }
