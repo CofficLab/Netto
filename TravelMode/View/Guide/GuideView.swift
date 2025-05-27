@@ -14,7 +14,7 @@ struct GuideView: View {
                 case .stopped:
                     StopView()
                 case .indeterminate:
-                    UnkownView()
+                    UnknownView()
                 case .running:
                     RunningView()
                 case .notInstalled:

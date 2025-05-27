@@ -283,6 +283,7 @@
       }
     },
     "Filter is disabled" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -335,6 +336,7 @@
       }
     },
     "Install System Extension to continue" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -511,6 +513,7 @@
       }
     },
     "Unknown" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -551,9 +554,6 @@
     "按下方示意图进行设置" : {
 
     },
-    "正在监控" : {
-
-    },
     "登录项与扩展" : {
 
     },
@@ -570,9 +570,6 @@
 
     },
     "通用" : {
-
-    },
-    "需要配置系统扩展" : {
 
     }
   },

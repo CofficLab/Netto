@@ -48,7 +48,6 @@ struct AppList: View {
                     .frame(maxWidth: .infinity)
             }
         }
-        .frame(minHeight: 300)
         .onAppear {
             apps = SmartApp.appList
             onNewEvent()

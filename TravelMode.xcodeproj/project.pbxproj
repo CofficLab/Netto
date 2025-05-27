@@ -55,6 +55,8 @@
 		F589B5BD2D13A10700C7E449 /* OSExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F589B5BC2D13A10300C7E449 /* OSExt.swift */; };
 		F589B5BF2D13A4AA00C7E449 /* InstallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F589B5BE2D13A4AA00C7E449 /* InstallView.swift */; };
 		F5CC78CA2DE5570D00A07EAB /* ExtGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC78C92DE5570D00A07EAB /* ExtGuide.swift */; };
+		F5CC78CC2DE55EED00A07EAB /* Popview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC78CB2DE55EDF00A07EAB /* Popview.swift */; };
+		F5CC78CE2DE5633700A07EAB /* BtnSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC78CD2DE5633700A07EAB /* BtnSetting.swift */; };
 		F5E3D9C92D13A84500D9C9D3 /* MessageTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9C82D13A84500D9C9D3 /* MessageTable.swift */; };
 		F5E3D9CD2D13A86600D9C9D3 /* TileMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9CC2D13A86600D9C9D3 /* TileMessage.swift */; };
 		F5E3D9CF2D13A89B00D9C9D3 /* PluginProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9CE2D13A89B00D9C9D3 /* PluginProvider.swift */; };
@@ -65,7 +67,7 @@
 		F5E3D9D92D13BFA400D9C9D3 /* BtnStart.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9D82D13BFA400D9C9D3 /* BtnStart.swift */; };
 		F5E3D9DB2D13C01E00D9C9D3 /* BtnStop.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9DA2D13C01E00D9C9D3 /* BtnStop.swift */; };
 		F5E3D9DD2D13C34100D9C9D3 /* DisabledView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9DC2D13C34100D9C9D3 /* DisabledView.swift */; };
-		F5E3D9DF2D13CA7C00D9C9D3 /* UnkownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9DE2D13CA7C00D9C9D3 /* UnkownView.swift */; };
+		F5E3D9DF2D13CA7C00D9C9D3 /* UnknownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9DE2D13CA7C00D9C9D3 /* UnknownView.swift */; };
 		F5E3D9E22D13D7AD00D9C9D3 /* ExtNotReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E12D13D7AD00D9C9D3 /* ExtNotReady.swift */; };
 		F5E3D9E82D14003400D9C9D3 /* BtnDeny.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E72D14003400D9C9D3 /* BtnDeny.swift */; };
 		F5E3D9EA2D1401E400D9C9D3 /* BtnAllow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9E92D1401E400D9C9D3 /* BtnAllow.swift */; };
@@ -142,6 +144,8 @@
 		F589B5BC2D13A10300C7E449 /* OSExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSExt.swift; sourceTree = "<group>"; };
 		F589B5BE2D13A4AA00C7E449 /* InstallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallView.swift; sourceTree = "<group>"; };
 		F5CC78C92DE5570D00A07EAB /* ExtGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtGuide.swift; sourceTree = "<group>"; };
+		F5CC78CB2DE55EDF00A07EAB /* Popview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Popview.swift; sourceTree = "<group>"; };
+		F5CC78CD2DE5633700A07EAB /* BtnSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnSetting.swift; sourceTree = "<group>"; };
 		F5E3D9C82D13A84500D9C9D3 /* MessageTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTable.swift; sourceTree = "<group>"; };
 		F5E3D9CC2D13A86600D9C9D3 /* TileMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMessage.swift; sourceTree = "<group>"; };
 		F5E3D9CE2D13A89B00D9C9D3 /* PluginProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginProvider.swift; sourceTree = "<group>"; };
@@ -152,7 +156,7 @@
 		F5E3D9D82D13BFA400D9C9D3 /* BtnStart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnStart.swift; sourceTree = "<group>"; };
 		F5E3D9DA2D13C01E00D9C9D3 /* BtnStop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnStop.swift; sourceTree = "<group>"; };
 		F5E3D9DC2D13C34100D9C9D3 /* DisabledView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisabledView.swift; sourceTree = "<group>"; };
-		F5E3D9DE2D13CA7C00D9C9D3 /* UnkownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnkownView.swift; sourceTree = "<group>"; };
+		F5E3D9DE2D13CA7C00D9C9D3 /* UnknownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownView.swift; sourceTree = "<group>"; };
 		F5E3D9E12D13D7AD00D9C9D3 /* ExtNotReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtNotReady.swift; sourceTree = "<group>"; };
 		F5E3D9E72D14003400D9C9D3 /* BtnDeny.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnDeny.swift; sourceTree = "<group>"; };
 		F5E3D9E92D1401E400D9C9D3 /* BtnAllow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnAllow.swift; sourceTree = "<group>"; };
@@ -197,6 +201,7 @@
 		0B09F68C2B3EAD6400B90A59 /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
+				F5CC78CD2DE5633700A07EAB /* BtnSetting.swift */,
 				F5E3D9F32D15197D00D9C9D3 /* BtnToggleLog.swift */,
 				F5E3D9E92D1401E400D9C9D3 /* BtnAllow.swift */,
 				F5E3D9E72D14003400D9C9D3 /* BtnDeny.swift */,
@@ -304,9 +309,10 @@
 		0BC7D31F2DE4105100FAE6DB /* Guide */ = {
 			isa = PBXGroup;
 			children = (
+				F5CC78CB2DE55EDF00A07EAB /* Popview.swift */,
 				F5CC78C92DE5570D00A07EAB /* ExtGuide.swift */,
 				F5E3D9E12D13D7AD00D9C9D3 /* ExtNotReady.swift */,
-				F5E3D9DE2D13CA7C00D9C9D3 /* UnkownView.swift */,
+				F5E3D9DE2D13CA7C00D9C9D3 /* UnknownView.swift */,
 				F5E3D9DC2D13C34100D9C9D3 /* DisabledView.swift */,
 				F589B5BE2D13A4AA00C7E449 /* InstallView.swift */,
 				F5E3D9D42D13BE2C00D9C9D3 /* RunningView.swift */,
@@ -525,6 +531,7 @@
 				F5E3D9F42D15198100D9C9D3 /* BtnToggleLog.swift in Sources */,
 				0B1C33FC2B39C1E7004A5E36 /* SmartApp.swift in Sources */,
 				0B09F68F2B3EAD8900B90A59 /* BtnInstall.swift in Sources */,
+				F5CC78CE2DE5633700A07EAB /* BtnSetting.swift in Sources */,
 				0B19F0C52B3AB6AB002D8FAC /* AppLine.swift in Sources */,
 				0B33992D2B3911F1005CC627 /* FirewallEvent.swift in Sources */,
 				0B408A2C2B395A77000E77DB /* NEFilterFlowExt.swift in Sources */,
@@ -550,7 +557,7 @@
 				0B1D149F2B3A78EC005A3D65 /* AppSetting.swift in Sources */,
 				0B3399332B391619005CC627 /* RootView.swift in Sources */,
 				F589B5BD2D13A10700C7E449 /* OSExt.swift in Sources */,
-				F5E3D9DF2D13CA7C00D9C9D3 /* UnkownView.swift in Sources */,
+				F5E3D9DF2D13CA7C00D9C9D3 /* UnknownView.swift in Sources */,
 				F5E3D9CD2D13A86600D9C9D3 /* TileMessage.swift in Sources */,
 				0B33992A2B390D44005CC627 /* EventManager.swift in Sources */,
 				0B1C33FE2B39C2AA004A5E36 /* Toolbar.swift in Sources */,
@@ -565,6 +572,7 @@
 				0B737BB72D12F2AF00712ABA /* SuperEvent.swift in Sources */,
 				F5E3D9D92D13BFA400D9C9D3 /* BtnStart.swift in Sources */,
 				F5E3D9C92D13A84500D9C9D3 /* MessageTable.swift in Sources */,
+				F5CC78CC2DE55EED00A07EAB /* Popview.swift in Sources */,
 				0B3399302B3914EF005CC627 /* AppManager.swift in Sources */,
 				0B737BB22D12F22500712ABA /* MessageProvider.swift in Sources */,
 				0B1D149C2B3A69F1005A3D65 /* DateExt.swift in Sources */,
