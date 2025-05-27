@@ -42,6 +42,7 @@
 		0B737BB72D12F2AF00712ABA /* SuperEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B737BB62D12F2AF00712ABA /* SuperEvent.swift */; };
 		0B81F59B2B3D008C00F65A4B /* GuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B81F59A2B3D008C00F65A4B /* GuideView.swift */; };
 		0BE2F0512D159D0E008BC604 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 0BE2F0502D159D0E008BC604 /* Localizable.xcstrings */; };
+		0BFE7CF92DE5E511004A19ED /* BtnQuit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BFE7CF82DE5E511004A19ED /* BtnQuit.swift */; };
 		C40A5C46229DD6A500627D50 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4B45DDD2273A3450050C59B /* NetworkExtension.framework */; };
 		C40A5C4B229DD6A500627D50 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A5C4A229DD6A500627D50 /* main.swift */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -135,6 +136,7 @@
 		0B737BB62D12F2AF00712ABA /* SuperEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperEvent.swift; sourceTree = "<group>"; };
 		0B81F59A2B3D008C00F65A4B /* GuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideView.swift; sourceTree = "<group>"; };
 		0BE2F0502D159D0E008BC604 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		0BFE7CF82DE5E511004A19ED /* BtnQuit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnQuit.swift; sourceTree = "<group>"; };
 		6ED719E06ED6DED000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		C40A5C4A229DD6A500627D50 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -209,6 +211,7 @@
 		0B09F68C2B3EAD6400B90A59 /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
+				0BFE7CF82DE5E511004A19ED /* BtnQuit.swift */,
 				F5CC78CD2DE5633700A07EAB /* BtnSetting.swift */,
 				F5E3D9F32D15197D00D9C9D3 /* BtnToggleLog.swift */,
 				F5E3D9E92D1401E400D9C9D3 /* BtnAllow.swift */,
@@ -579,6 +582,7 @@
 			files = (
 				F5E3D9D72D13BEFB00D9C9D3 /* StopView.swift in Sources */,
 				0B33993A2B392B20005CC627 /* FilterStatus.swift in Sources */,
+				0BFE7CF92DE5E511004A19ED /* BtnQuit.swift in Sources */,
 				F5E3D9D52D13BE2C00D9C9D3 /* RunningView.swift in Sources */,
 				F5E3D9F42D15198100D9C9D3 /* BtnToggleLog.swift in Sources */,
 				0B1C33FC2B39C1E7004A5E36 /* SmartApp.swift in Sources */,
