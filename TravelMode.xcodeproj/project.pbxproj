@@ -54,6 +54,7 @@
 		F500B3F02DE4684F009CC54C /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3EF2DE4684F009CC54C /* MagicKit */; };
 		F589B5BD2D13A10700C7E449 /* OSExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F589B5BC2D13A10300C7E449 /* OSExt.swift */; };
 		F589B5BF2D13A4AA00C7E449 /* InstallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F589B5BE2D13A4AA00C7E449 /* InstallView.swift */; };
+		F5CC78CA2DE5570D00A07EAB /* ExtGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC78C92DE5570D00A07EAB /* ExtGuide.swift */; };
 		F5E3D9C92D13A84500D9C9D3 /* MessageTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9C82D13A84500D9C9D3 /* MessageTable.swift */; };
 		F5E3D9CD2D13A86600D9C9D3 /* TileMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9CC2D13A86600D9C9D3 /* TileMessage.swift */; };
 		F5E3D9CF2D13A89B00D9C9D3 /* PluginProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9CE2D13A89B00D9C9D3 /* PluginProvider.swift */; };
@@ -140,6 +141,7 @@
 		C4E0DBB42273BEA0005B02F4 /* FilterDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDataProvider.swift; sourceTree = "<group>"; };
 		F589B5BC2D13A10300C7E449 /* OSExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSExt.swift; sourceTree = "<group>"; };
 		F589B5BE2D13A4AA00C7E449 /* InstallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallView.swift; sourceTree = "<group>"; };
+		F5CC78C92DE5570D00A07EAB /* ExtGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtGuide.swift; sourceTree = "<group>"; };
 		F5E3D9C82D13A84500D9C9D3 /* MessageTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTable.swift; sourceTree = "<group>"; };
 		F5E3D9CC2D13A86600D9C9D3 /* TileMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMessage.swift; sourceTree = "<group>"; };
 		F5E3D9CE2D13A89B00D9C9D3 /* PluginProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginProvider.swift; sourceTree = "<group>"; };
@@ -302,6 +304,7 @@
 		0BC7D31F2DE4105100FAE6DB /* Guide */ = {
 			isa = PBXGroup;
 			children = (
+				F5CC78C92DE5570D00A07EAB /* ExtGuide.swift */,
 				F5E3D9E12D13D7AD00D9C9D3 /* ExtNotReady.swift */,
 				F5E3D9DE2D13CA7C00D9C9D3 /* UnkownView.swift */,
 				F5E3D9DC2D13C34100D9C9D3 /* DisabledView.swift */,
@@ -557,6 +560,7 @@
 				0B1D14A72B3AA062005A3D65 /* DebugCommand.swift in Sources */,
 				0B81F59B2B3D008C00F65A4B /* GuideView.swift in Sources */,
 				0B3399382B39277B005CC627 /* EventList.swift in Sources */,
+				F5CC78CA2DE5570D00A07EAB /* ExtGuide.swift in Sources */,
 				0B40CE422B39646100DC6771 /* AppList.swift in Sources */,
 				0B737BB72D12F2AF00712ABA /* SuperEvent.swift in Sources */,
 				F5E3D9D92D13BFA400D9C9D3 /* BtnStart.swift in Sources */,

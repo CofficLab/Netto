@@ -16,6 +16,8 @@ struct ContentView: View {
                 if app.logVisible {
                     EventList().shadow(radius: 10)
                 }
+                
+                StatusBar()
             }.background(.clear)
         }
         .onAppear {
