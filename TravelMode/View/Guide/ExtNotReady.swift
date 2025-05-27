@@ -32,14 +32,14 @@ struct ExtensionNotReady: View {
                 .frame(height: 50)
                 .scaleEffect(isAnimating ? 1 : 0.9)
                 
-                MagicButton(title: "学习如何设置")
-                    .magicSize(.auto)
-                    .magicIcon(.iconStar)
-                    .magicPopover(content: {
-                        ExtGuide()
-                    })
-                    .frame(width: 150)
-                    .frame(height: 50)
+//                MagicButton(title: "学习如何设置")
+//                    .magicSize(.auto)
+//                    .magicIcon(.iconStar)
+//                    .magicPopover(content: {
+//                        ExtGuide()
+//                    })
+//                    .frame(width: 150)
+//                    .frame(height: 50)
             }
         }
         .padding()
