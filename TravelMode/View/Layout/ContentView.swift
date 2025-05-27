@@ -1,5 +1,5 @@
-import SwiftUI
 import MagicCore
+import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var app: AppManager
@@ -9,6 +9,8 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             VSplitView {
+                Topbar().frame(maxWidth: .infinity)
+
                 AppList()
 
                 Divider()
@@ -16,10 +18,10 @@ struct ContentView: View {
                 if app.logVisible {
                     EventList().shadow(radius: 10)
                 }
-                
-                StatusBar()
-            }.background(.clear)
+            }
+            .frame(maxWidth: .infinity).background(.clear)
         }
+        .frame(maxWidth: .infinity)
         .onAppear {
             event.onFilterStatusChanged({
                 app.setFilterStatus($0)

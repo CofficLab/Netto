@@ -57,10 +57,14 @@
 		F5CC78CA2DE5570D00A07EAB /* ExtGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC78C92DE5570D00A07EAB /* ExtGuide.swift */; };
 		F5CC78CC2DE55EED00A07EAB /* Popview.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC78CB2DE55EDF00A07EAB /* Popview.swift */; };
 		F5CC78CE2DE5633700A07EAB /* BtnSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC78CD2DE5633700A07EAB /* BtnSetting.swift */; };
+		F5CC78D12DE568EC00A07EAB /* Topbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC78D02DE568EC00A07EAB /* Topbar.swift */; };
+		F5CC78D42DE56D3A00A07EAB /* TileInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC78D32DE56D3A00A07EAB /* TileInstall.swift */; };
+		F5CC78D72DE56E1B00A07EAB /* TileLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC78D62DE56E1B00A07EAB /* TileLog.swift */; };
+		F5CC78DA2DE56EB000A07EAB /* TileSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC78D92DE56EB000A07EAB /* TileSwitcher.swift */; };
+		F5CC78DD2DE5707500A07EAB /* TileState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CC78DC2DE5707500A07EAB /* TileState.swift */; };
 		F5E3D9C92D13A84500D9C9D3 /* MessageTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9C82D13A84500D9C9D3 /* MessageTable.swift */; };
 		F5E3D9CD2D13A86600D9C9D3 /* TileMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9CC2D13A86600D9C9D3 /* TileMessage.swift */; };
 		F5E3D9CF2D13A89B00D9C9D3 /* PluginProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9CE2D13A89B00D9C9D3 /* PluginProvider.swift */; };
-		F5E3D9D12D13A8D800D9C9D3 /* StatusBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9D02D13A8D800D9C9D3 /* StatusBar.swift */; };
 		F5E3D9D32D13BC2400D9C9D3 /* ApprovalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9D22D13BC2400D9C9D3 /* ApprovalView.swift */; };
 		F5E3D9D52D13BE2C00D9C9D3 /* RunningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9D42D13BE2C00D9C9D3 /* RunningView.swift */; };
 		F5E3D9D72D13BEFB00D9C9D3 /* StopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9D62D13BEFB00D9C9D3 /* StopView.swift */; };
@@ -146,10 +150,14 @@
 		F5CC78C92DE5570D00A07EAB /* ExtGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtGuide.swift; sourceTree = "<group>"; };
 		F5CC78CB2DE55EDF00A07EAB /* Popview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Popview.swift; sourceTree = "<group>"; };
 		F5CC78CD2DE5633700A07EAB /* BtnSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BtnSetting.swift; sourceTree = "<group>"; };
+		F5CC78D02DE568EC00A07EAB /* Topbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Topbar.swift; sourceTree = "<group>"; };
+		F5CC78D32DE56D3A00A07EAB /* TileInstall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileInstall.swift; sourceTree = "<group>"; };
+		F5CC78D62DE56E1B00A07EAB /* TileLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileLog.swift; sourceTree = "<group>"; };
+		F5CC78D92DE56EB000A07EAB /* TileSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileSwitcher.swift; sourceTree = "<group>"; };
+		F5CC78DC2DE5707500A07EAB /* TileState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileState.swift; sourceTree = "<group>"; };
 		F5E3D9C82D13A84500D9C9D3 /* MessageTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTable.swift; sourceTree = "<group>"; };
 		F5E3D9CC2D13A86600D9C9D3 /* TileMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileMessage.swift; sourceTree = "<group>"; };
 		F5E3D9CE2D13A89B00D9C9D3 /* PluginProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginProvider.swift; sourceTree = "<group>"; };
-		F5E3D9D02D13A8D800D9C9D3 /* StatusBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBar.swift; sourceTree = "<group>"; };
 		F5E3D9D22D13BC2400D9C9D3 /* ApprovalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApprovalView.swift; sourceTree = "<group>"; };
 		F5E3D9D42D13BE2C00D9C9D3 /* RunningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningView.swift; sourceTree = "<group>"; };
 		F5E3D9D62D13BEFB00D9C9D3 /* StopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopView.swift; sourceTree = "<group>"; };
@@ -260,17 +268,14 @@
 		0B3399342B3916B2005CC627 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				F5CC78CF2DE568B000A07EAB /* Layout */,
 				0BC7D31F2DE4105100FAE6DB /* Guide */,
 				0B19F0C42B3AB6AB002D8FAC /* AppLine.swift */,
 				0B40CE412B39646100DC6771 /* AppList.swift */,
 				0B2551712B3FBFBE0005096C /* AppListSample.swift */,
 				0B09F68C2B3EAD6400B90A59 /* Buttons */,
-				0B5B1CA92B385BF30002421E /* ContentView.swift */,
 				0B1D14A32B3A9ED0005A3D65 /* DatabaseView.swift */,
 				0B3399372B39277B005CC627 /* EventList.swift */,
-				F5E3D9D02D13A8D800D9C9D3 /* StatusBar.swift */,
-				F5E3D9D62D13BEFB00D9C9D3 /* StopView.swift */,
-				0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -318,6 +323,7 @@
 				F5E3D9D42D13BE2C00D9C9D3 /* RunningView.swift */,
 				F5E3D9D22D13BC2400D9C9D3 /* ApprovalView.swift */,
 				0B81F59A2B3D008C00F65A4B /* GuideView.swift */,
+				F5E3D9D62D13BEFB00D9C9D3 /* StopView.swift */,
 			);
 			path = Guide;
 			sourceTree = "<group>";
@@ -390,9 +396,55 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F5CC78CF2DE568B000A07EAB /* Layout */ = {
+			isa = PBXGroup;
+			children = (
+				F5CC78D02DE568EC00A07EAB /* Topbar.swift */,
+				0B5B1CA92B385BF30002421E /* ContentView.swift */,
+				0B1C33FD2B39C2AA004A5E36 /* Toolbar.swift */,
+			);
+			path = Layout;
+			sourceTree = "<group>";
+		};
+		F5CC78D22DE56D0700A07EAB /* Install */ = {
+			isa = PBXGroup;
+			children = (
+				F5CC78D32DE56D3A00A07EAB /* TileInstall.swift */,
+			);
+			path = Install;
+			sourceTree = "<group>";
+		};
+		F5CC78D52DE56E0E00A07EAB /* Log */ = {
+			isa = PBXGroup;
+			children = (
+				F5CC78D62DE56E1B00A07EAB /* TileLog.swift */,
+			);
+			path = Log;
+			sourceTree = "<group>";
+		};
+		F5CC78D82DE56EA200A07EAB /* Switcher */ = {
+			isa = PBXGroup;
+			children = (
+				F5CC78D92DE56EB000A07EAB /* TileSwitcher.swift */,
+			);
+			path = Switcher;
+			sourceTree = "<group>";
+		};
+		F5CC78DB2DE5706700A07EAB /* State */ = {
+			isa = PBXGroup;
+			children = (
+				F5CC78DC2DE5707500A07EAB /* TileState.swift */,
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
 		F5E3D9C62D13A81300D9C9D3 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				F5CC78DB2DE5706700A07EAB /* State */,
+				F5CC78D82DE56EA200A07EAB /* Switcher */,
+				F5CC78D52DE56E0E00A07EAB /* Log */,
+				F5CC78D22DE56D0700A07EAB /* Install */,
 				F5E3D9C72D13A82D00D9C9D3 /* SmartMessage */,
 			);
 			path = Plugins;
@@ -539,12 +591,13 @@
 				C4B1415C227BBC0200B26560 /* IPCConnection.swift in Sources */,
 				0B1D14A22B3A99AC005A3D65 /* AppConfig.swift in Sources */,
 				0B3399262B3907F6005CC627 /* ContentView.swift in Sources */,
-				F5E3D9D12D13A8D800D9C9D3 /* StatusBar.swift in Sources */,
 				F5E3D9DD2D13C34100D9C9D3 /* DisabledView.swift in Sources */,
 				0B2551742B3FD3C30005096C /* DisplayType.swift in Sources */,
+				F5CC78D42DE56D3A00A07EAB /* TileInstall.swift in Sources */,
 				0B2551722B3FBFBE0005096C /* AppListSample.swift in Sources */,
 				F5E3D9EA2D1401E400D9C9D3 /* BtnAllow.swift in Sources */,
 				F589B5BF2D13A4AA00C7E449 /* InstallView.swift in Sources */,
+				F5CC78DD2DE5707500A07EAB /* TileState.swift in Sources */,
 				0B1D14A42B3A9ED0005A3D65 /* DatabaseView.swift in Sources */,
 				0B3399252B3907F3005CC627 /* TheApp.swift in Sources */,
 				0B1D14982B3A63A3005A3D65 /* BackgroundView.swift in Sources */,
@@ -554,6 +607,7 @@
 				0B09F6922B3EB84100B90A59 /* Location.swift in Sources */,
 				0B09F6852B3E51F900B90A59 /* ExtConfig.swift in Sources */,
 				F5E3D9DB2D13C01E00D9C9D3 /* BtnStop.swift in Sources */,
+				F5CC78DA2DE56EB000A07EAB /* TileSwitcher.swift in Sources */,
 				0B1D149F2B3A78EC005A3D65 /* AppSetting.swift in Sources */,
 				0B3399332B391619005CC627 /* RootView.swift in Sources */,
 				F589B5BD2D13A10700C7E449 /* OSExt.swift in Sources */,
@@ -570,7 +624,9 @@
 				F5CC78CA2DE5570D00A07EAB /* ExtGuide.swift in Sources */,
 				0B40CE422B39646100DC6771 /* AppList.swift in Sources */,
 				0B737BB72D12F2AF00712ABA /* SuperEvent.swift in Sources */,
+				F5CC78D12DE568EC00A07EAB /* Topbar.swift in Sources */,
 				F5E3D9D92D13BFA400D9C9D3 /* BtnStart.swift in Sources */,
+				F5CC78D72DE56E1B00A07EAB /* TileLog.swift in Sources */,
 				F5E3D9C92D13A84500D9C9D3 /* MessageTable.swift in Sources */,
 				F5CC78CC2DE55EED00A07EAB /* Popview.swift in Sources */,
 				0B3399302B3914EF005CC627 /* AppManager.swift in Sources */,

@@ -23,3 +23,9 @@ struct TheApp: App {
         }.menuBarExtraStyle(.window)
     }
 }
+
+#Preview("APP") {
+    RootView(content: {
+        ContentView()
+    }).frame(width: 700)
+}

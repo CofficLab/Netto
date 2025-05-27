@@ -272,6 +272,12 @@
         }
       }
     },
+    "Disabled" : {
+
+    },
+    "Error" : {
+
+    },
     "Error: %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -323,6 +329,9 @@
           }
         }
       }
+    },
+    "Indeterminate" : {
+
     },
     "Install" : {
       "extractionState" : "stale",
@@ -377,6 +386,9 @@
         }
       }
     },
+    "Need Approval" : {
+
+    },
     "No" : {
       "localizations" : {
         "zh-Hans" : {
@@ -386,6 +398,9 @@
           }
         }
       }
+    },
+    "Not Installed" : {
+
     },
     "Open Data Folder" : {
       "localizations" : {
@@ -438,6 +453,9 @@
         }
       }
     },
+    "Running" : {
+
+    },
     "Show Log" : {
       "localizations" : {
         "zh-Hans" : {
@@ -489,6 +507,9 @@
         }
       }
     },
+    "Stopped" : {
+
+    },
     "Time" : {
       "localizations" : {
         "zh-Hans" : {
@@ -522,6 +543,9 @@
           }
         }
       }
+    },
+    "Waiting For Approval" : {
+
     },
     "Wi-Fi" : {
 
