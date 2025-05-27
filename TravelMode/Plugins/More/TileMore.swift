@@ -7,30 +7,11 @@ struct TileMore: View, SuperLog, SuperThread {
 
     @State var hovered = false
     @State var isPresented = false
-    @State var live = false
-    @State private var selection: Set<SmartMessage.ID> = []
-    @State private var selectedChannel: String = "all"
-    @State private var messages: [SmartMessage] = []
-
-    var firstFlashMessage: SmartMessage? { m.messages.first(where: { $0.shouldFlash }) }
 
     var body: some View {
         HStack {
-            if let m = firstFlashMessage, live {
-                Text(m.description).onAppear {
-                    main.asyncAfter(deadline: .now() + 3, execute: {
-                        self.live = false
-                    })
-                }
-            } else {
-                Image(systemName: "plus.circle")
-            }
+            Image(systemName: "ellipsis")
         }
-        .onChange(of: firstFlashMessage, {
-            if firstFlashMessage != nil {
-                self.live = true
-            }
-        })
         .onHover(perform: { hovering in
             hovered = hovering
         })
