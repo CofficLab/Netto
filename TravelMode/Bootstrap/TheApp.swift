@@ -13,6 +13,8 @@ struct TheApp: App {
             RootView {
                 ContentView()
             }
+            .frame(minHeight: 500)
+            .frame(minWidth: 300)
             .environmentObject(app)
             .environmentObject(event)
             .environmentObject(channel)

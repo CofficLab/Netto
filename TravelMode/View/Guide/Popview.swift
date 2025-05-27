@@ -49,8 +49,6 @@ struct Popview<Content: View>: View {
                 isAnimating = true
             }
         }
-        .frame(minWidth: 400)
-        .frame(minHeight: 500)
         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
         .contentShape(Rectangle())
         .onHover { hovering in

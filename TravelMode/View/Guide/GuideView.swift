@@ -41,6 +41,7 @@ struct GuideView: View {
             .background(.background)
             .cornerRadius(16)
             .padding(20)
+            .shadow(color: Color.blue.opacity(0.2), radius: 10, x: 0, y: 2)
         }
     }
 }
