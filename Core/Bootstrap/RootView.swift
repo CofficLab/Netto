@@ -1,28 +1,26 @@
-import SwiftUI
-import SwiftData
 import AlertToast
 import MagicCore
+import SwiftData
+import SwiftUI
 
 struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var content: Content
     private var app = AppManager.shared
-    private var eventManager = EventManager.shared
     private var p = PluginProvider()
     private var data = DataProvider.shared
-    
+
     @StateObject var m = MessageProvider.shared
     @StateObject var channel = ChannelProvider.shared
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
-    
+
     var body: some View {
         content
             .environmentObject(app)
             .environmentObject(data)
             .environmentObject(channel)
-            .environmentObject(eventManager)
             .modelContainer(AppConfig.container)
             .environmentObject(m)
             .environmentObject(p)

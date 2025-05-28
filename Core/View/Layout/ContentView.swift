@@ -3,7 +3,6 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var app: AppManager
-    @EnvironmentObject private var event: EventManager
     @EnvironmentObject private var channel: ChannelProvider
 
     var body: some View {
@@ -23,10 +22,12 @@ struct ContentView: View {
         }
         .frame(maxWidth: .infinity)
         .onAppear {
-            event.onFilterStatusChanged({
-                app.setFilterStatus($0)
-            })
             channel.boot()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .FilterStatusChanged)) { notification in
+            if let status = notification.object as? FilterStatus {
+                app.setFilterStatus(status)
+            }
         }
         .onDisappear {
             channel.viewWillDisappear()

@@ -7,11 +7,10 @@ import SystemExtensions
 
 class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
     static let shared = ChannelProvider()
-    private override init() {}
-    
+    override private init() {}
+
     let emoji = "🫙"
 
-    private var event = EventManager.shared
     private var ipc = IPCConnection.shared
     private var filterManager = NEFilterManager.shared()
     private var extensionManager = OSSystemExtensionManager.shared
@@ -24,7 +23,11 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
                 registerWithProvider()
             }
 
-            event.emitFilterStatusChanged(status)
+            NotificationCenter.default.post(
+                name: .FilterStatusChanged,
+                object: status,
+                userInfo: nil
+            )
         }
     }
 
@@ -144,17 +147,17 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         os_log("  ➡️ Current Status: \(self.status.description)")
 
         self.emit(.willStart)
-        
+
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
             os_log("\(self.t)extensionBundle.bundleIdentifier 为空")
             status = .stopped
             return
         }
-        
+
         // macOS 15， 系统设置 - 网络 - 过滤器，用户能删除过滤器，所以要确保过滤器已加载
-        
+
         try await loadFilterConfiguration(reason: reason)
-        
+
         guard !filterManager.isEnabled else {
             os_log("\(self.t)过滤器已启用，直接关联")
             registerWithProvider()
@@ -260,15 +263,15 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         ipc.register(withExtension: extensionBundle, delegate: self) { success in
             if success {
                 os_log("\(self.t)APP 和 Provider 关联成功 🎉")
-                
+
                 self.emit(.didRegisterWithProvider)
-                
+
                 self.main.async {
                     self.status = .running
                 }
             } else {
                 os_log("\(self.t)APP 和 Provider 关联失败 💔")
-                
+
                 self.main.async {
                     self.status = .extensionNotReady
                 }
@@ -329,13 +332,17 @@ extension ChannelProvider: AppCommunication {
     }
 
     func needApproval() {
-        EventManager.shared.emitNeedApproval()
+        NotificationCenter.default.post(
+            name: .NeedApproval,
+            object: nil,
+            userInfo: nil
+        )
     }
 
     // MARK: AppCommunication
 
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
-        let verbose = false 
+        let verbose = false
 
         if verbose {
             os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId())")
