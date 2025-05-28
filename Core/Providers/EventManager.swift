@@ -24,7 +24,7 @@ final class EventManager: ObservableObject {
     }
     
     func emitProviderSaid(_ words: String) {
-        Logger.app.debug("provider said: \(words)")
+        os_log("provider said: \(words)")
         NotificationCenter.default.post(
             name: NSNotification.Name(EventList.WaitingForApproval.name),
             object: words,

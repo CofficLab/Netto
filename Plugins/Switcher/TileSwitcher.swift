@@ -11,13 +11,12 @@ struct TileSwitcher: View, SuperLog, SuperThread {
 
     var body: some View {
         HStack {
-            if app.status.isStopped() {
-                BtnStart(asToolbarItem: true)
-                    .labelStyle(.iconOnly)
-            }
-            
             if app.status.isRunning() {
                 BtnStop(asToolbarItem: true).labelStyle(.iconOnly)
+            } else {
+                BtnStart(asToolbarItem: true)
+                    .labelStyle(.iconOnly)
+                    .disabled(!app.status.canStart())
             }
         }
         .frame(maxHeight: .infinity)

@@ -23,7 +23,7 @@ final class AppSetting: SuperLog, SuperEvent {
         do {
             try context.save()
         } catch (let error) {
-            Logger.app.error("\(error.localizedDescription)")
+            os_log("\(error.localizedDescription)")
         }
     }
     
@@ -39,7 +39,7 @@ final class AppSetting: SuperLog, SuperEvent {
             
             return first
         } catch (let error) {
-            Logger.app.error("\(error.localizedDescription)")
+            os_log("\(error.localizedDescription)")
             
             return nil
         }

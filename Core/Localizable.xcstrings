@@ -243,6 +243,7 @@
 
     },
     "Debug" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -271,9 +272,6 @@
           }
         }
       }
-    },
-    "Disabled" : {
-
     },
     "Error" : {
 
@@ -404,6 +402,7 @@
 
     },
     "Open Data Folder" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -453,9 +452,6 @@
           }
         }
       }
-    },
-    "Running" : {
-
     },
     "Show Log" : {
       "extractionState" : "stale",
@@ -508,9 +504,6 @@
           }
         }
       }
-    },
-    "Stopped" : {
-
     },
     "Time" : {
       "localizations" : {
@@ -568,6 +561,12 @@
     "下一步" : {
 
     },
+    "已停止" : {
+
+    },
+    "已停用" : {
+
+    },
     "开始" : {
 
     },
@@ -583,6 +582,9 @@
     "登录项与扩展" : {
 
     },
+    "等待配置扩展" : {
+
+    },
     "管理Mac的整体设置和相关设置..." : {
 
     },
@@ -593,6 +595,9 @@
 
     },
     "辅助功能" : {
+
+    },
+    "运行中" : {
 
     },
     "通用" : {

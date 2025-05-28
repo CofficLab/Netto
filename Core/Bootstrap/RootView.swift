@@ -5,7 +5,7 @@ import MagicCore
 
 struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var content: Content
-    private var appManager = AppManager()
+    private var app = AppManager.shared
     private var eventManager = EventManager()
     private var p = PluginProvider()
     
@@ -18,7 +18,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     
     var body: some View {
         content
-            .environmentObject(appManager)
+            .environmentObject(app)
             .environmentObject(channel)
             .environmentObject(eventManager)
             .modelContainer(AppConfig.container)
