@@ -5,7 +5,7 @@ struct AppList: View {
     @EnvironmentObject private var appManager: AppManager
     @EnvironmentObject private var channel: ChannelProvider
     @EnvironmentObject private var data: DataProvider
-    
+
     private var displayType: DisplayType {
         appManager.displayType
     }
@@ -46,30 +46,29 @@ struct AppList: View {
                 GuideView()
             }
         }
-        .onAppear {
-            onNewEvent()
-        }
-    }
-}
+        .onReceive(NotificationCenter.default.publisher(for: .NetWorkFilterFlow)) { notification in
+            if let wrapper = notification.object as? FlowWrapper {
+                let flow = wrapper.flow
+                let app = SmartApp.fromId(flow.getAppId())
 
-// MARK: Event
-
-extension AppList {
-    private func onNewEvent() {
-        EventManager.shared.onNetworkFilterFlow({ e in
-            let app = SmartApp.fromId(e.sourceAppIdentifier)
-            if data.apps.contains(where: {
-                $0.id == app.id
-            }) {
-                for (i, a) in data.apps.enumerated() {
-                    if a.id == app.id {
-                        data.apps[i] = a.appendEvent(e)
+                if data.apps.contains(where: { $0.id == app.id }) {
+                    for (i, a) in data.apps.enumerated() {
+                        if a.id == app.id {
+                            let event = FirewallEvent(
+                                address: flow.getHostname(),
+                                port: flow.getLocalPort(),
+                                sourceAppIdentifier: flow.getAppId(),
+                                status: wrapper.allowed ? .allowed : .rejected,
+                                direction: flow.direction
+                            )
+                            data.apps[i] = a.appendEvent(event)
+                        }
                     }
+                } else {
+                    data.apps.append(app)
                 }
-            } else {
-                data.apps.append(app)
             }
-        })
+        }
     }
 }
 

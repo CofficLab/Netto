@@ -11,12 +11,12 @@ final class EventManager: ObservableObject {
     
     
     enum EventList {
-        case NetWorkFilterFlow
         case FilterStatusChanged
         case NeedApproval
         case WaitingForApproval
         case PermissionDenied
         case ProviderSaid
+        case NetWorkFilterFlow
         
         var name: String {
             String(describing: self)
@@ -62,25 +62,6 @@ final class EventManager: ObservableObject {
             object: nil,
             userInfo: nil
         )
-    }
-    
-    func onNetworkFilterFlow(_ callback: @escaping (_ e: FirewallEvent) -> Void) {
-        NotificationCenter.default.addObserver(
-            forName: NSNotification.Name(EventList.NetWorkFilterFlow.name),
-            object: nil,
-            queue: .main,
-            using: { notification in
-                let wrapper = notification.object as! FlowWrapper
-                let flow = wrapper.flow
-                
-                callback(FirewallEvent(
-                    address: flow.getHostname(),
-                    port: flow.getLocalPort(),
-                    sourceAppIdentifier: flow.getAppId(),
-                    status: wrapper.allowed ? .allowed : .rejected,
-                    direction: flow.direction
-                ))
-            })
     }
     
     func onFilterStatusChanged(_ callback: @escaping (_ e: FilterStatus) -> Void) {
