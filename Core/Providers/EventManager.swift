@@ -8,10 +8,7 @@ final class EventManager: ObservableObject {
     static let shared = EventManager()
     private init() {}
     
-    struct FlowWrapper {
-        var flow: NEFilterFlow
-        var allowed: Bool
-    }
+    
     
     enum EventList {
         case NetWorkFilterFlow
@@ -55,14 +52,6 @@ final class EventManager: ObservableObject {
         NotificationCenter.default.post(
             name: NSNotification.Name(EventList.FilterStatusChanged.name),
             object: status,
-            userInfo: nil
-        )
-    }
-    
-    func emitNetworkFilterFlow(_ flow: NEFilterFlow, allowed: Bool) {
-        NotificationCenter.default.post(
-            name: NSNotification.Name(EventList.NetWorkFilterFlow.name),
-            object: FlowWrapper(flow: flow, allowed: allowed),
             userInfo: nil
         )
     }

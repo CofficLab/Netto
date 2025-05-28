@@ -4,15 +4,14 @@ import SwiftUI
 struct AppList: View {
     @EnvironmentObject private var appManager: AppManager
     @EnvironmentObject private var channel: ChannelProvider
-
-    @State private var apps: [SmartApp] = []
+    @EnvironmentObject private var data: DataProvider
     
     private var displayType: DisplayType {
         appManager.displayType
     }
 
     private var appsVisible: [SmartApp] {
-        apps.sorted(by: {
+        data.apps.sorted(by: {
             $0.events.count > $1.events.count
         }).filter({
             $0.events.count > 0
@@ -48,7 +47,6 @@ struct AppList: View {
             }
         }
         .onAppear {
-            apps = SmartApp.appList
             onNewEvent()
         }
     }
@@ -60,16 +58,16 @@ extension AppList {
     private func onNewEvent() {
         EventManager.shared.onNetworkFilterFlow({ e in
             let app = SmartApp.fromId(e.sourceAppIdentifier)
-            if apps.contains(where: {
+            if data.apps.contains(where: {
                 $0.id == app.id
             }) {
-                for (i, a) in apps.enumerated() {
+                for (i, a) in data.apps.enumerated() {
                     if a.id == app.id {
-                        apps[i] = a.appendEvent(e)
+                        data.apps[i] = a.appendEvent(e)
                     }
                 }
             } else {
-                apps.append(app)
+                data.apps.append(app)
             }
         })
     }

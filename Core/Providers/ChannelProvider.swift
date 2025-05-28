@@ -347,14 +347,13 @@ extension ChannelProvider: AppCommunication {
                     os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Allow")
                 }
 
-                EventManager.shared.emitNetworkFilterFlow(flow, allowed: true)
+                self.nc.post(name: .NetWorkFilterFlow, object: FlowWrapper(flow: flow, allowed: true))
                 responseHandler(true)
             } else {
                 if verbose {
                     os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Deny")
                 }
-
-                EventManager.shared.emitNetworkFilterFlow(flow, allowed: false)
+                self.nc.post(name: .NetWorkFilterFlow, object: FlowWrapper(flow: flow, allowed: false))
                 responseHandler(false)
             }
         }

@@ -8,6 +8,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var app = AppManager.shared
     private var eventManager = EventManager.shared
     private var p = PluginProvider()
+    private var data = DataProvider.shared
     
     @StateObject var m = MessageProvider.shared
     @StateObject var channel = ChannelProvider.shared
@@ -19,6 +20,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     var body: some View {
         content
             .environmentObject(app)
+            .environmentObject(data)
             .environmentObject(channel)
             .environmentObject(eventManager)
             .modelContainer(AppConfig.container)
