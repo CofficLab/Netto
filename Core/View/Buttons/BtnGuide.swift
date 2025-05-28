@@ -48,7 +48,7 @@ struct BtnGuide: View, SuperEvent {
      * 打开欢迎引导窗口并隐藏菜单栏窗口
      */
     private func action() -> Void {
-        nc.post(name: .willOpenWelcomeWindow, object: nil)
+        nc.post(name: .shouldOpenWelcomeWindow, object: nil)
     }
 }
 

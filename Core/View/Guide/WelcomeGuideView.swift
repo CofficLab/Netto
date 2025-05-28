@@ -5,7 +5,6 @@ import SwiftUI
  * 用于在应用启动时向用户展示使用指南
  */
 struct WelcomeGuideView: View {
-    @Binding var isPresented: Bool
     @State private var currentStep = 0
     @AppStorage("hasShownWelcome") private var hasShownWelcome = false
     @Environment(\.dismiss) private var dismiss
@@ -14,9 +13,10 @@ struct WelcomeGuideView: View {
         VStack(spacing: 20) {
             // 头部
             VStack(spacing: 16) {
-                Image(systemName: "network")
-                    .font(.system(size: 48))
-                    .foregroundColor(.blue)
+                Image("Logo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 72, height: 72)
                 
                 Text("欢迎使用 TravelMode")
                     .font(.largeTitle)
@@ -139,11 +139,10 @@ struct WelcomeGuideView: View {
      */
     private func closeWindow() {
         hasShownWelcome = true
-        isPresented = false
         dismiss()
     }
 }
 
 #Preview {
-    WelcomeGuideView(isPresented: .constant(true))
+    WelcomeGuideView()
 }

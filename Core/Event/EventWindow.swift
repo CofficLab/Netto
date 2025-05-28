@@ -2,8 +2,17 @@ import Foundation
 
 /// 通知名称扩展
 extension Notification.Name  {
+    /// 应该打开欢迎窗口的通知
+    static let shouldOpenWelcomeWindow = Notification.Name("shouldOpenWelcomeWindow")
+
     /// 将要打开欢迎窗口的通知
     static let willOpenWelcomeWindow = Notification.Name("willOpenWelcomeWindow")
+
+    /// 已经打开欢迎窗口的通知
+    static let didOpenWelcomeWindow = Notification.Name("didOpenWelcomeWindow")
+
+    /// 将要关闭欢迎窗口的通知
+    static let willCloseWelcomeWindow = Notification.Name("willCloseWelcomeWindow")
 
     /// 应该关闭欢迎窗口的通知
     static let shouldCloseWelcomeWindow = Notification.Name("shouldCloseWelcomeWindow")

@@ -19,15 +19,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, SuperEvent, SuperLog, SuperT
     func applicationDidFinishLaunching(_ notification: Notification) {
         let shouldShowWelcome = shouldShowWelcomeWindow()
 
-        os_log("\(self.t) Application did finish launching, shouldShowWelcome: \(shouldShowWelcome)")
+        os_log("\(self.t) did finish launching, shouldShowWelcome: \(shouldShowWelcome)")
 
         if shouldShowWelcome {
-            // 延迟1秒确保应用完全启动
-            self.main.asyncAfter(deadline: .now() + 1.0) {
-                self.nc.post(name: .willOpenWelcomeWindow, object: nil)
-                
-//                self.openWindow(id: AppConfig.welcomeWindowId)
-            }
+            self.nc.post(name: .shouldOpenWelcomeWindow, object: nil)
+        } else {
+            self.nc.post(name:.shouldCloseWelcomeWindow, object: nil)
         }
     }
 
@@ -62,7 +59,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SuperEvent, SuperLog, SuperT
             UserDefaults.standard.set(currentVersion, forKey: "lastShownWelcomeVersion")
         }
 
-        return shouldShow || true
+        return shouldShow
     }
 
     /**
