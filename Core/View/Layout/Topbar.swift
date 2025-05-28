@@ -7,7 +7,6 @@ struct Topbar: View {
     var body: some View {
         HStack {
             p.getPlugins()
-                .padding(.trailing, 10)
                 .labelStyle(.iconOnly)
         }
         .frame(height: 30)

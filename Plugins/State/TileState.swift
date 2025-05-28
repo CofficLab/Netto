@@ -10,30 +10,29 @@ struct TileState: View, SuperLog, SuperThread {
     @State var isPresented = false
 
     var body: some View {
-        HStack {
-            ZStack {
-                switch app.status {
-                case .stopped:
-                    Text("Stopped")
-                case .indeterminate:
-                    Text("Indeterminate")
-                case .running:
-                    Text("Running") 
-                case.notInstalled:
-                    Text("Not Installed")
-                case.needApproval:
-                    Text("Need Approval")
-                case.waitingForApproval:
-                    Text("Waiting For Approval")
-                case.error:
-                    Text("Error")
-                case.disabled:
-                    Text("Disabled")
-                case.extensionNotReady:
-                    Text("Disabled")
-                }
+        Group {
+            switch app.status {
+            case .stopped:
+                Text("已停止")
+            case .indeterminate:
+                Text("Indeterminate")
+            case .running:
+                Text("运行中")
+            case .notInstalled:
+                Text("Not Installed")
+            case .needApproval:
+                Text("Need Approval")
+            case .waitingForApproval:
+                Text("Waiting For Approval")
+            case .error:
+                Text("Error")
+            case .disabled:
+                Text("已停用")
+            case .extensionNotReady:
+                Text("等待配置扩展")
             }
         }
+        .font(.footnote)
         .frame(maxHeight: .infinity)
         .onHover(perform: { hovering in
             hovered = hovering
