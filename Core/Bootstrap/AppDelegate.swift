@@ -9,7 +9,7 @@ import SwiftUI
  */
 class AppDelegate: NSObject, NSApplicationDelegate, SuperEvent, SuperLog, SuperThread {
     @Environment(\.openWindow) private var openWindow
-    static let emoji = "🫙"
+    static let emoji = "🍎"
 
     /**
      * 应用启动完成后的处理

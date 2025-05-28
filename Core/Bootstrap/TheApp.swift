@@ -15,14 +15,14 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @State private var shouldShowMenuApp = true
     @State private var shouldShowWelcomeWindow = false
 
-    static let emoji = "🫙"
+    static let emoji = "🐦"
     static let welcomeWindowTitle = "Welcome to TravelMode"
 
     var body: some Scene {
         // 欢迎引导窗口
         Window(Self.welcomeWindowTitle, id: AppConfig.welcomeWindowId) {
-            
                 if shouldShowLoading && !shouldShowWelcomeWindow {
+                    // 使用 RootView 包裹，让 Providers 开始初始化
                     RootView {
                         LoadingView(isPresented: $shouldShowLoading, message: "启动中")
                             .onReceive(nc.publisher(for: .shouldOpenWelcomeWindow)) { _ in

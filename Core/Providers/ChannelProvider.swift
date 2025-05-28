@@ -37,7 +37,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         }
     }
 
-    let emoji = "🫙"
+    static let emoji = "📢"
 
     private var ipc = IPCConnection.shared
     private var filterManager = NEFilterManager.shared()
@@ -77,7 +77,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     }
 
     func setObserver() {
-        os_log("\(self.t)添加监听")
+        os_log("\(self.t)👂 添加监听")
         observer = nc.addObserver(
             forName: .NEFilterConfigurationDidChange,
             object: filterManager,
