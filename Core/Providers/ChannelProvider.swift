@@ -33,6 +33,13 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
 
     var observer: Any?
 
+    /// 更新过滤器状态
+    /// - Parameter status: 新的过滤器状态
+    @MainActor
+    private func updateFilterStatus(_ status: FilterStatus) {
+        self.status = status
+    }
+
     func boot() {
         os_log("\(self.t)\(Location.did(.Boot))")
 
@@ -43,26 +50,21 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         os_log("\(self.t)\(Location.did(.IfReady))")
 
         // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
                 try await loadFilterConfiguration(reason: "Boot")
             } catch {
                 os_log(.error, "\(self.t)Boot -> \(error)")
             }
 
-            if self.filterManager.isEnabled {
-                os_log("\(self.t)Boot -> 过滤器已启用 ✅")
-
-                self.main.async {
-                    self.status = .running
-                }
-            } else {
-                os_log("\(self.t)Boot -> 过滤器未启用 ❎")
-
-                self.main.async {
-                    self.status = .disabled
-                }
-            }
+            let isEnabled = self.filterManager.isEnabled
+            let logMessage = isEnabled ? "过滤器已启用 ✅" : "过滤器未启用 ❎"
+            let newStatus: FilterStatus = isEnabled ? .running : .disabled
+            
+            os_log("\(self.t)Boot -> \(logMessage)")
+            
+            await updateFilterStatus(newStatus)
         }
     }
 
@@ -187,9 +189,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         filterManager.isEnabled = false
         try await filterManager.saveToPreferences()
 
-        self.main.async {
-            self.status = .stopped
-        }
+        await self.updateFilterStatus(.stopped)
     }
 
     // MARK: Content Filter Configuration Management
