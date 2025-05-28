@@ -31,7 +31,7 @@ struct EventList: View {
         }
         .background(BackgroundView.type1)
         .onAppear {
-            EventManager().onNetworkFilterFlow({
+            EventManager.shared.onNetworkFilterFlow({
                 app.appendEvent($0)
             })
         }

@@ -5,6 +5,7 @@ import SwiftData
 import SwiftUI
 
 class MessageProvider: ObservableObject, SuperLog, SuperThread, SuperEvent {
+    static let shared = MessageProvider()
     let emoji = "📪"
     let maxMessageCount = 100
 
@@ -20,7 +21,7 @@ class MessageProvider: ObservableObject, SuperLog, SuperThread, SuperEvent {
     @Published var showToast = false
     @Published var showAlert = false
 
-    init() {
+    private init() {
         let verbose = false
         if verbose {
             os_log("\(Self.onInit) MessageProvider")
