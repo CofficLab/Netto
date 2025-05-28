@@ -6,11 +6,11 @@ import MagicCore
 struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var content: Content
     private var app = AppManager.shared
-    private var eventManager = EventManager()
+    private var eventManager = EventManager.shared
     private var p = PluginProvider()
     
-    @StateObject var m = MessageProvider()
-    @StateObject var channel = ChannelProvider()
+    @StateObject var m = MessageProvider.shared
+    @StateObject var channel = ChannelProvider.shared
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()

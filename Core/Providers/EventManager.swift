@@ -5,6 +5,9 @@ import SwiftUI
 import OSLog
 
 final class EventManager: ObservableObject {
+    static let shared = EventManager()
+    private init() {}
+    
     struct FlowWrapper {
         var flow: NEFilterFlow
         var allowed: Bool

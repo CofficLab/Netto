@@ -6,9 +6,12 @@ import SwiftUI
 import SystemExtensions
 
 class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
+    static let shared = ChannelProvider()
+    private override init() {}
+    
     let emoji = "🫙"
 
-    private var event = EventManager()
+    private var event = EventManager.shared
     private var ipc = IPCConnection.shared
     private var filterManager = NEFilterManager.shared()
     private var extensionManager = OSSystemExtensionManager.shared
@@ -326,7 +329,7 @@ extension ChannelProvider: AppCommunication {
     }
 
     func needApproval() {
-        EventManager().emitNeedApproval()
+        EventManager.shared.emitNeedApproval()
     }
 
     // MARK: AppCommunication
@@ -344,14 +347,14 @@ extension ChannelProvider: AppCommunication {
                     os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Allow")
                 }
 
-                EventManager().emitNetworkFilterFlow(flow, allowed: true)
+                EventManager.shared.emitNetworkFilterFlow(flow, allowed: true)
                 responseHandler(true)
             } else {
                 if verbose {
                     os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Deny")
                 }
 
-                EventManager().emitNetworkFilterFlow(flow, allowed: false)
+                EventManager.shared.emitNetworkFilterFlow(flow, allowed: false)
                 responseHandler(false)
             }
         }
