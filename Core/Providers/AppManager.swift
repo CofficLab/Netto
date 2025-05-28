@@ -2,6 +2,9 @@ import Foundation
 import SwiftUI
 
 class AppManager: ObservableObject {
+    static let shared = AppManager()
+    private init() {}
+    
     @Published var status: FilterStatus = .indeterminate
     @Published var events: [FirewallEvent] = []
     @Published var logVisible: Bool = false
