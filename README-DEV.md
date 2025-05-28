@@ -15,3 +15,5 @@
 ## 参考资料
 
 - [macOS System Preference Panes](https://gist.github.com/rmcdongit/f66ff91e0dad78d4d6346a75ded4b751)
+- <https://www.avanderlee.com/debugging/network-extension-debugging-macos/>
+- <https://developer.apple.com/documentation/networkextension/filtering-network-traffic>
