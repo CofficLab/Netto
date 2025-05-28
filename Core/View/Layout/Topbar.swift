@@ -7,7 +7,7 @@ struct Topbar: View {
     var body: some View {
         HStack {
             p.getPlugins()
-                .labelStyle(.iconOnly)
+//                .labelStyle(.iconOnly)
         }
         .frame(height: 30)
         .background(BackgroundView.type2.opacity(0.2))
