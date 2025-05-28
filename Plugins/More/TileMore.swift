@@ -30,6 +30,8 @@ struct TileMore: View, SuperLog, SuperThread {
                 BtnStart()
                 BtnToggleLog()
                 BtnSetting()
+                BtnGuide()
+                BtnAbout()
                 BtnQuit()
             }.padding()
         })
