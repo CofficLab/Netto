@@ -3,15 +3,15 @@ import SwiftUI
 
 struct AppList: View {
     @EnvironmentObject private var appManager: AppManager
+    @EnvironmentObject private var channel: ChannelProvider
+    @EnvironmentObject private var data: DataProvider
 
-    @State private var apps: [SmartApp] = []
     private var displayType: DisplayType {
         appManager.displayType
     }
 
-    private var channel = ChannelProvider()
     private var appsVisible: [SmartApp] {
-        apps.sorted(by: {
+        data.apps.sorted(by: {
             $0.events.count > $1.events.count
         }).filter({
             $0.events.count > 0
@@ -46,31 +46,6 @@ struct AppList: View {
                 GuideView()
             }
         }
-        .onAppear {
-            apps = SmartApp.appList
-            onNewEvent()
-        }
-    }
-}
-
-// MARK: Event
-
-extension AppList {
-    private func onNewEvent() {
-        EventManager().onNetworkFilterFlow({ e in
-            let app = SmartApp.fromId(e.sourceAppIdentifier)
-            if apps.contains(where: {
-                $0.id == app.id
-            }) {
-                for (i, a) in apps.enumerated() {
-                    if a.id == app.id {
-                        apps[i] = a.appendEvent(e)
-                    }
-                }
-            } else {
-                apps.append(app)
-            }
-        })
     }
 }
 

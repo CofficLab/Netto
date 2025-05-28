@@ -9,16 +9,7 @@ struct ExtensionNotReady: View {
         ) {
             VStack(spacing: 24) {
                 BtnSetting()
-                BtnInstall()
-
-//                MagicButton(title: "学习如何设置")
-//                    .magicSize(.auto)
-//                    .magicIcon(.iconStar)
-//                    .magicPopover(content: {
-//                        ExtGuide()
-//                    })
-//                    .frame(width: 150)
-//                    .frame(height: 50)
+//                BtnInstall()
             }
         }
     }

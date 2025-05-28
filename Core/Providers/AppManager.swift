@@ -1,12 +1,20 @@
 import Foundation
+import Combine
 import SwiftUI
 
 class AppManager: ObservableObject {
+    static let shared = AppManager()
+    private init() {
+        setupNotificationListeners()
+    }
+    
     @Published var status: FilterStatus = .indeterminate
     @Published var events: [FirewallEvent] = []
     @Published var logVisible: Bool = false
     @Published var dbVisible: Bool = false
     @Published var displayType: DisplayType = .All
+
+    private var cancellables = Set<AnyCancellable>()
     
     func appendEvent(_ e: FirewallEvent) {
         self.events.append(e)
@@ -26,6 +34,17 @@ class AppManager: ObservableObject {
     
     func setFilterStatus(_ status: FilterStatus) {
         self.status = status
+    }
+
+    /// 设置通知监听器
+    private func setupNotificationListeners() {
+        NotificationCenter.default.publisher(for: .FilterStatusChanged)
+            .compactMap { $0.object as? FilterStatus }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] status in
+                self?.setFilterStatus(status)
+            }
+            .store(in: &cancellables)
     }
 }
 

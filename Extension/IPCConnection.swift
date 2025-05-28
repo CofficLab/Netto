@@ -23,7 +23,7 @@ import MagicCore
 
 /// The IPCConnection class is used by both the app and the system extension to communicate with each other
 class IPCConnection: NSObject, SuperLog {
-    let emoji = "📢"
+    static let emoji = "🤝"
     var listener: NSXPCListener?
     var currentConnection: NSXPCConnection?
     weak var delegate: AppCommunication?

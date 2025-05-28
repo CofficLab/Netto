@@ -6,9 +6,39 @@ import SwiftUI
 import SystemExtensions
 
 class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
-    let emoji = "🫙"
+    static let shared = ChannelProvider()
+    
+    override private init() {
+        super.init()
+        os_log("\(self.t)\(Location.did(.Boot))")
 
-    private var event = EventManager()
+        self.emit(.willBoot)
+        self.status = .indeterminate
+        self.setObserver()
+
+        os_log("\(self.t)\(Location.did(.IfReady))")
+
+        // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await loadFilterConfiguration(reason: "Boot")
+            } catch {
+                os_log(.error, "\(self.t)Boot -> \(error)")
+            }
+
+            let isEnabled = self.filterManager.isEnabled
+            let logMessage = isEnabled ? "过滤器已启用 ✅" : "过滤器未启用 ❎"
+            let newStatus: FilterStatus = isEnabled ? .running : .disabled
+
+            os_log("\(self.t)Boot -> \(logMessage)")
+
+            await updateFilterStatus(newStatus)
+        }
+    }
+
+    static let emoji = "📢"
+
     private var ipc = IPCConnection.shared
     private var filterManager = NEFilterManager.shared()
     private var extensionManager = OSSystemExtensionManager.shared
@@ -21,43 +51,21 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
                 registerWithProvider()
             }
 
-            event.emitFilterStatusChanged(status)
+            NotificationCenter.default.post(
+                name: .FilterStatusChanged,
+                object: status,
+                userInfo: nil
+            )
         }
     }
 
     var observer: Any?
 
-    func boot() {
-        os_log("\(self.t)\(Location.did(.Boot))")
-
-        self.emit(.willBoot)
-        self.status = .indeterminate
-        self.setObserver()
-
-        os_log("\(self.t)\(Location.did(.IfReady))")
-
-        // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
-        Task {
-            do {
-                try await loadFilterConfiguration(reason: "Boot")
-            } catch {
-                os_log(.error, "\(self.t)Boot -> \(error)")
-            }
-
-            if self.filterManager.isEnabled {
-                os_log("\(self.t)Boot -> 过滤器已启用 ✅")
-
-                self.main.async {
-                    self.status = .running
-                }
-            } else {
-                os_log("\(self.t)Boot -> 过滤器未启用 ❎")
-
-                self.main.async {
-                    self.status = .disabled
-                }
-            }
-        }
+    /// 更新过滤器状态
+    /// - Parameter status: 新的过滤器状态
+    @MainActor
+    private func updateFilterStatus(_ status: FilterStatus) {
+        self.status = status
     }
 
     func clearError() {
@@ -69,7 +77,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     }
 
     func setObserver() {
-        os_log("\(self.t)添加监听")
+        os_log("\(self.t)👂 添加监听")
         observer = nc.addObserver(
             forName: .NEFilterConfigurationDidChange,
             object: filterManager,
@@ -141,17 +149,17 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         os_log("  ➡️ Current Status: \(self.status.description)")
 
         self.emit(.willStart)
-        
+
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
             os_log("\(self.t)extensionBundle.bundleIdentifier 为空")
             status = .stopped
             return
         }
-        
+
         // macOS 15， 系统设置 - 网络 - 过滤器，用户能删除过滤器，所以要确保过滤器已加载
-        
+
         try await loadFilterConfiguration(reason: reason)
-        
+
         guard !filterManager.isEnabled else {
             os_log("\(self.t)过滤器已启用，直接关联")
             registerWithProvider()
@@ -181,9 +189,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         filterManager.isEnabled = false
         try await filterManager.saveToPreferences()
 
-        self.main.async {
-            self.status = .stopped
-        }
+        await self.updateFilterStatus(.stopped)
     }
 
     // MARK: Content Filter Configuration Management
@@ -257,15 +263,15 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         ipc.register(withExtension: extensionBundle, delegate: self) { success in
             if success {
                 os_log("\(self.t)APP 和 Provider 关联成功 🎉")
-                
+
                 self.emit(.didRegisterWithProvider)
-                
+
                 self.main.async {
                     self.status = .running
                 }
             } else {
                 os_log("\(self.t)APP 和 Provider 关联失败 💔")
-                
+
                 self.main.async {
                     self.status = .extensionNotReady
                 }
@@ -326,13 +332,17 @@ extension ChannelProvider: AppCommunication {
     }
 
     func needApproval() {
-        EventManager().emitNeedApproval()
+        NotificationCenter.default.post(
+            name: .NeedApproval,
+            object: nil,
+            userInfo: nil
+        )
     }
 
     // MARK: AppCommunication
 
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
-        let verbose = false 
+        let verbose = false
 
         if verbose {
             os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId())")
@@ -344,34 +354,17 @@ extension ChannelProvider: AppCommunication {
                     os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Allow")
                 }
 
-                EventManager().emitNetworkFilterFlow(flow, allowed: true)
+                self.nc.post(name: .NetWorkFilterFlow, object: FlowWrapper(flow: flow, allowed: true))
                 responseHandler(true)
             } else {
                 if verbose {
                     os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Deny")
                 }
-
-                EventManager().emitNetworkFilterFlow(flow, allowed: false)
+                self.nc.post(name: .NetWorkFilterFlow, object: FlowWrapper(flow: flow, allowed: false))
                 responseHandler(false)
             }
         }
     }
-}
-
-extension Notification.Name {
-    static let willInstall = Notification.Name("willInstall")
-    static let willBoot = Notification.Name("willBoot")
-    static let didInstall = Notification.Name("didInstall")
-    static let didFailWithError = Notification.Name("didFailWithError")
-    static let willStart = Notification.Name("willStart")
-    static let didStart = Notification.Name("didStart")
-    static let willStop = Notification.Name("willStop")
-    static let didStop = Notification.Name("didStop")
-    static let configurationChanged = Notification.Name("configurationChanged")
-    static let needApproval = Notification.Name("needApproval")
-    static let error = Notification.Name("error")
-    static let willRegisterWithProvider = Notification.Name("willRegisterWithProvider")
-    static let didRegisterWithProvider = Notification.Name("didRegisterWithProvider")
 }
 
 #Preview("APP") {

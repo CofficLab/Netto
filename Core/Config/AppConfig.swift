@@ -8,6 +8,10 @@ struct AppConfig {
     static private var fileManager = FileManager.default
     static var dbFileName = "db.sqlite"
     static var label = "com.yueyi.TravelMode"
+    static var appName = "TravelMode"
+    
+    // Window IDs
+    static let welcomeWindowId = "welcome"
     
     static var documentsURL: URL {
         FileManager.default

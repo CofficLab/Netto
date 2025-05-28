@@ -51,5 +51,70 @@ enum FilterStatus {
             false
         }
     }
+
+    func isNotInstalled() -> Bool {
+        switch self {
+        case.notInstalled:
+            true
+        default:
+            false
+        }
+    }
+
+    func isDisabled() -> Bool {
+        switch self {
+        case.disabled:
+            true
+        default:
+            false
+        }
+    }
+
+    func isExtensionNotReady() -> Bool {
+        switch self {
+        case.extensionNotReady:
+            true
+        default:
+            false
+        }
+    }   
+
+    func isNeedApproval() -> Bool {
+        switch self {
+        case.needApproval:
+            true
+        default:
+            false
+        }
+    }
+
+    func isWaitingForApproval() -> Bool {
+        switch self {
+        case.waitingForApproval:
+            true
+        default:
+            false
+        }
+    }
+
+    func isError() -> Bool {
+        switch self {
+        case.error:
+            true
+        default:
+            false
+        }
+    }
+
+    func canStart() -> Bool {
+        switch self {
+        case.stopped, .indeterminate,  .disabled:
+            true
+        case .error, .notInstalled,.waitingForApproval, .needApproval, .extensionNotReady:
+            false
+        default:
+            false
+        }
+    }
 }
 

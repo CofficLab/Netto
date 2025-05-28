@@ -30,10 +30,18 @@ struct EventList: View {
             })
         }
         .background(BackgroundView.type1)
-        .onAppear {
-            EventManager().onNetworkFilterFlow({
-                app.appendEvent($0)
-            })
+        .onReceive(NotificationCenter.default.publisher(for: .NetWorkFilterFlow)) { notification in
+            if let wrapper = notification.object as? FlowWrapper {
+                let flow = wrapper.flow
+                let event = FirewallEvent(
+                    address: flow.getHostname(),
+                    port: flow.getLocalPort(),
+                    sourceAppIdentifier: flow.getAppId(),
+                    status: wrapper.allowed ? .allowed : .rejected,
+                    direction: flow.direction
+                )
+                app.appendEvent(event)
+            }
         }
     }
 }
