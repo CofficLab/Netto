@@ -28,7 +28,15 @@ struct TheApp: App {
         Window("Welcome to TravelMode", id: "welcome") {
             WelcomeGuideView(isPresented: $isWelcomePresented)
                 .onAppear {
+                    // 确保窗口显示在最上层
                     NSApplication.shared.activate(ignoringOtherApps: true)
+                    // 将窗口置于最前面
+                    DispatchQueue.main.async {
+                        if let window = NSApplication.shared.windows.first(where: { $0.title == "Welcome to TravelMode" }) {
+                            window.level = .floating
+                            window.orderFrontRegardless()
+                        }
+                    }
                 }
         }
         .windowStyle(.hiddenTitleBar)

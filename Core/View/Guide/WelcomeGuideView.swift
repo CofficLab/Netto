@@ -8,6 +8,7 @@ struct WelcomeGuideView: View {
     @Binding var isPresented: Bool
     @State private var currentStep = 0
     @AppStorage("hasShownWelcome") private var hasShownWelcome = false
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         VStack(spacing: 20) {
@@ -94,6 +95,9 @@ struct WelcomeGuideView: View {
         }
         .frame(width: 500, height: 600)
         .background(Color(NSColor.windowBackgroundColor))
+        .onAppear {
+            resetToFirstStep()
+        }
     }
     
     /**
@@ -119,11 +123,20 @@ struct WelcomeGuideView: View {
     }
     
     /**
+     * 重置到第一步
+     * 确保每次打开引导界面时都从第一步开始
+     */
+    private func resetToFirstStep() {
+        currentStep = 0
+    }
+    
+    /**
      * 关闭窗口
      */
     private func closeWindow() {
         hasShownWelcome = true
         isPresented = false
+        dismiss()
     }
 }
 
