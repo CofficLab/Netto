@@ -11,11 +11,10 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     func getPlugins() -> some View {
         HStack(spacing: 0) {
             TileSwitcher()
-//            TileLog()
             Spacer()
             TileState()
             Spacer()
-//            TileMessage()
+            TileEventList()
             TileMore()
         }
     }

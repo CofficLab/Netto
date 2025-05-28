@@ -11,12 +11,6 @@ struct ContentView: View {
                 Topbar()
 
                 AppList()
-
-                Divider()
-
-                if app.logVisible {
-                    EventList().shadow(radius: 10)
-                }
             }
             .frame(maxWidth: .infinity).background(.clear)
         }

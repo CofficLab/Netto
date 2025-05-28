@@ -10,7 +10,6 @@ class AppManager: ObservableObject {
     
     @Published var status: FilterStatus = .indeterminate
     @Published var events: [FirewallEvent] = []
-    @Published var logVisible: Bool = false
     @Published var dbVisible: Bool = false
     @Published var displayType: DisplayType = .All
 
