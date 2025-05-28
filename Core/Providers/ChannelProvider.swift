@@ -7,7 +7,35 @@ import SystemExtensions
 
 class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
     static let shared = ChannelProvider()
-    override private init() {}
+    
+    override private init() {
+        super.init()
+        os_log("\(self.t)\(Location.did(.Boot))")
+
+        self.emit(.willBoot)
+        self.status = .indeterminate
+        self.setObserver()
+
+        os_log("\(self.t)\(Location.did(.IfReady))")
+
+        // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await loadFilterConfiguration(reason: "Boot")
+            } catch {
+                os_log(.error, "\(self.t)Boot -> \(error)")
+            }
+
+            let isEnabled = self.filterManager.isEnabled
+            let logMessage = isEnabled ? "过滤器已启用 ✅" : "过滤器未启用 ❎"
+            let newStatus: FilterStatus = isEnabled ? .running : .disabled
+
+            os_log("\(self.t)Boot -> \(logMessage)")
+
+            await updateFilterStatus(newStatus)
+        }
+    }
 
     let emoji = "🫙"
 
@@ -38,34 +66,6 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     @MainActor
     private func updateFilterStatus(_ status: FilterStatus) {
         self.status = status
-    }
-
-    func boot() {
-        os_log("\(self.t)\(Location.did(.Boot))")
-
-        self.emit(.willBoot)
-        self.status = .indeterminate
-        self.setObserver()
-
-        os_log("\(self.t)\(Location.did(.IfReady))")
-
-        // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
-        Task { [weak self] in
-            guard let self else { return }
-            do {
-                try await loadFilterConfiguration(reason: "Boot")
-            } catch {
-                os_log(.error, "\(self.t)Boot -> \(error)")
-            }
-
-            let isEnabled = self.filterManager.isEnabled
-            let logMessage = isEnabled ? "过滤器已启用 ✅" : "过滤器未启用 ❎"
-            let newStatus: FilterStatus = isEnabled ? .running : .disabled
-            
-            os_log("\(self.t)Boot -> \(logMessage)")
-            
-            await updateFilterStatus(newStatus)
-        }
     }
 
     func clearError() {

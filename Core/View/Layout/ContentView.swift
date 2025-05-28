@@ -21,9 +21,6 @@ struct ContentView: View {
             .frame(maxWidth: .infinity).background(.clear)
         }
         .frame(maxWidth: .infinity)
-        .onAppear {
-            channel.boot()
-        }
         .onReceive(NotificationCenter.default.publisher(for: .FilterStatusChanged)) { notification in
             if let status = notification.object as? FilterStatus {
                 app.setFilterStatus(status)
