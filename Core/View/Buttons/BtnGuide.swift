@@ -5,7 +5,7 @@ import MagicCore
  * 引导按钮组件
  * 显示应用程序的引导界面
  */
-struct BtnGuide: View {
+struct BtnGuide: View, SuperEvent {
     @Environment(\.openWindow) private var openWindow
     
     private var asToolbarItem: Bool = false
@@ -45,11 +45,10 @@ struct BtnGuide: View {
     
     /**
      * 显示引导界面的操作
-     * 打开欢迎引导窗口
+     * 打开欢迎引导窗口并隐藏菜单栏窗口
      */
     private func action() -> Void {
-        // 打开引导窗口
-        openWindow(id: "welcome")
+        nc.post(name: .willOpenWelcomeWindow, object: nil)
     }
 }
 
