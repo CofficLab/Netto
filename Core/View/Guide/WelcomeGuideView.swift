@@ -18,7 +18,7 @@ struct WelcomeGuideView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 72, height: 72)
                 
-                Text("欢迎使用 TravelMode")
+                Text("欢迎使用 " + AppConfig.appName)
                     .font(.largeTitle)
                     .fontWeight(.bold)
                 

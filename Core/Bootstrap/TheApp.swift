@@ -64,7 +64,7 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         .keyboardShortcut("w", modifiers: [.command, .shift])
         
         // 主要的菜单栏应用
-        MenuBarExtra("TravelMode", systemImage: "network") {
+        MenuBarExtra(content: {
             RootView {
                 if shouldShowMenuApp == false {
                     Color.red.frame(height: 0)
@@ -87,8 +87,12 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                 shouldShowWelcomeWindow = true
                 shouldShowMenuApp = false
             }
-        }
+        }, label: {
+            Label(AppConfig.appName, systemImage: "network")
+        })
         .menuBarExtraStyle(.window)
+        
+        
     }
 }
 

@@ -189,7 +189,7 @@ struct ExtGuide: View {
                             icon: "puzzlepiece.extension",
                             iconColor: .gray,
                             title: "网络扩展",
-                            description: "TravelMode",
+                            description: AppConfig.appName,
                             isHero: true
                         ).foregroundStyle(.red)
 

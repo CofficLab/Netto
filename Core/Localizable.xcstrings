@@ -515,9 +515,6 @@
         }
       }
     },
-    "TravelMode" : {
-
-    },
     "Type" : {
       "localizations" : {
         "zh-Hans" : {
@@ -580,9 +577,6 @@
 
     },
     "按下方示意图进行设置" : {
-
-    },
-    "欢迎使用 TravelMode" : {
 
     },
     "登录项与扩展" : {
