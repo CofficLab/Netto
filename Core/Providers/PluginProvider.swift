@@ -16,7 +16,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         HStack(spacing: 0) {
             TileSwitcher()
             Spacer()
-            TileState()
+            TileFilter()
             Spacer()
             TileEventList()
             TileMore()

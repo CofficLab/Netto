@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum DisplayType {
+enum DisplayType: CaseIterable {
     case All
     case Allowed
     case Rejected

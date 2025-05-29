@@ -6,20 +6,6 @@ struct EventList: View {
     @State private var selectedDirection: DirectionFilter = .all
     @State private var selectedStatus: StatusFilter = .all
 
-    /// 方向筛选选项
-    enum DirectionFilter: String, CaseIterable {
-        case all = "全部"
-        case inbound = "In"
-        case outbound = "Out"
-    }
-
-    /// 状态筛选选项
-    enum StatusFilter: String, CaseIterable {
-        case all = "全部"
-        case allowed = "允许"
-        case rejected = "阻止"
-    }
-
     /// 根据筛选条件过滤events
     private var filteredEvents: [FirewallEvent] {
         let allEvents = app.events.reversed()
