@@ -10,6 +10,7 @@ class DataProvider: ObservableObject, SuperLog {
 
     @Published var apps: [SmartApp] = []
     @Published var samples: [SmartApp] = SmartApp.samples
+    @Published var events: [FirewallEvent] = []
 
     private var cancellables = Set<AnyCancellable>()
     private let appPermissionService: AppPermissionService
@@ -63,6 +64,8 @@ class DataProvider: ObservableObject, SuperLog {
             status: wrapper.allowed ? .allowed : .rejected,
             direction: flow.direction
         )
+        
+        self.events.append(event)
 
         if let index = apps.firstIndex(where: { $0.id == app.id }) {
             os_log("\(self.t)🍋 监听到网络流量，为已知的APP增加Event")
@@ -77,6 +80,14 @@ class DataProvider: ObservableObject, SuperLog {
         let total = self.apps.count
         let hasEventCount = self.apps.filter({ $0.events.count > 0 }).count
         os_log("\(self.t)📈 当前APP数量 -> \(total) 其中 Events.Count>0 的数量 -> \(hasEventCount)")
+    }
+    
+    func appendEvent(_ e: FirewallEvent) {
+        self.events.append(e)
+        
+        if self.events.count > 100 {
+            self.events.removeFirst()
+        }
     }
 
     /// 检查应用是否应该被允许访问网络

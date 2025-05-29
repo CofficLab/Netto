@@ -5,6 +5,7 @@
       "shouldTranslate" : false
     },
     "%@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -386,6 +387,7 @@
       }
     },
     "Status" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -465,7 +467,13 @@
     "下一步" : {
 
     },
+    "入" : {
+
+    },
     "共 %lld 条记录" : {
+
+    },
+    "出" : {
 
     },
     "开始" : {
@@ -493,9 +501,6 @@
 
     },
     "登录项与扩展" : {
-
-    },
-    "筛选条件:" : {
 
     },
     "管理Mac的整体设置和相关设置..." : {

@@ -9,19 +9,10 @@ class UIProvider: ObservableObject {
     }
     
     @Published var status: FilterStatus = .indeterminate
-    @Published var events: [FirewallEvent] = []
     @Published var dbVisible: Bool = false
     @Published var displayType: DisplayType = .All
 
     private var cancellables = Set<AnyCancellable>()
-    
-    func appendEvent(_ e: FirewallEvent) {
-        self.events.append(e)
-        
-        if self.events.count > 100 {
-            self.events.removeFirst()
-        }
-    }
     
     func start() {
         self.status = .running
