@@ -10,6 +10,7 @@ struct SmartApp: Identifiable {
     var name: String
     var icon: AnyView? = nil
     var events: [FirewallEvent] = []
+    var isSystemApp: Bool = false
 }
 
 // MARK: - Initialization
@@ -43,10 +44,12 @@ extension SmartApp {
     ///   - id: 应用程序唯一标识符
     ///   - name: 应用程序名称
     ///   - icon: SwiftUI视图作为图标
-    init(id: String, name: String, icon: some View) {
+    ///   - isSystemApp: 是否为系统应用程序（默认值为false）
+    init(id: String, name: String, icon: some View, isSystemApp: Bool = false) {
         self.id = id
         self.name = name
         self.icon = AnyView(icon)
+        self.isSystemApp = isSystemApp
     }
 }
 
@@ -81,8 +84,8 @@ extension SmartApp {
             )
         }
         
-        if dnsApp.id == id {
-            return dnsApp
+        if let systemApp = SystemApps.getSystemApp(id) {
+            return systemApp
         }
         
         return SmartApp(id: id, name: "未知", icon: Image("Unknown"))
@@ -114,25 +117,13 @@ extension SmartApp {
     }
 }
 
-// MARK: - 系统类应用
-
-extension SmartApp {
-    /// DNS系统服务应用
-    static let dnsApp = SmartApp(id: ".com.apple.mDNSResponder", name: "DNS服务", icon: Image("DNS"))
-
-    var systemApps: [SmartApp] { [
-        Self.dnsApp,
-    ]
-    }
-}
-
 // MARK: - Helpers
 
 extension SmartApp {
     /// 获取当前系统中所有正在运行的应用程序列表
     ///
     /// - Returns: 包含所有正在运行的应用程序的数组
-    static func getRunningAppList() -> [NSRunningApplication] {
+    static private func getRunningAppList() -> [NSRunningApplication] {
         let workspace = NSWorkspace.shared
         let runningApps = workspace.runningApplications
 
@@ -152,7 +143,7 @@ extension SmartApp {
     ///
     /// - Parameter id: 要查找的应用程序标识符
     /// - Returns: 找到的应用程序实例，如果未找到则返回nil
-    static func getApp(_ id: String) -> NSRunningApplication? {
+    static private func getApp(_ id: String) -> NSRunningApplication? {
         var workId = id
 
         if workId.hasPrefix(".") {
