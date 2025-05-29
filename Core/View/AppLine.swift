@@ -3,26 +3,39 @@ import OSLog
 import SwiftUI
 
 struct AppLine: View, SuperEvent {
+    @EnvironmentObject var data: DataProvider
+    
     var app: SmartApp
 
     @State private var hovering: Bool = false
-    @State var shouldAllow: Bool
+    @State var shouldAllow: Bool = true
 
     init(app: SmartApp) {
         self.app = app
-        self.shouldAllow = AppSetting.shouldAllow(app.id)
     }
 
     private var background: some View {
-        ZStack {
-            if hovering {
-                BackgroundView.type1.opacity(0.4)
-            } else {
+            Group {
                 if !shouldAllow {
-                    Color.red.opacity(0.1)
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.red.opacity(0.2),
+                            Color.red.opacity(0.05)
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                } else if hovering {
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.mint.opacity(0.2),
+                            Color.mint.opacity(0.05)
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
                 }
             }
-        }
     }
 
     var body: some View {
@@ -40,12 +53,7 @@ struct AppLine: View, SuperEvent {
             Spacer()
 
             if hovering {
-                BtnDeny(appId: app.id)
-                    .labelStyle(.titleOnly)
-                    .disabled(!shouldAllow)
-                BtnAllow(appId: app.id)
-                    .labelStyle(.titleOnly)
-                    .disabled(shouldAllow)
+                AppAction(shouldAllow: $shouldAllow, appId: app.id)
             }
         }
         .padding(.vertical, 5)
@@ -57,26 +65,15 @@ struct AppLine: View, SuperEvent {
         })
         .frame(height: 50)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onReceive(self.nc.publisher(for: .didSetDeny), perform: onDidSetDeny)
-        .onReceive(self.nc.publisher(for: .didSetAllow), perform: onDidSetAllow)
+        .onAppear(perform: onAppear)
     }
 }
 
-extension AppLine {
-    func onDidSetDeny(_ n: Notification) {
-        if let appId = n.userInfo?["appId"] as? String {
-            if appId == app.id {
-                self.shouldAllow = false
-            }
-        }
-    }
+// MARK: - 事件 
 
-    func onDidSetAllow(_ n: Notification) {
-        if let appId = n.userInfo?["appId"] as? String {
-            if appId == app.id {
-                self.shouldAllow = true
-            }
-        }
+extension AppLine {
+    func onAppear() {
+        self.shouldAllow = data.shouldAllow(app.id)
     }
 }
 
@@ -84,4 +81,5 @@ extension AppLine {
     RootView {
         ContentView()
     }
+    .frame(height: 600)
 }

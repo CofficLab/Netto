@@ -42,6 +42,18 @@ class DataProvider: ObservableObject {
             apps.append(app)
         }
     }
+    
+    func shouldAllow(_ id: String) -> Bool {
+        return AppSetting.shouldAllow(id)
+    }
+    
+    func allow(_ id: String) throws {
+        try AppSetting.setAllow(id)
+    }
+    
+    func deny(_ id: String) throws {
+        try AppSetting.setDeny(id)
+    }
 }
 
 #Preview("APP") {

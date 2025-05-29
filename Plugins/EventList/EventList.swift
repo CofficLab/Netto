@@ -114,7 +114,7 @@ struct EventList: View {
         }
         .frame(minWidth: 700)
         .frame(minHeight: 500)
-        .background(BackgroundView.type1)
+//        .background(BackgroundView.type1)
         .onReceive(NotificationCenter.default.publisher(for: .NetWorkFilterFlow)) { notification in
             if let wrapper = notification.object as? FlowWrapper {
                 let flow = wrapper.flow

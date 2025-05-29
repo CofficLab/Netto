@@ -34,7 +34,7 @@ struct GuideView: View {
                         Text("Error: \(error.localizedDescription)")
                             .font(.callout)
                             .padding(20)
-                            .background(BackgroundView.type2A.rotationEffect(.degrees(180)))
+//                            .background(BackgroundView.type2A.rotationEffect(.degrees(180)))
                     }
                 }
             }

@@ -177,6 +177,7 @@
       }
     },
     "Allow" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -254,6 +255,7 @@
       }
     },
     "Deny" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
