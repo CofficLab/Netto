@@ -26,7 +26,7 @@ struct AppLine: View, SuperEvent {
                     Text(app.id)
                 }
             }
-            .foregroundColor(app.isSystemApp ? .green : .primary)
+            .foregroundColor(app.isSystemApp ? .green.opacity(0.5) : .primary)
 
             Spacer()
 
