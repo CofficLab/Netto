@@ -4,7 +4,7 @@ import SwiftUI
 struct BtnStop: View, SuperLog {
     @EnvironmentObject private var channel: ChannelProvider
     @EnvironmentObject var m: MessageProvider
-    @EnvironmentObject var app: AppManager
+    @EnvironmentObject var app: UIProvider
     
     private var asToolbarItem: Bool = false
     private var icon: String = "stop.circle"

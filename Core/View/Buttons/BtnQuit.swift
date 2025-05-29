@@ -2,7 +2,7 @@ import SwiftUI
 import MagicCore
 
 struct BtnQuit: View {
-    @EnvironmentObject var app: AppManager
+    @EnvironmentObject var app: UIProvider
     
     private var asToolbarItem: Bool = false
     private var icon: String = "xmark.circle"

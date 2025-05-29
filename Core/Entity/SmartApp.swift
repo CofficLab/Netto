@@ -10,6 +10,9 @@ struct SmartApp: Identifiable {
     var icon: AnyView? = nil
     var events: [FirewallEvent] = []
     var isSystemApp: Bool = false
+    var isSample: Bool = false
+    
+    var isNotSample: Bool { !isSample }
 }
 
 // MARK: - Initialization
@@ -43,11 +46,13 @@ extension SmartApp {
     ///   - name: 应用程序名称
     ///   - icon: SwiftUI视图作为图标
     ///   - isSystemApp: 是否为系统应用程序（默认值为false）
-    init(id: String, name: String, icon: some View, isSystemApp: Bool = false) {
+    ///   - isSample: 是否为示例应用程序（默认值为false）
+    init(id: String, name: String, icon: some View, isSystemApp: Bool = false, isSample: Bool = false) {
         self.id = id
         self.name = name
         self.icon = AnyView(icon)
         self.isSystemApp = isSystemApp
+        self.isSample = isSample
     }
 }
 
@@ -80,7 +85,7 @@ extension SmartApp {
             )
         }
 
-        if let systemApp = SystemApps.getSystemApp(id) {
+        if let systemApp = Self.getSystemApp(id) {
             return systemApp
         }
 

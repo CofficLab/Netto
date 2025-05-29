@@ -4,7 +4,7 @@ import SwiftUI
 
 struct TileSwitcher: View, SuperLog, SuperThread {
     @EnvironmentObject var m: MessageProvider
-    @EnvironmentObject var app: AppManager
+    @EnvironmentObject var app: UIProvider
 
     @State var hovered = false
     @State var isPresented = false

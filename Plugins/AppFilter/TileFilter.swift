@@ -4,7 +4,7 @@ import SwiftUI
 
 struct TileFilter: View, SuperLog, SuperThread {
     @EnvironmentObject var m: MessageProvider
-    @EnvironmentObject var app: AppManager
+    @EnvironmentObject var app: UIProvider
 
     var body: some View {
         Picker("Type", selection: $app.displayType) {

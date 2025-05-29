@@ -42,6 +42,10 @@ enum FilterStatus {
             false
         }
     }
+    
+    func isNotRunning() -> Bool {
+        !isRunning()
+    }
 
     func isStopped() -> Bool {
         switch self {

@@ -30,7 +30,7 @@ struct AppLine: View, SuperEvent {
 
             Spacer()
 
-            if hovering {
+            if hovering && app.isNotSample {
                 AppAction(shouldAllow: $shouldAllow, appId: app.id)
             }
         }

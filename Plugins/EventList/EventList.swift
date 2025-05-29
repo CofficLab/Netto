@@ -2,7 +2,7 @@ import NetworkExtension
 import SwiftUI
 
 struct EventList: View {
-    @EnvironmentObject private var app: AppManager
+    @EnvironmentObject private var app: UIProvider
     @State private var selectedDirection: DirectionFilter = .all
     @State private var selectedStatus: StatusFilter = .all
 

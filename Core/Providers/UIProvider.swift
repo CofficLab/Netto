@@ -2,8 +2,8 @@ import Foundation
 import Combine
 import SwiftUI
 
-class AppManager: ObservableObject {
-    static let shared = AppManager()
+class UIProvider: ObservableObject {
+    static let shared = UIProvider()
     private init() {
         setupNotificationListeners()
     }

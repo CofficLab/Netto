@@ -2,7 +2,7 @@ import MagicCore
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject private var app: AppManager
+    @EnvironmentObject private var app: UIProvider
     @EnvironmentObject private var channel: ChannelProvider
 
     var body: some View {
