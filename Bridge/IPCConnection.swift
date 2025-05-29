@@ -9,18 +9,6 @@ import Network
 import NetworkExtension
 import MagicCore
 
-/// App --> Provider IPC
-@objc protocol ProviderCommunication {
-    func register(_ completionHandler: @escaping (Bool) -> Void)
-}
-
-/// Provider --> App IPC
-@objc protocol AppCommunication {
-    func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void)
-    func needApproval()
-    func providerSaid(_ words: String)
-}
-
 /// The IPCConnection class is used by both the app and the system extension to communicate with each other
 class IPCConnection: NSObject, SuperLog {
     static let emoji = "🤝"
@@ -45,7 +33,7 @@ class IPCConnection: NSObject, SuperLog {
 
     func startListener() {
         let machServiceName = extensionMachServiceName(from: Bundle.main)
-        os_log("\(self.t)Starting XPC listener for mach service \(machServiceName)")
+        os_log("\(self.t)🚀 Starting XPC listener for mach service \(machServiceName)")
 
         let newListener = NSXPCListener(machServiceName: machServiceName)
         newListener.delegate = self
@@ -58,7 +46,7 @@ class IPCConnection: NSObject, SuperLog {
         self.delegate = delegate
 
         guard currentConnection == nil else {
-            os_log("\(self.t)IPC.register: Already registered with the provider")
+            os_log("\(self.t)⚠️ IPC.register: Already registered with the provider")
             completionHandler(true)
             return
         }
@@ -96,6 +84,8 @@ class IPCConnection: NSObject, SuperLog {
         for a decision about a connection.
     */
     func promptUser(flow: NEFilterFlow, responseHandler:@escaping (Bool) -> Void) -> Bool {
+        os_log("\(self.t)🍋 promptUser")
+        
         guard let connection = currentConnection else {
             os_log("Cannot prompt user because the app isn't registered")
             return false
@@ -114,20 +104,19 @@ class IPCConnection: NSObject, SuperLog {
         return true
     }
     
-    func providerSay(_ words: String) {
-        os_log("IPC.providerSay")
+    func log(_ message: String) {
+        os_log("🧩 IPC.providerSay")
         guard let connection = currentConnection else {
-            os_log("Cannot prompt user because the app isn't registered")
+            os_log("🧩 Cannot prompt user because the app isn't registered")
             return
         }
         
         guard let appProxy = connection.remoteObjectProxyWithErrorHandler({ promptError in
-            os_log("Failed to prompt the user: %@", promptError.localizedDescription)
+            os_log("🧩 Failed to prompt the user: %@", promptError.localizedDescription)
         }) as? AppCommunication else {
-            fatalError("Failed to create a remote object proxy for the app")
+            fatalError("🧩 Failed to create a remote object proxy for the app")
         }
-        appProxy.providerSaid(words)
-        os_log("Provider Said: \(words)")
+        appProxy.extensionLog(message)
     }
 }
 
@@ -136,7 +125,7 @@ extension IPCConnection: NSXPCListenerDelegate {
     // MARK: NSXPCListenerDelegate
 
     func listener(_ listener: NSXPCListener, shouldAcceptNewConnection newConnection: NSXPCConnection) -> Bool {
-        providerSay("IPCConnection.shouldAcceptNewConnection")
+        log("IPCConnection.shouldAcceptNewConnection")
         // The exported object is this IPCConnection instance.
         newConnection.exportedInterface = NSXPCInterface(with: ProviderCommunication.self)
         newConnection.exportedObject = self

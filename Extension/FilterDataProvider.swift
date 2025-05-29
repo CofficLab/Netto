@@ -6,7 +6,7 @@ class FilterDataProvider: NEFilterDataProvider {
     private var ipc = IPCConnection.shared
 
     override func startFilter(completionHandler: @escaping (Error?) -> Void) {
-        ipc.providerSay("startFilter 🚛")
+        ipc.log("🚀 startFilter")
 
         // Filter incoming TCP connections on port 8888
         let filterRules = ["0.0.0.0", "::"].map { address -> NEFilterRule in
@@ -30,9 +30,9 @@ class FilterDataProvider: NEFilterDataProvider {
             if let applyError = error {
                 os_log("Failed to apply filter settings: %@", applyError.localizedDescription)
 
-                ipc.providerSay("⚠️ Failed to apply filter settings: \(applyError.localizedDescription)")
+                ipc.log("⚠️ Failed to apply filter settings: \(applyError.localizedDescription)")
             } else {
-                ipc.providerSay("Success to apply filter settings 🎉")
+                ipc.log("🎉 Success to apply filter settings")
             }
 
             completionHandler(error)
@@ -44,37 +44,37 @@ class FilterDataProvider: NEFilterDataProvider {
     }
 
     override func stopFilter(with reason: NEProviderStopReason, completionHandler: @escaping () -> Void) {
-        ipc.providerSay("stopFilter 📢 with reason -> \(reason)")
+        ipc.log("🤚 stopFilter with reason -> \(reason)")
 
         completionHandler()
     }
 
     override func handleInboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        ipc.providerSay("handleInboundData")
+        ipc.log("handleInboundData")
 
         return .allow()
     }
 
     override func handleOutboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        ipc.providerSay("handleOutboundData")
+        ipc.log("handleOutboundData")
 
         return .allow()
     }
 
     override func handleInboundDataComplete(for flow: NEFilterFlow) -> NEFilterDataVerdict {
-        ipc.providerSay("handleInboundDataComplete")
+        ipc.log("handleInboundDataComplete")
 
         return .allow()
     }
 
     override func handleOutboundDataComplete(for flow: NEFilterFlow) -> NEFilterDataVerdict {
-        ipc.providerSay("handleOutboundDataComplete")
+        ipc.log("handleOutboundDataComplete")
 
         return .allow()
     }
 
     override func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
-//        ipc.providerSay("handleNewFlow")
+        ipc.log("🍋 handleNewFlow")
 
         // Ask the app to prompt the user
         // WWDC2019视频中说，这是一个异步的过程
@@ -86,7 +86,7 @@ class FilterDataProvider: NEFilterDataProvider {
         }
 
         guard prompted else {
-            ipc.providerSay("调用promptUser失败，放行")
+            ipc.log("调用promptUser失败，放行")
             return .allow()
         }
 

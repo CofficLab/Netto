@@ -15,7 +15,7 @@ extension SmartApp {
             id: ".com.apple.mDNSResponder",
             name: "DNS服务",
             icon: IconHelper.createSystemIcon(
-                iconName: "DNS",
+                iconName: "network",
                 gradientColors: [Color.blue.opacity(0.6), Color.cyan],
                 isSystemIcon: false
             ),

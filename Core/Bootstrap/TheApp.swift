@@ -83,7 +83,7 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                 shouldShowMenuApp = true
             }
             .onReceive(nc.publisher(for: .shouldOpenWelcomeWindow)) { _ in
-                os_log("\(self.t) 打开欢迎窗口")
+                os_log("\(self.t)🖥️ 打开欢迎窗口")
                 openWindow(id: AppConfig.welcomeWindowId)
                 shouldShowWelcomeWindow = true
                 shouldShowMenuApp = false
