@@ -235,7 +235,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
                 self.filterManager.isEnabled = true
 
                 // 将过滤器加载到系统设置中
-                os_log("\(self.t)将要弹出授权对话框来加载到系统设置中 📺")
+                os_log("\(self.t) 📺 将要弹出授权对话框来加载到系统设置中")
                 os_log("\(self.t)\(Location.did(.SaveToPreferences))")
                 self.filterManager.saveToPreferences { saveError in
                     self.main.async {
