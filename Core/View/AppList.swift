@@ -20,9 +20,9 @@ struct AppList: View {
             case .All:
                 true
             case .Allowed:
-                AppSetting.shouldAllow($0.id)
+                data.shouldAllow($0.id)
             case .Rejected:
-                !AppSetting.shouldAllow($0.id)
+                !data.shouldAllow($0.id)
             }
         }
     }

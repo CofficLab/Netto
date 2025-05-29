@@ -3,9 +3,7 @@ import OSLog
 import SwiftUI
 
 struct AppAction: View, SuperLog, SuperEvent {
-    @EnvironmentObject private var channel: ChannelProvider
     @EnvironmentObject var m: MessageProvider
-    @EnvironmentObject var app: AppManager
     @EnvironmentObject var data: DataProvider
 
     @Binding var shouldAllow: Bool
@@ -20,14 +18,6 @@ struct AppAction: View, SuperLog, SuperEvent {
         }
     }
 
-    private var title: String {
-        if shouldAllow {
-            "禁止"
-        } else {
-            "允许"
-        }
-    }
-
     var body: some View {
         MagicButton(icon: iconName, size: .auto, action: {
             shouldAllow ? deny() : allow()
@@ -37,8 +27,6 @@ struct AppAction: View, SuperLog, SuperEvent {
         .magicBackgroundColor(shouldAllow ? .red : .green)
         .frame(width: 30)
         .frame(height: 30)
-        .onReceive(self.nc.publisher(for: .didSetDeny), perform: onDidSetDeny)
-        .onReceive(self.nc.publisher(for: .didSetAllow), perform: onDidSetAllow)
     }
 
     private func deny() {
@@ -60,26 +48,6 @@ struct AppAction: View, SuperLog, SuperEvent {
         } catch let error {
             os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
             m.error(error)
-        }
-    }
-}
-
-// MARK: - 事件
-
-extension AppAction {
-    func onDidSetDeny(_ n: Notification) {
-        if let appId = n.userInfo?["appId"] as? String {
-            if appId == self.appId {
-                self.shouldAllow = false
-            }
-        }
-    }
-
-    func onDidSetAllow(_ n: Notification) {
-        if let appId = n.userInfo?["appId"] as? String {
-            if appId == self.appId {
-                self.shouldAllow = true
-            }
         }
     }
 }

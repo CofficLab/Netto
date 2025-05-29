@@ -8,6 +8,8 @@ import SystemExtensions
 class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
     static let shared = ChannelProvider()
     
+    private var data: DataProvider = DataProvider.shared
+    
     override private init() {
         super.init()
         os_log("\(self.t)\(Location.did(.Boot))")
@@ -349,7 +351,7 @@ extension ChannelProvider: AppCommunication {
         }
 
         self.main.async {
-            if AppSetting.shouldAllow(flow.getAppId()) {
+            if self.data.shouldAllow(flow.getAppId()) {
                 if verbose {
                     os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Allow")
                 }

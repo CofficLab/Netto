@@ -4,38 +4,14 @@ import SwiftUI
 
 struct AppLine: View, SuperEvent {
     @EnvironmentObject var data: DataProvider
-    
+
     var app: SmartApp
 
-    @State private var hovering: Bool = false
+    @State var hovering: Bool = false
     @State var shouldAllow: Bool = true
 
     init(app: SmartApp) {
         self.app = app
-    }
-
-    private var background: some View {
-            Group {
-                if !shouldAllow {
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color.red.opacity(0.2),
-                            Color.red.opacity(0.05)
-                        ]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                } else if hovering {
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color.mint.opacity(0.2),
-                            Color.mint.opacity(0.05)
-                        ]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                }
-            }
     }
 
     var body: some View {
@@ -58,7 +34,27 @@ struct AppLine: View, SuperEvent {
         }
         .padding(.vertical, 5)
         .padding(.horizontal, 10)
-        .background(background)
+        .background(Group {
+            if !shouldAllow {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.red.opacity(0.2),
+                        Color.red.opacity(0.05),
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            } else if hovering {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.mint.opacity(0.2),
+                        Color.mint.opacity(0.05),
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            }
+        })
         .scaleEffect(hovering ? 1 : 1)
         .onHover(perform: { hovering in
             self.hovering = hovering
@@ -69,7 +65,7 @@ struct AppLine: View, SuperEvent {
     }
 }
 
-// MARK: - 事件 
+// MARK: - 事件
 
 extension AppLine {
     func onAppear() {
