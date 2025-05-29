@@ -19,7 +19,7 @@ struct StopView: View {
                             .foregroundStyle(.orange)
                             .font(.system(size: 14, weight: .medium))
                             .frame(width: 20, alignment: .center)
-                        Text("当前监控网络已停止")
+                        Text("当前网络监控已停止")
                             .font(.system(size: 15, weight: .medium))
                             .foregroundStyle(.primary)
                     }

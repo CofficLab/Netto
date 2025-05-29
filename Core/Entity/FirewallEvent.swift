@@ -21,7 +21,7 @@ struct FirewallEvent: Hashable, Identifiable {
     }
     
     var timeFormatted: String {
-        self.time.compactDateTime
+        self.time.fullDateTime
     }
     
     var description: String {

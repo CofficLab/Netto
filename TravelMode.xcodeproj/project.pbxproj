@@ -48,13 +48,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		0B1C65C12DE5F87500F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				IPCConnection.swift,
-			);
-			target = C4B45DB422739FFF0050C59B /* TavelMode */;
-		};
 		0B1C665C2DE5FDB800F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -73,8 +66,9 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		0B1C653D2DE5F6C600F982C0 /* Core */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0B1C665D2DE5FDE700F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Core; sourceTree = "<group>"; };
-		0B1C65BB2DE5F87500F982C0 /* Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0B1C65C12DE5F87500F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 0B1C665C2DE5FDB800F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Extension; sourceTree = "<group>"; };
+		0B1C65BB2DE5F87500F982C0 /* Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0B1C665C2DE5FDB800F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Extension; sourceTree = "<group>"; };
 		0B1C65CD2DE5F90800F982C0 /* Plugins */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Plugins; sourceTree = "<group>"; };
+		0B6703FA2DE8928A0078D726 /* Bridge */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Bridge; sourceTree = "<group>"; };
 		0BECFF612DE5FFD6001B7619 /* docs */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = docs; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -103,6 +97,7 @@
 		C4B45DAC22739FFF0050C59B = {
 			isa = PBXGroup;
 			children = (
+				0B6703FA2DE8928A0078D726 /* Bridge */,
 				0B1C65392DE5F6C600F982C0 /* Assets.xcassets */,
 				0B1C653D2DE5F6C600F982C0 /* Core */,
 				0BECFF612DE5FFD6001B7619 /* docs */,
@@ -140,6 +135,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				0B1C65BB2DE5F87500F982C0 /* Extension */,
+				0B6703FA2DE8928A0078D726 /* Bridge */,
 			);
 			name = Extension;
 			productName = SimpleFirewallExtension;
@@ -163,6 +159,7 @@
 			fileSystemSynchronizedGroups = (
 				0B1C653D2DE5F6C600F982C0 /* Core */,
 				0B1C65CD2DE5F90800F982C0 /* Plugins */,
+				0B6703FA2DE8928A0078D726 /* Bridge */,
 			);
 			name = TavelMode;
 			productName = SimpleFirewall;

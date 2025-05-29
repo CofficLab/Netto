@@ -2,13 +2,14 @@ import NetworkExtension
 import SwiftUI
 
 struct EventList: View {
-    @EnvironmentObject private var app: AppManager
+    @EnvironmentObject private var app: UIProvider
+    @EnvironmentObject private var data: DataProvider
     @State private var selectedDirection: DirectionFilter = .all
     @State private var selectedStatus: StatusFilter = .all
 
     /// 根据筛选条件过滤events
     private var filteredEvents: [FirewallEvent] {
-        let allEvents = app.events.reversed()
+        let allEvents = data.events.reversed()
 
         return allEvents.filter { event in
             // 方向筛选
@@ -41,13 +42,9 @@ struct EventList: View {
         VStack {
             // 筛选控件
             HStack {
-                Text("筛选条件:")
-                    .font(.headline)
-
-                Spacer().frame(width: 20)
 
                 // 方向筛选
-                Picker("Direction", selection: $selectedDirection) {
+                Picker("", selection: $selectedDirection) {
                     ForEach(DirectionFilter.allCases, id: \.self) { direction in
                         Text(direction.rawValue).tag(direction)
                     }
@@ -58,7 +55,7 @@ struct EventList: View {
                 Spacer().frame(width: 20)
 
                 // 状态筛选
-                Picker("Status", selection: $selectedStatus) {
+                Picker("", selection: $selectedStatus) {
                     ForEach(StatusFilter.allCases, id: \.self) { status in
                         Text(status.rawValue).tag(status)
                     }
@@ -78,7 +75,7 @@ struct EventList: View {
             Divider()
 
             Table(filteredEvents, columns: {
-                TableColumn("Time", value: \.timeFormatted).width(132)
+                TableColumn("Time", value: \.timeFormatted).width(150)
                 TableColumn("APP") { event in
                     let smartApp = SmartApp.fromId(event.sourceAppIdentifier)
                     HStack {
@@ -90,28 +87,13 @@ struct EventList: View {
                 TableColumn("Address", value: \.address)
                 TableColumn("Port", value: \.port).width(60)
                 TableColumn("Direction") { event in
-                    Text("\(event.direction == .inbound ? "In" : "Out")")
-                }.width(30)
-                TableColumn("Status") { e in
-                    Text(e.statusDescription)
-                        .foregroundStyle(e.isAllowed ? .green : .red)
+                    Text(event.direction == .inbound ? "入" : "出")
+                        .foregroundStyle(event.isAllowed ? .green : .red)
                 }.width(30)
             })
         }
         .frame(minWidth: 700)
-        .frame(minHeight: 500).onReceive(NotificationCenter.default.publisher(for: .NetWorkFilterFlow)) { notification in
-            if let wrapper = notification.object as? FlowWrapper {
-                let flow = wrapper.flow
-                let event = FirewallEvent(
-                    address: flow.getHostname(),
-                    port: flow.getLocalPort(),
-                    sourceAppIdentifier: flow.getAppId(),
-                    status: wrapper.allowed ? .allowed : .rejected,
-                    direction: flow.direction
-                )
-                app.appendEvent(event)
-            }
-        }
+        .frame(minHeight: 500)
     }
 }
 

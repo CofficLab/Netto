@@ -2,26 +2,17 @@ import Foundation
 import Combine
 import SwiftUI
 
-class AppManager: ObservableObject {
-    static let shared = AppManager()
+class UIProvider: ObservableObject {
+    static let shared = UIProvider()
     private init() {
         setupNotificationListeners()
     }
     
     @Published var status: FilterStatus = .indeterminate
-    @Published var events: [FirewallEvent] = []
     @Published var dbVisible: Bool = false
     @Published var displayType: DisplayType = .All
 
     private var cancellables = Set<AnyCancellable>()
-    
-    func appendEvent(_ e: FirewallEvent) {
-        self.events.append(e)
-        
-        if self.events.count > 100 {
-            self.events.removeFirst()
-        }
-    }
     
     func start() {
         self.status = .running

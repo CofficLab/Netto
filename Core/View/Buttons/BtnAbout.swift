@@ -6,7 +6,7 @@ import MagicCore
  * 显示应用程序的关于界面（系统自带）
  */
 struct BtnAbout: View {
-    @EnvironmentObject var app: AppManager
+    @EnvironmentObject var app: UIProvider
     
     private var asToolbarItem: Bool = false
     private var icon: String = "info.circle"

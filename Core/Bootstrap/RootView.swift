@@ -5,7 +5,7 @@ import SwiftUI
 
 struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var content: Content
-    private var app = AppManager.shared
+    private var app = UIProvider.shared
     private var p = PluginProvider.shared
     private var data = DataProvider.shared
 

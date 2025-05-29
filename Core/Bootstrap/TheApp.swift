@@ -26,13 +26,13 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                     RootView {
                         LoadingView(isPresented: $shouldShowLoading, message: "启动中")
                             .onReceive(nc.publisher(for: .shouldOpenWelcomeWindow)) { _ in
-                                os_log("\(self.t) 打开欢迎窗口")
+                                os_log("\(self.t)🖥️ 打开欢迎窗口")
                                 openWindow(id: AppConfig.welcomeWindowId)
                                 shouldShowWelcomeWindow = true
                                 shouldShowMenuApp = false
                             }
                             .onReceive(nc.publisher(for:.shouldCloseWelcomeWindow)) { _ in
-                                os_log("\(self.t) 关闭欢迎窗口，关闭LoadingView")
+                                os_log("\(self.t)🖥️ 关闭欢迎窗口，关闭LoadingView")
                                 shouldShowWelcomeWindow = false
                                 shouldShowLoading = false
                                 shouldShowMenuApp = true
@@ -54,7 +54,7 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                             }
                         }
                         .onReceive(nc.publisher(for: .shouldCloseWelcomeWindow)) { _ in
-                            os_log("\(self.t) 关闭欢迎窗口")
+                            os_log("\(self.t)关闭欢迎窗口")
                             shouldShowWelcomeWindow = false
                             shouldShowMenuApp = true
                         }
@@ -82,11 +82,8 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                 // 用户点击了菜单栏图标
                 shouldShowMenuApp = true
             }
-            .onDisappear {
-                print("MenuBar window disappeared")
-            }
             .onReceive(nc.publisher(for: .shouldOpenWelcomeWindow)) { _ in
-                os_log("\(self.t) 打开欢迎窗口")
+                os_log("\(self.t)🖥️ 打开欢迎窗口")
                 openWindow(id: AppConfig.welcomeWindowId)
                 shouldShowWelcomeWindow = true
                 shouldShowMenuApp = false

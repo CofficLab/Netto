@@ -1,12 +1,17 @@
 import Combine
 import Foundation
-import SwiftUI
+import MagicCore
 import OSLog
+import SwiftUI
 
-class DataProvider: ObservableObject {
+class DataProvider: ObservableObject, SuperLog {
     static let shared = DataProvider()
+    static let emoji = "💾"
 
-    @Published var apps: [SmartApp]
+    @Published var apps: [SmartApp] = []
+    @Published var samples: [SmartApp] = SmartApp.samples
+    @Published var events: [FirewallEvent] = []
+
     private var cancellables = Set<AnyCancellable>()
     private let appPermissionService: AppPermissionService
 
@@ -14,22 +19,20 @@ class DataProvider: ObservableObject {
     /// - Parameter appPermissionService: 应用权限服务，默认使用shared实例
     init(appPermissionService: AppPermissionService = AppPermissionService.shared) {
         self.appPermissionService = appPermissionService
-        self.apps = SmartApp.appList
-        
+
         // 添加被禁止的应用到apps列表中
         do {
             let deniedAppIds = try appPermissionService.getDeniedApps()
             for appId in deniedAppIds {
                 let smartApp = SmartApp.fromId(appId)
-                // 检查apps中是否已经包含该应用，如果没有则添加
                 if !self.apps.contains(where: { $0.id == smartApp.id }) {
                     self.apps.append(smartApp)
                 }
             }
         } catch {
-            print("获取被禁止应用列表失败: \(error)")
+            os_log(.error, "\(self.t)获取被禁止应用列表失败: \(error)")
         }
-        
+
         setupNotificationListeners()
     }
 
@@ -54,18 +57,36 @@ class DataProvider: ObservableObject {
     private func handleNetworkFlow(_ wrapper: FlowWrapper) {
         let flow = wrapper.flow
         let app = SmartApp.fromId(flow.getAppId())
+        let event = FirewallEvent(
+            address: flow.getHostname(),
+            port: flow.getLocalPort(),
+            sourceAppIdentifier: flow.getAppId(),
+            status: wrapper.allowed ? .allowed : .rejected,
+            direction: flow.direction
+        )
+        
+        self.events.append(event)
 
         if let index = apps.firstIndex(where: { $0.id == app.id }) {
-            let event = FirewallEvent(
-                address: flow.getHostname(),
-                port: flow.getLocalPort(),
-                sourceAppIdentifier: flow.getAppId(),
-                status: wrapper.allowed ? .allowed : .rejected,
-                direction: flow.direction
-            )
+            os_log("\(self.t)🍋 监听到网络流量，为已知的APP增加Event")
+
             apps[index] = apps[index].appendEvent(event)
         } else {
-            apps.append(app)
+            os_log("\(self.t)🛋️ 监听到网络流量，没见过这个APP，加入列表 -> \(app.id)")
+
+            apps.append(app.appendEvent(event))
+        }
+
+        let total = self.apps.count
+        let hasEventCount = self.apps.filter({ $0.events.count > 0 }).count
+        os_log("\(self.t)📈 当前APP数量 -> \(total) 其中 Events.Count>0 的数量 -> \(hasEventCount)")
+    }
+    
+    func appendEvent(_ e: FirewallEvent) {
+        self.events.append(e)
+        
+        if self.events.count > 100 {
+            self.events.removeFirst()
         }
     }
 
@@ -74,6 +95,13 @@ class DataProvider: ObservableObject {
     /// - Returns: 是否允许访问
     func shouldAllow(_ id: String) -> Bool {
         return appPermissionService.shouldAllow(id)
+    }
+
+    /// 检查应用是否应该被拒绝访问网络
+    /// - Parameter id: 应用标识符
+    /// - Returns: 是否拒绝访问
+    func shouldDeny(_ id: String) -> Bool {
+        return !self.shouldAllow(id)
     }
 
     /// 允许应用访问网络
@@ -89,39 +117,6 @@ class DataProvider: ObservableObject {
     func deny(_ id: String) throws {
         try appPermissionService.deny(id)
     }
-
-    let samples: [SmartApp] = [
-        SmartApp(id: "com.apple.Safari", name: "Safari", icon: Text("🌐")),
-        SmartApp(id: "com.apple.Maps", name: "Maps", icon: Text("🗺️")),
-        SmartApp(id: "com.apple.MobileSMS", name: "Messages", icon: Text("💬")),
-        SmartApp(id: "com.apple.Mail", name: "Mail", icon: Text("📧")),
-        SmartApp(id: "com.apple.Photos", name: "Photos", icon: Text("🖼️")),
-        SmartApp(id: "com.apple.iCal", name: "Calendar", icon: Text("📅")),
-        SmartApp(id: "com.apple.Notes", name: "Notes", icon: Text("📝")),
-        SmartApp(id: "com.apple.reminders", name: "Reminders", icon: Text("⏰")),
-        SmartApp(id: "com.apple.Weather", name: "Weather", icon: Text("🌤️")),
-        SmartApp(id: "com.apple.Clock", name: "Clock", icon: Text("🕐")),
-        SmartApp(id: "com.apple.systempreferences", name: "Settings", icon: Text("⚙️")),
-        SmartApp(id: "com.apple.AppStore", name: "App Store", icon: Text("🏪")),
-        SmartApp(id: "com.apple.Health", name: "Health", icon: Text("❤️")),
-        SmartApp(id: "com.apple.Wallet", name: "Wallet", icon: Text("👛")),
-        SmartApp(id: "com.apple.stocks", name: "Stocks", icon: Text("📈")),
-        SmartApp(id: "com.apple.Calculator", name: "Calculator", icon: Text("🧮")),
-        SmartApp(id: "com.apple.camera", name: "Camera", icon: Text("📸")),
-        SmartApp(id: "com.apple.FaceTime", name: "FaceTime", icon: Text("📱")),
-        SmartApp(id: "com.apple.iBooks", name: "iBooks", icon: Text("📚")),
-        SmartApp(id: "com.apple.podcasts", name: "Podcasts", icon: Text("🎙️")),
-        SmartApp(id: "com.apple.Music", name: "Music", icon: Text("🎵")),
-        SmartApp(id: "com.apple.TV", name: "TV", icon: Text("📺")),
-        SmartApp(id: "com.apple.finder", name: "Finder", icon: Text("📁")),
-        SmartApp(id: "com.apple.Home", name: "Home", icon: Text("🏠")),
-        SmartApp(id: "com.apple.VoiceMemos", name: "Voice Memos", icon: Text("🎤")),
-        SmartApp(id: "com.apple.shortcuts", name: "Shortcuts", icon: Text("⚡️")),
-        SmartApp(id: "com.apple.translate", name: "Translate", icon: Text("🌍")),
-        SmartApp(id: "com.apple.findmy", name: "Find My", icon: Text("🔍")),
-        SmartApp(id: "com.apple.AddressBook", name: "Address Book", icon: Text("👥")),
-        SmartApp(id: "com.apple.measure", name: "Measure", icon: Text("📏")),
-    ]
 }
 
 #Preview("APP") {

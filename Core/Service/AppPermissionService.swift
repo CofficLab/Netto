@@ -1,5 +1,4 @@
 import Foundation
-//
 import MagicCore
 import OSLog
 import SwiftUI
@@ -175,7 +174,9 @@ import SwiftUI
  *    - 监控Service的性能指标
  *    - 实现适当的错误报告机制
  */
-class AppPermissionService {
+class AppPermissionService: SuperLog {
+    static let emoji = "💁"
+    
     // MARK: - Properties
 
     /// 数据库管理器
@@ -221,7 +222,7 @@ class AppPermissionService {
     /// - Throws: 保存数据时可能抛出的错误
     func deny(_ id: String) throws {
         try repository.setDeny(id)
-        os_log("App \(id) has been denied network access")
+        os_log("\(self.t)💾 App \(id) has been denied network access")
     }
 
     /// 切换应用的访问权限状态

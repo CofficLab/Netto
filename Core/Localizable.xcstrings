@@ -4,17 +4,6 @@
     "" : {
       "shouldTranslate" : false
     },
-    "%@" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "%lld" : {
       "localizations" : {
         "zh-Hans" : {
@@ -26,126 +15,6 @@
       },
       "shouldTranslate" : false
     },
-    "⏰" : {
-      "shouldTranslate" : false
-    },
-    "⚙️" : {
-      "shouldTranslate" : false
-    },
-    "⚡️" : {
-      "shouldTranslate" : false
-    },
-    "❤️" : {
-      "shouldTranslate" : false
-    },
-    "🌍" : {
-      "shouldTranslate" : false
-    },
-    "🌐" : {
-      "shouldTranslate" : false
-    },
-    "🌤️" : {
-      "shouldTranslate" : false
-    },
-    "🎙️" : {
-      "shouldTranslate" : false
-    },
-    "🎤" : {
-      "shouldTranslate" : false
-    },
-    "🎵" : {
-      "shouldTranslate" : false
-    },
-    "🏠" : {
-      "shouldTranslate" : false
-    },
-    "🏪" : {
-      "shouldTranslate" : false
-    },
-    "👛" : {
-      "shouldTranslate" : false
-    },
-    "👥" : {
-      "shouldTranslate" : false
-    },
-    "💬" : {
-      "shouldTranslate" : false
-    },
-    "📁" : {
-      "shouldTranslate" : false
-    },
-    "📅" : {
-      "shouldTranslate" : false
-    },
-    "📈" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "📈"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
-    "📏" : {
-      "shouldTranslate" : false
-    },
-    "📚" : {
-      "shouldTranslate" : false
-    },
-    "📝" : {
-      "shouldTranslate" : false
-    },
-    "📧" : {
-      "shouldTranslate" : false
-    },
-    "📱" : {
-      "shouldTranslate" : false
-    },
-    "📸" : {
-      "shouldTranslate" : false
-    },
-    "📺" : {
-      "shouldTranslate" : false
-    },
-    "🔍" : {
-      "shouldTranslate" : false
-    },
-    "🕐" : {
-      "shouldTranslate" : false
-    },
-    "🖼️" : {
-      "shouldTranslate" : false
-    },
-    "🗺️" : {
-      "shouldTranslate" : false
-    },
-    "🧮" : {
-      "shouldTranslate" : false
-    },
-    "1. General -> Login Items & Extensions -> Network Extension, enable" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1. 通用 -> 登录项与扩展 -> 网络扩展, 启用"
-          }
-        }
-      }
-    },
-    "2. Retry to enable" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2. 重试启用"
-          }
-        }
-      }
-    },
     "Action" : {
       "localizations" : {
         "zh-Hans" : {
@@ -154,7 +23,8 @@
             "value" : "操作"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Address" : {
       "localizations" : {
@@ -164,7 +34,8 @@
             "value" : "地址"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "All" : {
       "localizations" : {
@@ -174,18 +45,8 @@
             "value" : "全部"
           }
         }
-      }
-    },
-    "Allow" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "允许"
-          }
-        }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Allowed" : {
       "localizations" : {
@@ -195,7 +56,8 @@
             "value" : "已允许"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "APP" : {
       "localizations" : {
@@ -205,18 +67,15 @@
             "value" : "APP"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "App ID 已复制到剪贴板" : {
-
-    },
-    "Apps connected to the internet will appear here" : {
-      "extractionState" : "stale",
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "连接到互联网的APP将显示在这里"
+            "value" : "App ID copied to clipboard"
           }
         }
       }
@@ -229,7 +88,8 @@
             "value" : "清除"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Click \"Allow\" to install extension" : {
       "localizations" : {
@@ -239,32 +99,25 @@
             "value" : "点击 \"允许\" 安装扩展"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Coffic" : {
-
-    },
-    "CofficLab" : {
-
-    },
-    "Debug" : {
-      "extractionState" : "stale",
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "调试"
+            "value" : "Coffic"
           }
         }
       }
     },
-    "Deny" : {
-      "extractionState" : "stale",
+    "CofficLab" : {
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "禁止"
+            "value" : "CofficLab"
           }
         }
       }
@@ -277,7 +130,8 @@
             "value" : "方向"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Error: %@" : {
       "localizations" : {
@@ -287,69 +141,21 @@
             "value" : "错误: %@"
           }
         }
-      }
-    },
-    "Filter is disabled" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "过滤器未启用"
-          }
-        }
-      }
-    },
-    "General -> Login Items & Extensions -> Network Extension -> TravelMode" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "通用 -> 登录项与扩展 -> 网络扩展 -> TravelMode"
-          }
-        }
-      }
-    },
-    "Hide Log" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隐藏日志"
-          }
-        }
-      }
+      },
+      "shouldTranslate" : false
     },
     "ID" : {
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "ID"
           }
-        }
-      }
-    },
-    "Install" : {
-      "extractionState" : "stale",
-      "localizations" : {
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "安装"
-          }
-        }
-      }
-    },
-    "Install System Extension to continue" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "安装系统扩展以继续"
+            "value" : "ID"
           }
         }
       }
@@ -362,29 +168,8 @@
             "value" : "消息"
           }
         }
-      }
-    },
-    "Monitoring" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "监控"
-          }
-        }
-      }
-    },
-    "Monitoring Stopped" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "监控已停止"
-          }
-        }
-      }
+      },
+      "shouldTranslate" : false
     },
     "No" : {
       "localizations" : {
@@ -394,29 +179,8 @@
             "value" : "否"
           }
         }
-      }
-    },
-    "Open Data Folder" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打开数据文件夹"
-          }
-        }
-      }
-    },
-    "Please allow TravelMode to run in System Settings" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请在系统设置中允许 TravelMode 运行"
-          }
-        }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Port" : {
       "localizations" : {
@@ -426,18 +190,8 @@
             "value" : "端口"
           }
         }
-      }
-    },
-    "Preview" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "预览"
-          }
-        }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Rejected" : {
       "localizations" : {
@@ -447,39 +201,8 @@
             "value" : "已拒绝"
           }
         }
-      }
-    },
-    "Show Log" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "显示日志"
-          }
-        }
-      }
-    },
-    "Start" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "开始"
-          }
-        }
-      }
-    },
-    "Status" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "状态"
-          }
-        }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Status Unknown" : {
       "localizations" : {
@@ -489,7 +212,8 @@
             "value" : "状态未知"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Stop" : {
       "localizations" : {
@@ -499,7 +223,8 @@
             "value" : "停止"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Time" : {
       "localizations" : {
@@ -509,7 +234,8 @@
             "value" : "时间"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Type" : {
       "localizations" : {
@@ -519,21 +245,18 @@
             "value" : "类型"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
-    "Unknown" : {
-      "extractionState" : "stale",
+    "Wi-Fi" : {
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未知"
+            "value" : "Wi-Fi"
           }
         }
       }
-    },
-    "Wi-Fi" : {
-
     },
     "Yes" : {
       "localizations" : {
@@ -543,73 +266,238 @@
             "value" : "是"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "上一步" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous"
+          }
+        }
+      }
     },
     "下一步" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        }
+      }
+    },
+    "入" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In"
+          }
+        }
+      }
     },
     "共 %lld 条记录" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total %lld records"
+          }
+        }
+      }
+    },
+    "出" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Out"
+          }
+        }
+      }
     },
     "开始" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        }
+      }
     },
     "开始使用" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get Started"
+          }
+        }
+      }
     },
     "当前没有出现被禁止联网的 APP" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No blocked network apps currently"
+          }
+        }
+      }
     },
-    "当前监控网络已停止" : {
-
+    "当前网络监控已停止" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network monitoring is currently stopped"
+          }
+        }
+      }
     },
     "所有应用可自由联网" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All apps can freely access the network"
+          }
+        }
+      }
     },
     "扩展" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extensions"
+          }
+        }
+      }
     },
     "扩展可在 Mac 和 App 中添加额外功能..." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extensions can add extra functionality to Mac and Apps..."
+          }
+        }
+      }
     },
     "按下方示意图进行设置" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow the diagram below for setup"
+          }
+        }
+      }
     },
     "登录项与扩展" : {
-
-    },
-    "筛选条件:" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Login Items & Extensions"
+          }
+        }
+      }
     },
     "管理Mac的整体设置和相关设置..." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage Mac's general and related settings..."
+          }
+        }
+      }
     },
     "网络" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network"
+          }
+        }
+      }
     },
     "网络过滤与监控工具" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network filtering and monitoring tool"
+          }
+        }
+      }
     },
     "联网的 APP 将显示在这里" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network-connected apps will be shown here"
+          }
+        }
+      }
     },
     "聚焦" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Focus"
+          }
+        }
+      }
     },
     "被允许联网的 APP 将显示在这里" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps allowed to access the network will be shown here"
+          }
+        }
+      }
     },
     "被禁止联网的 APP 将显示在这里" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps blocked from accessing the network will be shown here"
+          }
+        }
+      }
     },
     "辅助功能" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibility"
+          }
+        }
+      }
     },
     "通用" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

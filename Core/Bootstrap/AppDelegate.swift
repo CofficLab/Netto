@@ -19,7 +19,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SuperEvent, SuperLog, SuperT
     func applicationDidFinishLaunching(_ notification: Notification) {
         let shouldShowWelcome = shouldShowWelcomeWindow()
 
-        os_log("\(self.t) did finish launching, shouldShowWelcome: \(shouldShowWelcome)")
+        os_log("\(self.t)🚩 did finish launching, shouldShowWelcome: \(shouldShowWelcome)")
 
         if shouldShowWelcome {
             self.nc.post(name: .shouldOpenWelcomeWindow, object: nil)
@@ -40,7 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SuperEvent, SuperLog, SuperT
         let lastShownVersion = UserDefaults.standard.string(forKey: "lastShownWelcomeVersion")
         let currentVersion = getCurrentAppVersion()
 
-        os_log("\(self.t) lastShownVersion: \(lastShownVersion ?? "nil"), currentVersion: \(currentVersion)")
+        os_log("\(self.t)🚩 lastShownVersion: \(lastShownVersion ?? "nil"), currentVersion: \(currentVersion)")
 
         // 首次安装或无法获取版本信息
         guard let lastVersion = lastShownVersion, !lastVersion.isEmpty else {

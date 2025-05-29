@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct RunningView: View {
-    @EnvironmentObject var app: AppManager
+    @EnvironmentObject var app: UIProvider
 
     var body: some View {
         Popview(

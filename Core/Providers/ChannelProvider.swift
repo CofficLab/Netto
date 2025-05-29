@@ -12,17 +12,14 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     
     override private init() {
         super.init()
-        os_log("\(self.t)\(Location.did(.Boot))")
+        os_log("\(Self.onInit)")
 
         self.emit(.willBoot)
         self.status = .indeterminate
         self.setObserver()
 
-        os_log("\(self.t)\(Location.did(.IfReady))")
-
         // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
-        Task { [weak self] in
-            guard let self else { return }
+        Task {
             do {
                 try await loadFilterConfiguration(reason: "Boot")
             } catch {
@@ -30,12 +27,10 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
             }
 
             let isEnabled = self.filterManager.isEnabled
-            let logMessage = isEnabled ? "过滤器已启用 ✅" : "过滤器未启用 ❎"
-            let newStatus: FilterStatus = isEnabled ? .running : .disabled
+  
+            os_log("\(self.t)\(isEnabled ? "✅ 过滤器已启用" : "⚠️ 过滤器未启用")")
 
-            os_log("\(self.t)Boot -> \(logMessage)")
-
-            await updateFilterStatus(newStatus)
+            await updateFilterStatus(isEnabled ? .running : .disabled)
         }
     }
 
@@ -67,6 +62,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     /// - Parameter status: 新的过滤器状态
     @MainActor
     private func updateFilterStatus(_ status: FilterStatus) {
+        os_log("\(self.t)🍋 更新状态 -> \(status.description)")
         self.status = status
     }
 
@@ -79,15 +75,17 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     }
 
     func setObserver() {
-        os_log("\(self.t)👂 添加监听")
+        os_log("\(self.t)👀 添加监听")
         observer = nc.addObserver(
             forName: .NEFilterConfigurationDidChange,
             object: filterManager,
             queue: .main
         ) { _ in
             let enabled = self.filterManager.isEnabled
-            os_log("\(self.t)\(enabled ? "Filter 已打开 🎉" : "Fitler 已关闭 ❎")")
-            self.status = self.filterManager.isEnabled ? .running : .stopped
+            os_log("\(self.t)\(enabled ? "👀 监听到 Filter 已打开 " : "👀 监听到 Fitler 已关闭")")
+            Task { @MainActor in
+                self.updateFilterStatus(self.filterManager.isEnabled ? .running : .stopped)
+            }
         }
     }
 
@@ -116,16 +114,6 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         )
     }
 
-//    func updateStatus() {
-//        if filterManager.isEnabled {
-//            os_log("\(self.t)APP: updateStatus.registerWithProvider")
-//            registerWithProvider()
-//        } else {
-//            os_log("\(self.t)APP: 过滤器未启用")
-//            status = .notInstalled
-//        }
-//    }
-
     func installFilter() {
         os_log("\(self.t)\(Location.did(.InstallFilter))")
 
@@ -147,8 +135,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     }
 
     func startFilter(reason: String) async throws {
-        os_log("\(self.t)开启过滤器 🐛 \(reason)")
-        os_log("  ➡️ Current Status: \(self.status.description)")
+        os_log("\(self.t)🚀 开启过滤器 🐛 \(reason)  ➡️ Current Status: \(self.status.description)")
 
         self.emit(.willStart)
 
@@ -163,12 +150,12 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         try await loadFilterConfiguration(reason: reason)
 
         guard !filterManager.isEnabled else {
-            os_log("\(self.t)过滤器已启用，直接关联")
+            os_log("\(self.t)👌 过滤器已启用，直接关联")
             registerWithProvider()
             return
         }
 
-        os_log("\(self.t)开始激活系统扩展 ⚙️")
+        os_log("\(self.t)🚀 开始激活系统扩展")
 
         // Start by activating the system extension
         let activationRequest = OSSystemExtensionRequest.activationRequest(forExtensionWithIdentifier: extensionIdentifier, queue: .main)
@@ -177,7 +164,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     }
 
     func stopFilter(reason: String) async throws {
-        os_log("\(self.t)停止过滤器 🐛 \(reason)")
+        os_log("\(self.t)🤚 停止过滤器 🐛 \(reason)")
 
         self.emit(.willStop)
 
@@ -197,15 +184,14 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     // MARK: Content Filter Configuration Management
 
     func loadFilterConfiguration(reason: String) async throws {
-        os_log("\(self.t)loadFilterConfiguration 读取过滤器配置 🐛 \(reason)")
-        os_log("\(self.t)\(Location.did(.LoadFilterConfiguration))")
+        os_log("\(self.t)🚩 读取过滤器配置 🐛 \(reason)")
 
         // You must call this method at least once before calling saveToPreferencesWithCompletionHandler: for the first time after your app launches.
         try await filterManager.loadFromPreferences()
     }
 
     func enableFilterConfiguration(reason: String) {
-        os_log("\(self.t)\(Location.did(.EnableFilterConfiguration))")
+        os_log("\(self.t)🦶 \(Location.did(.EnableFilterConfiguration))")
 
         self.emit(.configurationChanged)
 
@@ -219,7 +205,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
             do {
                 try await loadFilterConfiguration(reason: reason)
 
-                os_log("\(self.t)加载过滤器配置成功 🎉")
+                os_log("\(self.t)🎉 加载过滤器配置成功")
 
                 if self.filterManager.providerConfiguration == nil {
                     let providerConfiguration = NEFilterProviderConfiguration()
@@ -235,8 +221,8 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
                 self.filterManager.isEnabled = true
 
                 // 将过滤器加载到系统设置中
-                os_log("\(self.t)将要弹出授权对话框来加载到系统设置中 📺")
-                os_log("\(self.t)\(Location.did(.SaveToPreferences))")
+                os_log("\(self.t)📺 将要弹出授权对话框来加载到系统设置中")
+                os_log("\(self.t)🦶 \(Location.did(.SaveToPreferences))")
                 self.filterManager.saveToPreferences { saveError in
                     self.main.async {
                         if let error = saveError {
@@ -244,27 +230,27 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
                             self.status = .disabled
                             return
                         } else {
-                            os_log("\(self.t)\(Location.did(.UserApproved))")
+                            os_log("\(self.t)🦶 \(Location.did(.UserApproved))")
                         }
 
-                        // self.registerWithProvider()
+                        self.registerWithProvider()
                     }
                 }
             } catch {
                 os_log("\(self.t)APP: 加载过滤器配置失败")
-                self.status = .stopped
+                await self.updateFilterStatus(.stopped)
             }
         }
     }
 
     func registerWithProvider() {
-        os_log("\(self.t)registerWithProvider，让 APP 和 Provider 关联起来 🛫")
+        os_log("\(self.t)🛫 registerWithProvider，让 ChannelProvider 和 Extension 关联起来")
 
         self.emit(.willRegisterWithProvider)
 
         ipc.register(withExtension: extensionBundle, delegate: self) { success in
             if success {
-                os_log("\(self.t)APP 和 Provider 关联成功 🎉")
+                os_log("\(self.t)🎉 ChannelProvider 和 Extension 关联成功")
 
                 self.emit(.didRegisterWithProvider)
 
@@ -272,7 +258,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
                     self.status = .running
                 }
             } else {
-                os_log("\(self.t)APP 和 Provider 关联失败 💔")
+                os_log("\(self.t)💔 ChannelProvider 和 Extension 关联失败")
 
                 self.main.async {
                     self.status = .extensionNotReady
@@ -291,9 +277,9 @@ extension ChannelProvider: OSSystemExtensionRequestDelegate {
     ) {
         switch result {
         case .completed:
-            os_log("\(self.t)OSSystemExtensionRequestDelegate -> completed")
+            os_log("\(self.t)🍋 OSSystemExtensionRequestDelegate -> completed")
         case .willCompleteAfterReboot:
-            os_log("\(self.t)willCompleteAfterReboot")
+            os_log("\(self.t)🍋 willCompleteAfterReboot")
         @unknown default:
             os_log("\(self.t)\(result.rawValue)")
         }
@@ -309,7 +295,7 @@ extension ChannelProvider: OSSystemExtensionRequestDelegate {
     }
 
     func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
-        os_log("\(self.t)\(Location.did(.RequestNeedsUserApproval))")
+        os_log("\(self.t)🦶 \(Location.did(.RequestNeedsUserApproval))")
         status = .needApproval
     }
 
@@ -324,13 +310,11 @@ extension ChannelProvider: OSSystemExtensionRequestDelegate {
     }
 }
 
-extension ChannelProvider: AppCommunication {
-    func providerSaid(_ words: String) {
-        os_log("\(self.t)Provider said -> \(words)")
-    }
+// MARK: AppCommunication
 
-    func providerSay(_ words: String) {
-        os_log("\(self.t)Provider -> \(words)")
+extension ChannelProvider: AppCommunication {
+    func extensionLog(_ words: String) {
+        os_log("\(self.t)💬 Extension said -> \(words)")
     }
 
     func needApproval() {
@@ -341,26 +325,20 @@ extension ChannelProvider: AppCommunication {
         )
     }
 
-    // MARK: AppCommunication
-
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
-        let verbose = false
-
-        if verbose {
-            os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId())")
-        }
+        let verbose = true
 
         self.main.async {
             if self.data.shouldAllow(flow.getAppId()) {
                 if verbose {
-                    os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Allow")
+                    os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Allow")
                 }
 
                 self.nc.post(name: .NetWorkFilterFlow, object: FlowWrapper(flow: flow, allowed: true))
                 responseHandler(true)
             } else {
                 if verbose {
-                    os_log("\(self.t)Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Deny")
+                    os_log("\(self.t)🈲 Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Deny")
                 }
                 self.nc.post(name: .NetWorkFilterFlow, object: FlowWrapper(flow: flow, allowed: false))
                 responseHandler(false)

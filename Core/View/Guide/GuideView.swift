@@ -2,7 +2,7 @@ import SwiftUI
 import MagicCore
 
 struct GuideView: View {
-    @EnvironmentObject private var app: AppManager
+    @EnvironmentObject private var app: UIProvider
 
     var body: some View {
         ZStack {

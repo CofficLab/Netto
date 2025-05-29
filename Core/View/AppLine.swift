@@ -26,11 +26,11 @@ struct AppLine: View, SuperEvent {
                     Text(app.id)
                 }
             }
-            .foregroundColor(app.isSystemApp ? .teal : .primary)
+            .foregroundColor(app.isSystemApp ? .green.opacity(0.5) : .primary)
 
             Spacer()
 
-            if hovering {
+            if hovering && app.isNotSample {
                 AppAction(shouldAllow: $shouldAllow, appId: app.id)
             }
         }

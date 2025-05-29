@@ -1,22 +1,20 @@
+import MagicCore
 import OSLog
 import SwiftUI
 
-struct AppList: View {
-    @EnvironmentObject private var appManager: AppManager
-    @EnvironmentObject private var channel: ChannelProvider
+struct AppList: View, SuperLog {
+    @EnvironmentObject private var ui: UIProvider
     @EnvironmentObject private var data: DataProvider
+    
+    static var emoji = "🖥️"
 
-    private var displayType: DisplayType {
-        appManager.displayType
-    }
-
-    private var appsVisible: [SmartApp] {
+    private var apps: [SmartApp] {
         data.apps.sorted(by: {
             $0.events.count > $1.events.count
         }).filter({
-            $0.events.count > 0 || !data.shouldAllow($0.id)
+            $0.events.count > 0 || data.shouldDeny($0.id)
         }).filter {
-            switch displayType {
+            switch ui.displayType {
             case .All:
                 true
             case .Allowed:
@@ -27,25 +25,27 @@ struct AppList: View {
         }
     }
 
+    /// 构建应用列表视图
     var body: some View {
         ZStack {
-            if appsVisible.count > 0 {
-                ScrollView {
-                    VStack(spacing: 0) {
-                        ForEach(appsVisible) { app in
-                            AppLine(app: app)
+            ScrollView {
+                VStack(spacing: 0) {
+                    ForEach(Array((apps.isNotEmpty ? apps : data.samples).enumerated()), id: \.element.id) { index, app in
+                        AppLine(app: app)
+                        if index < (apps.isNotEmpty ? apps : data.samples).count - 1 {
                             Divider()
                         }
                     }
                 }
-            } else {
-                AppListSample()
             }
 
-            if appsVisible.count == 0 || appManager.status.isStopped() {
+            if ui.status.isNotRunning() || apps.isEmpty {
                 GuideView()
             }
         }
+        .onChange(of: self.apps.count, {
+            os_log("\(self.t)🍋 当前APP数量 -> \(apps.count)")
+        })
     }
 }
 
@@ -53,6 +53,7 @@ struct AppList: View {
     RootView {
         ContentView()
     }
+    .frame(height: 600)
 }
 
 #Preview("AppList") {
