@@ -208,6 +208,7 @@
       }
     },
     "Apps connected to the internet will appear here" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -275,9 +276,6 @@
         }
       }
     },
-    "Error" : {
-
-    },
     "Error: %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -330,9 +328,6 @@
           }
         }
       }
-    },
-    "Indeterminate" : {
-
     },
     "Install" : {
       "extractionState" : "stale",
@@ -388,9 +383,6 @@
         }
       }
     },
-    "Need Approval" : {
-
-    },
     "No" : {
       "localizations" : {
         "zh-Hans" : {
@@ -400,9 +392,6 @@
           }
         }
       }
-    },
-    "Not Installed" : {
-
     },
     "Open Data Folder" : {
       "extractionState" : "stale",
@@ -540,9 +529,6 @@
         }
       }
     },
-    "Waiting For Approval" : {
-
-    },
     "Wi-Fi" : {
 
     },
@@ -565,16 +551,13 @@
     "共 %lld 条记录" : {
 
     },
-    "已停止" : {
-
-    },
-    "已停用" : {
-
-    },
     "开始" : {
 
     },
     "开始使用" : {
+
+    },
+    "当前没有出现被禁止联网的 APP" : {
 
     },
     "当前监控网络已停止" : {
@@ -595,9 +578,6 @@
     "登录项与扩展" : {
 
     },
-    "等待配置扩展" : {
-
-    },
     "筛选条件:" : {
 
     },
@@ -610,13 +590,19 @@
     "网络过滤与监控工具" : {
 
     },
+    "联网的 APP 将显示在这里" : {
+
+    },
     "聚焦" : {
 
     },
-    "辅助功能" : {
+    "被允许联网的 APP 将显示在这里" : {
 
     },
-    "运行中" : {
+    "被禁止联网的 APP 将显示在这里" : {
+
+    },
+    "辅助功能" : {
 
     },
     "通用" : {

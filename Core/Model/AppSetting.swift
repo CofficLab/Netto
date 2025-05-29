@@ -94,11 +94,6 @@ final class AppSetting: SuperLog, SuperEvent {
     }
 }
 
-extension Notification.Name {
-    static let didSetAllow = Notification.Name("didSetAllow")
-    static let didSetDeny = Notification.Name("didSetDeny")
-}
-
 extension AppSetting {
     static func emitDidSetAllow(_ appId: String) {
         NotificationCenter.default.post(name: .didSetAllow, object: nil, userInfo: [

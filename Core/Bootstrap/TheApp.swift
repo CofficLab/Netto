@@ -75,7 +75,7 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                 } else {
                     ContentView()
                         .frame(minHeight: 500)
-                        .frame(minWidth: 300)
+                        .frame(minWidth: 350)
                 }
             }
             .onAppear {
