@@ -83,7 +83,9 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         ) { _ in
             let enabled = self.filterManager.isEnabled
             os_log("\(self.t)\(enabled ? "Filter 已打开 🎉" : "Fitler 已关闭 ❎")")
-            self.status = self.filterManager.isEnabled ? .running : .stopped
+            Task { @MainActor in
+                self.updateFilterStatus(self.filterManager.isEnabled ? .running : .stopped)
+            }
         }
     }
 

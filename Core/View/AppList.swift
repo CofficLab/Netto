@@ -1,6 +1,6 @@
+import MagicCore
 import OSLog
 import SwiftUI
-import MagicCore
 
 struct AppList: View {
     @EnvironmentObject private var ui: UIProvider
@@ -24,20 +24,19 @@ struct AppList: View {
     }
 
     /// 构建应用列表视图
-    /// - 使用List替代ScrollView提供更好的性能和用户体验
-    /// - 当应用列表为空或服务未运行时显示引导视图
     var body: some View {
         ZStack {
-            List {
-                ForEach(apps.isNotEmpty ? apps : data.samples) { app in
-                    AppLine(app: app)
-                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                        .listRowSeparator(.visible)
+            ScrollView {
+                VStack(spacing: 0) {
+                    ForEach(Array((apps.isNotEmpty ? apps : data.samples).enumerated()), id: \.element.id) { index, app in
+                        AppLine(app: app)
+                        if index < (apps.isNotEmpty ? apps : data.samples).count - 1 {
+                            Divider()
+                        }
+                    }
                 }
-                .listRowBackground(Color.clear)
             }
-            .listStyle(.plain)
-            
+
             if ui.status.isNotRunning() || apps.isEmpty {
                 GuideView()
             }
