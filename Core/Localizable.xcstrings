@@ -177,6 +177,7 @@
       }
     },
     "Allow" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -206,7 +207,11 @@
         }
       }
     },
+    "App ID 已复制到剪贴板" : {
+
+    },
     "Apps connected to the internet will appear here" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -254,6 +259,7 @@
       }
     },
     "Deny" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -272,9 +278,6 @@
           }
         }
       }
-    },
-    "Error" : {
-
     },
     "Error: %@" : {
       "localizations" : {
@@ -329,9 +332,6 @@
         }
       }
     },
-    "Indeterminate" : {
-
-    },
     "Install" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -376,6 +376,7 @@
       }
     },
     "Monitoring Stopped" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -384,9 +385,6 @@
           }
         }
       }
-    },
-    "Need Approval" : {
-
     },
     "No" : {
       "localizations" : {
@@ -397,9 +395,6 @@
           }
         }
       }
-    },
-    "Not Installed" : {
-
     },
     "Open Data Folder" : {
       "extractionState" : "stale",
@@ -434,6 +429,7 @@
       }
     },
     "Preview" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -536,9 +532,6 @@
         }
       }
     },
-    "Waiting For Approval" : {
-
-    },
     "Wi-Fi" : {
 
     },
@@ -558,16 +551,22 @@
     "下一步" : {
 
     },
-    "已停止" : {
-
-    },
-    "已停用" : {
+    "共 %lld 条记录" : {
 
     },
     "开始" : {
 
     },
     "开始使用" : {
+
+    },
+    "当前没有出现被禁止联网的 APP" : {
+
+    },
+    "当前监控网络已停止" : {
+
+    },
+    "所有应用可自由联网" : {
 
     },
     "扩展" : {
@@ -582,7 +581,7 @@
     "登录项与扩展" : {
 
     },
-    "等待配置扩展" : {
+    "筛选条件:" : {
 
     },
     "管理Mac的整体设置和相关设置..." : {
@@ -594,13 +593,19 @@
     "网络过滤与监控工具" : {
 
     },
+    "联网的 APP 将显示在这里" : {
+
+    },
     "聚焦" : {
 
     },
-    "辅助功能" : {
+    "被允许联网的 APP 将显示在这里" : {
 
     },
-    "运行中" : {
+    "被禁止联网的 APP 将显示在这里" : {
+
+    },
+    "辅助功能" : {
 
     },
     "通用" : {

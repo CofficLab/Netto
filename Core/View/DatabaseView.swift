@@ -16,11 +16,7 @@ struct DatabaseView: View {
                 }
             }
             TableColumn("Action") { i in
-                if i.allowed {
-                    BtnDeny(appId: i.appId)
-                } else {
-                    BtnAllow(appId: i.appId)
-                }
+                AppAction(shouldAllow: .constant(true), appId: i.appId)
             }
         })
     }

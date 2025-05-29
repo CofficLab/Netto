@@ -1,5 +1,6 @@
 import Foundation
 import NetworkExtension
+import MagicCore
 
 struct FirewallEvent: Hashable, Identifiable {
     enum Status {
@@ -20,7 +21,7 @@ struct FirewallEvent: Hashable, Identifiable {
     }
     
     var timeFormatted: String {
-        self.time.timeFormatted
+        self.time.compactDateTime
     }
     
     var description: String {

@@ -5,33 +5,8 @@ struct Toolbar: View, SuperLog {
     @EnvironmentObject private var app: AppManager
     @EnvironmentObject private var channel: ChannelProvider
 
-    private var shouldShowLogButton: Bool {
-        switch app.status {
-        case .stopped:
-            true
-        case .indeterminate:
-            false
-        case .running:
-            true
-        case .notInstalled:
-            false
-        case .needApproval:
-            false
-        case .waitingForApproval:
-            false
-        case .error:
-            false
-        case .disabled, .extensionNotReady:
-            false
-        }
-    }
-
     var body: some View {
         HStack {
-            if shouldShowLogButton {
-                BtnToggleLog().labelStyle(.iconOnly)
-            }
-
             ZStack {
                 switch app.status {
                 case .stopped:

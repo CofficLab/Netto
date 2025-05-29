@@ -3,26 +3,16 @@ import OSLog
 import SwiftUI
 
 struct AppLine: View, SuperEvent {
+    @EnvironmentObject var data: DataProvider
+
     var app: SmartApp
 
-    @State private var hovering: Bool = false
-    @State var shouldAllow: Bool
+    @State var hovering: Bool = false
+    @State var shouldAllow: Bool = true
+    @State var showCopyMessage: Bool = false
 
     init(app: SmartApp) {
         self.app = app
-        self.shouldAllow = AppSetting.shouldAllow(app.id)
-    }
-
-    private var background: some View {
-        ZStack {
-            if hovering {
-                BackgroundView.type1.opacity(0.4)
-            } else {
-                if !shouldAllow {
-                    Color.red.opacity(0.1)
-                }
-            }
-        }
     }
 
     var body: some View {
@@ -36,45 +26,88 @@ struct AppLine: View, SuperEvent {
                     Text(app.id)
                 }
             }
+            .foregroundColor(app.isSystemApp ? .teal : .primary)
 
             Spacer()
 
             if hovering {
-                BtnDeny(appId: app.id)
-                    .labelStyle(.titleOnly)
-                    .disabled(!shouldAllow)
-                BtnAllow(appId: app.id)
-                    .labelStyle(.titleOnly)
-                    .disabled(shouldAllow)
+                AppAction(shouldAllow: $shouldAllow, appId: app.id)
             }
         }
         .padding(.vertical, 5)
         .padding(.horizontal, 10)
-        .background(background)
+        .background(Group {
+            if !shouldAllow {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.red.opacity(0.2),
+                        Color.red.opacity(0.05),
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            } else if hovering {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.mint.opacity(0.2),
+                        Color.mint.opacity(0.05),
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            }
+        })
         .scaleEffect(hovering ? 1 : 1)
         .onHover(perform: { hovering in
             self.hovering = hovering
         })
+        .onTapGesture(count: 2) {
+            copyAppId()
+        }
         .frame(height: 50)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onReceive(self.nc.publisher(for: .didSetDeny), perform: onDidSetDeny)
-        .onReceive(self.nc.publisher(for: .didSetAllow), perform: onDidSetAllow)
+        .onAppear(perform: onAppear)
+        .overlay(
+            Group {
+                if showCopyMessage {
+                    Text("App ID 已复制到剪贴板")
+                        .font(.caption)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.green.opacity(0.8))
+                        .foregroundColor(.white)
+                        .cornerRadius(6)
+                        .transition(.opacity.combined(with: .scale))
+                }
+            },
+            alignment: .center
+        )
     }
 }
 
-extension AppLine {
-    func onDidSetDeny(_ n: Notification) {
-        if let appId = n.userInfo?["appId"] as? String {
-            if appId == app.id {
-                self.shouldAllow = false
-            }
-        }
-    }
+// MARK: - 事件
 
-    func onDidSetAllow(_ n: Notification) {
-        if let appId = n.userInfo?["appId"] as? String {
-            if appId == app.id {
-                self.shouldAllow = true
+extension AppLine {
+    /// 页面出现时的处理
+    func onAppear() {
+        self.shouldAllow = data.shouldAllow(app.id)
+    }
+    
+    /// 复制应用 ID 到剪贴板
+    private func copyAppId() {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(app.id, forType: .string)
+        
+        // 显示复制成功提示
+        withAnimation(.easeInOut(duration: 0.3)) {
+            showCopyMessage = true
+        }
+        
+        // 2秒后隐藏提示
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                showCopyMessage = false
             }
         }
     }
@@ -84,4 +117,5 @@ extension AppLine {
     RootView {
         ContentView()
     }
+    .frame(height: 600)
 }

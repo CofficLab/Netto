@@ -14,15 +14,15 @@ struct AppList: View {
         data.apps.sorted(by: {
             $0.events.count > $1.events.count
         }).filter({
-            $0.events.count > 0
+            $0.events.count > 0 || !data.shouldAllow($0.id)
         }).filter {
             switch displayType {
             case .All:
                 true
             case .Allowed:
-                AppSetting.shouldAllow($0.id)
+                data.shouldAllow($0.id)
             case .Rejected:
-                !AppSetting.shouldAllow($0.id)
+                !data.shouldAllow($0.id)
             }
         }
     }

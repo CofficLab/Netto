@@ -7,10 +7,9 @@ struct Topbar: View {
     var body: some View {
         HStack {
             p.getPlugins()
-//                .labelStyle(.iconOnly)
         }
         .frame(height: 30)
-        .background(BackgroundView.type2.opacity(0.2))
+        .background(MagicBackground.colorTeal.opacity(0.2))
     }
 }
 

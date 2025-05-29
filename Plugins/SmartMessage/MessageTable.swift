@@ -50,7 +50,7 @@ struct MessageTable: View, SuperLog, SuperThread {
             })
         }
         .padding(10)
-        .background(BackgroundView.type1.opacity(0.1))
+//        .background(BackgroundView.type1.opacity(0.1))
     }
 }
 

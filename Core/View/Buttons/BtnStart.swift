@@ -29,6 +29,7 @@ struct BtnStart: View, SuperLog {
                 action()
             })
             .magicTitle("开启")
+            .magicBackgroundColor(.blue)
             .magicShape(.roundedRectangle)
             .frame(width: 150)
             .frame(height: 50)
