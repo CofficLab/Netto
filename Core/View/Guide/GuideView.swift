@@ -1,4 +1,5 @@
 import SwiftUI
+import MagicCore
 
 struct GuideView: View {
     @EnvironmentObject private var app: AppManager
@@ -6,12 +7,11 @@ struct GuideView: View {
     var body: some View {
         ZStack {
             Color.black.opacity(0.3)
+            MagicBackground.forest.opacity(0.3)
 
             VStack(spacing: 0) {
                 switch app.status {
-                case .disabled:
-                    DisabledView()
-                case .stopped:
+                case .disabled, .stopped:
                     StopView()
                 case .indeterminate:
                     UnknownView()
@@ -34,7 +34,7 @@ struct GuideView: View {
                         Text("Error: \(error.localizedDescription)")
                             .font(.callout)
                             .padding(20)
-//                            .background(BackgroundView.type2A.rotationEffect(.degrees(180)))
+                            .background(MagicBackground.cherry)
                     }
                 }
             }

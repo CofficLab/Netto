@@ -9,7 +9,7 @@ struct Topbar: View {
             p.getPlugins()
         }
         .frame(height: 30)
-//        .background(BackgroundView.type2.opacity(0.2))
+        .background(MagicBackground.colorTeal.opacity(0.2))
     }
 }
 

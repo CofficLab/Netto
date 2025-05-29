@@ -378,6 +378,7 @@
       }
     },
     "Monitoring Stopped" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -436,6 +437,7 @@
       }
     },
     "Preview" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -573,6 +575,12 @@
 
     },
     "开始使用" : {
+
+    },
+    "当前监控网络已停止" : {
+
+    },
+    "所有应用可自由联网" : {
 
     },
     "扩展" : {

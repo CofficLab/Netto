@@ -1,25 +1,49 @@
 import SwiftUI
 
+/**
+ * 停止监控视图
+ * 使用Popview封装，显示监控已停止状态并提供启动按钮
+ */
 struct StopView: View {
-    @State private var isAnimating = false
-
     var body: some View {
-        VStack(spacing: 24) {
-            Image(systemName: "stop.circle")
-                .font(.system(size: 48))
-                .symbolEffect(.pulse, value: isAnimating)
-                .foregroundStyle(.red)
-                .opacity(isAnimating ? 1 : 0)
-                .offset(y: isAnimating ? 0 : 20)
-            
-            Text("Monitoring Stopped").font(.title)
-            
-            BtnStart().labelStyle(.titleOnly)
-        }
-        .padding()
-        .onAppear {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                isAnimating = true
+        Popview(
+            iconName: "stop.circle",
+            title: "监控已停止",
+            iconColor: .red
+        ) {
+            VStack(spacing: 20) {
+                // 状态信息区域
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 8) {
+                        Image(systemName: .iconStop)
+                            .foregroundStyle(.orange)
+                            .font(.system(size: 14, weight: .medium))
+                            .frame(width: 20, alignment: .center)
+                        Text("当前监控网络已停止")
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundStyle(.primary)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.orange.opacity(0.1))
+                    .cornerRadius(8)
+
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.shield")
+                            .foregroundStyle(.green)
+                            .font(.system(size: 14, weight: .medium))
+                            .frame(width: 20, alignment: .center)
+                        Text("所有应用可自由联网")
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundStyle(.primary)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.green.opacity(0.1))
+                    .cornerRadius(8)
+                }
+
+                BtnStart()
             }
         }
     }

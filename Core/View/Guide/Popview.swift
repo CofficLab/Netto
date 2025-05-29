@@ -5,12 +5,12 @@ struct Popview<Content: View>: View {
     @State private var isAnimating = false
     @State private var isHovered = false
     @State private var isPressed = false
-    
+
     let iconName: String
     let title: String
     let iconColor: Color
     let content: Content
-    
+
     init(
         iconName: String,
         title: String,
@@ -33,7 +33,7 @@ struct Popview<Content: View>: View {
                 .opacity(isAnimating ? 1 : 0)
                 .offset(y: isAnimating ? 0 : 20)
                 .scaleEffect(isPressed ? 0.8 : 1)
-            
+
             Text(title)
                 .font(.system(size: 24, weight: .medium))
                 .foregroundStyle(.primary)
@@ -79,4 +79,11 @@ struct Popview<Content: View>: View {
         ExtensionNotReady()
     }
     .frame(height: 500)
+}
+
+#Preview("APP") {
+    RootView {
+        ContentView()
+    }
+    .frame(height: 800)
 }

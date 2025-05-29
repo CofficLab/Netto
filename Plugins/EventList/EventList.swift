@@ -1,29 +1,29 @@
-import SwiftUI
 import NetworkExtension
+import SwiftUI
 
 struct EventList: View {
     @EnvironmentObject private var app: AppManager
     @State private var selectedDirection: DirectionFilter = .all
     @State private var selectedStatus: StatusFilter = .all
-    
+
     /// 方向筛选选项
     enum DirectionFilter: String, CaseIterable {
         case all = "全部"
         case inbound = "In"
         case outbound = "Out"
     }
-    
+
     /// 状态筛选选项
     enum StatusFilter: String, CaseIterable {
         case all = "全部"
         case allowed = "允许"
         case rejected = "阻止"
     }
-    
+
     /// 根据筛选条件过滤events
     private var filteredEvents: [FirewallEvent] {
         let allEvents = app.events.reversed()
-        
+
         return allEvents.filter { event in
             // 方向筛选
             let directionMatch: Bool
@@ -35,7 +35,7 @@ struct EventList: View {
             case .outbound:
                 directionMatch = event.direction == .outbound
             }
-            
+
             // 状态筛选
             let statusMatch: Bool
             switch selectedStatus {
@@ -46,7 +46,7 @@ struct EventList: View {
             case .rejected:
                 statusMatch = event.status == .rejected
             }
-            
+
             return directionMatch && statusMatch
         }
     }
@@ -57,9 +57,9 @@ struct EventList: View {
             HStack {
                 Text("筛选条件:")
                     .font(.headline)
-                
+
                 Spacer().frame(width: 20)
-                
+
                 // 方向筛选
                 Picker("Direction", selection: $selectedDirection) {
                     ForEach(DirectionFilter.allCases, id: \.self) { direction in
@@ -68,9 +68,9 @@ struct EventList: View {
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .frame(width: 150)
-                
+
                 Spacer().frame(width: 20)
-                
+
                 // 状态筛选
                 Picker("Status", selection: $selectedStatus) {
                     ForEach(StatusFilter.allCases, id: \.self) { status in
@@ -79,18 +79,18 @@ struct EventList: View {
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .frame(width: 160)
-                
+
                 Spacer()
-                
+
                 // 显示当前筛选结果数量
                 Text("共 \(filteredEvents.count) 条记录")
                     .foregroundColor(.secondary)
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
-            
+
             Divider()
-            
+
             Table(filteredEvents, columns: {
                 TableColumn("Time", value: \.timeFormatted).width(132)
                 TableColumn("APP") { event in
@@ -113,9 +113,7 @@ struct EventList: View {
             })
         }
         .frame(minWidth: 700)
-        .frame(minHeight: 500)
-//        .background(BackgroundView.type1)
-        .onReceive(NotificationCenter.default.publisher(for: .NetWorkFilterFlow)) { notification in
+        .frame(minHeight: 500).onReceive(NotificationCenter.default.publisher(for: .NetWorkFilterFlow)) { notification in
             if let wrapper = notification.object as? FlowWrapper {
                 let flow = wrapper.flow
                 let event = FirewallEvent(
