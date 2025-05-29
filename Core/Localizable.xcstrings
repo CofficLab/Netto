@@ -26,58 +26,8 @@
       },
       "shouldTranslate" : false
     },
-    "⏰" : {
-      "shouldTranslate" : false
-    },
-    "⚙️" : {
-      "shouldTranslate" : false
-    },
-    "⚡️" : {
-      "shouldTranslate" : false
-    },
-    "❤️" : {
-      "shouldTranslate" : false
-    },
-    "🌍" : {
-      "shouldTranslate" : false
-    },
-    "🌐" : {
-      "shouldTranslate" : false
-    },
-    "🌤️" : {
-      "shouldTranslate" : false
-    },
-    "🎙️" : {
-      "shouldTranslate" : false
-    },
-    "🎤" : {
-      "shouldTranslate" : false
-    },
-    "🎵" : {
-      "shouldTranslate" : false
-    },
-    "🏠" : {
-      "shouldTranslate" : false
-    },
-    "🏪" : {
-      "shouldTranslate" : false
-    },
-    "👛" : {
-      "shouldTranslate" : false
-    },
-    "👥" : {
-      "shouldTranslate" : false
-    },
-    "💬" : {
-      "shouldTranslate" : false
-    },
-    "📁" : {
-      "shouldTranslate" : false
-    },
-    "📅" : {
-      "shouldTranslate" : false
-    },
     "📈" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -86,42 +36,6 @@
           }
         }
       },
-      "shouldTranslate" : false
-    },
-    "📏" : {
-      "shouldTranslate" : false
-    },
-    "📚" : {
-      "shouldTranslate" : false
-    },
-    "📝" : {
-      "shouldTranslate" : false
-    },
-    "📧" : {
-      "shouldTranslate" : false
-    },
-    "📱" : {
-      "shouldTranslate" : false
-    },
-    "📸" : {
-      "shouldTranslate" : false
-    },
-    "📺" : {
-      "shouldTranslate" : false
-    },
-    "🔍" : {
-      "shouldTranslate" : false
-    },
-    "🕐" : {
-      "shouldTranslate" : false
-    },
-    "🖼️" : {
-      "shouldTranslate" : false
-    },
-    "🗺️" : {
-      "shouldTranslate" : false
-    },
-    "🧮" : {
       "shouldTranslate" : false
     },
     "1. General -> Login Items & Extensions -> Network Extension, enable" : {

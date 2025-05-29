@@ -8,6 +8,12 @@ class DataProvider: ObservableObject {
 
     @Published var apps: [SmartApp]
     @Published var samples: [SmartApp] = SmartApp.samples
+    var appsAllowed: [SmartApp] {
+        self.apps.filter({
+            self.shouldAllow($0.id)
+        })
+    }
+    
     private var cancellables = Set<AnyCancellable>()
     private let appPermissionService: AppPermissionService
 
