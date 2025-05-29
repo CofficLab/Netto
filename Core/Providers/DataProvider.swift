@@ -1,22 +1,16 @@
 import Combine
 import Foundation
-import SwiftUI
-import OSLog
 import MagicCore
+import OSLog
+import SwiftUI
 
 class DataProvider: ObservableObject, SuperLog {
     static let shared = DataProvider()
     static let emoji = "💾"
 
-    @Published var apps: [SmartApp]
+    @Published var apps: [SmartApp] = []
     @Published var samples: [SmartApp] = SmartApp.samples
-    
-    var appsAllowed: [SmartApp] {
-        self.apps.filter({
-            self.shouldAllow($0.id)
-        })
-    }
-    
+
     private var cancellables = Set<AnyCancellable>()
     private let appPermissionService: AppPermissionService
 
@@ -24,22 +18,20 @@ class DataProvider: ObservableObject, SuperLog {
     /// - Parameter appPermissionService: 应用权限服务，默认使用shared实例
     init(appPermissionService: AppPermissionService = AppPermissionService.shared) {
         self.appPermissionService = appPermissionService
-        self.apps = SmartApp.appList
-        
+
         // 添加被禁止的应用到apps列表中
         do {
             let deniedAppIds = try appPermissionService.getDeniedApps()
             for appId in deniedAppIds {
                 let smartApp = SmartApp.fromId(appId)
-                // 检查apps中是否已经包含该应用，如果没有则添加
                 if !self.apps.contains(where: { $0.id == smartApp.id }) {
                     self.apps.append(smartApp)
                 }
             }
         } catch {
-            print("获取被禁止应用列表失败: \(error)")
+            os_log(.error, "\(self.t)获取被禁止应用列表失败: \(error)")
         }
-        
+
         setupNotificationListeners()
     }
 
@@ -74,16 +66,16 @@ class DataProvider: ObservableObject, SuperLog {
 
         if let index = apps.firstIndex(where: { $0.id == app.id }) {
             os_log("\(self.t)🍋 监听到网络流量，为已知的APP增加Event")
-            
+
             apps[index] = apps[index].appendEvent(event)
         } else {
             os_log("\(self.t)🛋️ 监听到网络流量，没见过这个APP，加入列表 -> \(app.id)")
-            
+
             apps.append(app.appendEvent(event))
         }
-        
+
         let total = self.apps.count
-        let hasEventCount = self.apps.filter({$0.events.count>0}).count
+        let hasEventCount = self.apps.filter({ $0.events.count > 0 }).count
         os_log("\(self.t)📈 当前APP数量 -> \(total) 其中 Events.Count>0 的数量 -> \(hasEventCount)")
     }
 
@@ -93,7 +85,7 @@ class DataProvider: ObservableObject, SuperLog {
     func shouldAllow(_ id: String) -> Bool {
         return appPermissionService.shouldAllow(id)
     }
-    
+
     /// 检查应用是否应该被拒绝访问网络
     /// - Parameter id: 应用标识符
     /// - Returns: 是否拒绝访问
