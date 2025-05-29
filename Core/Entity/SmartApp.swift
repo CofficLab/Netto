@@ -187,7 +187,7 @@ extension SmartApp {
                 .padding(6)
                 .foregroundColor(.white)
         }
-        .frame(width: 36, height: 36)
+        .frame(width: 34, height: 34)
         .clipped())
     }
 }

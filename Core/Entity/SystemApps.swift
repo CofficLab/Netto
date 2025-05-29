@@ -37,7 +37,7 @@ struct SystemApps {
                     .padding(6)
             }
         }
-        .frame(width: 36, height: 36)
+        .frame(width: 34, height: 34)
         .clipped()
     }
     static let dns = SmartApp(
@@ -101,6 +101,46 @@ struct SystemApps {
         isSystemApp: true
     )
 
+    static let usbmuxd = SmartApp(
+        id: ".com.apple.usbmuxd",
+        name: "USB多路复用守护进程",
+        icon: createSystemIcon(
+            iconName: "cable.connector",
+            gradientColors: [Color.gray.opacity(0.8), Color.gray]
+        ),
+        isSystemApp: true
+    )
+
+    static let cloudd = SmartApp(
+        id: ".com.apple.cloudd",
+        name: "iCloud守护进程",
+        icon: createSystemIcon(
+            iconName: "icloud",
+            gradientColors: [Color.cyan.opacity(0.8), Color.blue]
+        ),
+        isSystemApp: true
+    )
+
+    static let shortcuts = SmartApp(
+        id: ".com.apple.shortcuts",
+        name: "快捷指令",
+        icon: createSystemIcon(
+            iconName: "bolt.circle",
+            gradientColors: [Color.yellow.opacity(0.8), Color.orange]
+        ),
+        isSystemApp: true
+    )
+
+    static let bird = SmartApp(
+        id: ".com.apple.bird",
+        name: "系统鸟类服务",
+        icon: createSystemIcon(
+            iconName: "bird",
+            gradientColors: [Color.mint.opacity(0.8), Color.teal]
+        ),
+        isSystemApp: true
+    )
+
     /// 获取系统应用
     /// - Parameter id: 应用ID
     /// - Returns: 应用
@@ -118,6 +158,14 @@ struct SystemApps {
             return airPlayHelper
         case gitRemoteHttp.id:
             return gitRemoteHttp
+        case usbmuxd.id:
+            return usbmuxd
+        case cloudd.id:
+            return cloudd
+        case shortcuts.id:
+            return shortcuts
+        case bird.id:
+            return bird
         default:
             return nil
         }
