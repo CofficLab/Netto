@@ -164,7 +164,6 @@ extension SmartApp {
         for app in apps {
             let bundleIdentifier = app.bundleIdentifier
             
-            
             guard let bundleIdentifier = bundleIdentifier else {
                 continue
             }
