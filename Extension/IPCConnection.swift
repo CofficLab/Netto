@@ -63,7 +63,7 @@ class IPCConnection: NSObject, SuperLog {
             return
         }
         
-        os_log("\(self.t)IPC.register 🛫")
+        os_log("\(self.t)🛫 IPC.register")
 
         let machServiceName = extensionMachServiceName(from: bundle)
         let newConnection = NSXPCConnection(machServiceName: machServiceName, options: [])
@@ -87,7 +87,7 @@ class IPCConnection: NSObject, SuperLog {
             fatalError("Failed to create a remote object proxy for the provider")
         }
 
-        os_log("\(self.t)providerProxy.register 🛫")
+        os_log("\(self.t)🛫 providerProxy.register")
         providerProxy.register(completionHandler)
     }
 
