@@ -10,11 +10,6 @@ struct SmartApp: Identifiable {
     var name: String
     var icon: AnyView? = nil
     var events: [FirewallEvent] = []
-    
-    /// 应用名称的视图表示
-    var nameView: some View {
-        Text(name)
-    }
 }
 
 // MARK: - Initialization

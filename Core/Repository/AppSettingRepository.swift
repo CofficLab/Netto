@@ -110,6 +110,17 @@ class AppSettingRepository {
         return try context.fetch(FetchDescriptor<AppSetting>())
     }
     
+    /// 获取所有被拒绝访问的AppSetting记录
+    /// - Returns: 所有allowed为false的AppSetting记录数组
+    /// - Throws: 查询数据时可能抛出的错误
+    func fetchDeniedApps() throws -> [AppSetting] {
+        let predicate = #Predicate<AppSetting> { item in
+            item.allowed == false
+        }
+        
+        return try context.fetch(FetchDescriptor(predicate: predicate))
+    }
+    
     // MARK: - Permission Management
     
     /// 检查指定ID的应用是否应该被允许访问网络

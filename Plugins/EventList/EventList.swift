@@ -83,7 +83,7 @@ struct EventList: View {
                     let smartApp = SmartApp.fromId(event.sourceAppIdentifier)
                     HStack {
                         smartApp.icon.frame(width: 33)
-                        smartApp.nameView
+                        Text(smartApp.name)
                     }
                 }
                 TableColumn("ID", value: \.sourceAppIdentifier)

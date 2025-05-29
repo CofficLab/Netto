@@ -1,11 +1,12 @@
 import Combine
 import Foundation
 import SwiftUI
+import OSLog
 
 class DataProvider: ObservableObject {
     static let shared = DataProvider()
 
-    @Published var apps: [SmartApp] = SmartApp.appList
+    @Published var apps: [SmartApp]
     private var cancellables = Set<AnyCancellable>()
     private let appPermissionService: AppPermissionService
 
@@ -13,6 +14,22 @@ class DataProvider: ObservableObject {
     /// - Parameter appPermissionService: 应用权限服务，默认使用shared实例
     init(appPermissionService: AppPermissionService = AppPermissionService.shared) {
         self.appPermissionService = appPermissionService
+        self.apps = SmartApp.appList
+        
+        // 添加被禁止的应用到apps列表中
+        do {
+            let deniedAppIds = try appPermissionService.getDeniedApps()
+            for appId in deniedAppIds {
+                let smartApp = SmartApp.fromId(appId)
+                // 检查apps中是否已经包含该应用，如果没有则添加
+                if !self.apps.contains(where: { $0.id == smartApp.id }) {
+                    self.apps.append(smartApp)
+                }
+            }
+        } catch {
+            print("获取被禁止应用列表失败: \(error)")
+        }
+        
         setupNotificationListeners()
     }
 
