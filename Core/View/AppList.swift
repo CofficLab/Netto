@@ -1,5 +1,6 @@
 import OSLog
 import SwiftUI
+import MagicCore
 
 struct AppList: View {
     @EnvironmentObject private var ui: UIProvider
@@ -26,14 +27,14 @@ struct AppList: View {
         ZStack {
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(apps) { app in
+                    ForEach(apps.isNotEmpty ? apps : data.samples) { app in
                         AppLine(app: app)
                         Divider()
                     }
                 }
             }
 
-            if ui.status.isNotRunning() {
+            if ui.status.isNotRunning() || apps.isEmpty {
                 GuideView()
             }
         }
