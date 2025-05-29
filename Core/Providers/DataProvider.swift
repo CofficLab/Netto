@@ -127,5 +127,7 @@ class DataProvider: ObservableObject {
 #Preview("APP") {
     RootView(content: {
         ContentView()
-    }).frame(width: 700)
+    })
+    .frame(width: 700)
+    .frame(height: 600)
 }
