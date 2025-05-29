@@ -1,11 +1,10 @@
+import AppKit
 import Foundation
 import SwiftUI
-import AppKit
 
 struct SmartApp: Identifiable {
-    
     // MARK: - Properties
-    
+
     var id: String
     var name: String
     var icon: AnyView? = nil
@@ -16,7 +15,6 @@ struct SmartApp: Identifiable {
 // MARK: - Initialization
 
 extension SmartApp {
-    
     /// 使用ID和名称初始化SmartApp
     /// - Parameters:
     ///   - id: 应用程序唯一标识符
@@ -25,7 +23,7 @@ extension SmartApp {
         self.id = id
         self.name = name
     }
-    
+
     /// 使用ID、名称和可选图标初始化SmartApp
     /// - Parameters:
     ///   - id: 应用程序唯一标识符
@@ -38,7 +36,7 @@ extension SmartApp {
             self.icon = AnyView(Image(nsImage: i).resizable())
         }
     }
-    
+
     /// 使用ID、名称和SwiftUI视图图标初始化SmartApp
     /// - Parameters:
     ///   - id: 应用程序唯一标识符
@@ -56,14 +54,13 @@ extension SmartApp {
 // MARK: - Instance Methods
 
 extension SmartApp {
-    
     /// 向应用添加防火墙事件
     /// - Parameter e: 要添加的防火墙事件
     /// - Returns: 包含新事件的SmartApp副本
     func appendEvent(_ e: FirewallEvent) -> Self {
         var cloned = self
         cloned.events.append(e)
-        
+
         return cloned
     }
 }
@@ -71,7 +68,6 @@ extension SmartApp {
 // MARK: - Factory Methods
 
 extension SmartApp {
-    
     /// 根据应用ID创建SmartApp实例
     /// - Parameter id: 应用程序ID
     /// - Returns: 对应的SmartApp实例
@@ -83,14 +79,14 @@ extension SmartApp {
                 icon: runningApp.icon ?? NSImage()
             )
         }
-        
+
         if let systemApp = SystemApps.getSystemApp(id) {
             return systemApp
         }
-        
-        return SmartApp(id: id, name: "未知", icon: Image("Unknown"))
+
+        return Self.unknownApp(id)
     }
-    
+
     /// 从NSRunningApplication创建SmartApp实例
     /// - Parameter app: 正在运行的应用程序对象
     /// - Returns: 对应的SmartApp实例
@@ -106,10 +102,9 @@ extension SmartApp {
 // MARK: - Static Properties
 
 extension SmartApp {
-    
     /// 当前运行的应用程序列表（去重后）
     static let appList: [SmartApp] = getRunningAppList().map {
-        return Self.fromRunningApp($0)
+        Self.fromRunningApp($0)
     }.reduce(into: []) { result, app in
         if !result.contains(where: { $0.id == app.id }) {
             result.append(app)
@@ -123,7 +118,7 @@ extension SmartApp {
     /// 获取当前系统中所有正在运行的应用程序列表
     ///
     /// - Returns: 包含所有正在运行的应用程序的数组
-    static private func getRunningAppList() -> [NSRunningApplication] {
+    private static func getRunningAppList() -> [NSRunningApplication] {
         let workspace = NSWorkspace.shared
         let runningApps = workspace.runningApplications
 
@@ -143,7 +138,7 @@ extension SmartApp {
     ///
     /// - Parameter id: 要查找的应用程序标识符
     /// - Returns: 找到的应用程序实例，如果未找到则返回nil
-    static private func getApp(_ id: String) -> NSRunningApplication? {
+    private static func getApp(_ id: String) -> NSRunningApplication? {
         var workId = id
 
         if workId.hasPrefix(".") {
@@ -154,11 +149,11 @@ extension SmartApp {
 
         for app in apps {
             let bundleIdentifier = app.bundleIdentifier
-            
+
             guard let bundleIdentifier = bundleIdentifier else {
                 continue
             }
-            
+
             if
                 bundleIdentifier == workId ||
                 bundleIdentifier == id ||
@@ -169,6 +164,31 @@ extension SmartApp {
         }
 
         return nil
+    }
+}
+
+// MAKR: - Unknown App
+
+extension SmartApp {
+    static func unknownApp(_ id: String) -> SmartApp {
+        SmartApp(id: id, name: "未知", icon: ZStack {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(LinearGradient(
+                    gradient: Gradient(colors: [Color.blue.opacity(0.6), Color.cyan]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                ))
+                .aspectRatio(1, contentMode: .fit)
+                .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
+
+            Image(systemName: "app")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .padding(6)
+                .foregroundColor(.white)
+        }
+        .frame(width: 36, height: 36)
+        .clipped())
     }
 }
 
