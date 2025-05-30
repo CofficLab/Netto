@@ -25,12 +25,12 @@ struct AppLine: View, SuperEvent {
             self.hovering = hovering
         })
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .popover(isPresented: $showChildrenPopover, arrowEdge: .trailing) {
-            AppDetail(
-                popoverHovering: $popoverHovering,
-                app: app,
-            ).frame(width: 600)
-        }
+//        .popover(isPresented: $showChildrenPopover, arrowEdge: .trailing) {
+//            AppDetail(
+//                popoverHovering: $popoverHovering,
+//                app: app,
+//            ).frame(width: 600)
+//        }
         .onChange(of: self.hovering, {
             if self.hovering {
                 self.showChildrenPopover = true
