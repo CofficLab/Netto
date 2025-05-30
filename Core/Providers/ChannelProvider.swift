@@ -349,11 +349,6 @@ extension ChannelProvider: AppCommunication {
     ///   - responseHandler: 响应处理回调
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
         let verbose = true
-        if verbose {
-            os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(id) -> Allow")
-        }
-
-        // 在Task外部调用responseHandler以避免数据竞争
 
         let shouldAllow = DataProvider().shouldAllow(id)
         if shouldAllow {
@@ -366,7 +361,6 @@ extension ChannelProvider: AppCommunication {
                 id: id,
                 hostname: hostname,
                 port: port,
-
                 allowed: true,
                 direction: direction
             ))
@@ -380,7 +374,6 @@ extension ChannelProvider: AppCommunication {
                 hostname: hostname,
                 port: port,
                 allowed: false,
-
                 direction: direction
             ))
             responseHandler(false)
