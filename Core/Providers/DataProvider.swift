@@ -114,6 +114,7 @@ extension DataProvider {
             }
 
             apps[index] = apps[index].appendEvent(event)
+            apps[index] = apps[index].addChildren(app.children)
         } else {
             if verbose {
                 os_log("\(self.t)🛋️ 监听到网络流量，没见过这个APP，加入列表 -> \(app.id)")

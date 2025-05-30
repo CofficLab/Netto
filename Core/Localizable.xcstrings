@@ -4,6 +4,9 @@
     "" : {
       "shouldTranslate" : false
     },
+    "(%lld)" : {
+
+    },
     "%lld" : {
       "localizations" : {
         "zh-Hans" : {

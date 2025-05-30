@@ -34,7 +34,6 @@ extension SmartApp: SuperLog {
             }
             
             // 收集可能接近的匹配
-            // 如果用户提供的id包含了app的id，或app的id包含了用户提供的id
             if id.contains(bundleIdentifier) || bundleIdentifier.contains(id) {
                 possibleMatches.append((app, bundleIdentifier))
             }
@@ -47,6 +46,34 @@ extension SmartApp: SuperLog {
         } else {
             os_log(.debug, "\(self.t) ⚠️ 未找到应用程序: \(id)")
         }
+
+        return nil
+    }
+
+    /// 根据标识符查找正在运行的应用程序
+    ///
+    /// - Parameter id: 要查找的应用程序标识符
+    /// - Returns: 找到的应用程序实例，如果未找到则返回nil
+    static func getPackage(_ id: String) -> NSRunningApplication? {
+        let apps = getRunningAppList()
+
+        for app in apps {
+            guard let bundleIdentifier = app.bundleIdentifier else {
+                continue
+            }
+
+            // 完全匹配情况
+            if bundleIdentifier == id {
+                return app
+            }
+            
+            // 收集可能接近的匹配
+            if id.contains(bundleIdentifier) {
+                return Self.getApp(bundleIdentifier)
+            }
+        }
+        
+        os_log(.debug, "\(self.t) ⚠️ 未找到应用程序: \(id)")
 
         return nil
     }
