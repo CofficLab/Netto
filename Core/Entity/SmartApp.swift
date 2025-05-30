@@ -4,6 +4,8 @@ import SwiftUI
 
 struct SmartApp: Identifiable {
     // MARK: - Properties
+    
+    static let emoji = "🐒"
 
     var id: String
     var name: String
