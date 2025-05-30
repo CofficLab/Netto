@@ -158,7 +158,7 @@ extension SmartApp {
     func addChild(_ child: SmartApp) -> Self {
         // 如果已经存在了，则将child中的events添加到当前应用程序的events中
         if let existingChild = self.getChild(child.id) {
-            var cloned = self.removeChild(child.id)
+            let cloned = self.removeChild(child.id)
             return cloned.addChild(existingChild.appendEvents(child.events))
         }
         
