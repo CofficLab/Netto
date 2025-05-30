@@ -51,9 +51,6 @@ struct AppList: View, SuperLog {
                 GuideView()
             }
         }
-        .onChange(of: self.apps.count, {
-            os_log("\(self.t)🍋 当前APP数量 -> \(apps.count)")
-        })
     }
 }
 
