@@ -20,28 +20,6 @@ struct SmartApp: Identifiable {
 // MARK: - Initialization
 
 extension SmartApp {
-    /// 使用ID和名称初始化SmartApp
-    /// - Parameters:
-    ///   - id: 应用程序唯一标识符
-    ///   - name: 应用程序名称
-    init(id: String, name: String) {
-        self.id = id
-        self.name = name
-    }
-
-    /// 使用ID、名称和可选图标初始化SmartApp
-    /// - Parameters:
-    ///   - id: 应用程序唯一标识符
-    ///   - name: 应用程序名称
-    ///   - icon: 可选的NSImage图标
-    init(id: String, name: String, icon: NSImage? = nil) {
-        self.id = id
-        self.name = name
-        if let i = icon {
-            self.icon = AnyView(Image(nsImage: i).resizable())
-        }
-    }
-
     /// 使用ID、名称和SwiftUI视图图标初始化SmartApp
     /// - Parameters:
     ///   - id: 应用程序唯一标识符
@@ -83,7 +61,7 @@ extension SmartApp {
             return SmartApp(
                 id: runningApp.bundleIdentifier ?? "",
                 name: runningApp.localizedName ?? "",
-                icon: runningApp.icon ?? NSImage()
+                icon: AnyView(Image(nsImage: runningApp.icon ?? NSImage()).resizable())
             )
         }
 
@@ -101,7 +79,7 @@ extension SmartApp {
         return SmartApp(
             id: app.bundleIdentifier ?? "-",
             name: app.localizedName ?? "-",
-            icon: app.icon
+            icon: AnyView(Image(nsImage: app.icon ?? NSImage()).resizable())
         )
     }
 }

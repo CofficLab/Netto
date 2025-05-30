@@ -24,9 +24,9 @@ struct AppLine: View, SuperEvent {
                 HStack(alignment: .top) {
                     Text("\(app.events.count)").font(.callout)
                     Text(app.id)
+                        .foregroundColor(app.isSystemApp ? .orange.opacity(0.7) : .primary)
                 }
             }
-            .foregroundColor(app.isSystemApp ? .green.opacity(0.5) : .primary)
 
             Spacer()
 

@@ -6,7 +6,27 @@ extension SmartApp {
     /// - Parameter id: 应用ID
     /// - Returns: 应用
     static func getSystemApp(_ id: String) -> SmartApp? {
-        return allSystemApps.first { $0.id == id }
+        // 遍历系统应用，如果找到则返回
+        for app in allSystemApps {
+            if app.id == id {
+                return app
+            }
+        }
+
+        // 如果没找到与定义的系统应用，但ID以.开头，表示是系统应用，返回未知的系统应用
+        if id.hasPrefix(".") {
+            return SmartApp(
+                id: id,
+                name: "未知系统应用",
+                icon: IconHelper.createSystemIcon(
+                    iconName: "questionmark.circle",
+                    gradientColors: [Color.indigo.opacity(0.8), Color.purple]
+                ),
+                isSystemApp: true
+            )
+        }
+
+        return nil
     }
     
     static let allSystemApps: [SmartApp] = [
@@ -205,6 +225,39 @@ extension SmartApp {
             icon: IconHelper.createSystemIcon(
                 iconName: "circle.hexagongrid",
                 gradientColors: [Color.green.opacity(0.8), Color.mint]
+            ),
+            isSystemApp: true
+        ),
+        
+        // 控制中心
+        SmartApp(
+            id: ".com.apple.controlcenter",
+            name: "控制中心",
+            icon: IconHelper.createSystemIcon(
+                iconName: "switch.2",
+                gradientColors: [Color.blue.opacity(0.8), Color.indigo]
+            ),
+            isSystemApp: true
+        ),
+        
+        // 备忘录
+        SmartApp(
+            id: ".com.apple.Notes",
+            name: "备忘录",
+            icon: IconHelper.createSystemIcon(
+                iconName: "note.text",
+                gradientColors: [Color.yellow.opacity(0.8), Color.orange]
+            ),
+            isSystemApp: true
+        ),
+        
+        // 远程配对守护进程
+        SmartApp(
+            id: ".com.apple.CoreDevice.remotepairingd",
+            name: "远程配对守护进程",
+            icon: IconHelper.createSystemIcon(
+                iconName: "antenna.radiowaves.left.and.right",
+                gradientColors: [Color.teal.opacity(0.8), Color.cyan]
             ),
             isSystemApp: true
         )
