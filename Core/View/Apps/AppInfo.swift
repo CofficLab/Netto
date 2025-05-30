@@ -4,7 +4,7 @@ import SwiftUI
 /// 支持紧凑模式和普通模式，可自定义字体大小和样式
 struct AppInfo: View {
     @EnvironmentObject var data: DataProvider
-    
+
     var app: SmartApp
     var iconSize: CGFloat
     var nameFont: Font
@@ -15,9 +15,9 @@ struct AppInfo: View {
     var copyMessageText: String
 
     @State var shouldAllow: Bool = true
-    
-    @Binding var hovering: Bool
-    @Binding var showCopyMessage: Bool
+
+    @State var hovering: Bool = false
+    @State var showCopyMessage: Bool = false
 
     /// 初始化应用信息视图
     /// - Parameters:
@@ -41,8 +41,6 @@ struct AppInfo: View {
         isCompact: Bool = false,
         copyMessageDuration: Double = 2.0,
         copyMessageText: String = "App ID 已复制到剪贴板",
-        hovering: Binding<Bool>,
-        showCopyMessage: Binding<Bool>
     ) {
         self.app = app
         self.iconSize = iconSize
@@ -52,8 +50,6 @@ struct AppInfo: View {
         self.isCompact = isCompact
         self.copyMessageDuration = copyMessageDuration
         self.copyMessageText = copyMessageText
-        self._hovering = hovering
-        self._showCopyMessage = showCopyMessage
     }
 
     var body: some View {
@@ -94,6 +90,9 @@ struct AppInfo: View {
         .contentShape(Rectangle())
         .onTapGesture(count: 2) {
             copyAppId()
+        }
+        .onHover { hovering in
+            self.hovering = hovering
         }
         .onAppear(perform: onAppear)
         .padding(.vertical, 5)

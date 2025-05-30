@@ -8,7 +8,6 @@ struct AppLine: View, SuperEvent {
     var app: SmartApp
 
     @State var hovering: Bool = false
-    @State var showCopyMessage: Bool = false
     @State var showChildrenPopover: Bool = false
     @State var popoverHovering: Bool = false
 
@@ -20,9 +19,7 @@ struct AppLine: View, SuperEvent {
         AppInfo(
             app: app,
             iconSize: 40,
-            isCompact: false,
-            hovering: $hovering,
-            showCopyMessage: $showCopyMessage
+            isCompact: false
         )
         .onHover(perform: { hovering in
             self.hovering = hovering
