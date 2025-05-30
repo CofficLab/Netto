@@ -11,11 +11,11 @@ struct AppInfo: View {
     var isCompact: Bool
     var copyMessageDuration: Double
     var copyMessageText: String
-    
+
     @Binding var shouldAllow: Bool
     @Binding var hovering: Bool
     @Binding var showCopyMessage: Bool
-    
+
     /// 初始化应用信息视图
     /// - Parameters:
     ///   - app: 应用数据模型
@@ -54,28 +54,28 @@ struct AppInfo: View {
         self._hovering = hovering
         self._showCopyMessage = showCopyMessage
     }
-    
+
     var body: some View {
         HStack(spacing: isCompact ? 8 : 12) {
             app.icon.frame(width: iconSize, height: iconSize)
-            
+
             VStack(alignment: .leading, spacing: isCompact ? 2 : 4) {
                 HStack {
                     Text(app.name)
                         .font(nameFont)
                         .lineLimit(1)
-                    
+
                     if !app.children.isEmpty && !isCompact {
                         Text("(\(app.children.count) children)")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
-                
+
                 HStack(alignment: .top, spacing: 4) {
                     Text("\(app.events.count)")
                         .font(countFont)
-                    
+
                     Text(app.id)
                         .font(idFont)
                         .foregroundColor(app.isSystemApp ? .orange.opacity(0.7) : (isCompact ? .secondary : .primary))
@@ -83,24 +83,40 @@ struct AppInfo: View {
                         .truncationMode(isCompact ? .middle : .tail)
                 }
             }
-            
+
             Spacer()
-            
-            if hovering && app.isNotSample && !isCompact {
+
+            if hovering && app.isNotSample {
                 AppAction(shouldAllow: $shouldAllow, appId: app.id)
-            }
-            
-            if isCompact {
-                // 状态指示器
-                Circle()
-                    .fill(shouldAllow ? Color.green : Color.red)
-                    .frame(width: 8, height: 8)
             }
         }
         .contentShape(Rectangle())
         .onTapGesture(count: 2) {
             copyAppId()
         }
+        .padding(.vertical, 5)
+        .padding(.horizontal, 10)
+        .background(Group {
+            if !shouldAllow {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.red.opacity(0.2),
+                        Color.red.opacity(0.05),
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            } else if hovering {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.mint.opacity(0.2),
+                        Color.mint.opacity(0.05),
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            }
+        })
         .overlay(
             Group {
                 if showCopyMessage {
@@ -117,18 +133,18 @@ struct AppInfo: View {
             alignment: .center
         )
     }
-    
+
     /// 复制应用 ID 到剪贴板
     func copyAppId() {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(app.id, forType: .string)
-        
+
         // 显示复制成功提示
         withAnimation(.easeInOut(duration: 0.3)) {
             showCopyMessage = true
         }
-        
+
         // 指定时间后隐藏提示
         DispatchQueue.main.asyncAfter(deadline: .now() + copyMessageDuration) {
             withAnimation(.easeInOut(duration: 0.3)) {

@@ -23,12 +23,6 @@ struct ChildAppRow: View {
             hovering: $hovering,
             showCopyMessage: $showCopyMessage
         )
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(hovering ? Color.secondary.opacity(0.1) : Color.clear)
-        )
         .onHover { hovering in
             self.hovering = hovering
         }

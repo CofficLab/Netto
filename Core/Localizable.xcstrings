@@ -4,6 +4,9 @@
     "" : {
       "shouldTranslate" : false
     },
+    "(%lld children)" : {
+
+    },
     "%lld" : {
       "localizations" : {
         "zh-Hans" : {
@@ -14,9 +17,6 @@
         }
       },
       "shouldTranslate" : false
-    },
-    "%lld children" : {
-
     },
     "Action" : {
       "localizations" : {
@@ -73,10 +73,8 @@
       },
       "shouldTranslate" : false
     },
-    "App ID 已复制" : {
-
-    },
     "App ID 已复制到剪贴板" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

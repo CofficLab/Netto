@@ -5,7 +5,7 @@ import SwiftUI
 struct AppList: View, SuperLog {
     @EnvironmentObject private var ui: UIProvider
     @EnvironmentObject private var data: DataProvider
-    
+
     static var emoji = "🖥️"
 
     private var apps: [SmartApp] {
