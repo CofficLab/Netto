@@ -84,9 +84,6 @@
         }
       }
     },
-    "Child Applications" : {
-
-    },
     "Clear" : {
       "localizations" : {
         "zh-Hans" : {
@@ -166,6 +163,9 @@
           }
         }
       }
+    },
+    "ID: %@" : {
+
     },
     "Message" : {
       "localizations" : {
@@ -296,6 +296,9 @@
         }
       }
     },
+    "事件总数 (Total Events)" : {
+
+    },
     "允许" : {
       "localizations" : {
         "en" : {
@@ -326,6 +329,9 @@
         }
       }
     },
+    "最近事件: %@" : {
+
+    },
     "出" : {
       "localizations" : {
         "en" : {
@@ -336,6 +342,9 @@
         }
       }
     },
+    "子应用程序 (Child Applications)" : {
+
+    },
     "将鼠标悬停在应用上查看操作按钮" : {
       "localizations" : {
         "en" : {
@@ -345,6 +354,9 @@
           }
         }
       }
+    },
+    "属性信息 (Properties)" : {
+
     },
     "已禁止" : {
       "localizations" : {
@@ -365,6 +377,9 @@
           }
         }
       }
+    },
+    "应用详情 (Application Details)" : {
+
     },
     "开关" : {
       "localizations" : {
@@ -529,6 +544,9 @@
         }
       }
     },
+    "系统应用 (System App)" : {
+
+    },
     "系统扩展" : {
       "localizations" : {
         "en" : {
@@ -548,6 +566,9 @@
           }
         }
       }
+    },
+    "网络事件 (Network Events)" : {
+
     },
     "网络过滤与监控工具" : {
       "localizations" : {

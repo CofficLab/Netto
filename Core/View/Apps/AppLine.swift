@@ -23,26 +23,24 @@ struct AppLine: View, SuperEvent {
         )
         .onHover(perform: { hovering in
             self.hovering = hovering
-            // 当有children且hover时显示popover
-            if !app.children.isEmpty {
-                if hovering {
-                    showChildrenPopover = true
-                } else {
-                    // 延迟关闭，给用户时间移动到popover
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        if !popoverHovering {
-                            showChildrenPopover = false
-                        }
+            // 当hover时显示popover
+            if hovering {
+                showChildrenPopover = true
+            } else {
+                // 延迟关闭，给用户时间移动到popover
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    if !popoverHovering {
+                        showChildrenPopover = false
                     }
                 }
             }
         })
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .popover(isPresented: $showChildrenPopover, arrowEdge: .trailing) {
-            ChildrenPopoverView(
-                children: app.children,
+            AppDetail(
                 popoverHovering: $popoverHovering,
-                showChildrenPopover: $showChildrenPopover
+                showChildrenPopover: $showChildrenPopover,
+                app: app,
             ).frame(width: 600)
         }
     }
