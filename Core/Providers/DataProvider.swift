@@ -4,9 +4,7 @@ import MagicCore
 import OSLog
 import SwiftUI
 
-@MainActor
 class DataProvider: ObservableObject, SuperLog {
-    static let shared = DataProvider()
     nonisolated static let emoji = "💾"
 
     @Published var apps: [SmartApp] = []
@@ -18,7 +16,7 @@ class DataProvider: ObservableObject, SuperLog {
 
     /// 初始化DataProvider
     /// - Parameter appPermissionService: 应用权限服务，默认使用shared实例
-    init(appPermissionService: AppPermissionService = AppPermissionService.shared) {
+    init(appPermissionService: AppPermissionService = AppPermissionService()) {
         self.appPermissionService = appPermissionService
 
         // 添加被禁止的应用到apps列表中
@@ -39,7 +37,7 @@ class DataProvider: ObservableObject, SuperLog {
 
     /// 私有初始化方法，用于单例模式
     private convenience init() {
-        self.init(appPermissionService: AppPermissionService.shared)
+        self.init(appPermissionService: AppPermissionService())
     }
 
     func appendEvent(_ e: FirewallEvent) {

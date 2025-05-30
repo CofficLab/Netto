@@ -9,7 +9,7 @@ import SystemExtensions
 class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
     static let shared = ChannelProvider()
 
-    private var data: DataProvider = DataProvider.shared
+    private let data: DataProvider = DataProvider()
 
     override private init() {
         super.init()
@@ -43,7 +43,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
 
     @Published var error: Error?
     @Published private var _status: FilterStatus = .stopped
-    
+
     /// 过滤器状态（只读）
     /// 只能通过updateFilterStatus方法修改状态
     var status: FilterStatus {
@@ -57,9 +57,9 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     @MainActor
     private func updateFilterStatus(_ status: FilterStatus) {
         let oldValue = _status
-        
+
         self._status = status
-        
+
         os_log("\(self.t)🍋 更新状态 -> \(status.description) 原状态 -> \(oldValue.description)")
         if oldValue.isNotRunning() && status.isRunning() {
             registerWithProvider(reason: "not running -> running")
@@ -339,44 +339,52 @@ extension ChannelProvider: AppCommunication {
         )
     }
 
+    /// 提示用户是否允许网络连接
+    /// 使用Task { @MainActor in }确保在主actor上下文中安全访问DataProvider
+    /// - Parameters:
+    ///   - id: 应用标识符
+    ///   - hostname: 主机名
+    ///   - port: 端口号
+    ///   - direction: 网络流量方向
+    ///   - responseHandler: 响应处理回调
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
         let verbose = true
-                        if verbose {
-                            os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(id) -> Allow")
-                        }
-
-//        self.main.async {
-//            if self.data.shouldAllow(id) {
-//                if verbose {
-//                    os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Allow")
-//                }
-
-        DispatchQueue.main.async {
-            NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
-                    id: id,
-                    hostname: hostname,
-                    port: port,
-
-                    allowed: true,
-                    direction: direction
-                ))
+        if verbose {
+            os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(id) -> Allow")
         }
+
+        // 在Task外部调用responseHandler以避免数据竞争
+
+        let shouldAllow = DataProvider().shouldAllow(id)
+        if shouldAllow {
+            if verbose {
+                os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(id) -> Allow")
+            }
             responseHandler(true)
-//            } else {
-            ////                if verbose {
-            ////                    os_log("\(self.t)🈲 Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Deny")
-            ////                }
-//                self.nc.post(name: .NetWorkFilterFlow, object: FlowWrapper(
-//                    id: id,
-//                    hostname: hostname,
-//                    port: port,
-//                    allowed: false,
-//
-//                    direction: direction
-//                ))
-//                responseHandler(false)
-//            }
-//        }
+
+            NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
+                id: id,
+                hostname: hostname,
+                port: port,
+
+                allowed: true,
+                direction: direction
+            ))
+
+        } else {
+            if verbose {
+                os_log("\(self.t)🈲 Channel.promptUser 👤 with App -> \(id) -> Deny")
+            }
+            NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
+                id: id,
+                hostname: hostname,
+                port: port,
+                allowed: false,
+
+                direction: direction
+            ))
+            responseHandler(false)
+        }
     }
 }
 
