@@ -18,6 +18,17 @@ struct MenuBarDiagramView: View {
                 HStack(spacing: 12) {
                     Spacer()
                     
+                    // 其他菜单栏图标（灰色）
+                    HStack(spacing: 8) {
+                        Image(systemName: "wifi")
+                            .foregroundColor(.gray.opacity(0.6))
+                        Image(systemName: "battery.100")
+                            .foregroundColor(.gray.opacity(0.6))
+                        Image(systemName: "clock")
+                            .foregroundColor(.gray.opacity(0.6))
+                    }
+                    .font(.system(size: 14))
+                    
                     // 突出显示的网络图标
                     ZStack {
                         Circle()
@@ -36,17 +47,6 @@ struct MenuBarDiagramView: View {
                     }
                     .padding(.horizontal, 4)
                     
-                    // 其他菜单栏图标（灰色）
-                    HStack(spacing: 8) {
-                        Image(systemName: "wifi")
-                            .foregroundColor(.gray.opacity(0.6))
-                        Image(systemName: "battery.100")
-                            .foregroundColor(.gray.opacity(0.6))
-                        Image(systemName: "clock")
-                            .foregroundColor(.gray.opacity(0.6))
-                    }
-                    .font(.system(size: 14))
-                    
                     Spacer().frame(width: 12)
                 }
             }
@@ -57,13 +57,13 @@ struct MenuBarDiagramView: View {
                 Image(systemName: "arrow.up")
                     .foregroundColor(.green)
                     .font(.system(size: 20, weight: .bold))
-                    .offset(x: 10) // 指向网络图标位置
+                    .offset(x: 60) // 指向网络图标位置
                 
                 Text("点击这里访问应用")
                     .font(.caption)
                     .foregroundColor(.green)
                     .fontWeight(.medium)
-                    .offset(x: 10)
+                    .offset(x: 60)
             }
         }
         .padding(.vertical, 8)

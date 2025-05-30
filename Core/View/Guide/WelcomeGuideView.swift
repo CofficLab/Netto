@@ -45,7 +45,10 @@ struct WelcomeGuideView: View {
                         title: "网络过滤",
                         description: "您可以查看所有网络连接请求，并选择允许或拒绝特定的应用访问网络。",
                         icon: "shield.checkered",
-                        color: .orange
+                        color: .orange,
+                        customContent: {
+                            AnyView(NetworkFilterDiagramView())
+                        }
                     )
                 } else {
                     stepView(
