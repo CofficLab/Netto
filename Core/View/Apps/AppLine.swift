@@ -8,7 +8,6 @@ struct AppLine: View, SuperEvent {
     var app: SmartApp
 
     @State var hovering: Bool = false
-    @State var shouldAllow: Bool = true
     @State var showCopyMessage: Bool = false
     @State var showChildrenPopover: Bool = false
     @State var popoverHovering: Bool = false
@@ -22,7 +21,6 @@ struct AppLine: View, SuperEvent {
             app: app,
             iconSize: 40,
             isCompact: false,
-            shouldAllow: $shouldAllow,
             hovering: $hovering,
             showCopyMessage: $showCopyMessage
         )
@@ -43,60 +41,16 @@ struct AppLine: View, SuperEvent {
             }
         })
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear(perform: onAppear)
         .popover(isPresented: $showChildrenPopover, arrowEdge: .trailing) {
             ChildrenPopoverView(
                 children: app.children,
                 popoverHovering: $popoverHovering,
                 showChildrenPopover: $showChildrenPopover
-            )
+            ).frame(width: 600)
         }
     }
 }
 
-// MARK: - 事件
-
-extension AppLine {
-    /// 页面出现时的处理
-    func onAppear() {
-        self.shouldAllow = data.shouldAllow(app.id)
-    }
-}
-
-// MARK: - 子应用弹出视图组件
-
-struct ChildrenPopoverView: View {
-    @EnvironmentObject var data: DataProvider
-    
-    var children: [SmartApp]
-    @Binding var popoverHovering: Bool
-    @Binding var showChildrenPopover: Bool
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Child Applications")
-                .font(.headline)
-                .padding(.bottom, 4)
-            
-            ForEach(children) { childApp in
-                ChildAppRow(app: childApp)
-            }
-        }
-        .padding(12)
-        .frame(minWidth: 300, maxWidth: 400)
-        .onHover { hovering in
-            popoverHovering = hovering
-            // 当鼠标离开popover时，延迟关闭
-            if !hovering {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    if !popoverHovering {
-                        showChildrenPopover = false
-                    }
-                }
-            }
-        }
-    }
-}
 #Preview {
     RootView {
         ContentView()

@@ -6,7 +6,6 @@ struct ChildAppRow: View {
     var app: SmartApp
     
     @State var hovering: Bool = false
-    @State var shouldAllow: Bool = true
     @State var showCopyMessage: Bool = false
     
     var body: some View {
@@ -19,15 +18,11 @@ struct ChildAppRow: View {
             isCompact: true,
             copyMessageDuration: 1.5,
             copyMessageText: "App ID 已复制",
-            shouldAllow: $shouldAllow,
             hovering: $hovering,
             showCopyMessage: $showCopyMessage
         )
         .onHover { hovering in
             self.hovering = hovering
-        }
-        .onAppear {
-            self.shouldAllow = data.shouldAllow(app.id)
         }
     }
 }

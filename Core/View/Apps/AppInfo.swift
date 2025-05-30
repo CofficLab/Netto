@@ -3,6 +3,8 @@ import SwiftUI
 /// 通用的应用信息显示组件，用于显示应用图标、名称、ID和事件数量
 /// 支持紧凑模式和普通模式，可自定义字体大小和样式
 struct AppInfo: View {
+    @EnvironmentObject var data: DataProvider
+    
     var app: SmartApp
     var iconSize: CGFloat
     var nameFont: Font
@@ -12,7 +14,8 @@ struct AppInfo: View {
     var copyMessageDuration: Double
     var copyMessageText: String
 
-    @Binding var shouldAllow: Bool
+    @State var shouldAllow: Bool = true
+    
     @Binding var hovering: Bool
     @Binding var showCopyMessage: Bool
 
@@ -38,7 +41,6 @@ struct AppInfo: View {
         isCompact: Bool = false,
         copyMessageDuration: Double = 2.0,
         copyMessageText: String = "App ID 已复制到剪贴板",
-        shouldAllow: Binding<Bool>,
         hovering: Binding<Bool>,
         showCopyMessage: Binding<Bool>
     ) {
@@ -50,7 +52,6 @@ struct AppInfo: View {
         self.isCompact = isCompact
         self.copyMessageDuration = copyMessageDuration
         self.copyMessageText = copyMessageText
-        self._shouldAllow = shouldAllow
         self._hovering = hovering
         self._showCopyMessage = showCopyMessage
     }
@@ -94,6 +95,7 @@ struct AppInfo: View {
         .onTapGesture(count: 2) {
             copyAppId()
         }
+        .onAppear(perform: onAppear)
         .padding(.vertical, 5)
         .padding(.horizontal, 10)
         .background(Group {
@@ -151,6 +153,15 @@ struct AppInfo: View {
                 showCopyMessage = false
             }
         }
+    }
+}
+
+// MARK: - 事件
+
+extension AppInfo {
+    /// 页面出现时的处理
+    func onAppear() {
+        self.shouldAllow = data.shouldAllow(app.id)
     }
 }
 
