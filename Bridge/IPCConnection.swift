@@ -122,7 +122,7 @@ class IPCConnection: NSObject, SuperLog {
     }
 }
 
-extension IPCConnection: @preconcurrency NSXPCListenerDelegate {
+extension IPCConnection: NSXPCListenerDelegate {
 
     // MARK: NSXPCListenerDelegate
 
@@ -150,7 +150,7 @@ extension IPCConnection: @preconcurrency NSXPCListenerDelegate {
     }
 }
 
-extension IPCConnection: @preconcurrency ProviderCommunication {
+extension IPCConnection: ProviderCommunication {
     // MARK: ProviderCommunication
 
     func register(_ completionHandler: @escaping (Bool) -> Void) {

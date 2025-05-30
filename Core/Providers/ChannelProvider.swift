@@ -16,7 +16,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         os_log("\(Self.onInit)")
 
         self.emit(.willBoot)
-        self.status = .indeterminate
+        self.updateFilterStatus(.indeterminate)
         self.setObserver()
 
         // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
@@ -31,7 +31,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
 
             os_log("\(self.t)\(isEnabled ? "✅ 过滤器已启用" : "⚠️ 过滤器未启用")")
 
-            await updateFilterStatus(isEnabled ? .running : .disabled)
+            updateFilterStatus(isEnabled ? .running : .disabled)
         }
     }
 
@@ -44,7 +44,13 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     private var extensionBundle = AppConfig.extensionBundle
 
     @Published var error: Error?
-    @Published var status: FilterStatus = .stopped
+    @Published private var _status: FilterStatus = .stopped
+    
+    /// 过滤器状态（只读）
+    /// 只能通过updateFilterStatus方法修改状态
+    var status: FilterStatus {
+        return _status
+    }
 
     var observer: Any?
 
@@ -53,11 +59,11 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     @MainActor
     private func updateFilterStatus(_ status: FilterStatus) {
         os_log("\(self.t)🍋 更新状态 -> \(status.description)")
-        if self.status.isRunning() == false && status.isRunning() {
+        if self._status.isNotRunning() && status.isRunning() {
             registerWithProvider()
         }
 
-        self.status = status
+        self._status = status
 
         DispatchQueue.main.async {
             NotificationCenter.default.post(
@@ -99,7 +105,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
 
         if filterManager.isEnabled {
             registerWithProvider()
-            status = .running
+            self.updateFilterStatus(.running)
 
             return true
         } else {
@@ -125,7 +131,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         self.emit(.willInstall)
 
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
-            status = .stopped
+            self.updateFilterStatus(.stopped)
             return
         }
 
@@ -145,7 +151,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
 
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
             os_log("\(self.t)extensionBundle.bundleIdentifier 为空")
-            status = .stopped
+            self.updateFilterStatus(.stopped)
             return
         }
 
@@ -173,7 +179,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         self.emit(.willStop)
 
         guard filterManager.isEnabled else {
-            status = .stopped
+            self.updateFilterStatus(.stopped)
             return
         }
 
@@ -228,21 +234,19 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
                 os_log("\(self.t)📺 将要弹出授权对话框来加载到系统设置中")
                 os_log("\(self.t)🦶 \(Location.did(.SaveToPreferences))")
                 self.filterManager.saveToPreferences { saveError in
-//                    self.main.async {
                     if let error = saveError {
                         os_log(.error, "\(self.t)授权对话框报错 -> \(error.localizedDescription)")
-                        self.status = .disabled
+                        self.updateFilterStatus(.disabled)
                         return
                     } else {
                         os_log("\(self.t)🦶 \(Location.did(.UserApproved))")
                     }
 
                     self.registerWithProvider()
-//                    }
                 }
             } catch {
                 os_log("\(self.t)APP: 加载过滤器配置失败")
-                await self.updateFilterStatus(.stopped)
+                self.updateFilterStatus(.stopped)
             }
         }
     }
@@ -256,18 +260,13 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
             if success {
                 os_log("\(self.t)🎉 ChannelProvider 和 Extension 关联成功")
 
-                self.emit(.didRegisterWithProvider)
+                NotificationCenter.default.post(name: .didRegisterWithProvider, object: nil)
 
-//                self.main.async {
-//                    self.status = .running
                 self.updateFilterStatus(.running)
-//                }
             } else {
                 os_log("\(self.t)💔 ChannelProvider 和 Extension 关联失败")
 
-//                self.main.async {
-                self.status = .extensionNotReady
-//                }
+                self.updateFilterStatus(.extensionNotReady)
             }
         }
     }
@@ -342,8 +341,11 @@ extension ChannelProvider: AppCommunication {
 
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
         let verbose = false
+                        if verbose {
+                            os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(id) -> Allow")
+                        }
 
-        self.main.async {
+//        self.main.async {
 //            if self.data.shouldAllow(id) {
 //                if verbose {
 //                    os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Allow")
@@ -372,7 +374,7 @@ extension ChannelProvider: AppCommunication {
 //                ))
 //                responseHandler(false)
 //            }
-        }
+//        }
     }
 }
 
