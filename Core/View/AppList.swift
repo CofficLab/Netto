@@ -11,9 +11,17 @@ struct AppList: View, SuperLog {
     private var apps: [SmartApp] {
         data.apps.sorted(by: {
             $0.events.count > $1.events.count
-        }).filter({
+        })
+        .filter({
             $0.events.count > 0 || data.shouldDeny($0.id)
-        }).filter {
+        })
+        .filter({
+            $0.isSystemApp == false
+        })
+        .filter({
+            $0.hasId
+        })
+        .filter {
             switch ui.displayType {
             case .All:
                 true
