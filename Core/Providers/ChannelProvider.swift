@@ -27,7 +27,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
                 os_log(.error, "\(self.t)Boot -> \(error)")
             }
 
-            let isEnabled = self.filterManager.isEnabled
+            let isEnabled = NEFilterManager.shared().isEnabled
 
             os_log("\(self.t)\(isEnabled ? "✅ 过滤器已启用" : "⚠️ 过滤器未启用")")
 
@@ -38,8 +38,6 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     nonisolated static let emoji = "📢"
 
     private var ipc = IPCConnection.shared
-    @MainActor
-    private var filterManager = NEFilterManager.shared()
     private var extensionManager = OSSystemExtensionManager.shared
     private var extensionBundle = AppConfig.extensionBundle
 
@@ -58,12 +56,14 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     /// - Parameter status: 新的过滤器状态
     @MainActor
     private func updateFilterStatus(_ status: FilterStatus) {
-        os_log("\(self.t)🍋 更新状态 -> \(status.description)")
-        if self._status.isNotRunning() && status.isRunning() {
-            registerWithProvider()
-        }
-
+        let oldValue = _status
+        
         self._status = status
+        
+        os_log("\(self.t)🍋 更新状态 -> \(status.description) 原状态 -> \(oldValue.description)")
+        if oldValue.isNotRunning() && status.isRunning() {
+            registerWithProvider(reason: "not running -> running")
+        }
 
         DispatchQueue.main.async {
             NotificationCenter.default.post(
@@ -88,13 +88,13 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         os_log("\(self.t)👀 添加监听")
         observer = nc.addObserver(
             forName: .NEFilterConfigurationDidChange,
-            object: filterManager,
+            object: NEFilterManager.shared(),
             queue: .main
         ) { _ in
-//            let enabled = self.filterManager.isEnabled
-//            os_log("\(self.t)\(enabled ? "👀 监听到 Filter 已打开 " : "👀 监听到 Fitler 已关闭")")
+            let enabled = NEFilterManager.shared().isEnabled
+            os_log("\(self.t)\(enabled ? "👀 监听到 Filter 已打开 " : "👀 监听到 Fitler 已关闭")")
             Task { @MainActor in
-                self.updateFilterStatus(self.filterManager.isEnabled ? .running : .stopped)
+                self.updateFilterStatus(enabled ? .running : .stopped)
             }
         }
     }
@@ -103,8 +103,8 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     func ifFilterReady() -> Bool {
         os_log("\(self.t)\(Location.did(.IfReady))")
 
-        if filterManager.isEnabled {
-            registerWithProvider()
+        if NEFilterManager.shared().isEnabled {
+//            registerWithProvider()
             self.updateFilterStatus(.running)
 
             return true
@@ -120,7 +120,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
 
         nc.removeObserver(changeObserver,
                           name: .NEFilterConfigurationDidChange,
-                          object: filterManager
+                          object: NEFilterManager.shared()
         )
     }
 
@@ -159,9 +159,9 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
 
         try await loadFilterConfiguration(reason: reason)
 
-        guard !filterManager.isEnabled else {
+        guard !NEFilterManager.shared().isEnabled else {
             os_log("\(self.t)👌 过滤器已启用，直接关联")
-            registerWithProvider()
+            registerWithProvider(reason: reason)
             return
         }
 
@@ -178,17 +178,17 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
 
         self.emit(.willStop)
 
-        guard filterManager.isEnabled else {
+        guard NEFilterManager.shared().isEnabled else {
             self.updateFilterStatus(.stopped)
             return
         }
 
         try await loadFilterConfiguration(reason: reason)
 
-        filterManager.isEnabled = false
+        NEFilterManager.shared().isEnabled = false
         try await NEFilterManager.shared().saveToPreferences()
 
-        await self.updateFilterStatus(.stopped)
+        self.updateFilterStatus(.stopped)
     }
 
     // MARK: Content Filter Configuration Management
@@ -205,9 +205,9 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
 
         self.emit(.configurationChanged)
 
-        guard !filterManager.isEnabled else {
+        guard !NEFilterManager.shared().isEnabled else {
             os_log("\(self.t)FilterManager is Disabled, registerWithProvider")
-            registerWithProvider()
+//            registerWithProvider()
             return
         }
 
@@ -217,23 +217,23 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
 
                 os_log("\(self.t)🎉 加载过滤器配置成功")
 
-                if self.filterManager.providerConfiguration == nil {
+                if NEFilterManager.shared().providerConfiguration == nil {
                     let providerConfiguration = NEFilterProviderConfiguration()
                     providerConfiguration.filterSockets = true
                     providerConfiguration.filterPackets = false
-                    self.filterManager.providerConfiguration = providerConfiguration
+                    NEFilterManager.shared().providerConfiguration = providerConfiguration
                     if let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String {
-                        self.filterManager.localizedDescription = appName
+                        NEFilterManager.shared().localizedDescription = appName
                     }
                 }
 
                 // 如果true，加载到系统设置中后就是启动状态
-                self.filterManager.isEnabled = true
+                NEFilterManager.shared().isEnabled = true
 
                 // 将过滤器加载到系统设置中
                 os_log("\(self.t)📺 将要弹出授权对话框来加载到系统设置中")
                 os_log("\(self.t)🦶 \(Location.did(.SaveToPreferences))")
-                self.filterManager.saveToPreferences { saveError in
+                NEFilterManager.shared().saveToPreferences { saveError in
                     if let error = saveError {
                         os_log(.error, "\(self.t)授权对话框报错 -> \(error.localizedDescription)")
                         self.updateFilterStatus(.disabled)
@@ -242,7 +242,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
                         os_log("\(self.t)🦶 \(Location.did(.UserApproved))")
                     }
 
-                    self.registerWithProvider()
+                    self.registerWithProvider(reason: "已授权")
                 }
             } catch {
                 os_log("\(self.t)APP: 加载过滤器配置失败")
@@ -251,8 +251,8 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
         }
     }
 
-    func registerWithProvider() {
-        os_log("\(self.t)🛫 registerWithProvider，让 ChannelProvider 和 Extension 关联起来")
+    func registerWithProvider(reason: String) {
+        os_log("\(self.t)🛫 registerWithProvider，让 ChannelProvider 和 Extension 关联起来(\(reason)")
 
         self.emit(.willRegisterWithProvider)
 
@@ -340,7 +340,7 @@ extension ChannelProvider: AppCommunication {
     }
 
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
-        let verbose = false
+        let verbose = true
                         if verbose {
                             os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(id) -> Allow")
                         }
@@ -351,14 +351,16 @@ extension ChannelProvider: AppCommunication {
 //                    os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(flow.getAppId()) -> Allow")
 //                }
 
-            self.nc.post(name: .NetWorkFilterFlow, object: FlowWrapper(
-                id: id,
-                hostname: hostname,
-                port: port,
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
+                    id: id,
+                    hostname: hostname,
+                    port: port,
 
-                allowed: true,
-                direction: direction
-            ))
+                    allowed: true,
+                    direction: direction
+                ))
+        }
             responseHandler(true)
 //            } else {
             ////                if verbose {

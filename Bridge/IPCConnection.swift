@@ -16,9 +16,8 @@ class IPCConnection: NSObject, SuperLog {
     var currentConnection: NSXPCConnection?
     weak var delegate: AppCommunication?
     
-    @MainActor
-    static let shared = IPCConnection()
-
+    nonisolated(unsafe) static let shared = IPCConnection()
+    
     /**
         The NetworkExtension framework registers a Mach service with the name in the system extension's NEMachServiceName Info.plist key.
         The Mach service name must be prefixed with one of the app groups in the system extension's com.apple.security.application-groups entitlement.
@@ -69,7 +68,7 @@ class IPCConnection: NSObject, SuperLog {
         newConnection.resume()
 
         guard let providerProxy = newConnection.remoteObjectProxyWithErrorHandler({ registerError in
-            os_log(.error, "Failed to register with the provider: %@", registerError.localizedDescription)
+            os_log(.error, "\(self.t)Failed to register with the provider: \(registerError)")
             self.currentConnection?.invalidate()
             self.currentConnection = nil
             completionHandler(false)

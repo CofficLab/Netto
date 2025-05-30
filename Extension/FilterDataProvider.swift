@@ -6,7 +6,7 @@ import os.log
 class FilterDataProvider: NEFilterDataProvider, SuperLog {
     static let emoji: String = "🎈"
 
-    private var ipc = IPCConnection()
+    private var ipc = IPCConnection.shared
 
     /**
      * 启动网络过滤器
@@ -119,20 +119,20 @@ class FilterDataProvider: NEFilterDataProvider, SuperLog {
         // Ask the app to prompt the user
         // WWDC2019视频中说，这是一个异步的过程
 //        DispatchQueue.main.async {
-//            let prompted = self.ipc.promptUser(flow: f) { (allow: Bool) in
-//                let userVerdict: NEFilterNewFlowVerdict = allow ? .allow() : .drop()
+        let prompted = self.ipc.promptUser(flow: flow) { (allow: Bool) in
+            let userVerdict: NEFilterNewFlowVerdict = allow ? .allow() : .drop()
 //
-//                // 用户决策完毕，可能是恢复，也可能是拒绝
-        self.resumeFlow(flow, with: NEFilterNewFlowVerdict.allow())
-//            }
+                // 用户决策完毕，可能是恢复，也可能是拒绝
+            self.resumeFlow(flow, with: userVerdict)
+        }
 //        }
 
-//        guard prompted else {
-//            ipc.log("调用promptUser失败，放行")
-        return .allow()
-//        }
+        guard prompted else {
+            ipc.log("调用promptUser失败，放行")
+            return .allow()
+        }
 
         // 因为等待用户决策是异步的，所以这里先暂停，等待决策结果
-//        return .pause()
+        return .pause()
     }
 }

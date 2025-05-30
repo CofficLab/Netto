@@ -73,7 +73,7 @@ extension SmartApp: SuperLog {
             }
         }
         
-        os_log(.debug, "\(self.t) ⚠️ 未找到应用程序: \(id)")
+        os_log(.debug, "\(self.t)⚠️ 未找到应用程序: \(id)")
 
         return nil
     }
