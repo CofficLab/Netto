@@ -50,7 +50,7 @@ struct WelcomeGuideView: View {
                             AnyView(NetworkFilterDiagramView())
                         }
                     )
-                } else {
+                } else if currentStep == 2 {
                     stepView(
                         title: "工具栏操作",
                         description: "应用顶部的工具栏提供了各种功能插件，更多高级操作都集中在右侧的更多菜单按钮中。",
@@ -60,6 +60,15 @@ struct WelcomeGuideView: View {
                             AnyView(ToolbarDiagramView())
                         }
                     )
+                } else {
+                    stepView(
+                        title: "工作原理",
+                        description: "了解应用程序与系统扩展的协作机制，系统扩展负责网络过滤，应用程序提供用户界面。",
+                        icon: "gearshape.2.fill",
+                        color: .blue
+                    ) {
+                        AnyView(WorkingPrincipleDiagramView())
+                    }
                 }
             }
             .frame(maxHeight: .infinity)
@@ -68,7 +77,7 @@ struct WelcomeGuideView: View {
             VStack(spacing: 16) {
                 // 进度指示器
                 HStack(spacing: 8) {
-                    ForEach(0..<3, id: \.self) { index in
+                    ForEach(0..<4, id: \.self) { index in
                         Circle()
                             .fill(index == currentStep ? Color.blue : Color.gray.opacity(0.3))
                             .frame(width: 8, height: 8)
@@ -86,7 +95,7 @@ struct WelcomeGuideView: View {
                     
                     Spacer()
                     
-                    if currentStep < 2 {
+                    if currentStep < 3 {
                         Button("下一步") {
                             currentStep += 1
                         }
