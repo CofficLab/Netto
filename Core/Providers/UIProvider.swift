@@ -11,6 +11,7 @@ class UIProvider: ObservableObject {
     @Published var status: FilterStatus = .indeterminate
     @Published var dbVisible: Bool = false
     @Published var displayType: DisplayType = .All
+    @Published var showSystemApps: Bool = false
 
     private var cancellables = Set<AnyCancellable>()
     

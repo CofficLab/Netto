@@ -22,6 +22,13 @@ struct FilterBar: View, SuperLog, SuperThread {
             .clipShape(RoundedRectangle(cornerRadius: 0))
 
             Spacer()
+
+            /// 系统应用显示开关
+            Toggle("显示系统应用", isOn: $app.showSystemApps)
+                .toggleStyle(SwitchToggleStyle(tint: .blue))
+                .font(.caption)
+                .padding(.horizontal, 8)
+            
         }
         .frame(height: 30)
         .frame(maxWidth: .infinity)

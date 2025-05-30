@@ -16,7 +16,11 @@ struct AppList: View, SuperLog {
             $0.events.count > 0 || data.shouldDeny($0.id)
         })
         .filter({
-            $0.isSystemApp == false
+            if ui.showSystemApps {
+                return true
+            } else {
+                return $0.isSystemApp == false
+            }
         })
         .filter({
             $0.hasId
