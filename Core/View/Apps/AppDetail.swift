@@ -4,7 +4,6 @@ struct AppDetail: View {
     @EnvironmentObject var data: DataProvider
     
     @Binding var popoverHovering: Bool
-    @Binding var showChildrenPopover: Bool
 
     var app: SmartApp
 
@@ -120,11 +119,6 @@ struct AppDetail: View {
         .padding(12)
         .onHover { hovering in
             popoverHovering = hovering
-            if !hovering {
-                if !popoverHovering {
-                    showChildrenPopover = false
-                }
-            }
         }
     }
 }

@@ -23,9 +23,17 @@ struct AppLine: View, SuperEvent {
         )
         .onHover(perform: { hovering in
             self.hovering = hovering
-            // 当hover时显示popover
-            if hovering {
-                showChildrenPopover = true
+        })
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .popover(isPresented: $showChildrenPopover, arrowEdge: .trailing) {
+            AppDetail(
+                popoverHovering: $popoverHovering,
+                app: app,
+            ).frame(width: 600)
+        }
+        .onChange(of: self.hovering, {
+            if self.hovering {
+                self.showChildrenPopover = true
             } else {
                 // 延迟关闭，给用户时间移动到popover
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -35,14 +43,9 @@ struct AppLine: View, SuperEvent {
                 }
             }
         })
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .popover(isPresented: $showChildrenPopover, arrowEdge: .trailing) {
-            AppDetail(
-                popoverHovering: $popoverHovering,
-                showChildrenPopover: $showChildrenPopover,
-                app: app,
-            ).frame(width: 600)
-        }
+        .onChange(of: self.popoverHovering, {
+            self.showChildrenPopover = self.popoverHovering
+        })
     }
 }
 
