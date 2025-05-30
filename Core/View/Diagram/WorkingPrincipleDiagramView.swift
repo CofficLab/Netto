@@ -49,10 +49,6 @@ struct WorkingPrincipleDiagramView: View {
                 )
                 .scaleEffect(showAnimation ? 1.05 : 1.0)
                 .shadow(color: showAnimation ? .orange.opacity(0.3) : .clear, radius: 6)
-            
-            Text("网络过滤扩展")
-                .font(.caption2)
-                .foregroundColor(.secondary)
         }
     }
     
@@ -187,10 +183,6 @@ struct WorkingPrincipleDiagramView: View {
             .scaleEffect(showAnimation ? 1.05 : 1.0)
             .shadow(color: showAnimation ? .blue.opacity(0.3) : .clear, radius: 6)
             .opacity(showAnimation ? 1.0 : 0.8)
-            
-            Text("用户界面")
-                .font(.caption2)
-                .foregroundColor(.secondary)
         }
     }
 }

@@ -53,7 +53,7 @@ struct WelcomeGuideView: View {
                 } else if currentStep == 2 {
                     stepView(
                         title: "工具栏操作",
-                        description: "应用顶部的工具栏提供了各种功能插件，更多高级操作都集中在右侧的更多菜单按钮中。",
+                        description: "应用顶部的工具栏提供了各种功能，更多高级操作都集中在右侧的更多菜单按钮中。",
                         icon: "menubar.rectangle",
                         color: .purple,
                         customContent: {

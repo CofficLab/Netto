@@ -38,15 +38,6 @@ struct NetworkFilterDiagramView: View {
             HStack(spacing: 16) {
                 HStack(spacing: 4) {
                     Circle()
-                        .fill(Color.green.opacity(0.3))
-                        .frame(width: 12, height: 12)
-                    Text("已允许")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-
-                HStack(spacing: 4) {
-                    Circle()
                         .fill(Color.red.opacity(0.3))
                         .frame(width: 12, height: 12)
                     Text("已禁止")
