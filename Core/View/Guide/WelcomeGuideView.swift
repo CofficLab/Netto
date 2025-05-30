@@ -52,10 +52,13 @@ struct WelcomeGuideView: View {
                     )
                 } else {
                     stepView(
-                        title: "实时监控",
-                        description: "实时查看网络活动日志，了解哪些应用正在访问网络以及访问的目标。",
-                        icon: "chart.line.uptrend.xyaxis",
-                        color: .purple
+                        title: "工具栏操作",
+                        description: "应用顶部的工具栏提供了各种功能插件，更多高级操作都集中在右侧的更多菜单按钮中。",
+                        icon: "menubar.rectangle",
+                        color: .purple,
+                        customContent: {
+                            AnyView(ToolbarDiagramView())
+                        }
                     )
                 }
             }
