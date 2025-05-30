@@ -21,20 +21,32 @@ extension SmartApp: SuperLog {
     /// - Returns: 找到的应用程序实例，如果未找到则返回nil
     static func getApp(_ id: String) -> NSRunningApplication? {
         let apps = getRunningAppList()
+        var possibleMatches: [(app: NSRunningApplication, id: String)] = []
 
         for app in apps {
-            let bundleIdentifier = app.bundleIdentifier
-
-            guard let bundleIdentifier = bundleIdentifier else {
+            guard let bundleIdentifier = app.bundleIdentifier else {
                 continue
             }
 
+            // 完全匹配情况
             if bundleIdentifier == id {
                 return app
             }
+            
+            // 收集可能接近的匹配
+            // 如果用户提供的id包含了app的id，或app的id包含了用户提供的id
+            if id.contains(bundleIdentifier) || bundleIdentifier.contains(id) {
+                possibleMatches.append((app, bundleIdentifier))
+            }
         }
-
-        os_log(.debug, "\(self.t) ⚠️ 未找到应用程序: \(id)")
+        
+        // 如果有可能接近的匹配，在日志中输出
+        if !possibleMatches.isEmpty {
+            let matchesInfo = possibleMatches.map { "\($0.app.localizedName ?? "未知应用")(\($0.id))" }.joined(separator: ", ")
+            os_log(.debug, "\(self.t) 🍉 未找到完全匹配的应用程序: \(id), 可能接近的应用: \(matchesInfo)")
+        } else {
+            os_log(.debug, "\(self.t) ⚠️ 未找到应用程序: \(id)")
+        }
 
         return nil
     }
