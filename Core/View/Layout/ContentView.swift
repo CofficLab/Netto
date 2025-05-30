@@ -7,12 +7,11 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            VSplitView {
-                Topbar()
+            Topbar()
 
-                AppList()
-            }
-            .frame(maxWidth: .infinity).background(.clear)
+            FilterBar()
+
+            AppList()
         }
         .frame(maxWidth: .infinity)
         .onDisappear {

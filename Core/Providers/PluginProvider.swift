@@ -7,16 +7,14 @@ import SwiftUI
 
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     static let shared = PluginProvider()
-    
+
     private init() {}
-    
+
     let emoji = "🧩"
 
     func getPlugins() -> some View {
         HStack(spacing: 0) {
             TileSwitcher()
-            Spacer()
-            TileFilter()
             Spacer()
             TileEventList()
             TileMore()
