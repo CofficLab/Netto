@@ -5,15 +5,27 @@ import SwiftUI
 struct AppList: View, SuperLog {
     @EnvironmentObject private var ui: UIProvider
     @EnvironmentObject private var data: DataProvider
-    
+
     static var emoji = "🖥️"
 
     private var apps: [SmartApp] {
         data.apps.sorted(by: {
             $0.events.count > $1.events.count
-        }).filter({
+        })
+        .filter({
             $0.events.count > 0 || data.shouldDeny($0.id)
-        }).filter {
+        })
+        .filter({
+            if ui.showSystemApps {
+                return true
+            } else {
+                return $0.isSystemApp == false
+            }
+        })
+        .filter({
+            $0.hasId
+        })
+        .filter {
             switch ui.displayType {
             case .All:
                 true
@@ -43,9 +55,6 @@ struct AppList: View, SuperLog {
                 GuideView()
             }
         }
-        .onChange(of: self.apps.count, {
-            os_log("\(self.t)🍋 当前APP数量 -> \(apps.count)")
-        })
     }
 }
 

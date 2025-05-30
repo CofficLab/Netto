@@ -75,7 +75,7 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                 } else {
                     ContentView()
                         .frame(minHeight: 500)
-                        .frame(minWidth: 350)
+                        .frame(minWidth: 400)
                 }
             }
             .onAppear {
@@ -92,8 +92,6 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
             Label(AppConfig.appName, systemImage: "network")
         })
         .menuBarExtraStyle(.window)
-        
-        
     }
 }
 

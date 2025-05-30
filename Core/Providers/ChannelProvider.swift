@@ -314,7 +314,11 @@ extension ChannelProvider: OSSystemExtensionRequestDelegate {
 
 extension ChannelProvider: AppCommunication {
     func extensionLog(_ words: String) {
-        os_log("\(self.t)💬 Extension said -> \(words)")
+        let verbose = false
+        
+        if verbose {
+            os_log("\(self.t)💬 Extension said -> \(words)")
+        }
     }
 
     func needApproval() {
@@ -326,7 +330,7 @@ extension ChannelProvider: AppCommunication {
     }
 
     func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void) {
-        let verbose = true
+        let verbose = false
 
         self.main.async {
             if self.data.shouldAllow(flow.getAppId()) {

@@ -41,50 +41,9 @@ class DataProvider: ObservableObject, SuperLog {
         self.init(appPermissionService: AppPermissionService.shared)
     }
 
-    /// 设置通知监听器
-    private func setupNotificationListeners() {
-        NotificationCenter.default.publisher(for: .NetWorkFilterFlow)
-            .compactMap { $0.object as? FlowWrapper }
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] wrapper in
-                self?.handleNetworkFlow(wrapper)
-            }
-            .store(in: &cancellables)
-    }
-
-    /// 处理网络流量事件
-    /// - Parameter wrapper: 包装的网络流量数据
-    private func handleNetworkFlow(_ wrapper: FlowWrapper) {
-        let flow = wrapper.flow
-        let app = SmartApp.fromId(flow.getAppId())
-        let event = FirewallEvent(
-            address: flow.getHostname(),
-            port: flow.getLocalPort(),
-            sourceAppIdentifier: flow.getAppId(),
-            status: wrapper.allowed ? .allowed : .rejected,
-            direction: flow.direction
-        )
-        
-        self.events.append(event)
-
-        if let index = apps.firstIndex(where: { $0.id == app.id }) {
-            os_log("\(self.t)🍋 监听到网络流量，为已知的APP增加Event")
-
-            apps[index] = apps[index].appendEvent(event)
-        } else {
-            os_log("\(self.t)🛋️ 监听到网络流量，没见过这个APP，加入列表 -> \(app.id)")
-
-            apps.append(app.appendEvent(event))
-        }
-
-        let total = self.apps.count
-        let hasEventCount = self.apps.filter({ $0.events.count > 0 }).count
-        os_log("\(self.t)📈 当前APP数量 -> \(total) 其中 Events.Count>0 的数量 -> \(hasEventCount)")
-    }
-    
     func appendEvent(_ e: FirewallEvent) {
         self.events.append(e)
-        
+
         if self.events.count > 100 {
             self.events.removeFirst()
         }
@@ -116,6 +75,60 @@ class DataProvider: ObservableObject, SuperLog {
     /// - Throws: 操作失败时抛出错误
     func deny(_ id: String) throws {
         try appPermissionService.deny(id)
+    }
+}
+
+// MARK: - Event
+
+extension DataProvider {
+    /// 设置通知监听器
+    private func setupNotificationListeners() {
+        NotificationCenter.default.publisher(for: .NetWorkFilterFlow)
+            .compactMap { $0.object as? FlowWrapper }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] wrapper in
+                self?.handleNetworkFlow(wrapper)
+            }
+            .store(in: &cancellables)
+    }
+
+    /// 处理网络流量事件
+    /// - Parameter wrapper: 包装的网络流量数据
+    private func handleNetworkFlow(_ wrapper: FlowWrapper) {
+        let verbose = false
+        let flow = wrapper.flow
+        let app = SmartApp.fromId(flow.getAppId())
+        let event = FirewallEvent(
+            address: flow.getHostname(),
+            port: flow.getLocalPort(),
+            sourceAppIdentifier: flow.getAppId(),
+            status: wrapper.allowed ? .allowed : .rejected,
+            direction: flow.direction
+        )
+
+        self.appendEvent(event)
+
+        if let index = apps.firstIndex(where: { $0.id == app.id }) {
+            if verbose {
+                os_log("\(self.t)🍋 监听到网络流量，为已知的APP增加Event")
+            }
+
+            apps[index] = apps[index].appendEvent(event)
+            apps[index] = apps[index].addChildren(app.children)
+        } else {
+            if verbose {
+                os_log("\(self.t)🛋️ 监听到网络流量，没见过这个APP，加入列表 -> \(app.id)")
+            }
+
+            apps.append(app.appendEvent(event))
+        }
+
+        let total = self.apps.count
+        let hasEventCount = self.apps.filter({ $0.events.count > 0 }).count
+
+        if verbose {
+            os_log("\(self.t)📈 当前APP数量 -> \(total) 其中 Events.Count>0 的数量 -> \(hasEventCount)")
+        }
     }
 }
 

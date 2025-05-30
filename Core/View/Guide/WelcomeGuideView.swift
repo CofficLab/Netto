@@ -35,22 +35,40 @@ struct WelcomeGuideView: View {
                         title: "菜单栏访问",
                         description: "应用运行后，您可以通过点击菜单栏中的网络图标来访问主界面。",
                         icon: "menubar.rectangle",
-                        color: .green
+                        color: .green,
+                        customContent: {
+                            AnyView(MenuBarDiagramView())
+                        }
                     )
                 } else if currentStep == 1 {
                     stepView(
                         title: "网络过滤",
                         description: "您可以查看所有网络连接请求，并选择允许或拒绝特定的应用访问网络。",
                         icon: "shield.checkered",
-                        color: .orange
+                        color: .orange,
+                        customContent: {
+                            AnyView(NetworkFilterDiagramView())
+                        }
+                    )
+                } else if currentStep == 2 {
+                    stepView(
+                        title: "工具栏操作",
+                        description: "应用顶部的工具栏提供了各种功能，更多高级操作都集中在右侧的更多菜单按钮中。",
+                        icon: "menubar.rectangle",
+                        color: .purple,
+                        customContent: {
+                            AnyView(ToolbarDiagramView())
+                        }
                     )
                 } else {
                     stepView(
-                        title: "实时监控",
-                        description: "实时查看网络活动日志，了解哪些应用正在访问网络以及访问的目标。",
-                        icon: "chart.line.uptrend.xyaxis",
-                        color: .purple
-                    )
+                        title: "工作原理",
+                        description: "了解应用程序与系统扩展的协作机制，系统扩展负责网络过滤，应用程序提供用户界面。",
+                        icon: "gearshape.2.fill",
+                        color: .blue
+                    ) {
+                        AnyView(WorkingPrincipleDiagramView())
+                    }
                 }
             }
             .frame(maxHeight: .infinity)
@@ -59,7 +77,7 @@ struct WelcomeGuideView: View {
             VStack(spacing: 16) {
                 // 进度指示器
                 HStack(spacing: 8) {
-                    ForEach(0..<3, id: \.self) { index in
+                    ForEach(0..<4, id: \.self) { index in
                         Circle()
                             .fill(index == currentStep ? Color.blue : Color.gray.opacity(0.3))
                             .frame(width: 8, height: 8)
@@ -77,7 +95,7 @@ struct WelcomeGuideView: View {
                     
                     Spacer()
                     
-                    if currentStep < 2 {
+                    if currentStep < 3 {
                         Button("下一步") {
                             currentStep += 1
                         }
@@ -107,11 +125,15 @@ struct WelcomeGuideView: View {
     /**
      * 单个步骤视图
      */
-    private func stepView(title: String, description: String, icon: String, color: Color) -> some View {
+    private func stepView(title: String, description: String, icon: String, color: Color, customContent: (() -> AnyView)? = nil) -> some View {
         VStack(spacing: 24) {
-            Image(systemName: icon)
-                .font(.system(size: 64))
-                .foregroundColor(color)
+            if let customContent = customContent {
+                customContent()
+            } else {
+                Image(systemName: icon)
+                    .font(.system(size: 64))
+                    .foregroundColor(color)
+            }
             
             Text(title)
                 .font(.title2)
@@ -125,6 +147,8 @@ struct WelcomeGuideView: View {
                 .padding(.horizontal, 40)
         }
     }
+    
+
     
     /**
      * 重置到第一步

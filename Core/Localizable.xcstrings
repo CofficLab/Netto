@@ -4,6 +4,9 @@
     "" : {
       "shouldTranslate" : false
     },
+    "(%lld children)" : {
+
+    },
     "%lld" : {
       "localizations" : {
         "zh-Hans" : {
@@ -71,6 +74,7 @@
       "shouldTranslate" : false
     },
     "App ID 已复制到剪贴板" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -159,6 +163,9 @@
           }
         }
       }
+    },
+    "ID: %@" : {
+
     },
     "Message" : {
       "localizations" : {
@@ -289,6 +296,19 @@
         }
       }
     },
+    "事件总数 (Total Events)" : {
+
+    },
+    "允许" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow"
+          }
+        }
+      }
+    },
     "入" : {
       "localizations" : {
         "en" : {
@@ -309,12 +329,64 @@
         }
       }
     },
+    "最近事件: %@" : {
+
+    },
     "出" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Out"
+          }
+        }
+      }
+    },
+    "子应用程序 (Child Applications)" : {
+
+    },
+    "将鼠标悬停在应用上查看操作按钮" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hover over the app to see action buttons"
+          }
+        }
+      }
+    },
+    "属性信息 (Properties)" : {
+
+    },
+    "已禁止" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocked"
+          }
+        }
+      }
+    },
+    "应用列表" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App List"
+          }
+        }
+      }
+    },
+    "应用详情 (Application Details)" : {
+
+    },
+    "开关" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch"
           }
         }
       }
@@ -359,6 +431,9 @@
         }
       }
     },
+    "当前运行的应用程序" : {
+
+    },
     "所有应用可自由联网" : {
       "localizations" : {
         "en" : {
@@ -399,12 +474,62 @@
         }
       }
     },
+    "数据交换" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data Exchange"
+          }
+        }
+      }
+    },
+    "日志" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log"
+          }
+        }
+      }
+    },
+    "更多操作" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More Actions"
+          }
+        }
+      }
+    },
+    "点击这里访问应用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Click here to access the app"
+          }
+        }
+      }
+    },
     "登录项与扩展" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Login Items & Extensions"
+          }
+        }
+      }
+    },
+    "禁止" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Block"
           }
         }
       }
@@ -419,6 +544,19 @@
         }
       }
     },
+    "系统应用 (System App)" : {
+
+    },
+    "系统扩展" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System Extensions"
+          }
+        }
+      }
+    },
     "网络" : {
       "localizations" : {
         "en" : {
@@ -428,6 +566,9 @@
           }
         }
       }
+    },
+    "网络事件 (Network Events)" : {
+
     },
     "网络过滤与监控工具" : {
       "localizations" : {

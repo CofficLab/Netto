@@ -4,6 +4,8 @@ import SwiftUI
 
 struct SmartApp: Identifiable {
     // MARK: - Properties
+    
+    static let emoji = "🐒"
 
     var id: String
     var name: String
@@ -11,35 +13,16 @@ struct SmartApp: Identifiable {
     var events: [FirewallEvent] = []
     var isSystemApp: Bool = false
     var isSample: Bool = false
-    
+    var children: [SmartApp] = []
+
     var isNotSample: Bool { !isSample }
+    var hasId: Bool { id.isNotEmpty }
+    var hasNoId: Bool { id.isEmpty }
 }
 
 // MARK: - Initialization
 
 extension SmartApp {
-    /// 使用ID和名称初始化SmartApp
-    /// - Parameters:
-    ///   - id: 应用程序唯一标识符
-    ///   - name: 应用程序名称
-    init(id: String, name: String) {
-        self.id = id
-        self.name = name
-    }
-
-    /// 使用ID、名称和可选图标初始化SmartApp
-    /// - Parameters:
-    ///   - id: 应用程序唯一标识符
-    ///   - name: 应用程序名称
-    ///   - icon: 可选的NSImage图标
-    init(id: String, name: String, icon: NSImage? = nil) {
-        self.id = id
-        self.name = name
-        if let i = icon {
-            self.icon = AnyView(Image(nsImage: i).resizable())
-        }
-    }
-
     /// 使用ID、名称和SwiftUI视图图标初始化SmartApp
     /// - Parameters:
     ///   - id: 应用程序唯一标识符
@@ -47,7 +30,13 @@ extension SmartApp {
     ///   - icon: SwiftUI视图作为图标
     ///   - isSystemApp: 是否为系统应用程序（默认值为false）
     ///   - isSample: 是否为示例应用程序（默认值为false）
-    init(id: String, name: String, icon: some View, isSystemApp: Bool = false, isSample: Bool = false) {
+    init(
+        id: String, 
+        name: String, 
+        icon: some View, 
+        isSystemApp: Bool = false, 
+        isSample: Bool = false
+    ) {
         self.id = id
         self.name = name
         self.icon = AnyView(icon)
@@ -68,6 +57,38 @@ extension SmartApp {
 
         return cloned
     }
+
+    /// 向应用添加多个防火墙事件
+    /// - Parameter events: 要添加的防火墙事件数组
+    /// - Returns: 包含新事件的SmartApp副本
+    func appendEvents(_ events: [FirewallEvent]) -> Self {
+        var cloned = self
+        cloned.events.append(contentsOf: events)
+        return cloned
+    }
+
+    /// 检查应用程序是否包含子应用程序
+    /// - Parameter id: 子应用程序ID
+    /// - Returns: 如果应用程序包含子应用程序，则返回true；否则返回false
+    func containsChild(_ id: String) -> Bool {
+        children.contains(where: { $0.id == id })
+    }
+
+    /// 检查应用程序是否包含子应用程序
+    /// - Parameter id: 子应用程序ID
+    /// - Returns: 如果应用程序包含子应用程序，则返回true；否则返回false
+    func getChild(_ id: String) -> SmartApp? {
+        children.first(where: { $0.id == id })
+    }
+
+    /// 删除子应用程序
+    /// - Parameter id: 子应用程序ID
+    /// - Returns: 包含删除子应用程序的SmartApp副本
+    func removeChild(_ id: String) -> Self {
+        var cloned = self
+        cloned.children.removeAll(where: { $0.id == id })
+        return cloned
+    }
 }
 
 // MARK: - Factory Methods
@@ -81,15 +102,26 @@ extension SmartApp {
             return SmartApp(
                 id: runningApp.bundleIdentifier ?? "",
                 name: runningApp.localizedName ?? "",
-                icon: runningApp.icon ?? NSImage()
+                icon: AnyView(Image(nsImage: runningApp.icon ?? NSImage()).resizable())
             )
         }
 
         if let systemApp = Self.getSystemApp(id) {
             return systemApp
         }
+        
+        let unknownApp = Self.unknownApp(id)
 
-        return Self.unknownApp(id)
+        // 尝试寻找Package
+        if let packageApp = Self.getPackage(id) {
+            return SmartApp(
+                id: packageApp.bundleIdentifier ?? "",
+                name: packageApp.localizedName ?? "",
+                icon: AnyView(Image(nsImage: packageApp.icon ?? NSImage()).resizable())
+            ).addChild(unknownApp)
+        }
+
+        return unknownApp
     }
 
     /// 从NSRunningApplication创建SmartApp实例
@@ -99,7 +131,7 @@ extension SmartApp {
         return SmartApp(
             id: app.bundleIdentifier ?? "-",
             name: app.localizedName ?? "-",
-            icon: app.icon
+            icon: AnyView(Image(nsImage: app.icon ?? NSImage()).resizable())
         )
     }
 }
@@ -117,83 +149,32 @@ extension SmartApp {
     }
 }
 
-// MARK: - Helpers
+// MARK: - Modifiers
 
 extension SmartApp {
-    /// 获取当前系统中所有正在运行的应用程序列表
-    ///
-    /// - Returns: 包含所有正在运行的应用程序的数组
-    private static func getRunningAppList() -> [NSRunningApplication] {
-        let workspace = NSWorkspace.shared
-        let runningApps = workspace.runningApplications
-
-        return runningApps
+    /// 为应用程序添加子应用程序
+    /// - Parameter child: 子应用程序
+    /// - Returns: 包含子应用程序的SmartApp副本
+    func addChild(_ child: SmartApp) -> Self {
+        // 如果已经存在了，则将child中的events添加到当前应用程序的events中
+        if let existingChild = self.getChild(child.id) {
+            let cloned = self.removeChild(child.id)
+            return cloned.addChild(existingChild.appendEvents(child.events))
+        }
+        
+        // 如果不存在，则直接添加
+        var cloned = self
+        cloned.children.append(child)
+        return cloned
     }
 
-    /// 根据标识符查找正在运行的应用程序
-    ///
-    /// 该方法通过提供的标识符在当前运行的应用程序中查找匹配的应用程序。
-    /// 查找规则如下：
-    /// - 如果标识符以点(.)开头，会自动移除开头的点
-    /// - 匹配规则（满足任一即匹配成功）：
-    ///   - 完全匹配应用程序的bundle identifier
-    ///   - 完全匹配原始输入的标识符
-    ///   - 输入的标识符包含应用程序的bundle identifier
-    ///   - 输入的标识符以应用程序的bundle identifier结尾
-    ///
-    /// - Parameter id: 要查找的应用程序标识符
-    /// - Returns: 找到的应用程序实例，如果未找到则返回nil
-    private static func getApp(_ id: String) -> NSRunningApplication? {
-        var workId = id
-
-        if workId.hasPrefix(".") {
-            workId = String(workId.dropFirst())
+    /// 为应用程序添加多个子应用程序
+    /// - Parameter children: 子应用程序数组
+    /// - Returns: 包含子应用程序的SmartApp副本
+    func addChildren(_ children: [SmartApp]) -> Self {
+        children.reduce(self) { result, child in
+            result.addChild(child)
         }
-
-        let apps = getRunningAppList()
-
-        for app in apps {
-            let bundleIdentifier = app.bundleIdentifier
-
-            guard let bundleIdentifier = bundleIdentifier else {
-                continue
-            }
-
-            if
-                bundleIdentifier == workId ||
-                bundleIdentifier == id ||
-                id.contains(bundleIdentifier) ||
-                id.hasSuffix(bundleIdentifier) {
-                return app
-            }
-        }
-
-        return nil
-    }
-}
-
-// MAKR: - Unknown App
-
-extension SmartApp {
-    static func unknownApp(_ id: String) -> SmartApp {
-        SmartApp(id: id, name: "未知", icon: ZStack {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(LinearGradient(
-                    gradient: Gradient(colors: [Color.blue.opacity(0.6), Color.cyan]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                ))
-                .aspectRatio(1, contentMode: .fit)
-                .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
-
-            Image(systemName: "app")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .padding(6)
-                .foregroundColor(.white)
-        }
-        .frame(width: 34, height: 34)
-        .clipped())
     }
 }
 
