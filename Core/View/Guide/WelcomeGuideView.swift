@@ -35,7 +35,10 @@ struct WelcomeGuideView: View {
                         title: "菜单栏访问",
                         description: "应用运行后，您可以通过点击菜单栏中的网络图标来访问主界面。",
                         icon: "menubar.rectangle",
-                        color: .green
+                        color: .green,
+                        customContent: {
+                            AnyView(MenuBarDiagramView())
+                        }
                     )
                 } else if currentStep == 1 {
                     stepView(
@@ -107,11 +110,15 @@ struct WelcomeGuideView: View {
     /**
      * 单个步骤视图
      */
-    private func stepView(title: String, description: String, icon: String, color: Color) -> some View {
+    private func stepView(title: String, description: String, icon: String, color: Color, customContent: (() -> AnyView)? = nil) -> some View {
         VStack(spacing: 24) {
-            Image(systemName: icon)
-                .font(.system(size: 64))
-                .foregroundColor(color)
+            if let customContent = customContent {
+                customContent()
+            } else {
+                Image(systemName: icon)
+                    .font(.system(size: 64))
+                    .foregroundColor(color)
+            }
             
             Text(title)
                 .font(.title2)
@@ -125,6 +132,8 @@ struct WelcomeGuideView: View {
                 .padding(.horizontal, 40)
         }
     }
+    
+
     
     /**
      * 重置到第一步

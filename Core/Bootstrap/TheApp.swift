@@ -92,8 +92,6 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
             Label(AppConfig.appName, systemImage: "network")
         })
         .menuBarExtraStyle(.window)
-        
-        
     }
 }
 
