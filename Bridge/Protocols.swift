@@ -7,7 +7,7 @@ import NetworkExtension
 
 /// Provider --> App IPC
 @objc protocol AppCommunication {
-    func promptUser(flow: NEFilterFlow, responseHandler: @escaping (Bool) -> Void)
+    func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void)
     func needApproval()
     func extensionLog(_ words: String)
 }

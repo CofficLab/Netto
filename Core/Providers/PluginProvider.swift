@@ -5,6 +5,7 @@ import StoreKit
 import SwiftData
 import SwiftUI
 
+@MainActor
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     static let shared = PluginProvider()
 

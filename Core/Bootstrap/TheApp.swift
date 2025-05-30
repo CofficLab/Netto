@@ -15,7 +15,7 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @State private var shouldShowMenuApp = true
     @State private var shouldShowWelcomeWindow = false
 
-    static let emoji = "🐦"
+    nonisolated static let emoji = "🐦"
     static let welcomeWindowTitle = "Welcome to TravelMode"
 
     var body: some Scene {
@@ -46,12 +46,12 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                             // 确保窗口显示在最上层
                             NSApplication.shared.activate(ignoringOtherApps: true)
                             // 将窗口置于最前面
-                            main.async {
+//                            main.async {
                                 if let window = NSApplication.shared.windows.first(where: { $0.title == Self.welcomeWindowTitle }) {
                                     window.level = .floating
                                     window.orderFrontRegardless()
                                 }
-                            }
+//                            }
                         }
                         .onReceive(nc.publisher(for: .shouldCloseWelcomeWindow)) { _ in
                             os_log("\(self.t)关闭欢迎窗口")

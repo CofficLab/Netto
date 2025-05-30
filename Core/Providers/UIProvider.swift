@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import SwiftUI
 
+@MainActor
 class UIProvider: ObservableObject {
     static let shared = UIProvider()
     private init() {

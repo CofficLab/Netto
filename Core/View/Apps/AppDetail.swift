@@ -18,7 +18,7 @@ struct AppDetail: View {
                 // 应用基本信息
                 HStack(spacing: 12) {
                     // 应用图标
-                    if let icon = app.icon {
+                    if let icon = app.getIcon() {
                         icon
                             .frame(width: 48, height: 48)
                             .clipShape(RoundedRectangle(cornerRadius: 8))

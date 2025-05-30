@@ -4,9 +4,10 @@ import MagicCore
 import OSLog
 import SwiftUI
 
+@MainActor
 class DataProvider: ObservableObject, SuperLog {
     static let shared = DataProvider()
-    static let emoji = "💾"
+    nonisolated static let emoji = "💾"
 
     @Published var apps: [SmartApp] = []
     @Published var samples: [SmartApp] = SmartApp.samples
@@ -96,14 +97,13 @@ extension DataProvider {
     /// - Parameter wrapper: 包装的网络流量数据
     private func handleNetworkFlow(_ wrapper: FlowWrapper) {
         let verbose = false
-        let flow = wrapper.flow
-        let app = SmartApp.fromId(flow.getAppId())
+        let app = SmartApp.fromId(wrapper.id)
         let event = FirewallEvent(
-            address: flow.getHostname(),
-            port: flow.getLocalPort(),
-            sourceAppIdentifier: flow.getAppId(),
+            address: wrapper.hostname,
+            port: wrapper.port,
+            sourceAppIdentifier: wrapper.id,
             status: wrapper.allowed ? .allowed : .rejected,
-            direction: flow.direction
+            direction: wrapper.direction
         )
 
         self.appendEvent(event)

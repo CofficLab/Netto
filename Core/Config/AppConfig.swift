@@ -4,11 +4,12 @@ import SwiftData
 import SwiftUI
 import WebKit
 
+@MainActor
 struct AppConfig {
-    static private var fileManager = FileManager.default
-    static var dbFileName = "db.sqlite"
-    static var label = "com.yueyi.TravelMode"
-    static var appName = "TravelMode"
+    static private let fileManager = FileManager.default
+    static let dbFileName = "db.sqlite"
+    static let label = "com.yueyi.TravelMode"
+    static let appName = "TravelMode"
     
     // Window IDs
     static let welcomeWindowId = "welcome"

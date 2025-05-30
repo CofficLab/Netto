@@ -2,7 +2,7 @@ import MagicCore
 import OSLog
 import SwiftUI
 
-struct TileMessage: View, SuperLog, SuperThread {
+struct TileMessage: View {
     @EnvironmentObject var m: MessageProvider
 
     @State var hovered = false
@@ -18,9 +18,9 @@ struct TileMessage: View, SuperLog, SuperThread {
         HStack {
             if let m = firstFlashMessage, live {
                 Text(m.description).onAppear {
-                    main.asyncAfter(deadline: .now() + 3, execute: {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                         self.live = false
-                    })
+                    }
                 }
             } else {
                 Image(systemName: "message")

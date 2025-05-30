@@ -11,10 +11,12 @@ import MagicCore
 
 /// The IPCConnection class is used by both the app and the system extension to communicate with each other
 class IPCConnection: NSObject, SuperLog {
-    static let emoji = "🤝"
+    nonisolated static let emoji = "🤝"
     var listener: NSXPCListener?
     var currentConnection: NSXPCConnection?
     weak var delegate: AppCommunication?
+    
+    @MainActor
     static let shared = IPCConnection()
 
     /**
@@ -99,7 +101,7 @@ class IPCConnection: NSObject, SuperLog {
             fatalError("Failed to create a remote object proxy for the app")
         }
 
-        appProxy.promptUser(flow: flow, responseHandler: responseHandler)
+        appProxy.promptUser(id: flow.getAppId(), hostname:flow.getHostname(), port: flow.getLocalPort(), direction: flow.direction, responseHandler: responseHandler)
 
         return true
     }
@@ -120,7 +122,7 @@ class IPCConnection: NSObject, SuperLog {
     }
 }
 
-extension IPCConnection: NSXPCListenerDelegate {
+extension IPCConnection: @preconcurrency NSXPCListenerDelegate {
 
     // MARK: NSXPCListenerDelegate
 
@@ -148,7 +150,7 @@ extension IPCConnection: NSXPCListenerDelegate {
     }
 }
 
-extension IPCConnection: ProviderCommunication {
+extension IPCConnection: @preconcurrency ProviderCommunication {
     // MARK: ProviderCommunication
 
     func register(_ completionHandler: @escaping (Bool) -> Void) {

@@ -111,6 +111,7 @@ import SwiftUI
  *    - 处理并发访问的冲突
  *    - 实现适当的数据验证机制
  */
+@MainActor
 class DatabaseManager {
     
     // MARK: - Properties

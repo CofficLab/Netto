@@ -37,6 +37,7 @@ import SwiftUI
  * - ✅ 权限检查逻辑
  *
  */
+@MainActor
 class AppSettingRepository {
     // MARK: - Properties
 

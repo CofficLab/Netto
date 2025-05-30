@@ -174,8 +174,9 @@ import SwiftUI
  *    - 监控Service的性能指标
  *    - 实现适当的错误报告机制
  */
+@MainActor
 class AppPermissionService: SuperLog {
-    static let emoji = "💁"
+    nonisolated static let emoji = "💁"
     
     // MARK: - Properties
 
