@@ -168,5 +168,9 @@ struct WelcomeGuideView: View {
 }
 
 #Preview {
-    WelcomeGuideView()
+    RootView {
+        ContentView()
+    }
+    .frame(height: 600)
+    .frame(width: 500)
 }
