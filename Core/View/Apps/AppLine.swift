@@ -36,16 +36,16 @@ struct AppLine: View, SuperEvent {
                 self.showChildrenPopover = true
             } else {
                 // 延迟关闭，给用户时间移动到popover
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    if !popoverHovering {
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                    if !popoverHovering {
                         showChildrenPopover = false
-                    }
-                }
+//                    }
+//                }
             }
         })
-        .onChange(of: self.popoverHovering, {
-            self.showChildrenPopover = self.popoverHovering
-        })
+//        .onChange(of: self.popoverHovering, {
+//            self.showChildrenPopover = self.popoverHovering
+//        })
     }
 }
 
