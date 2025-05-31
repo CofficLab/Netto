@@ -8,7 +8,7 @@ struct Toolbar: View, SuperLog {
     var body: some View {
         HStack {
             ZStack {
-                switch app.status {
+                switch channel.status {
                 case .stopped:
                     BtnStart(asToolbarItem: true).labelStyle(.iconOnly)
                 case .indeterminate:

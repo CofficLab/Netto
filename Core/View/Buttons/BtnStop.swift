@@ -40,7 +40,6 @@ struct BtnStop: View, SuperLog {
         Task {
             do {
                 try await channel.stopFilter(reason: self.className)
-                app.stop()
             } catch {
                 self.m.error(error)
             }
