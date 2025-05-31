@@ -95,7 +95,7 @@ struct AppInfo: View {
         }
         .onHover(perform: onHover)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .popover(isPresented: $showChildrenPopover, arrowEdge: .trailing) {
+        .popover(isPresented: $showChildrenPopover, arrowEdge: .leading) {
             AppDetail(
                 popoverHovering: $popoverHovering,
                 app: app,
@@ -137,11 +137,11 @@ struct AppInfo: View {
         }
 
         // 指定时间后隐藏提示
-//        DispatchQueue.main.asyncAfter(deadline: .now() + copyMessageDuration) {
-//            withAnimation(.easeInOut(duration: 0.3)) {
-//                showCopyMessage = false
-//            }
-//        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + copyMessageDuration) {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                showCopyMessage = false
+            }
+        }
     }
 }
 
@@ -191,7 +191,7 @@ extension AppInfo {
     func onAppear() {
         self.shouldAllow = data.shouldAllow(app.id)
     }
-    
+
     func onHover(_ hovering: Bool) {
         self.hovering = hovering
         if self.hovering {
@@ -205,6 +205,10 @@ extension AppInfo {
 
             // 延迟关闭，给用户时间移动到popover
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                if self.ui.hoveredAppId != self.app.id {
+                    showChildrenPopover = false
+                    return
+                }
                 if !popoverHovering {
                     showChildrenPopover = false
                 }

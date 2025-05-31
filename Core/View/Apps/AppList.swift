@@ -44,7 +44,11 @@ struct AppList: View, SuperLog {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(Array((apps.isNotEmpty ? apps : data.samples).enumerated()), id: \.element.id) { index, app in
-                        AppLine(app: app)
+                        AppInfo(
+                            app: app,
+                            iconSize: 40,
+                            isCompact: false
+                        )
                         if index < (apps.isNotEmpty ? apps : data.samples).count - 1 {
                             Divider()
                         }
