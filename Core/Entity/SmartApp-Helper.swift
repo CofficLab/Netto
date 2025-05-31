@@ -42,9 +42,9 @@ extension SmartApp: SuperLog {
         // 如果有可能接近的匹配，在日志中输出
         if !possibleMatches.isEmpty {
             let matchesInfo = possibleMatches.map { "\($0.app.localizedName ?? "未知应用")(\($0.id))" }.joined(separator: ", ")
-            os_log(.debug, "\(self.t) 🍉 未找到完全匹配的应用程序: \(id), 可能接近的应用: \(matchesInfo)")
+            os_log(.debug, "\(self.t)🍉 未找到完全匹配的应用程序: \(id), 可能接近的应用: \(matchesInfo)")
         } else {
-            os_log(.debug, "\(self.t) ⚠️ 未找到应用程序: \(id)")
+            os_log(.debug, "\(self.t)⚠️ 未找到应用程序: \(id)")
         }
 
         return nil
@@ -73,7 +73,7 @@ extension SmartApp: SuperLog {
             }
         }
         
-        os_log(.debug, "\(self.t) ⚠️ 未找到应用程序: \(id)")
+        os_log(.debug, "\(self.t)⚠️ 未找到应用程序: \(id)")
 
         return nil
     }

@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import SwiftUI
 
+@MainActor
 class UIProvider: ObservableObject {
     static let shared = UIProvider()
     private init() {
@@ -12,7 +13,6 @@ class UIProvider: ObservableObject {
     @Published var dbVisible: Bool = false
     @Published var displayType: DisplayType = .All
     @Published var showSystemApps: Bool = false
-
     private var cancellables = Set<AnyCancellable>()
     
     func start() {
@@ -21,10 +21,6 @@ class UIProvider: ObservableObject {
     
     func stop() {
         self.status = .stopped
-    }
-    
-    func setFilterStatus(_ status: FilterStatus) {
-        self.status = status
     }
 
     /// 设置通知监听器

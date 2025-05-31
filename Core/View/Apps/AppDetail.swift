@@ -17,20 +17,9 @@ struct AppDetail: View {
                 
                 // 应用基本信息
                 HStack(spacing: 12) {
-                    // 应用图标
-                    if let icon = app.icon {
-                        icon
+                    app.getIcon()
                             .frame(width: 48, height: 48)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
-                    } else {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 48, height: 48)
-                            .overlay {
-                                Image(systemName: "app")
-                                    .foregroundColor(.gray)
-                            }
-                    }
                     
                     VStack(alignment: .leading, spacing: 4) {
                         Text(app.name)

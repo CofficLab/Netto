@@ -4,16 +4,17 @@ import SwiftData
 import SwiftUI
 import WebKit
 
+@MainActor
 struct AppConfig {
-    static private var fileManager = FileManager.default
-    static var dbFileName = "db.sqlite"
-    static var label = "com.yueyi.TravelMode"
-    static var appName = "TravelMode"
+    static private let fileManager = FileManager.default
+    nonisolated static let dbFileName = "db.sqlite"
+    nonisolated static let label = "com.yueyi.TravelMode"
+    nonisolated static let appName = "TravelMode"
     
     // Window IDs
     static let welcomeWindowId = "welcome"
     
-    static var documentsURL: URL {
+    nonisolated static var documentsURL: URL {
         FileManager.default
             .urls(for: .documentDirectory, in: .userDomainMask)
             .first!
@@ -23,11 +24,11 @@ struct AppConfig {
         AppConfig.databaseURL.deletingLastPathComponent()
     }
     
-    static var databaseURL: URL {
+    nonisolated static var databaseURL: URL {
         getDatabaseURL()
     }
     
-    private static func getDatabaseURL() -> URL {
+    nonisolated private static func getDatabaseURL() -> URL {
         let fileName = dbFileName
         #if DEBUG
             let dirName = "debug"
@@ -36,11 +37,12 @@ struct AppConfig {
         #endif
         
         var isDir: ObjCBool = true
-        let dbDir = documentsURL            .appendingPathComponent(dirName, isDirectory: true)
+        let dbDir = documentsURL
+            .appendingPathComponent(dirName, isDirectory: true)
         
-        if !fileManager.fileExists(atPath: dbDir.path, isDirectory: &isDir) {
+        if !FileManager.default.fileExists(atPath: dbDir.path, isDirectory: &isDir) {
             do {
-                try fileManager.createDirectory(atPath: dbDir.path, withIntermediateDirectories: true)
+                try FileManager.default.createDirectory(atPath: dbDir.path, withIntermediateDirectories: true)
             } catch (let error) {
                 fatalError("新建数据库文件夹发生错误：\(error.localizedDescription)")
             }
@@ -48,30 +50,6 @@ struct AppConfig {
         
         return dbDir.appendingPathComponent(fileName)
     }
-
-    static var container: ModelContainer = {
-        let schema = Schema([
-            AppSetting.self,
-        ])
-
-        let modelConfiguration = ModelConfiguration(
-            schema: schema,
-            url: databaseURL,
-            allowsSave: true,
-            cloudKitDatabase: .none
-        )
-
-        do {
-            let container = try ModelContainer(
-                for: schema,
-                configurations: [modelConfiguration]
-            )
-
-            return container
-        } catch {
-            fatalError("无法创建 primaryContainer: \n\(error)")
-        }
-    }()
 }
 
 #Preview("APP") {

@@ -54,7 +54,7 @@ struct AppInfo: View {
 
     var body: some View {
         HStack(spacing: isCompact ? 8 : 12) {
-            app.icon.frame(width: iconSize, height: iconSize)
+            app.getIcon().frame(width: iconSize, height: iconSize)
 
             VStack(alignment: .leading, spacing: isCompact ? 2 : 4) {
                 HStack {
@@ -99,14 +99,25 @@ struct AppInfo: View {
         .padding(.horizontal, 10)
         .background(Group {
             if !shouldAllow {
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.red.opacity(0.2),
-                        Color.red.opacity(0.05),
-                    ]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
+                if hovering {
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.red.opacity(0.4),
+                            Color.mint.opacity(0.1),
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                } else {
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color.red.opacity(0.2),
+                            Color.red.opacity(0.05),
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                }
             } else if hovering {
                 LinearGradient(
                     gradient: Gradient(colors: [

@@ -6,7 +6,7 @@ struct AppList: View, SuperLog {
     @EnvironmentObject private var ui: UIProvider
     @EnvironmentObject private var data: DataProvider
 
-    static var emoji = "🖥️"
+    nonisolated static let emoji = "🖥️"
 
     private var apps: [SmartApp] {
         data.apps.sorted(by: {

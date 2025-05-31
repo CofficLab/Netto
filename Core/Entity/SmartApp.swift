@@ -2,14 +2,13 @@ import AppKit
 import Foundation
 import SwiftUI
 
-struct SmartApp: Identifiable {
+struct SmartApp: Identifiable, Sendable {
     // MARK: - Properties
     
     static let emoji = "🐒"
 
     var id: String
     var name: String
-    var icon: AnyView? = nil
     var events: [FirewallEvent] = []
     var isSystemApp: Bool = false
     var isSample: Bool = false
@@ -39,7 +38,6 @@ extension SmartApp {
     ) {
         self.id = id
         self.name = name
-        self.icon = AnyView(icon)
         self.isSystemApp = isSystemApp
         self.isSample = isSample
     }
@@ -48,6 +46,14 @@ extension SmartApp {
 // MARK: - Instance Methods
 
 extension SmartApp {
+    func getIcon() -> some View {
+        if let runningApp = Self.getApp(self.id), let icon = runningApp.icon {
+            return AnyView(Image(nsImage: icon))
+        }
+        
+        return AnyView(SmartApp.getDefaultIcon())
+    }
+    
     /// 向应用添加防火墙事件
     /// - Parameter e: 要添加的防火墙事件
     /// - Returns: 包含新事件的SmartApp副本

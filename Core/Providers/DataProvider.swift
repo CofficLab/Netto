@@ -5,8 +5,7 @@ import OSLog
 import SwiftUI
 
 class DataProvider: ObservableObject, SuperLog {
-    static let shared = DataProvider()
-    static let emoji = "💾"
+    nonisolated static let emoji = "💾"
 
     @Published var apps: [SmartApp] = []
     @Published var samples: [SmartApp] = SmartApp.samples
@@ -17,7 +16,7 @@ class DataProvider: ObservableObject, SuperLog {
 
     /// 初始化DataProvider
     /// - Parameter appPermissionService: 应用权限服务，默认使用shared实例
-    init(appPermissionService: AppPermissionService = AppPermissionService.shared) {
+    init(appPermissionService: AppPermissionService = AppPermissionService()) {
         self.appPermissionService = appPermissionService
 
         // 添加被禁止的应用到apps列表中
@@ -38,7 +37,7 @@ class DataProvider: ObservableObject, SuperLog {
 
     /// 私有初始化方法，用于单例模式
     private convenience init() {
-        self.init(appPermissionService: AppPermissionService.shared)
+        self.init(appPermissionService: AppPermissionService())
     }
 
     func appendEvent(_ e: FirewallEvent) {
@@ -96,14 +95,13 @@ extension DataProvider {
     /// - Parameter wrapper: 包装的网络流量数据
     private func handleNetworkFlow(_ wrapper: FlowWrapper) {
         let verbose = false
-        let flow = wrapper.flow
-        let app = SmartApp.fromId(flow.getAppId())
+        let app = SmartApp.fromId(wrapper.id)
         let event = FirewallEvent(
-            address: flow.getHostname(),
-            port: flow.getLocalPort(),
-            sourceAppIdentifier: flow.getAppId(),
+            address: wrapper.hostname,
+            port: wrapper.port,
+            sourceAppIdentifier: wrapper.id,
             status: wrapper.allowed ? .allowed : .rejected,
-            direction: flow.direction
+            direction: wrapper.direction
         )
 
         self.appendEvent(event)

@@ -1,4 +1,3 @@
-//
 import SwiftData
 import OSLog
 import MagicCore
@@ -125,21 +124,40 @@ class DatabaseManager {
     lazy var appSettingRepository: AppSettingRepository = {
         return AppSettingRepository(context: mainContext)
     }()
-    
-    // MARK: - Singleton
-    
-    /// 共享的数据库管理器实例
-    static let shared = DatabaseManager()
+
+    static func container() -> ModelContainer  {
+        let schema = Schema([
+            AppSetting.self,
+        ])
+
+        let modelConfiguration = ModelConfiguration(
+            schema: schema,
+            url: AppConfig.databaseURL,
+            allowsSave: true,
+            cloudKitDatabase: .none
+        )
+
+        do {
+            let container = try ModelContainer(
+                for: schema,
+                configurations: [modelConfiguration]
+            )
+
+            return container
+        } catch {
+            fatalError("无法创建 primaryContainer: \n\(error)")
+        }
+    }
     
     // MARK: - Initialization
     
     /// 初始化数据库管理器
     /// - Parameter container: 数据库容器，如果为nil则使用默认配置
-    private init(container: ModelContainer? = nil) {
+    init(container: ModelContainer? = nil) {
         if let container = container {
             self.container = container
         } else {
-            self.container = AppConfig.container
+            self.container = Self.container()
         }
         
         self.mainContext = ModelContext(self.container)
@@ -168,21 +186,6 @@ class DatabaseManager {
         if mainContext.hasChanges {
             try mainContext.save()
         }
-    }
-    
-    /// 在后台上下文中执行操作
-    /// - Parameter operation: 要执行的操作闭包
-    /// - Throws: 操作执行时可能抛出的错误
-    func performBackgroundTask(_ operation: @escaping (ModelContext) throws -> Void) async throws {
-        let backgroundContext = createBackgroundContext()
-        
-        try await Task {
-            try operation(backgroundContext)
-            
-            if backgroundContext.hasChanges {
-                try backgroundContext.save()
-            }
-        }.value
     }
     
     // MARK: - Database Operations
