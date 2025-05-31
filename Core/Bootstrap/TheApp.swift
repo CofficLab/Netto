@@ -46,12 +46,10 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                         // 确保窗口显示在最上层
                         NSApplication.shared.activate(ignoringOtherApps: true)
                         // 将窗口置于最前面
-//                            main.async {
                         if let window = NSApplication.shared.windows.first(where: { $0.title == Self.welcomeWindowTitle }) {
                             window.level = .floating
                             window.orderFrontRegardless()
                         }
-//                            }
                     }
                     .onReceive(nc.publisher(for: .shouldCloseWelcomeWindow)) { _ in
                         os_log("\(self.t)关闭欢迎窗口")

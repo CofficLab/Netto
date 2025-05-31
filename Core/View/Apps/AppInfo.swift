@@ -4,6 +4,7 @@ import SwiftUI
 /// 支持紧凑模式和普通模式，可自定义字体大小和样式
 struct AppInfo: View {
     @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var ui: UIProvider
 
     var app: SmartApp
     var iconSize: CGFloat
@@ -15,9 +16,10 @@ struct AppInfo: View {
     var copyMessageText: String
 
     @State var shouldAllow: Bool = true
-
     @State var hovering: Bool = false
     @State var showCopyMessage: Bool = false
+    @State var showChildrenPopover: Bool = false
+    @State var popoverHovering: Bool = false
 
     /// 初始化应用信息视图
     /// - Parameters:
@@ -91,13 +93,63 @@ struct AppInfo: View {
         .onTapGesture(count: 2) {
             copyAppId()
         }
-        .onHover { hovering in
-            self.hovering = hovering
+        .onHover(perform: onHover)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .popover(isPresented: $showChildrenPopover, arrowEdge: .trailing) {
+            AppDetail(
+                popoverHovering: $popoverHovering,
+                app: app,
+            ).frame(width: 600)
         }
+        .onChange(of: self.popoverHovering, {
+            self.showChildrenPopover = self.popoverHovering
+        })
         .onAppear(perform: onAppear)
         .padding(.vertical, 5)
         .padding(.horizontal, 10)
-        .background(Group {
+        .background(background)
+        .overlay(
+            Group {
+                if showCopyMessage {
+                    Text(copyMessageText)
+                        .font(isCompact ? .caption2 : .caption)
+                        .padding(.horizontal, isCompact ? 6 : 8)
+                        .padding(.vertical, isCompact ? 3 : 4)
+                        .background(Color.green.opacity(0.8))
+                        .foregroundColor(.white)
+                        .cornerRadius(isCompact ? 4 : 6)
+                        .transition(.opacity.combined(with: .scale))
+                }
+            },
+            alignment: .center
+        )
+    }
+
+    /// 复制应用 ID 到剪贴板
+    func copyAppId() {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(app.id, forType: .string)
+
+        // 显示复制成功提示
+        withAnimation(.easeInOut(duration: 0.3)) {
+            showCopyMessage = true
+        }
+
+        // 指定时间后隐藏提示
+//        DispatchQueue.main.asyncAfter(deadline: .now() + copyMessageDuration) {
+//            withAnimation(.easeInOut(duration: 0.3)) {
+//                showCopyMessage = false
+//            }
+//        }
+    }
+}
+
+// MARK: - View
+
+extension AppInfo {
+    var background: some View {
+        Group {
             if !shouldAllow {
                 if hovering {
                     LinearGradient(
@@ -128,40 +180,6 @@ struct AppInfo: View {
                     endPoint: .trailing
                 )
             }
-        })
-        .overlay(
-            Group {
-                if showCopyMessage {
-                    Text(copyMessageText)
-                        .font(isCompact ? .caption2 : .caption)
-                        .padding(.horizontal, isCompact ? 6 : 8)
-                        .padding(.vertical, isCompact ? 3 : 4)
-                        .background(Color.green.opacity(0.8))
-                        .foregroundColor(.white)
-                        .cornerRadius(isCompact ? 4 : 6)
-                        .transition(.opacity.combined(with: .scale))
-                }
-            },
-            alignment: .center
-        )
-    }
-
-    /// 复制应用 ID 到剪贴板
-    func copyAppId() {
-        let pasteboard = NSPasteboard.general
-        pasteboard.clearContents()
-        pasteboard.setString(app.id, forType: .string)
-
-        // 显示复制成功提示
-        withAnimation(.easeInOut(duration: 0.3)) {
-            showCopyMessage = true
-        }
-
-        // 指定时间后隐藏提示
-        DispatchQueue.main.asyncAfter(deadline: .now() + copyMessageDuration) {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                showCopyMessage = false
-            }
         }
     }
 }
@@ -172,6 +190,26 @@ extension AppInfo {
     /// 页面出现时的处理
     func onAppear() {
         self.shouldAllow = data.shouldAllow(app.id)
+    }
+    
+    func onHover(_ hovering: Bool) {
+        self.hovering = hovering
+        if self.hovering {
+            self.ui.setHoveredAppId(self.app.id)
+            self.showChildrenPopover = true
+        } else {
+            if self.ui.hoveredAppId != self.app.id {
+                showChildrenPopover = false
+                return
+            }
+
+            // 延迟关闭，给用户时间移动到popover
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                if !popoverHovering {
+                    showChildrenPopover = false
+                }
+            }
+        }
     }
 }
 
