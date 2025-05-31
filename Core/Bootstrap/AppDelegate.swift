@@ -21,7 +21,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SuperEvent, SuperLog, SuperT
 
         os_log("\(self.t)🚩 did finish launching, shouldShowWelcome: \(shouldShowWelcome)")
 
-        if shouldShowWelcome {
+        if shouldShowWelcome || true {
             self.nc.post(name: .shouldOpenWelcomeWindow, object: nil)
         } else {
             self.nc.post(name:.shouldCloseWelcomeWindow, object: nil)

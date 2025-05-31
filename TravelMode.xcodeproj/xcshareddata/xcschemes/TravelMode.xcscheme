@@ -53,7 +53,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "ditto &quot;${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}&quot; &quot;/Applications/${FULL_PRODUCT_NAME}&quot;&#10;">
+               scriptText = "&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
@@ -69,7 +69,7 @@
       <PathRunnable
          runnableDebuggingMode = "0"
          BundleIdentifier = "com.yueyi.TravelMode"
-         FilePath = "/Applications/TavelMode.app">
+         FilePath = "/Users/angel/Library/Developer/Xcode/DerivedData/TravelMode-eplghqbmycjhnrdhhmgztyooqqfd/Build/Products/Debug/TavelMode.app">
       </PathRunnable>
       <MacroExpansion>
          <BuildableReference

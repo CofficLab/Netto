@@ -12,6 +12,9 @@
 
     2个，一个APP和一个扩展。
 
+- Could not attach to pid : “4226”
+    打开控制台APP，搜索相关日志。
+
 ## 架构设计 Architecture Design
 
 ### 整体架构 Overall Architecture

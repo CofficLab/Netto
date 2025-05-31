@@ -118,9 +118,10 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
             return
         }
 
-        nc.removeObserver(changeObserver,
-                          name: .NEFilterConfigurationDidChange,
-                          object: NEFilterManager.shared()
+        nc.removeObserver(
+            changeObserver,
+            name: .NEFilterConfigurationDidChange,
+            object: NEFilterManager.shared()
         )
     }
 

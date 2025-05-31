@@ -28,14 +28,7 @@ struct GuideView: View {
                         .font(.title)
                     Image("Ask")
                 case let .error(error):
-                    VStack {
-                        InstallView()
-
-                        Text("Error: \(error.localizedDescription)")
-                            .font(.callout)
-                            .padding(20)
-                            .background(MagicBackground.cherry)
-                    }
+                    ErrorView(error: error)
                 }
             }
             .background(.background)
