@@ -54,7 +54,7 @@ struct AppInfo: View {
 
     var body: some View {
         HStack(spacing: isCompact ? 8 : 12) {
-//            app.icon.frame(width: iconSize, height: iconSize)
+            app.getIcon().frame(width: iconSize, height: iconSize)
 
             VStack(alignment: .leading, spacing: isCompact ? 2 : 4) {
                 HStack {

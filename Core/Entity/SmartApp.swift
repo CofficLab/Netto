@@ -46,8 +46,12 @@ extension SmartApp {
 // MARK: - Instance Methods
 
 extension SmartApp {
-    func getIcon() -> (some View)? {
-        EmptyView()
+    func getIcon() -> some View {
+        if let runningApp = Self.getApp(self.id), let icon = runningApp.icon {
+            return AnyView(Image(nsImage: icon))
+        }
+        
+        return AnyView(SmartApp.getDefaultIcon())
     }
     
     /// 向应用添加防火墙事件
