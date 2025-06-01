@@ -1,3 +1,4 @@
+import MagicCore
 import SwiftUI
 
 /// 通用的应用信息显示组件，用于显示应用图标、名称、ID和事件数量
@@ -9,7 +10,6 @@ struct AppInfo: View {
 
     @State var shouldAllow: Bool = true
     @State var hovering: Bool = false
-    @State var showCopyMessage: Bool = false
     @State var popoverHovering: Bool = false
     @State private var hidePopoverTask: Task<Void, Never>?
 
@@ -56,9 +56,6 @@ struct AppInfo: View {
             }
         }
         .contentShape(Rectangle())
-        .onTapGesture(count: 2) {
-            copyAppId()
-        }
         .onHover(perform: onHover)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .popover(isPresented: Binding(
@@ -77,40 +74,6 @@ struct AppInfo: View {
         .padding(.vertical, 5)
         .padding(.horizontal, 10)
         .background(background)
-        .overlay(
-            Group {
-                if showCopyMessage {
-                    Text("App ID 已复制到剪贴板")
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical,  4)
-                        .background(Color.green.opacity(0.8))
-                        .foregroundColor(.white)
-                        .cornerRadius( 6)
-                        .transition(.opacity.combined(with: .scale))
-                }
-            },
-            alignment: .center
-        )
-    }
-
-    /// 复制应用 ID 到剪贴板
-    func copyAppId() {
-        let pasteboard = NSPasteboard.general
-        pasteboard.clearContents()
-        pasteboard.setString(app.id, forType: .string)
-
-        // 显示复制成功提示
-        withAnimation(.easeInOut(duration: 0.3)) {
-            showCopyMessage = true
-        }
-
-        // 指定时间后隐藏提示
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                showCopyMessage = false
-            }
-        }
     }
 }
 
@@ -165,14 +128,13 @@ extension AppInfo {
     /// - Parameter hovering: 是否悬停
     func onHover(_ hovering: Bool) {
         self.hovering = hovering
-        
+
         if self.hovering {
             // 取消之前的隐藏任务
             hidePopoverTask?.cancel()
             hidePopoverTask = nil
-            
+
             // 设置当前悬停的应用ID并显示popover
-            self.ui.setHoveredAppId(self.app.id)
             self.ui.showPopover(for: self.app.id)
         } else {
             // 延迟隐藏popover，给用户时间移动到popover上
@@ -182,16 +144,16 @@ extension AppInfo {
             }
         }
     }
-    
+
     /// 安排延迟隐藏popover
     private func scheduleHidePopover() {
         // 取消之前的隐藏任务
         hidePopoverTask?.cancel()
-        
+
         // 创建新的延迟隐藏任务
         hidePopoverTask = Task {
-            try? await Task.sleep(nanoseconds: 150_000_000) // 150ms延迟
-            
+            try? await Task.sleep(nanoseconds: 150000000) // 150ms延迟
+
             // 检查任务是否被取消
             if !Task.isCancelled {
                 await MainActor.run {
@@ -203,7 +165,7 @@ extension AppInfo {
             }
         }
     }
-    
+
     /// 处理popover悬停状态变化
     private func handlePopoverHoverChange() {
         if popoverHovering {

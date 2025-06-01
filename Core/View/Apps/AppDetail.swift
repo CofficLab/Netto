@@ -4,6 +4,9 @@ struct AppDetail: View {
     @EnvironmentObject var data: DataProvider
     
     @Binding var popoverHovering: Bool
+    
+    /// 复制状态，用于显示复制成功的动画提示
+    @State private var isCopied = false
 
     var app: SmartApp
 
@@ -26,10 +29,25 @@ struct AppDetail: View {
                             .font(.headline)
                             .foregroundColor(.primary)
                         
-                        Text("ID: \(app.id)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .textSelection(.enabled)
+                        // App ID 和复制按钮
+                        HStack(spacing: 6) {
+                            Text("ID: \(app.id)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .textSelection(.enabled)
+                            
+                            Button(action: {
+                                copyAppID()
+                            }) {
+                                Image(systemName: isCopied ? "checkmark.circle.fill" : "doc.on.doc")
+                                    .foregroundColor(isCopied ? .green : .secondary)
+                                    .font(.caption)
+                                    .scaleEffect(isCopied ? 1.2 : 1.0)
+                                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isCopied)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .help(isCopied ? "已复制!" : "复制 App ID")
+                        }
                     }
                     
                     Spacer()
@@ -99,6 +117,25 @@ struct AppDetail: View {
         .padding(12)
         .onHover { hovering in
             popoverHovering = hovering
+        }
+    }
+    
+    /// 复制App ID到剪贴板的方法
+    private func copyAppID() {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(app.id, forType: .string)
+        
+        // 显示复制成功的动画
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+            isCopied = true
+        }
+        
+        // 2秒后重置状态
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                isCopied = false
+            }
         }
     }
 }
