@@ -72,8 +72,8 @@ struct AppInfo: View {
                 }
 
                 HStack(alignment: .top, spacing: 4) {
-                    Text("\(app.events.count)")
-                        .font(countFont)
+//                    Text("\(app.events.count)")
+//                        .font(countFont)
 
                     Text(app.id)
                         .font(idFont)
@@ -198,21 +198,22 @@ extension AppInfo {
             self.ui.setHoveredAppId(self.app.id)
             self.showChildrenPopover = true
         } else {
-            if self.ui.hoveredAppId != self.app.id {
-                showChildrenPopover = false
-                return
-            }
+            self.showChildrenPopover = false
+//            if self.ui.hoveredAppId != self.app.id {
+//                showChildrenPopover = false
+//                return
+//            }
 
             // 延迟关闭，给用户时间移动到popover
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                if self.ui.hoveredAppId != self.app.id {
-                    showChildrenPopover = false
-                    return
-                }
-                if !popoverHovering {
-                    showChildrenPopover = false
-                }
-            }
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                if self.ui.hoveredAppId != self.app.id {
+//                    showChildrenPopover = false
+//                    return
+//                }
+//                if !popoverHovering {
+//                    showChildrenPopover = false
+//                }
+//            }
         }
     }
 }
