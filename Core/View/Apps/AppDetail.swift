@@ -92,16 +92,7 @@ struct AppDetail: View {
                      .padding(.bottom, 4)
 
                 ForEach(app.children) { childApp in
-                    AppInfo(
-                        app: childApp,
-                        iconSize: 24,
-                        nameFont: .subheadline,
-                        idFont: .caption2,
-                        countFont: .caption2,
-                        isCompact: true,
-                        copyMessageDuration: 1.5,
-                        copyMessageText: "App ID 已复制"
-                    )
+                    AppInfo(app: childApp)
                 }
             }
         }

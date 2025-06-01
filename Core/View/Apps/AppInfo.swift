@@ -6,12 +6,6 @@ struct AppInfo: View {
     @EnvironmentObject var ui: UIProvider
 
     var app: SmartApp
-    var iconSize: CGFloat
-    var nameFont: Font
-    var idFont: Font
-    var countFont: Font
-    var copyMessageDuration: Double
-    var copyMessageText: String
 
     @State var shouldAllow: Bool = true
     @State var hovering: Bool = false
@@ -22,42 +16,18 @@ struct AppInfo: View {
     /// 初始化应用信息视图
     /// - Parameters:
     ///   - app: 应用数据模型
-    ///   - iconSize: 图标大小
-    ///   - nameFont: 应用名称字体
-    ///   - idFont: 应用ID字体
-    ///   - countFont: 事件数量字体
-    ///   - copyMessageDuration: 复制提示显示时长
-    ///   - copyMessageText: 复制提示文本
-    ///   - shouldAllow: 是否允许应用运行的绑定
-    ///   - hovering: 鼠标悬停状态的绑定
-    ///   - showCopyMessage: 显示复制消息状态的绑定
-    init(
-        app: SmartApp,
-        iconSize: CGFloat,
-        nameFont: Font = .body,
-        idFont: Font = .callout,
-        countFont: Font = .callout,
-        isCompact: Bool = false,
-        copyMessageDuration: Double = 2.0,
-        copyMessageText: String = "App ID 已复制到剪贴板",
-    ) {
+    init(app: SmartApp) {
         self.app = app
-        self.iconSize = iconSize
-        self.nameFont = nameFont
-        self.idFont = idFont
-        self.countFont = countFont
-        self.copyMessageDuration = copyMessageDuration
-        self.copyMessageText = copyMessageText
     }
 
     var body: some View {
         HStack(spacing: 12) {
-            app.getIcon().frame(width: iconSize, height: iconSize)
+            app.getIcon().frame(width: 40, height: 40)
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(app.name)
-                        .font(nameFont)
+                        .font(.body)
                         .lineLimit(1)
 
                     if !app.children.isEmpty {
@@ -69,10 +39,10 @@ struct AppInfo: View {
 
                 HStack(alignment: .top, spacing: 4) {
                     Text("\(app.events.count)")
-                        .font(countFont)
+                        .font(.callout)
 
                     Text(app.id)
-                        .font(idFont)
+                        .font(.callout)
                         .foregroundColor(app.isSystemApp ? .orange.opacity(0.7) : .primary)
                         .lineLimit(1)
                         .truncationMode(.tail)
@@ -110,7 +80,7 @@ struct AppInfo: View {
         .overlay(
             Group {
                 if showCopyMessage {
-                    Text(copyMessageText)
+                    Text("App ID 已复制到剪贴板")
                         .font(.caption)
                         .padding(.horizontal, 8)
                         .padding(.vertical,  4)
@@ -136,7 +106,7 @@ struct AppInfo: View {
         }
 
         // 指定时间后隐藏提示
-        DispatchQueue.main.asyncAfter(deadline: .now() + copyMessageDuration) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             withAnimation(.easeInOut(duration: 0.3)) {
                 showCopyMessage = false
             }
