@@ -260,6 +260,50 @@ extension SmartApp {
                 gradientColors: [Color.teal.opacity(0.8), Color.cyan]
             ),
             isSystemApp: true
+        ),
+        
+        // AppKit XPC 打开和保存面板服务
+        SmartApp(
+            id: ".com.apple.appkit.xpc.openAndSavePanelService",
+            name: "AppKit XPC 打开和保存面板服务",
+            icon: IconHelper.createSystemIcon(
+                iconName: "folder.badge.plus",
+                gradientColors: [Color.blue.opacity(0.8), Color.indigo]
+            ),
+            isSystemApp: true
+        ),
+        
+        // 系统策略守护进程
+        SmartApp(
+            id: ".com.apple.syspolicyd",
+            name: "系统策略守护进程",
+            icon: IconHelper.createSystemIcon(
+                iconName: "shield.checkered",
+                gradientColors: [Color.red.opacity(0.8), Color.orange]
+            ),
+            isSystemApp: true
+        ),
+        
+        // Apple推送服务守护进程
+        SmartApp(
+            id: ".com.apple.apsd",
+            name: "Apple推送服务守护进程",
+            icon: IconHelper.createSystemIcon(
+                iconName: "bell.badge",
+                gradientColors: [Color.green.opacity(0.8), Color.mint]
+            ),
+            isSystemApp: true
+        ),
+        
+        // 配置守护进程
+        SmartApp(
+            id: ".com.apple.configd",
+            name: "配置守护进程",
+            icon: IconHelper.createSystemIcon(
+                iconName: "gearshape.2",
+                gradientColors: [Color.gray.opacity(0.8), Color.secondary]
+            ),
+            isSystemApp: true
         )
     ]
 }
