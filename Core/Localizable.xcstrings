@@ -4,9 +4,6 @@
     "" : {
       "shouldTranslate" : false
     },
-    "(%lld children)" : {
-
-    },
     "%lld" : {
       "localizations" : {
         "zh-Hans" : {
@@ -17,6 +14,9 @@
         }
       },
       "shouldTranslate" : false
+    },
+    "%lld children" : {
+
     },
     "Action" : {
       "localizations" : {
@@ -74,6 +74,7 @@
       "shouldTranslate" : false
     },
     "App ID 已复制到剪贴板" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -341,10 +342,10 @@
         }
       }
     },
-    "复制错误信息" : {
+    "复制 App ID" : {
 
     },
-    "子应用程序 (Child Applications)" : {
+    "复制错误信息" : {
 
     },
     "将鼠标悬停在应用上查看操作按钮" : {
@@ -357,10 +358,16 @@
         }
       }
     },
+    "展开子程序" : {
+
+    },
     "属性信息 (Properties)" : {
 
     },
     "已复制" : {
+
+    },
+    "已复制!" : {
 
     },
     "已禁止" : {
@@ -478,6 +485,9 @@
           }
         }
       }
+    },
+    "收起子程序" : {
+
     },
     "数据交换" : {
       "localizations" : {

@@ -9,6 +9,7 @@ struct AppList: View, SuperLog {
 
     nonisolated static let emoji = "🖥️"
 
+    /// 获取主应用列表（过滤掉子应用，只显示顶级应用）
     private var apps: [SmartApp] {
         data.apps.sorted(by: {
             $0.events.count > $1.events.count
@@ -34,6 +35,13 @@ struct AppList: View, SuperLog {
                 data.shouldAllow($0.id)
             case .Rejected:
                 !data.shouldAllow($0.id)
+            }
+        }
+        // 只显示主应用（没有父应用的应用），子应用通过折叠方式在AppInfo中展示
+        .filter { app in
+            // 检查是否为顶级应用（不是其他应用的子应用）
+            !data.apps.contains { parentApp in
+                parentApp.children.contains { $0.id == app.id }
             }
         }
     }

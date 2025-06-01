@@ -103,16 +103,7 @@ struct AppDetail: View {
             .background(Color(.controlBackgroundColor))
             .clipShape(RoundedRectangle(cornerRadius: 8))
             
-            // 子应用程序列表
-             if !app.children.isEmpty {
-                 Text("子应用程序 (Child Applications)")
-                     .font(.headline)
-                     .padding(.bottom, 4)
-
-                ForEach(app.children) { childApp in
-                    AppInfo(app: childApp)
-                }
-            }
+            // 注意：子应用程序现在在主列表中通过折叠方式展示
         }
         .padding(12)
         .onHover { hovering in
