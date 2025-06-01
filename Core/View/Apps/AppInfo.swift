@@ -1,7 +1,6 @@
 import SwiftUI
 
 /// 通用的应用信息显示组件，用于显示应用图标、名称、ID和事件数量
-/// 支持紧凑模式和普通模式，可自定义字体大小和样式
 struct AppInfo: View {
     @EnvironmentObject var data: DataProvider
     @EnvironmentObject var ui: UIProvider
@@ -11,15 +10,14 @@ struct AppInfo: View {
     var nameFont: Font
     var idFont: Font
     var countFont: Font
-    var isCompact: Bool
     var copyMessageDuration: Double
     var copyMessageText: String
 
     @State var shouldAllow: Bool = true
     @State var hovering: Bool = false
     @State var showCopyMessage: Bool = false
-    @State var showChildrenPopover: Bool = false
     @State var popoverHovering: Bool = false
+    @State private var hidePopoverTask: Task<Void, Never>?
 
     /// 初始化应用信息视图
     /// - Parameters:
@@ -28,7 +26,6 @@ struct AppInfo: View {
     ///   - nameFont: 应用名称字体
     ///   - idFont: 应用ID字体
     ///   - countFont: 事件数量字体
-    ///   - isCompact: 是否为紧凑模式
     ///   - copyMessageDuration: 复制提示显示时长
     ///   - copyMessageText: 复制提示文本
     ///   - shouldAllow: 是否允许应用运行的绑定
@@ -49,22 +46,21 @@ struct AppInfo: View {
         self.nameFont = nameFont
         self.idFont = idFont
         self.countFont = countFont
-        self.isCompact = isCompact
         self.copyMessageDuration = copyMessageDuration
         self.copyMessageText = copyMessageText
     }
 
     var body: some View {
-        HStack(spacing: isCompact ? 8 : 12) {
+        HStack(spacing: 12) {
             app.getIcon().frame(width: iconSize, height: iconSize)
 
-            VStack(alignment: .leading, spacing: isCompact ? 2 : 4) {
+            VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Text(app.name)
                         .font(nameFont)
                         .lineLimit(1)
 
-                    if !app.children.isEmpty && !isCompact {
+                    if !app.children.isEmpty {
                         Text("(\(app.children.count) children)")
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -72,14 +68,14 @@ struct AppInfo: View {
                 }
 
                 HStack(alignment: .top, spacing: 4) {
-//                    Text("\(app.events.count)")
-//                        .font(countFont)
+                    Text("\(app.events.count)")
+                        .font(countFont)
 
                     Text(app.id)
                         .font(idFont)
-                        .foregroundColor(app.isSystemApp ? .orange.opacity(0.7) : (isCompact ? .secondary : .primary))
+                        .foregroundColor(app.isSystemApp ? .orange.opacity(0.7) : .primary)
                         .lineLimit(1)
-                        .truncationMode(isCompact ? .middle : .tail)
+                        .truncationMode(.tail)
                 }
             }
 
@@ -95,15 +91,18 @@ struct AppInfo: View {
         }
         .onHover(perform: onHover)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .popover(isPresented: $showChildrenPopover, arrowEdge: .leading) {
+        .popover(isPresented: Binding(
+            get: { ui.shouldShowPopover(for: app.id) },
+            set: { _ in }
+        ), arrowEdge: .leading) {
             AppDetail(
                 popoverHovering: $popoverHovering,
                 app: app,
             ).frame(width: 600)
         }
-        .onChange(of: self.popoverHovering, {
-            self.showChildrenPopover = self.popoverHovering
-        })
+        .onChange(of: self.popoverHovering) {
+            handlePopoverHoverChange()
+        }
         .onAppear(perform: onAppear)
         .padding(.vertical, 5)
         .padding(.horizontal, 10)
@@ -112,12 +111,12 @@ struct AppInfo: View {
             Group {
                 if showCopyMessage {
                     Text(copyMessageText)
-                        .font(isCompact ? .caption2 : .caption)
-                        .padding(.horizontal, isCompact ? 6 : 8)
-                        .padding(.vertical, isCompact ? 3 : 4)
+                        .font(.caption)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical,  4)
                         .background(Color.green.opacity(0.8))
                         .foregroundColor(.white)
-                        .cornerRadius(isCompact ? 4 : 6)
+                        .cornerRadius( 6)
                         .transition(.opacity.combined(with: .scale))
                 }
             },
@@ -192,28 +191,58 @@ extension AppInfo {
         self.shouldAllow = data.shouldAllow(app.id)
     }
 
+    /// 处理鼠标悬停状态变化
+    /// - Parameter hovering: 是否悬停
     func onHover(_ hovering: Bool) {
         self.hovering = hovering
+        
         if self.hovering {
+            // 取消之前的隐藏任务
+            hidePopoverTask?.cancel()
+            hidePopoverTask = nil
+            
+            // 设置当前悬停的应用ID并显示popover
             self.ui.setHoveredAppId(self.app.id)
-            self.showChildrenPopover = true
+            self.ui.showPopover(for: self.app.id)
         } else {
-            self.showChildrenPopover = false
-//            if self.ui.hoveredAppId != self.app.id {
-//                showChildrenPopover = false
-//                return
-//            }
-
-            // 延迟关闭，给用户时间移动到popover
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                if self.ui.hoveredAppId != self.app.id {
-//                    showChildrenPopover = false
-//                    return
-//                }
-//                if !popoverHovering {
-//                    showChildrenPopover = false
-//                }
-//            }
+            // 延迟隐藏popover，给用户时间移动到popover上
+            // 只有当前显示的是这个应用的popover时才安排隐藏
+            if ui.shouldShowPopover(for: self.app.id) {
+                scheduleHidePopover()
+            }
+        }
+    }
+    
+    /// 安排延迟隐藏popover
+    private func scheduleHidePopover() {
+        // 取消之前的隐藏任务
+        hidePopoverTask?.cancel()
+        
+        // 创建新的延迟隐藏任务
+        hidePopoverTask = Task {
+            try? await Task.sleep(nanoseconds: 150_000_000) // 150ms延迟
+            
+            // 检查任务是否被取消
+            if !Task.isCancelled {
+                await MainActor.run {
+                    // 只有当用户没有悬停在popover上且当前popover仍然是这个应用的时才隐藏
+                    if !popoverHovering && ui.shouldShowPopover(for: self.app.id) {
+                        ui.hidePopover()
+                    }
+                }
+            }
+        }
+    }
+    
+    /// 处理popover悬停状态变化
+    private func handlePopoverHoverChange() {
+        if popoverHovering {
+            // 用户悬停在popover上，取消隐藏任务
+            hidePopoverTask?.cancel()
+            hidePopoverTask = nil
+        } else {
+            // 用户离开popover，安排隐藏
+            scheduleHidePopover()
         }
     }
 }

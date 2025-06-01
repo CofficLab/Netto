@@ -10,9 +10,30 @@ class UIProvider: ObservableObject {
     @Published var displayType: DisplayType = .All
     @Published var showSystemApps: Bool = false
     @Published var hoveredAppId: String = ""
+    @Published var activePopoverAppId: String = ""
     
+    /// 设置当前悬停的应用ID
+    /// - Parameter id: 应用ID
     func setHoveredAppId(_ id: String) {
         self.hoveredAppId = id
+    }
+    
+    /// 显示指定应用的popover，同时隐藏其他应用的popover
+    /// - Parameter appId: 要显示popover的应用ID
+    func showPopover(for appId: String) {
+        self.activePopoverAppId = appId
+    }
+    
+    /// 隐藏当前显示的popover
+    func hidePopover() {
+        self.activePopoverAppId = ""
+    }
+    
+    /// 检查指定应用的popover是否应该显示
+    /// - Parameter appId: 应用ID
+    /// - Returns: 是否应该显示popover
+    func shouldShowPopover(for appId: String) -> Bool {
+        return activePopoverAppId == appId
     }
 }
 
