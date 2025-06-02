@@ -63,6 +63,7 @@
       "shouldTranslate" : false
     },
     "APP" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -326,6 +327,7 @@
       }
     },
     "共 %lld 条记录" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

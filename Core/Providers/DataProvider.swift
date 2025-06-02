@@ -9,8 +9,7 @@ class DataProvider: ObservableObject, SuperLog {
 
     @Published var apps: [SmartApp] = []
     @Published var samples: [SmartApp] = SmartApp.samples
-    @Published var events: [FirewallEvent] = []
-
+    
     private var cancellables = Set<AnyCancellable>()
     private let appPermissionService: AppPermissionService
 
@@ -38,14 +37,6 @@ class DataProvider: ObservableObject, SuperLog {
     /// 私有初始化方法，用于单例模式
     private convenience init() {
         self.init(appPermissionService: AppPermissionService())
-    }
-
-    func appendEvent(_ e: FirewallEvent) {
-        self.events.append(e)
-
-        if self.events.count > 100 {
-            self.events.removeFirst()
-        }
     }
 
     /// 检查应用是否应该被允许访问网络
@@ -103,8 +94,6 @@ extension DataProvider {
             status: wrapper.allowed ? .allowed : .rejected,
             direction: wrapper.direction
         )
-
-        self.appendEvent(event)
 
         if let index = apps.firstIndex(where: { $0.id == app.id }) {
             if verbose {

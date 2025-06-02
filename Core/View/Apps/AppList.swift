@@ -79,9 +79,3 @@ struct AppList: View, SuperLog {
         AppList()
     }
 }
-
-#Preview("EventList") {
-    RootView {
-        EventList()
-    }
-}
