@@ -103,6 +103,35 @@ struct AppDetail: View {
             .background(Color(.controlBackgroundColor))
             .clipShape(RoundedRectangle(cornerRadius: 8))
             
+            // 事件详细列表
+            if !app.events.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("事件详情 (Event Details)")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .padding(.horizontal, 12)
+                    
+                    Table(app.events.reversed(), columns: {
+                        TableColumn("Time", value: \.timeFormatted).width(150)
+                        TableColumn("Address", value: \.address)
+                        TableColumn("Port", value: \.port).width(60)
+                        TableColumn("Direction") { event in
+                            Text(event.direction == .inbound ? "入" : "出")
+                                .foregroundStyle(event.isAllowed ? .green : .red)
+                        }.width(60)
+                        TableColumn("Status") { event in
+                            Text(event.status == .allowed ? "允许" : "拒绝")
+                                .foregroundStyle(event.isAllowed ? .green : .red)
+                        }.width(60)
+                    })
+                    .frame(minHeight: 200)
+                    .frame(maxHeight: 300)
+                }
+                .padding(12)
+                .background(Color(.controlBackgroundColor))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            
             // 注意：子应用程序现在在主列表中通过折叠方式展示
         }
         .padding(12)

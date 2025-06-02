@@ -211,6 +211,9 @@
       },
       "shouldTranslate" : false
     },
+    "Status" : {
+
+    },
     "Status Unknown" : {
       "localizations" : {
         "zh-Hans" : {
@@ -297,6 +300,9 @@
       }
     },
     "事件总数 (Total Events)" : {
+
+    },
+    "事件详情 (Event Details)" : {
 
     },
     "允许" : {
@@ -475,6 +481,9 @@
           }
         }
       }
+    },
+    "拒绝" : {
+
     },
     "按下方示意图进行设置" : {
       "localizations" : {
