@@ -15,9 +15,6 @@
       },
       "shouldTranslate" : false
     },
-    "%lld children" : {
-
-    },
     "Action" : {
       "localizations" : {
         "zh-Hans" : {
@@ -374,9 +371,6 @@
         }
       }
     },
-    "展开子程序" : {
-
-    },
     "属性信息 (Properties)" : {
 
     },
@@ -512,9 +506,6 @@
       }
     },
     "描述" : {
-
-    },
-    "收起子程序" : {
 
     },
     "数据交换" : {

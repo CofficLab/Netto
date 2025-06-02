@@ -21,17 +21,15 @@ struct SmartApp: Identifiable, Sendable {
 // MARK: - Initialization
 
 extension SmartApp {
-    /// 使用ID、名称和SwiftUI视图图标初始化SmartApp
+    /// 使用ID和名称初始化SmartApp
     /// - Parameters:
     ///   - id: 应用程序唯一标识符
     ///   - name: 应用程序名称
-    ///   - icon: SwiftUI视图作为图标
     ///   - isSystemApp: 是否为系统应用程序（默认值为false）
     ///   - isSample: 是否为示例应用程序（默认值为false）
     init(
         id: String, 
         name: String, 
-        icon: some View, 
         isSystemApp: Bool = false, 
         isSample: Bool = false
     ) {
@@ -45,31 +43,25 @@ extension SmartApp {
 // MARK: - Instance Methods
 
 extension SmartApp {
+    /// 获取应用图标
+    /// - Returns: 应用图标视图
     func getIcon() -> some View {
+        // 优先检查系统应用图标
+        if isSystemApp, let systemIcon = Self.getSystemAppIcon(self.id) {
+            return AnyView(systemIcon)
+        }
+        
+        // 检查运行中的应用图标
         if let runningApp = Self.getApp(self.id), let icon = runningApp.icon {
             return AnyView(Image(nsImage: icon))
         }
         
+        // 尝试寻找Package
+        if let packageApp = Self.getPackage(id), let icon = packageApp.icon {
+            return AnyView(Image(nsImage: icon))
+        }
+        
         return AnyView(SmartApp.getDefaultIcon())
-    }
-    
-    /// 向应用添加防火墙事件
-    /// - Parameter e: 要添加的防火墙事件
-    /// - Returns: 包含新事件的SmartApp副本
-    func appendEvent(_ e: FirewallEvent) -> Self {
-        var cloned = self
-        cloned.events.append(e)
-
-        return cloned
-    }
-
-    /// 向应用添加多个防火墙事件
-    /// - Parameter events: 要添加的防火墙事件数组
-    /// - Returns: 包含新事件的SmartApp副本
-    func appendEvents(_ events: [FirewallEvent]) -> Self {
-        var cloned = self
-        cloned.events.append(contentsOf: events)
-        return cloned
     }
 }
 
@@ -83,8 +75,7 @@ extension SmartApp {
         if let runningApp = getApp(id) {
             return SmartApp(
                 id: runningApp.bundleIdentifier ?? "",
-                name: runningApp.localizedName ?? "",
-                icon: AnyView(Image(nsImage: runningApp.icon ?? NSImage()).resizable())
+                name: runningApp.localizedName ?? ""
             )
         }
 
@@ -98,8 +89,7 @@ extension SmartApp {
         if let packageApp = Self.getPackage(id) {
             return SmartApp(
                 id: id,
-                name: packageApp.localizedName ?? "",
-                icon: AnyView(Image(nsImage: packageApp.icon ?? NSImage()).resizable())
+                name: packageApp.localizedName ?? ""
             )
         }
 
@@ -112,8 +102,7 @@ extension SmartApp {
     static func fromRunningApp(_ app: NSRunningApplication) -> Self {
         return SmartApp(
             id: app.bundleIdentifier ?? "-",
-            name: app.localizedName ?? "-",
-            icon: AnyView(Image(nsImage: app.icon ?? NSImage()).resizable())
+            name: app.localizedName ?? "-"
         )
     }
 }
