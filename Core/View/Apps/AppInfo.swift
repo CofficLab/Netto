@@ -11,6 +11,7 @@ struct AppInfo: View {
     @State var shouldAllow: Bool = true
     @State var hovering: Bool = false
     @State var popoverHovering: Bool = false
+    @State var actionHovering: Bool = false
     @State private var hidePopoverTask: Task<Void, Never>?
     @State private var isChildrenExpanded: Bool = false
 
@@ -69,13 +70,16 @@ struct AppInfo: View {
 
                 if hovering && app.isNotSample {
                     AppAction(shouldAllow: $shouldAllow, appId: app.id)
+                        .onHover(perform: {
+                            self.actionHovering = $0
+                        })
                 }
             }
             .contentShape(Rectangle())
             .onHover(perform: onHover)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .popover(isPresented: Binding(
-                get: { ui.shouldShowPopover(for: app.id) },
+                get: { ui.shouldShowPopover(for: app.id) && !self.actionHovering },
                 set: { _ in }
             ), arrowEdge: .leading) {
                 AppDetail(
@@ -90,13 +94,13 @@ struct AppInfo: View {
             .padding(.vertical, 5)
             .padding(.horizontal, 10)
             .background(background)
-            
+
             // 子程序列表（可折叠）
             if isChildrenExpanded && !app.children.isEmpty {
                 VStack(spacing: 0) {
                     ForEach(Array(app.children.enumerated()), id: \.element.id) { index, childApp in
                         ChildAppRow(childApp: childApp)
-                        
+
                         if index < app.children.count - 1 {
                             Divider()
                                 .padding(.leading, 40)
@@ -215,14 +219,14 @@ extension AppInfo {
 struct ChildAppRow: View {
     @EnvironmentObject var data: DataProvider
     @EnvironmentObject var ui: UIProvider
-    
+
     let childApp: SmartApp
-    
+
     @State private var hovering: Bool = false
     @State private var popoverHovering: Bool = false
     @State private var hidePopoverTask: Task<Void, Never>?
     @State private var shouldAllow: Bool = true
-    
+
     var body: some View {
         HStack(spacing: 12) {
             // 缩进指示器
@@ -230,18 +234,18 @@ struct ChildAppRow: View {
                 .fill(Color.secondary.opacity(0.3))
                 .frame(width: 2, height: 20)
                 .padding(.leading, 20)
-            
+
             childApp.getIcon().frame(width: 32, height: 32)
-            
+
             VStack(alignment: .leading, spacing: 2) {
                 Text(childApp.name)
                     .font(.caption)
                     .lineLimit(1)
-                
+
                 HStack(alignment: .top, spacing: 4) {
                     Text("\(childApp.events.count)")
                         .font(.caption2)
-                    
+
                     Text(childApp.id)
                         .font(.caption2)
                         .foregroundColor(.secondary)
@@ -249,9 +253,9 @@ struct ChildAppRow: View {
                         .truncationMode(.tail)
                 }
             }
-            
+
             Spacer()
-            
+
             if hovering && childApp.isNotSample {
                 AppAction(shouldAllow: $shouldAllow, appId: childApp.id)
             }
@@ -277,17 +281,17 @@ struct ChildAppRow: View {
             self.shouldAllow = data.shouldAllow(childApp.id)
         }
     }
-    
+
     /// 处理鼠标悬停状态变化
     /// - Parameter hovering: 是否悬停
     private func onHover(_ hovering: Bool) {
         self.hovering = hovering
-        
+
         if self.hovering {
             // 取消之前的隐藏任务
             hidePopoverTask?.cancel()
             hidePopoverTask = nil
-            
+
             // 设置当前悬停的应用ID并显示popover
             self.ui.showPopover(for: self.childApp.id)
         } else {
@@ -297,16 +301,16 @@ struct ChildAppRow: View {
             }
         }
     }
-    
+
     /// 安排延迟隐藏popover
     private func scheduleHidePopover() {
         // 取消之前的隐藏任务
         hidePopoverTask?.cancel()
-        
+
         // 创建新的延迟隐藏任务
         hidePopoverTask = Task {
             try? await Task.sleep(nanoseconds: 150000000) // 150ms延迟
-            
+
             // 检查任务是否被取消
             if !Task.isCancelled {
                 await MainActor.run {
@@ -318,7 +322,7 @@ struct ChildAppRow: View {
             }
         }
     }
-    
+
     /// 处理popover悬停状态变化
     private func handlePopoverHoverChange() {
         if popoverHovering {

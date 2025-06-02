@@ -19,7 +19,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
             Spacer()
             TileFilter()
             Spacer()
-//            TileEventList()
+            TileEventList()
             TileMore()
         }
     }

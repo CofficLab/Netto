@@ -117,15 +117,12 @@ class FilterDataProvider: NEFilterDataProvider, SuperLog {
         os_log("\(self.t)handleNewFlow")
 
         // Ask the app to prompt the user
-        // WWDC2019视频中说，这是一个异步的过程
-//        DispatchQueue.main.async {
         let prompted = self.ipc.promptUser(flow: flow) { (allow: Bool) in
             let userVerdict: NEFilterNewFlowVerdict = allow ? .allow() : .drop()
-//
-                // 用户决策完毕，可能是恢复，也可能是拒绝
+            
+            // 用户决策完毕，可能是恢复，也可能是拒绝
             self.resumeFlow(flow, with: userVerdict)
         }
-//        }
 
         guard prompted else {
             ipc.log("调用promptUser失败，放行")
