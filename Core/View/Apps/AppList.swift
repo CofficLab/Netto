@@ -37,13 +37,6 @@ struct AppList: View, SuperLog {
                 !data.shouldAllow($0.id)
             }
         }
-        // 只显示主应用（没有父应用的应用），子应用通过折叠方式在AppInfo中展示
-        .filter { app in
-            // 检查是否为顶级应用（不是其他应用的子应用）
-            !data.apps.contains { parentApp in
-                parentApp.children.contains { $0.id == app.id }
-            }
-        }
     }
 
     /// 构建应用列表视图

@@ -33,25 +33,6 @@ struct AppInfo: View {
                         Text(app.name)
                             .font(.body)
                             .lineLimit(1)
-
-                        if !app.children.isEmpty {
-                            Button(action: {
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    isChildrenExpanded.toggle()
-                                }
-                            }) {
-                                HStack(spacing: 4) {
-                                    Image(systemName: isChildrenExpanded ? "chevron.down" : "chevron.right")
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                    Text("\(app.children.count) children")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            .help(isChildrenExpanded ? "收起子程序" : "展开子程序")
-                        }
                     }
 
                     HStack(alignment: .top, spacing: 4) {
@@ -94,21 +75,6 @@ struct AppInfo: View {
             .padding(.vertical, 5)
             .padding(.horizontal, 10)
             .background(background)
-
-            // 子程序列表（可折叠）
-            if isChildrenExpanded && !app.children.isEmpty {
-                VStack(spacing: 0) {
-                    ForEach(Array(app.children.enumerated()), id: \.element.id) { index, childApp in
-                        ChildAppRow(childApp: childApp)
-
-                        if index < app.children.count - 1 {
-                            Divider()
-                                .padding(.leading, 40)
-                        }
-                    }
-                }
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
         }
     }
 }
@@ -340,5 +306,6 @@ struct ChildAppRow: View {
     RootView {
         ContentView()
     }
+    .frame(width: 500)
     .frame(height: 600)
 }

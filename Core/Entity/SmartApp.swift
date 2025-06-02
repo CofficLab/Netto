@@ -12,7 +12,6 @@ struct SmartApp: Identifiable, Sendable {
     var events: [FirewallEvent] = []
     var isSystemApp: Bool = false
     var isSample: Bool = false
-    var children: [SmartApp] = []
 
     var isNotSample: Bool { !isSample }
     var hasId: Bool { id.isNotEmpty }
@@ -72,29 +71,6 @@ extension SmartApp {
         cloned.events.append(contentsOf: events)
         return cloned
     }
-
-    /// 检查应用程序是否包含子应用程序
-    /// - Parameter id: 子应用程序ID
-    /// - Returns: 如果应用程序包含子应用程序，则返回true；否则返回false
-    func containsChild(_ id: String) -> Bool {
-        children.contains(where: { $0.id == id })
-    }
-
-    /// 检查应用程序是否包含子应用程序
-    /// - Parameter id: 子应用程序ID
-    /// - Returns: 如果应用程序包含子应用程序，则返回true；否则返回false
-    func getChild(_ id: String) -> SmartApp? {
-        children.first(where: { $0.id == id })
-    }
-
-    /// 删除子应用程序
-    /// - Parameter id: 子应用程序ID
-    /// - Returns: 包含删除子应用程序的SmartApp副本
-    func removeChild(_ id: String) -> Self {
-        var cloned = self
-        cloned.children.removeAll(where: { $0.id == id })
-        return cloned
-    }
 }
 
 // MARK: - Factory Methods
@@ -121,10 +97,10 @@ extension SmartApp {
         // 尝试寻找Package
         if let packageApp = Self.getPackage(id) {
             return SmartApp(
-                id: packageApp.bundleIdentifier ?? "",
+                id: id,
                 name: packageApp.localizedName ?? "",
                 icon: AnyView(Image(nsImage: packageApp.icon ?? NSImage()).resizable())
-            ).addChild(unknownApp)
+            )
         }
 
         return unknownApp
@@ -151,35 +127,6 @@ extension SmartApp {
     }.reduce(into: []) { result, app in
         if !result.contains(where: { $0.id == app.id }) {
             result.append(app)
-        }
-    }
-}
-
-// MARK: - Modifiers
-
-extension SmartApp {
-    /// 为应用程序添加子应用程序
-    /// - Parameter child: 子应用程序
-    /// - Returns: 包含子应用程序的SmartApp副本
-    func addChild(_ child: SmartApp) -> Self {
-        // 如果已经存在了，则将child中的events添加到当前应用程序的events中
-        if let existingChild = self.getChild(child.id) {
-            let cloned = self.removeChild(child.id)
-            return cloned.addChild(existingChild.appendEvents(child.events))
-        }
-        
-        // 如果不存在，则直接添加
-        var cloned = self
-        cloned.children.append(child)
-        return cloned
-    }
-
-    /// 为应用程序添加多个子应用程序
-    /// - Parameter children: 子应用程序数组
-    /// - Returns: 包含子应用程序的SmartApp副本
-    func addChildren(_ children: [SmartApp]) -> Self {
-        children.reduce(self) { result, child in
-            result.addChild(child)
         }
     }
 }
