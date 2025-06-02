@@ -1,8 +1,8 @@
-import Foundation
-import SwiftUI
 import AppKit
-import OSLog
+import Foundation
 import MagicCore
+import OSLog
+import SwiftUI
 
 extension SmartApp: SuperLog {
     /// 获取当前系统中所有正在运行的应用程序列表
@@ -17,9 +17,11 @@ extension SmartApp: SuperLog {
 
     /// 根据标识符查找正在运行的应用程序
     ///
-    /// - Parameter id: 要查找的应用程序标识符
+    /// - Parameter 
+    //      - id: 要查找的应用程序标识符 
+    //      - verbose: 是否输出详细日志
     /// - Returns: 找到的应用程序实例，如果未找到则返回nil
-    static func getApp(_ id: String) -> NSRunningApplication? {
+    static func getApp(_ id: String, verbose: Bool = false) -> NSRunningApplication? {
         let apps = getRunningAppList()
         var possibleMatches: [(app: NSRunningApplication, id: String)] = []
 
@@ -32,19 +34,23 @@ extension SmartApp: SuperLog {
             if bundleIdentifier == id {
                 return app
             }
-            
+
             // 收集可能接近的匹配
             if id.contains(bundleIdentifier) || bundleIdentifier.contains(id) {
                 possibleMatches.append((app, bundleIdentifier))
             }
         }
-        
+
         // 如果有可能接近的匹配，在日志中输出
         if !possibleMatches.isEmpty {
             let matchesInfo = possibleMatches.map { "\($0.app.localizedName ?? "未知应用")(\($0.id))" }.joined(separator: ", ")
-            os_log(.debug, "\(self.t)🍉 未找到完全匹配的应用程序: \(id), 可能接近的应用: \(matchesInfo)")
+            if verbose {
+                os_log(.debug, "\(self.t)🍉 未找到完全匹配的应用程序: \(id), 可能接近的应用: \(matchesInfo)")
+            }
         } else {
-            os_log(.debug, "\(self.t)⚠️ 未找到应用程序: \(id)")
+            if verbose {
+                os_log(.debug, "\(self.t)⚠️ 未找到应用程序: \(id)")
+            }
         }
 
         return nil
@@ -66,13 +72,13 @@ extension SmartApp: SuperLog {
             if bundleIdentifier == id {
                 return app
             }
-            
+
             // 收集可能接近的匹配
             if id.contains(bundleIdentifier) {
                 return Self.getApp(bundleIdentifier)
             }
         }
-        
+
         os_log(.debug, "\(self.t)⚠️ 未找到应用程序: \(id)")
 
         return nil
@@ -84,13 +90,13 @@ extension SmartApp: SuperLog {
 /// 用于展示运行中应用列表的预览视图
 struct RunningAppsPreview: View {
     @State private var runningApps: [NSRunningApplication] = []
-    
+
     var body: some View {
         VStack {
             Text("当前运行的应用程序")
                 .font(.headline)
                 .padding()
-            
+
             List(runningApps, id: \.bundleIdentifier) { app in
                 HStack {
                     if let icon = app.icon {
@@ -102,23 +108,22 @@ struct RunningAppsPreview: View {
                             .resizable()
                             .frame(width: 32, height: 32)
                     }
-                    
+
                     VStack(alignment: .leading) {
                         Text(app.localizedName ?? "未知应用")
                             .font(.headline)
-                        
+
                         if let bundleId = app.bundleIdentifier {
                             Text(bundleId)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         if let bundleURL = app.bundleURL {
                             Text(bundleURL.absoluteString)
                                 .font(.caption)
                                 .foregroundColor(.orange.opacity(0.8))
                         }
-
                     }
                 }
                 .padding(.vertical, 4)

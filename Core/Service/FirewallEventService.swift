@@ -153,13 +153,15 @@ class FirewallEventService: SuperLog {
     /// - Parameter event: 要记录的防火墙事件
     /// - Throws: 保存数据时可能抛出的错误
     func recordEvent(_ event: FirewallEvent) throws {
+        let verbose = false
         if let validationError = validateEventWithReason(event) {
             throw FirewallEventError.invalidEvent(validationError)
         }
         
         try repository.create(event)
+        if verbose {
         os_log("\(self.t)📝 Recorded firewall event: \(event.description) for app \(event.sourceAppIdentifier)")
-    }
+    }}
     
     /// 批量记录防火墙事件
     /// - Parameter events: 要记录的防火墙事件数组
@@ -210,6 +212,7 @@ class FirewallEventService: SuperLog {
     /// - Returns: 该应用的防火墙事件数组
     /// - Throws: 查询数据时可能抛出的错误
     func getEventsByAppId(_ appId: String) throws -> [FirewallEvent] {
+        os_log("\(self.t)获取防火墙事件: \(appId)")
         let eventModels = try repository.fetchByAppId(appId)
         return eventModels.map { $0.toFirewallEvent() }
     }

@@ -16,8 +16,8 @@ class DataProvider: ObservableObject, SuperLog {
 
     /// 初始化DataProvider
     /// - Parameters:
-    ///   - appPermissionService: 应用权限服务，默认使用shared实例
-    ///   - firewallEventService: 防火墙事件服务，默认使用shared实例
+    ///   - appPermissionService: 应用权限服务
+    ///   - firewallEventService: 防火墙事件服务
     init(appPermissionService: AppPermissionService = AppPermissionService(), 
          firewallEventService: FirewallEventService = FirewallEventService()) {
         self.appPermissionService = appPermissionService
@@ -91,7 +91,7 @@ extension DataProvider {
     /// 处理网络流量事件
     /// - Parameter wrapper: 包装的网络流量数据
     private func handleNetworkFlow(_ wrapper: FlowWrapper) {
-        let verbose = true
+        let verbose = false
         let app = SmartApp.fromId(wrapper.id)
         
         // 验证和处理端口信息
@@ -125,7 +125,7 @@ extension DataProvider {
             os_log(.error, "\(self.t)❌ 存储事件到数据库失败: \(error)")
         }
 
-        // 更新应用列表（不再在内存中存储事件）
+        // 更新应用列表
         if let index = apps.firstIndex(where: { $0.id == app.id }) {
             if verbose {
                 os_log("\(self.t)🍋 监听到网络流量，更新已知APP")

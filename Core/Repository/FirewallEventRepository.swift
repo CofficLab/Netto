@@ -40,8 +40,10 @@ import NetworkExtension
  * - ✅ 按应用ID查询
  *
  */
-class FirewallEventRepository {
+class FirewallEventRepository: SuperLog {
     // MARK: - Properties
+    
+    nonisolated static let emoji = "🏠"
 
     /// 数据库上下文
     private let context: ModelContext
@@ -154,6 +156,7 @@ class FirewallEventRepository {
     /// - Returns: 该应用的所有FirewallEventModel记录数组
     /// - Throws: 查询数据时可能抛出的错误
     func fetchByAppId(_ appId: String) throws -> [FirewallEventModel] {
+        os_log("\(self.t)根据应用ID查找FirewallEvent记录 -> \(appId)")
         let predicate = #Predicate<FirewallEventModel> { item in
             item.sourceAppIdentifier == appId
         }

@@ -1,6 +1,10 @@
 import SwiftUI
+import MagicCore
+import OSLog
 
-struct AppDetail: View {
+struct AppDetail: View, SuperLog {
+    nonisolated static let emoji = "🖥️"
+    
     @EnvironmentObject var data: DataProvider
     
     @Binding var popoverHovering: Bool
@@ -154,6 +158,7 @@ struct AppDetail: View {
         do {
             let allEvents = try firewallEventService.getEventsByAppId(app.id)
             events = allEvents
+            os_log("\(self.t)加载了 \(allEvents.count) 个事件")
         } catch {
             print("加载事件数据失败: \(error)")
             events = []
