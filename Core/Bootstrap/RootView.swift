@@ -21,7 +21,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
             .environmentObject(app)
             .environmentObject(data)
             .environmentObject(channel)
-//            .modelContainer(data.container)
+            .modelContainer(DatabaseManager.container())
             .environmentObject(m)
             .environmentObject(p)
             .toast(isPresenting: $m.showToast, alert: {

@@ -12,11 +12,16 @@ class DataProvider: ObservableObject, SuperLog {
     
     private var cancellables = Set<AnyCancellable>()
     private let appPermissionService: AppPermissionService
+    private let firewallEventService: FirewallEventService
 
     /// 初始化DataProvider
-    /// - Parameter appPermissionService: 应用权限服务，默认使用shared实例
-    init(appPermissionService: AppPermissionService = AppPermissionService()) {
+    /// - Parameters:
+    ///   - appPermissionService: 应用权限服务，默认使用shared实例
+    ///   - firewallEventService: 防火墙事件服务，默认使用shared实例
+    init(appPermissionService: AppPermissionService = AppPermissionService(), 
+         firewallEventService: FirewallEventService = FirewallEventService()) {
         self.appPermissionService = appPermissionService
+        self.firewallEventService = firewallEventService
 
         // 添加被禁止的应用到apps列表中
         do {
@@ -36,7 +41,8 @@ class DataProvider: ObservableObject, SuperLog {
 
     /// 私有初始化方法，用于单例模式
     private convenience init() {
-        self.init(appPermissionService: AppPermissionService())
+        self.init(appPermissionService: AppPermissionService(), 
+                  firewallEventService: FirewallEventService())
     }
 
     /// 检查应用是否应该被允许访问网络
@@ -85,36 +91,57 @@ extension DataProvider {
     /// 处理网络流量事件
     /// - Parameter wrapper: 包装的网络流量数据
     private func handleNetworkFlow(_ wrapper: FlowWrapper) {
-        let verbose = false
+        let verbose = true
         let app = SmartApp.fromId(wrapper.id)
+        
+        // 验证和处理端口信息
+        let validPort: String
+        if wrapper.port.isEmpty {
+            validPort = "0"  // 默认端口
+        } else if let portNumber = Int(wrapper.port), portNumber > 0 && portNumber <= 65535 {
+            validPort = wrapper.port
+        } else {
+            validPort = "0"  // 无效端口时使用默认值
+        }
+        
+        // 验证地址信息
+        let validAddress = wrapper.hostname.isEmpty ? "unknown" : wrapper.hostname
+        
         let event = FirewallEvent(
-            address: wrapper.hostname,
-            port: wrapper.port,
+            address: validAddress,
+            port: validPort,
             sourceAppIdentifier: wrapper.id,
             status: wrapper.allowed ? .allowed : .rejected,
             direction: wrapper.direction
         )
 
+        // 将事件存储到数据库
+        do {
+            try firewallEventService.recordEvent(event)
+            if verbose {
+                os_log("\(self.t)💾 事件已存储到数据库: \(event.description)")
+            }
+        } catch {
+            os_log(.error, "\(self.t)❌ 存储事件到数据库失败: \(error)")
+        }
+
+        // 更新应用列表（不再在内存中存储事件）
         if let index = apps.firstIndex(where: { $0.id == app.id }) {
             if verbose {
-                os_log("\(self.t)🍋 监听到网络流量，为已知的APP增加Event")
+                os_log("\(self.t)🍋 监听到网络流量，更新已知APP")
             }
-
-            apps[index] = apps[index].appendEvent(event)
             apps[index] = apps[index].addChildren(app.children)
         } else {
             if verbose {
                 os_log("\(self.t)🛋️ 监听到网络流量，没见过这个APP，加入列表 -> \(app.id)")
             }
-
-            apps.append(app.appendEvent(event))
+            apps.append(app)
         }
 
         let total = self.apps.count
-        let hasEventCount = self.apps.filter({ $0.events.count > 0 }).count
 
         if verbose {
-            os_log("\(self.t)📈 当前APP数量 -> \(total) 其中 Events.Count>0 的数量 -> \(hasEventCount)")
+            os_log("\(self.t)📈 当前APP数量 -> \(total)")
         }
     }
 }

@@ -7,6 +7,12 @@ struct AppDetail: View {
     
     /// 复制状态，用于显示复制成功的动画提示
     @State private var isCopied = false
+    
+    /// 从数据库加载的事件列表
+    @State private var events: [FirewallEvent] = []
+    
+    /// 防火墙事件服务
+    private let firewallEventService = FirewallEventService()
 
     var app: SmartApp
 
@@ -82,7 +88,7 @@ struct AppDetail: View {
                         
                         Spacer()
                         
-                        Text("\(app.events.count)")
+                        Text("\(events.count)")
                             .font(.caption)
                             .fontWeight(.medium)
                             .padding(.horizontal, 8)
@@ -91,8 +97,8 @@ struct AppDetail: View {
                             .clipShape(Capsule())
                     }
                     
-                    if !app.events.isEmpty {
-                        Text("最近事件: \(app.events.last?.description ?? "无")")
+                    if !events.isEmpty {
+                        Text("最近事件: \(events.last?.description ?? "无")")
                             .font(.caption2)
                             .foregroundColor(.secondary)
                             .lineLimit(2)
@@ -104,14 +110,14 @@ struct AppDetail: View {
             .clipShape(RoundedRectangle(cornerRadius: 8))
             
             // 事件详细列表
-            if !app.events.isEmpty {
+            if !events.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("事件详情 (Event Details)")
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .padding(.horizontal, 12)
                     
-                    Table(app.events.reversed(), columns: {
+                    Table(events.reversed(), columns: {
                         TableColumn("Time", value: \.timeFormatted).width(150)
                         TableColumn("Address", value: \.address)
                         TableColumn("Port", value: \.port).width(60)
@@ -137,6 +143,20 @@ struct AppDetail: View {
         .padding(12)
         .onHover { hovering in
             popoverHovering = hovering
+        }
+        .onAppear {
+            loadEvents()
+        }
+    }
+    
+    /// 从数据库加载指定应用的事件数据
+    private func loadEvents() {
+        do {
+            let allEvents = try firewallEventService.getEventsByAppId(app.id)
+            events = allEvents
+        } catch {
+            print("加载事件数据失败: \(error)")
+            events = []
         }
     }
     

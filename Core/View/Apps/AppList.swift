@@ -14,9 +14,9 @@ struct AppList: View, SuperLog {
         data.apps.sorted(by: {
             $0.events.count > $1.events.count
         })
-        .filter({
-            $0.events.count > 0 || data.shouldDeny($0.id)
-        })
+//        .filter({
+//            $0.events.count > 0 || data.shouldDeny($0.id)
+//        })
         .filter({
             if ui.showSystemApps {
                 return true

@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-struct DatabaseView: View {
+struct DBSettingView: View {
     @Query(sort: \AppSetting.appId, order: .forward)
     var items: [AppSetting]
     
@@ -25,11 +25,18 @@ struct DatabaseView: View {
 #Preview("APP") {
     RootView {
         ContentView()
-    }.frame(width: 700)
+    }.frame(width: 500)
 }
 
 #Preview {
     RootView {
-        DatabaseView()
+        DBSettingView()
     }
+}
+
+#Preview("防火墙事件视图") {
+    RootView {
+        DBEventView()
+    }
+    .frame(width: 600, height: 600)
 }

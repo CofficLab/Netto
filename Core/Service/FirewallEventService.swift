@@ -153,8 +153,8 @@ class FirewallEventService: SuperLog {
     /// - Parameter event: 要记录的防火墙事件
     /// - Throws: 保存数据时可能抛出的错误
     func recordEvent(_ event: FirewallEvent) throws {
-        guard validateEvent(event) else {
-            throw FirewallEventError.invalidEvent("Event validation failed")
+        if let validationError = validateEventWithReason(event) {
+            throw FirewallEventError.invalidEvent(validationError)
         }
         
         try repository.create(event)
@@ -315,25 +315,48 @@ class FirewallEventService: SuperLog {
     /// - Parameter event: 要验证的防火墙事件
     /// - Returns: 如果事件有效返回true，否则返回false
     func validateEvent(_ event: FirewallEvent) -> Bool {
-        // 检查基本字段
-        guard !event.id.isEmpty,
-              !event.address.isEmpty,
-              !event.port.isEmpty else {
-            return false
+        return validateEventWithReason(event) == nil
+    }
+    
+    /// 验证防火墙事件数据的有效性并返回具体的失败原因
+    /// - Parameter event: 要验证的防火墙事件
+    /// - Returns: 如果事件有效返回nil，否则返回具体的错误原因
+    private func validateEventWithReason(_ event: FirewallEvent) -> String? {
+        // 检查ID字段
+        if event.id.isEmpty {
+            return "事件ID不能为空"
+        }
+        
+        // 检查地址字段
+        if event.address.isEmpty {
+            return "地址不能为空"
+        }
+        
+        // 检查端口字段
+        if event.port.isEmpty {
+            return "端口不能为空"
         }
         
         // 检查时间是否合理（不能是未来时间）
-        guard event.time <= Date() else {
-            return false
+        if event.time > Date() {
+            return "事件时间不能是未来时间"
         }
         
         // 检查端口号是否有效
-        guard let portNumber = Int(event.port),
-              portNumber > 0 && portNumber <= 65535 else {
-            return false
+        guard let portNumber = Int(event.port) else {
+            return "端口号格式无效: \(event.port)"
         }
         
-        return true
+        // 允许端口为0（表示未知端口），因为防火墙事件并不总是包含有效的端口信息
+        if portNumber < 0 {
+            return "端口号不能为负数，当前值: \(portNumber)"
+        }
+        
+        if portNumber > 65535 {
+            return "端口号不能超过65535，当前值: \(portNumber)"
+        }
+        
+        return nil
     }
     
     /// 清理指定时间之前的防火墙事件
