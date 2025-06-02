@@ -139,3 +139,11 @@ struct RunningAppsPreview: View {
 #Preview {
     RunningAppsPreview()
 }
+
+#Preview("APP") {
+    RootView(content: {
+        ContentView()
+    })
+    .frame(width: 700)
+    .frame(height: 600)
+}
