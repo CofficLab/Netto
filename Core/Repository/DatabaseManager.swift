@@ -124,10 +124,16 @@ class DatabaseManager {
     lazy var appSettingRepository: AppSettingRepository = {
         return AppSettingRepository(context: mainContext)
     }()
+    
+    /// FirewallEvent仓库
+    lazy var firewallEventRepository: FirewallEventRepository = {
+        return FirewallEventRepository(context: mainContext)
+    }()
 
     static func container() -> ModelContainer  {
         let schema = Schema([
             AppSetting.self,
+            FirewallEventModel.self,
         ])
 
         let modelConfiguration = ModelConfiguration(
@@ -199,6 +205,12 @@ class DatabaseManager {
             mainContext.delete(setting)
         }
         
+        // 删除所有FirewallEvent记录
+        let firewallEvents = try mainContext.fetch(FetchDescriptor<FirewallEventModel>())
+        for event in firewallEvents {
+            mainContext.delete(event)
+        }
+        
         try saveMainContext()
         
         os_log("All database data cleared successfully")
@@ -209,9 +221,11 @@ class DatabaseManager {
     /// - Throws: 查询时可能抛出的错误
     func getDatabaseStats() throws -> [String: Int] {
         let appSettingsCount = try mainContext.fetch(FetchDescriptor<AppSetting>()).count
+        let firewallEventsCount = try mainContext.fetch(FetchDescriptor<FirewallEventModel>()).count
         
         return [
-            "appSettings": appSettingsCount
+            "appSettings": appSettingsCount,
+            "firewallEvents": firewallEventsCount
         ]
     }
     
