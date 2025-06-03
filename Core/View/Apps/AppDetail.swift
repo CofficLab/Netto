@@ -19,7 +19,6 @@ struct AppDetail: View, SuperLog {
             
             // 事件详细列表
             EventDetailView(appId: app.id)
-                .addLifecycleHandlers()
         }
         .padding(12)
         .onHover { hovering in

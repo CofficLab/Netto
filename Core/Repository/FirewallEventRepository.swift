@@ -446,7 +446,7 @@ extension Notification.Name {
     static let firewallEventDeleted = Notification.Name("firewallEventDeleted")
 }
 
-#Preview("FirewallEvent Repository") {
+#Preview("App") {
     RootView {
         ContentView()
     }

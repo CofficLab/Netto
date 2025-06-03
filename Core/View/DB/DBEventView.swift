@@ -300,6 +300,14 @@ struct DBEventView: View {
     }
 }
 
+#Preview("APP") {
+    RootView {
+        ContentView()
+    }
+    .frame(height: 600)
+    .frame(width: 800)
+}
+
 #Preview {
     RootView {
         DBEventView()

@@ -154,6 +154,15 @@ struct EventDetailView: View, SuperLog {
         .padding(12)
         .background(Color(.controlBackgroundColor))
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .onAppear(perform: onAppear)
+        .onChange(of: statusFilter) { _, _ in
+            currentPage = 0 // 重置到第一页
+            loadEvents()
+        }
+        .onChange(of: directionFilter) { _, _ in
+            currentPage = 0 // 重置到第一页
+            loadEvents()
+        }
     }
     
     // MARK: - 事件加载和分页方法
@@ -206,25 +215,6 @@ struct EventDetailView: View, SuperLog {
     }
 }
 
-
-// MARK: - 视图修饰器
-
-extension EventDetailView {
-    /// 添加视图出现和状态变化的处理
-    func addLifecycleHandlers() -> some View {
-        self
-            .onAppear(perform: onAppear)
-            .onChange(of: statusFilter) { _, _ in
-                currentPage = 0 // 重置到第一页
-                loadEvents()
-            }
-            .onChange(of: directionFilter) { _, _ in
-                currentPage = 0 // 重置到第一页
-                loadEvents()
-            }
-    }
-}
-
 #Preview("APP") {
     RootView {
         ContentView()
@@ -233,7 +223,6 @@ extension EventDetailView {
 }
 
 #Preview("事件详情视图") {
-    EventDetailView(appId: "com.example.app")
-        .addLifecycleHandlers()
+    EventDetailView(appId: "59GAB85EFG.com.apple.dt.Xcode")
         .frame(width: 600, height: 600)
 }
