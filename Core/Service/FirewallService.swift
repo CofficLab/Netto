@@ -6,10 +6,18 @@ import SwiftUI
 import SystemExtensions
 
 @MainActor
-class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
+final class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
     static let shared = FirewallService()
 
+    nonisolated static let emoji = "🛡️"
+
+    private var ipc = IPCConnection.shared
+    private var extensionManager = OSSystemExtensionManager.shared
+    private var extensionBundle = AppConfig.extensionBundle
+    private var error: Error?
+    private var observer: Any?
     private let s: AppPermissionService = .shared
+    var status: FilterStatus = .stopped
 
     override private init() {
         super.init()
@@ -35,50 +43,22 @@ class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
         }
     }
 
-    nonisolated static let emoji = "📢"
-
-    private var ipc = IPCConnection.shared
-    private var extensionManager = OSSystemExtensionManager.shared
-    private var extensionBundle = AppConfig.extensionBundle
-
-    var error: Error?
-    private var _status: FilterStatus = .stopped
-
-    var observer: Any?
-
     /// 更新过滤器状态
     /// - Parameter status: 新的过滤器状态
-    @MainActor
     private func updateFilterStatus(_ status: FilterStatus) {
-        let oldValue = _status
+        let oldValue = self.status
 
-        self._status = status
+        self.status = status
 
         os_log("\(self.t)🍋 更新状态 -> \(status.description) 原状态 -> \(oldValue.description)")
         if oldValue.isNotRunning() && status.isRunning() {
             registerWithProvider(reason: "not running -> running")
         }
 
-        DispatchQueue.main.async {
-            NotificationCenter.default.post(
-                name: .FilterStatusChanged,
-                object: status,
-                userInfo: nil
-            )
-        }
+        self.emit(.FilterStatusChanged, object: status)
     }
 
-    func clearError() {
-        self.error = nil
-    }
-
-    @MainActor
-    func setError(_ error: Error) {
-        self.error = error
-    }
-
-    @MainActor
-    func setObserver() {
+    private func setObserver() {
         os_log("\(self.t)👀 添加监听")
         observer = nc.addObserver(
             forName: .NEFilterConfigurationDidChange,
@@ -87,14 +67,15 @@ class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
         ) { _ in
             let enabled = NEFilterManager.shared().isEnabled
             os_log("\(self.t)\(enabled ? "👀 监听到 Filter 已打开 " : "👀 监听到 Fitler 已关闭")")
-            Task { @MainActor in
-                self.updateFilterStatus(enabled ? .running : .stopped)
+
+            Task {
+                await self.updateFilterStatus(enabled ? .running : .stopped)
             }
         }
     }
 
-    // 过滤器是否已经启动了
-    func ifFilterReady() -> Bool {
+    /// 过滤器是否已经启动了
+    private func ifFilterReady() -> Bool {
         os_log("\(self.t)\(Location.did(.IfReady))")
 
         if NEFilterManager.shared().isEnabled {
@@ -105,6 +86,18 @@ class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
         } else {
             return false
         }
+    }
+}
+
+// MARK: Operator
+
+extension FirewallService {
+    func clearError() {
+        self.error = nil
+    }
+
+    func setError(_ error: Error) {
+        self.error = error
     }
 
     func viewWillDisappear() {
@@ -140,7 +133,7 @@ class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
     }
 
     func startFilter(reason: String) async throws {
-        os_log("\(self.t)🚀 开启过滤器 🐛 \(reason)  ➡️ Current Status: \(self._status.description)")
+        os_log("\(self.t)🚀 开启过滤器 🐛 \(reason)  ➡️ Current Status: \(self.status.description)")
 
         self.emit(.willStart)
 
@@ -185,17 +178,19 @@ class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
 
         self.updateFilterStatus(.stopped)
     }
+}
 
-    // MARK: Content Filter Configuration Management
+// MARK: Content Filter Configuration Management
 
-    func loadFilterConfiguration(reason: String) async throws {
+extension FirewallService {
+    private func loadFilterConfiguration(reason: String) async throws {
         os_log("\(self.t)🚩 读取过滤器配置 🐛 \(reason)")
 
         // You must call this method at least once before calling saveToPreferencesWithCompletionHandler: for the first time after your app launches.
         try await NEFilterManager.shared().loadFromPreferences()
     }
 
-    func enableFilterConfiguration(reason: String) {
+    private func enableFilterConfiguration(reason: String) {
         os_log("\(self.t)🦶 \(Location.did(.EnableFilterConfiguration))")
 
         self.emit(.configurationChanged)
@@ -246,7 +241,7 @@ class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
         }
     }
 
-    func registerWithProvider(reason: String) {
+    private func registerWithProvider(reason: String) {
         os_log("\(self.t)🛫 registerWithProvider，让 ChannelProvider 和 Extension 关联起来(\(reason)")
 
         self.emit(.willRegisterWithProvider)

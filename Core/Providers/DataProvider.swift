@@ -121,7 +121,7 @@ extension DataProvider {
     /// 处理网络流量事件
     /// - Parameter wrapper: 包装的网络流量数据
     private func handleNetworkFlow(_ wrapper: FlowWrapper) {
-        let verbose = true
+        let verbose = false
         let app = SmartApp.fromId(wrapper.id)
 
         // 验证和处理端口信息

@@ -26,6 +26,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
             .environmentObject(m)
             .environmentObject(p)
             .environmentObject(service)
+            .onAppear(perform: onAppear)
             .onReceive(self.nc.publisher(for: .FilterStatusChanged), perform: onFilterStatusChanged)
             .toast(isPresenting: $m.showToast, alert: {
                 AlertToast(type: .systemImage("info.circle", .blue), title: m.toast)
@@ -53,6 +54,10 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
 // MARK: - Event
 
 extension RootView {
+    func onAppear() {
+        self.data.status = service.getFirewallServiceStatus()
+    }
+    
     func onFilterStatusChanged(_ n: Notification) {
         if let status = n.object as? FilterStatus {
             os_log("\(self.t)状态变更为 -> \(status.description)")
