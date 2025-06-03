@@ -348,7 +348,7 @@ extension ChannelProvider: AppCommunication {
     ///   - direction: 网络流量方向
     ///   - responseHandler: 响应处理回调
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
-        let verbose = true
+        let verbose = false
 
         let shouldAllow = DataProvider().shouldAllow(id)
         if shouldAllow {

@@ -167,6 +167,61 @@ class FirewallEventRepository: SuperLog {
         )
         return try context.fetch(descriptor)
     }
+    
+    /// 根据应用ID分页查找FirewallEvent记录
+    /// - Parameters:
+    ///   - appId: 应用程序ID
+    ///   - page: 页码（从0开始）
+    ///   - pageSize: 每页记录数
+    ///   - statusFilter: 状态筛选（可选）
+    ///   - directionFilter: 方向筛选（可选）
+    /// - Returns: 分页后的FirewallEventModel记录数组
+    /// - Throws: 查询数据时可能抛出的错误
+    func fetchByAppIdPaginated(
+        _ appId: String,
+        page: Int,
+        pageSize: Int,
+        statusFilter: FirewallEvent.Status? = nil,
+        directionFilter: NETrafficDirection? = nil
+    ) throws -> [FirewallEventModel] {
+        os_log("\(self.t)根据应用ID分页查找FirewallEvent记录 -> \(appId), 页码: \(page), 每页: \(pageSize)")
+        
+        // 构建查询条件
+        var predicates: [Predicate<FirewallEventModel>] = [
+            #Predicate<FirewallEventModel> { item in item.sourceAppIdentifier == appId }
+        ]
+        
+        // 添加状态筛选
+        if let statusFilter = statusFilter {
+            let statusValue = statusFilter == .allowed ? 0 : 1
+            predicates.append(#Predicate<FirewallEventModel> { item in item.statusRawValue == statusValue })
+        }
+        
+        // 添加方向筛选
+        if let directionFilter = directionFilter {
+            let directionValue = directionFilter.rawValue
+            predicates.append(#Predicate<FirewallEventModel> { item in item.directionRawValue == directionValue })
+        }
+        
+        // 组合所有条件
+        let combinedPredicate = predicates.reduce(into: predicates[0]) { result, predicate in
+            result = #Predicate<FirewallEventModel> { item in
+                result.evaluate(item) && predicate.evaluate(item)
+            }
+        }
+        
+        // 创建查询描述符
+        var descriptor = FetchDescriptor<FirewallEventModel>(
+            predicate: combinedPredicate,
+            sortBy: [SortDescriptor(\FirewallEventModel.time, order: .reverse)]
+        )
+        
+        // 设置分页参数
+        descriptor.fetchOffset = page * pageSize
+        descriptor.fetchLimit = pageSize
+        
+        return try context.fetch(descriptor)
+    }
 
     /// 根据状态查找FirewallEvent记录
     /// - Parameter status: 防火墙状态
@@ -274,6 +329,46 @@ class FirewallEventRepository: SuperLog {
             item.sourceAppIdentifier == appId
         }
         let descriptor = FetchDescriptor(predicate: predicate)
+        return try context.fetchCount(descriptor)
+    }
+    
+    /// 获取指定应用的事件总数（带筛选）
+    /// - Parameters:
+    ///   - appId: 应用程序ID
+    ///   - statusFilter: 状态筛选（可选）
+    ///   - directionFilter: 方向筛选（可选）
+    /// - Returns: 符合条件的事件总数
+    /// - Throws: 查询数据时可能抛出的错误
+    func getEventCountByAppIdFiltered(
+        _ appId: String,
+        statusFilter: FirewallEvent.Status? = nil,
+        directionFilter: NETrafficDirection? = nil
+    ) throws -> Int {
+        // 构建查询条件
+        var predicates: [Predicate<FirewallEventModel>] = [
+            #Predicate<FirewallEventModel> { item in item.sourceAppIdentifier == appId }
+        ]
+        
+        // 添加状态筛选
+        if let statusFilter = statusFilter {
+            let statusValue = statusFilter == .allowed ? 0 : 1
+            predicates.append(#Predicate<FirewallEventModel> { item in item.statusRawValue == statusValue })
+        }
+        
+        // 添加方向筛选
+        if let directionFilter = directionFilter {
+            let directionValue = directionFilter.rawValue
+            predicates.append(#Predicate<FirewallEventModel> { item in item.directionRawValue == directionValue })
+        }
+        
+        // 组合所有条件
+        let combinedPredicate = predicates.reduce(into: predicates[0]) { result, predicate in
+            result = #Predicate<FirewallEventModel> { item in
+                result.evaluate(item) && predicate.evaluate(item)
+            }
+        }
+        
+        let descriptor = FetchDescriptor(predicate: combinedPredicate)
         return try context.fetchCount(descriptor)
     }
     

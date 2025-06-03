@@ -217,6 +217,54 @@ class FirewallEventService: SuperLog {
         return eventModels.map { $0.toFirewallEvent() }
     }
     
+    /// 获取指定应用的防火墙事件（分页）
+    /// - Parameters:
+    ///   - appId: 应用程序ID
+    ///   - page: 页码（从0开始）
+    ///   - pageSize: 每页记录数
+    ///   - statusFilter: 状态筛选（可选）
+    ///   - directionFilter: 方向筛选（可选）
+    /// - Returns: 分页后的防火墙事件数组
+    /// - Throws: 查询数据时可能抛出的错误
+    func getEventsByAppIdPaginated(
+        _ appId: String,
+        page: Int,
+        pageSize: Int,
+        statusFilter: FirewallEvent.Status? = nil,
+        directionFilter: NETrafficDirection? = nil
+    ) throws -> [FirewallEvent] {
+        os_log("\(self.t)获取防火墙事件(分页): \(appId), 页码: \(page), 每页: \(pageSize)")
+        
+        let eventModels = try repository.fetchByAppIdPaginated(
+            appId,
+            page: page,
+            pageSize: pageSize,
+            statusFilter: statusFilter,
+            directionFilter: directionFilter
+        )
+        
+        return eventModels.map { $0.toFirewallEvent() }
+    }
+    
+    /// 获取指定应用的防火墙事件总数
+    /// - Parameters:
+    ///   - appId: 应用程序ID
+    ///   - statusFilter: 状态筛选（可选）
+    ///   - directionFilter: 方向筛选（可选）
+    /// - Returns: 符合条件的事件总数
+    /// - Throws: 查询数据时可能抛出的错误
+    func getEventCountByAppId(
+        _ appId: String,
+        statusFilter: FirewallEvent.Status? = nil,
+        directionFilter: NETrafficDirection? = nil
+    ) throws -> Int {
+        return try repository.getEventCountByAppIdFiltered(
+            appId,
+            statusFilter: statusFilter,
+            directionFilter: directionFilter
+        )
+    }
+    
     /// 获取指定状态的所有防火墙事件
     /// - Parameter status: 防火墙状态
     /// - Returns: 指定状态的防火墙事件数组

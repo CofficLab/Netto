@@ -1,29 +1,40 @@
 import SwiftUI
 import MagicCore
 import OSLog
+import NetworkExtension
 
 /**
  * 事件详情视图
  * 
  * 展示应用的网络事件详情，包括事件列表、筛选工具栏和分页控制
+ * 直接通过appId获取事件数据，支持分页加载和筛选
  */
 struct EventDetailView: View, SuperLog {
     nonisolated static let emoji = "📋"
     
-    /// 从数据库加载的事件列表
-    @Binding var events: [FirewallEvent]
+    /// 应用ID
+    let appId: String
     
     /// 当前页码（从0开始）
-    @Binding var currentPage: Int
+    @State private var currentPage: Int = 0
     
     /// 状态筛选选项
-    @Binding var statusFilter: StatusFilter
+    @State private var statusFilter: StatusFilter = .all
     
     /// 方向筛选选项
-    @Binding var directionFilter: DirectionFilter
+    @State private var directionFilter: DirectionFilter = .all
+    
+    /// 事件列表
+    @State private var events: [FirewallEvent] = []
+    
+    /// 事件总数
+    @State private var totalEventCount: Int = 0
     
     /// 每页显示的事件数量
     private let eventsPerPage: Int = 20
+    
+    /// 防火墙事件服务
+    private let firewallEventService = FirewallEventService()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -67,16 +78,16 @@ struct EventDetailView: View, SuperLog {
             .padding(.horizontal, 0)
             .padding(.bottom, 8)
             
-            // 筛选后的事件数量
+            // 事件数量
             HStack {
                 Spacer()
-                Text("共 \(getFilteredEvents().count) 条事件")
+                Text("共 \(totalEventCount) 条事件")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
             .padding(.horizontal, 12)
             
-            Table(getCurrentPageEvents(), columns: {
+            Table(events, columns: {
                 TableColumn("Time", value: \.timeFormatted).width(150)
                 TableColumn("Address", value: \.address)
                 TableColumn("Port", value: \.port).width(60)
@@ -98,6 +109,7 @@ struct EventDetailView: View, SuperLog {
                     Button(action: {
                         if currentPage > 0 {
                             currentPage -= 1
+                            loadEvents()
                         }
                     }) {
                         Image(systemName: "chevron.left")
@@ -116,6 +128,7 @@ struct EventDetailView: View, SuperLog {
                     Button(action: {
                         if currentPage < getTotalPages() - 1 {
                             currentPage += 1
+                            loadEvents()
                         }
                     }) {
                         Image(systemName: "chevron.right")
@@ -143,63 +156,74 @@ struct EventDetailView: View, SuperLog {
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
     
-    // MARK: - 事件筛选和分页方法
+    // MARK: - 事件加载和分页方法
     
-    /// 根据筛选条件获取事件列表
-    private func getFilteredEvents() -> [FirewallEvent] {
-        var filteredEvents = events
-        
-        // 应用状态筛选
-        if statusFilter != .all {
-            filteredEvents = filteredEvents.filter { event in
-                switch statusFilter {
-                case .allowed:
-                    return event.status == .allowed
-                case .rejected:
-                    return event.status == .rejected
-                case .all:
-                    return true
-                }
-            }
+    /// 加载事件数据
+    private func loadEvents() {
+        do {
+            // 获取状态筛选条件
+            let statusFilterValue: FirewallEvent.Status? = statusFilter == .all ? nil : 
+                                                         (statusFilter == .allowed ? .allowed : .rejected)
+            
+            // 获取方向筛选条件
+            let directionFilterValue: NETrafficDirection? = directionFilter == .all ? nil :
+                                                          (directionFilter == .inbound ? .inbound : .outbound)
+            
+            // 获取事件总数
+            totalEventCount = try firewallEventService.getEventCountByAppId(
+                appId,
+                statusFilter: statusFilterValue,
+                directionFilter: directionFilterValue
+            )
+            
+            // 获取分页数据
+            events = try firewallEventService.getEventsByAppIdPaginated(
+                appId,
+                page: currentPage,
+                pageSize: eventsPerPage,
+                statusFilter: statusFilterValue,
+                directionFilter: directionFilterValue
+            )
+            
+            os_log("\(self.t)🍑 (\(appId)) 加载了 \(events.count) 个事件，总数: \(totalEventCount)")
+        } catch {
+            print("加载事件数据失败: \(error)")
+            events = []
+            totalEventCount = 0
         }
-        
-        // 应用方向筛选
-        if directionFilter != .all {
-            filteredEvents = filteredEvents.filter { event in
-                switch directionFilter {
-                case .inbound:
-                    return event.direction == .inbound
-                case .outbound:
-                    return event.direction == .outbound
-                case .all:
-                    return true
-                }
-            }
-        }
-        
-        return filteredEvents
-    }
-    
-    /// 获取当前页的事件数据
-    private func getCurrentPageEvents() -> [FirewallEvent] {
-        let filteredEvents = getFilteredEvents()
-        let reversedEvents = Array(filteredEvents.reversed())
-        let startIndex = currentPage * eventsPerPage
-        let endIndex = min(startIndex + eventsPerPage, reversedEvents.count)
-        
-        if startIndex >= reversedEvents.count {
-            return []
-        }
-        
-        return Array(reversedEvents[startIndex..<endIndex])
     }
     
     /// 获取总页数
     private func getTotalPages() -> Int {
-        return max(1, Int(ceil(Double(getFilteredEvents().count) / Double(eventsPerPage))))
+        return max(1, Int(ceil(Double(totalEventCount) / Double(eventsPerPage))))
+    }
+    
+    // MARK: - 生命周期方法
+    
+    /// 视图出现时加载数据
+    private func onAppear() {
+        loadEvents()
     }
 }
 
+
+// MARK: - 视图修饰器
+
+extension EventDetailView {
+    /// 添加视图出现和状态变化的处理
+    func addLifecycleHandlers() -> some View {
+        self
+            .onAppear(perform: onAppear)
+            .onChange(of: statusFilter) { _, _ in
+                currentPage = 0 // 重置到第一页
+                loadEvents()
+            }
+            .onChange(of: directionFilter) { _, _ in
+                currentPage = 0 // 重置到第一页
+                loadEvents()
+            }
+    }
+}
 
 #Preview("APP") {
     RootView {
@@ -209,26 +233,7 @@ struct EventDetailView: View, SuperLog {
 }
 
 #Preview("事件详情视图") {
-    EventDetailView(
-        events: .constant([
-            FirewallEvent(
-                address: "example.com",
-                port: "443",
-                sourceAppIdentifier: "com.example.app",
-                status: .allowed,
-                direction: .outbound
-            ),
-            FirewallEvent(
-                address: "test.com",
-                port: "80",
-                sourceAppIdentifier: "com.example.app",
-                status: .rejected,
-                direction: .inbound
-            )
-        ]),
-        currentPage: .constant(0),
-        statusFilter: .constant(.all),
-        directionFilter: .constant(.all)
-    )
-    .frame(width: 600, height: 600)
+    EventDetailView(appId: "com.example.app")
+        .addLifecycleHandlers()
+        .frame(width: 600, height: 600)
 }
