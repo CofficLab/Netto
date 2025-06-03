@@ -19,6 +19,9 @@ struct SmartApp: Identifiable, Sendable {
     /// 是否是代理软件
     var isProxy: Bool = false
 
+    /// the URL to the application's bundle
+    var bundleURL: URL?
+
     var isNotSample: Bool { !isSample }
     var hasId: Bool { id.isNotEmpty }
     var hasNoId: Bool { id.isEmpty }
@@ -55,7 +58,8 @@ extension SmartApp {
             return SmartApp(
                 id: runningApp.bundleIdentifier ?? "",
                 name: runningApp.localizedName ?? "",
-                isProxy: Self.isProxyApp(runningApp)
+                isProxy: Self.isProxyApp(runningApp),
+                bundleURL: runningApp.bundleURL
             )
         }
 
@@ -74,7 +78,9 @@ extension SmartApp {
     static func fromRunningApp(_ app: NSRunningApplication) -> Self {
         return SmartApp(
             id: app.bundleIdentifier ?? "-",
-            name: app.localizedName ?? "-"
+            name: app.localizedName ?? "-",
+            isProxy: Self.isProxyApp(app),
+            bundleURL: app.bundleURL,
         )
     }
 }

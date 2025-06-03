@@ -81,27 +81,93 @@ struct AppDetail: View, SuperLog {
                         .fontWeight(.medium)
                     
                     VStack(spacing: 4) {
-                        Label("系统应用 (System App)", systemImage: app.isSystemApp ? "checkmark.circle.fill" : "xmark.circle")
-                            .foregroundColor(app.isSystemApp ? .green : .secondary)
-                            .font(.caption)
-                        
-                        HStack(spacing: 4) {
-                            Label("代理应用 (Proxy App)", systemImage: SmartApp.isProxyApp(withId: app.id) ? "shield.fill" : "shield")
-                                .foregroundColor(SmartApp.isProxyApp(withId: app.id) ? .orange : .secondary)
-                                .font(.caption)
-                            
-                            Button(action: {
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    showProxyExplanation.toggle()
+                        // 根据应用类型显示相应的标签
+                        if app.isSystemApp {
+                            // 系统应用标签
+                            HStack(spacing: 4) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.green)
+                                        .font(.caption)
+                                        .frame(width: 12, alignment: .center)
+                                    
+                                    Text("系统应用 (System App)")
+                                        .foregroundColor(.green)
+                                        .font(.caption)
                                 }
-                            }) {
-                                Image(systemName: showProxyExplanation ? "chevron.up.circle.fill" : "info.circle")
-                                    .foregroundColor(.blue)
+                                
+                                Spacer(minLength: 0)
+                            }
+                        } else if SmartApp.isProxyApp(withId: app.id) {
+                            // 代理应用标签
+                            HStack(spacing: 4) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "shield.fill")
+                                        .foregroundColor(.orange)
+                                        .font(.caption)
+                                        .frame(width: 12, alignment: .center)
+                                    
+                                    Text("代理应用 (Proxy App)")
+                                        .foregroundColor(.orange)
+                                        .font(.caption)
+                                }
+                                
+                                Button(action: {
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        showProxyExplanation.toggle()
+                                    }
+                                }) {
+                                    Image(systemName: showProxyExplanation ? "chevron.up.circle.fill" : "info.circle")
+                                        .foregroundColor(.blue)
+                                        .font(.caption)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .help(showProxyExplanation ? "收起代理应用说明" : "了解代理应用对网络监控的影响")
+
+                                Spacer(minLength: 0)
+                            }
+                        }
+                    }
+                    
+                    // Bundle URL 信息
+                    if let bundleURL = app.bundleURL {
+                        HStack(spacing: 4) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "folder")
+                                    .foregroundColor(.purple)
+                                    .font(.caption)
+                                    .frame(width: 12, alignment: .center)
+                                
+                                Text("Bundle路径 (Bundle Path)")
+                                    .foregroundColor(.purple)
                                     .font(.caption)
                             }
-                            .buttonStyle(PlainButtonStyle())
-                            .help(showProxyExplanation ? "收起代理应用说明" : "了解代理应用对网络监控的影响")
+                            
+                            Spacer(minLength: 0)
                         }
+                        
+                        // Bundle URL 路径显示
+                        HStack(spacing: 6) {
+                            Text(bundleURL.path)
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                                .textSelection(.enabled)
+                                .lineLimit(2)
+                                .truncationMode(.middle)
+                            
+                            Button(action: {
+                                bundleURL.openInFinder()
+                            }) {
+                                Image(systemName: "doc.viewfinder")
+                                    .foregroundColor(.secondary)
+                                    .font(.caption2)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .help("在 Finder 中显示")
+                            
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.leading, 16)
                     }
                 }
                 
@@ -288,6 +354,14 @@ struct AppDetail: View, SuperLog {
                 isCopied = false
             }
         }
+    }
+    
+    /// 复制Bundle路径到剪贴板的方法
+    /// - Parameter path: 要复制的Bundle路径字符串
+    private func copyBundlePath(_ path: String) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(path, forType: .string)
     }
 }
 
