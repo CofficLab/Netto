@@ -349,6 +349,7 @@ extension SmartApp {
         }
     }
 }
+
 #Preview {
     RootView {
         ContentView()

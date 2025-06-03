@@ -341,7 +341,6 @@ extension ChannelProvider: AppCommunication {
     }
 
     /// 提示用户是否允许网络连接
-    /// 使用Task { @MainActor in }确保在主actor上下文中安全访问DataProvider
     /// - Parameters:
     ///   - id: 应用标识符
     ///   - hostname: 主机名
@@ -349,7 +348,7 @@ extension ChannelProvider: AppCommunication {
     ///   - direction: 网络流量方向
     ///   - responseHandler: 响应处理回调
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
-        let verbose = false
+        let verbose = true
 
         let shouldAllow = DataProvider().shouldAllow(id)
         if shouldAllow {
@@ -385,5 +384,7 @@ extension ChannelProvider: AppCommunication {
 #Preview("APP") {
     RootView(content: {
         ContentView()
-    }).frame(width: 700)
+    })
+    .frame(width: 700)
+    .frame(height: 600)
 }

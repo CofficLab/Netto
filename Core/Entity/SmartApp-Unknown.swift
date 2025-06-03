@@ -22,7 +22,14 @@ extension SmartApp {
                 .padding(6)
                 .foregroundColor(.white)
         }
-        .frame(width: 34, height: 34)
+        .frame(width: 30, height: 30)
         .clipped()
     }
+}
+
+#Preview {
+    RootView {
+        ContentView()
+    }
+    .frame(height: 800)
 }
