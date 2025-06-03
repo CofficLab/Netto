@@ -64,4 +64,6 @@ struct AppAction: View, SuperLog, SuperEvent {
     RootView {
         ContentView()
     }
+    .frame(width: 500)
+    .frame(height: 500)
 }

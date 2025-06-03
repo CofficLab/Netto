@@ -142,7 +142,9 @@ struct DBSettingView: View {
 #Preview("APP") {
     RootView {
         ContentView()
-    }.frame(width: 500)
+    }
+    .frame(width: 500)
+    .frame(height: 600)
 }
 
 #Preview("DBSetting") {

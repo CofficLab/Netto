@@ -44,6 +44,7 @@
 		0BECFF622DE5FFD6001B7619 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4B45DB522739FFF0050C59B /* TavelMode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TavelMode.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F55AAB352DEEE763002E3E36 /* TavelMode copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "TavelMode copy-Info.plist"; path = "/Users/colorfy/Code/CofficLab/Netto/TavelMode copy-Info.plist"; sourceTree = "<absolute>"; };
 		F5F857DF2DE815C300E03577 /* README-DEV.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "README-DEV.md"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -106,6 +107,7 @@
 				C4B45DB622739FFF0050C59B /* Products */,
 				0BECFF622DE5FFD6001B7619 /* README.md */,
 				F5F857DF2DE815C300E03577 /* README-DEV.md */,
+				F55AAB352DEEE763002E3E36 /* TavelMode copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
