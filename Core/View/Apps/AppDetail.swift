@@ -192,37 +192,6 @@ struct AppDetail: View, SuperLog {
                         .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                         .transition(.opacity.combined(with: .scale(scale: 0.95)))
                 }
-                
-                Divider()
-                
-                // 事件统计信息
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("网络事件 (Network Events)")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                    
-                    HStack {
-                        Label("事件总数 (Total Events)", systemImage: "network")
-                            .font(.caption)
-                        
-                        Spacer()
-                        
-                        Text("\(events.count)")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
-                            .background(Color.blue.opacity(0.1))
-                            .clipShape(Capsule())
-                    }
-                    
-                    if !events.isEmpty {
-                        Text("最近事件: \(events.last?.description ?? "无")")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                            .lineLimit(2)
-                    }
-                }
             }
             .padding(12)
             .background(Color(.controlBackgroundColor))
@@ -231,35 +200,34 @@ struct AppDetail: View, SuperLog {
             // 事件详细列表
             if !events.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text("事件详情 (Event Details)")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
+                    Text("事件详情 (Event Details)")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    // 筛选工具栏
+                    HStack(spacing: 8) {
+                        // 状态筛选
+                        Picker("状态", selection: $statusFilter) {
+                            ForEach(StatusFilter.allCases, id: \.self) { filter in
+                                Text(filter.rawValue).tag(filter)
+                            }
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .frame(width: 180)
                         
                         Spacer()
                         
-                        // 筛选控件
-                        HStack(spacing: 8) {
-                            // 状态筛选
-                            Picker("状态", selection: $statusFilter) {
-                                ForEach(StatusFilter.allCases, id: \.self) { filter in
-                                    Text(filter.rawValue).tag(filter)
-                                }
+                        // 方向筛选
+                        Picker("方向", selection: $directionFilter) {
+                            ForEach(DirectionFilter.allCases, id: \.self) { filter in
+                                Text(filter.rawValue).tag(filter)
                             }
-                            .pickerStyle(SegmentedPickerStyle())
-                            .frame(width: 150)
-                            
-                            // 方向筛选
-                            Picker("方向", selection: $directionFilter) {
-                                ForEach(DirectionFilter.allCases, id: \.self) { filter in
-                                    Text(filter.rawValue).tag(filter)
-                                }
-                            }
-                            .pickerStyle(SegmentedPickerStyle())
-                            .frame(width: 120)
                         }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .frame(width: 180)
                     }
                     .padding(.horizontal, 12)
+                    .padding(.bottom, 4)
                     
                     // 筛选后的事件数量
                     HStack {
