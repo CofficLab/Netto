@@ -54,7 +54,8 @@ extension SmartApp {
         if let runningApp = getApp(id) {
             return SmartApp(
                 id: runningApp.bundleIdentifier ?? "",
-                name: runningApp.localizedName ?? ""
+                name: runningApp.localizedName ?? "",
+                isProxy: Self.isProxyApp(runningApp)
             )
         }
 

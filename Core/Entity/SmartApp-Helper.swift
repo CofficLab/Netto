@@ -46,6 +46,131 @@ extension SmartApp: SuperLog {
 
         return nil
     }
+    
+    /// 判断应用是否为代理软件
+    ///
+    /// 通过检查应用的bundle identifier和名称来识别常见的代理软件
+    /// - Parameter app: 要检查的应用程序实例
+    /// - Returns: 如果是代理软件返回true，否则返回false
+    static func isProxyApp(_ app: NSRunningApplication) -> Bool {
+        guard let bundleId = app.bundleIdentifier else {
+            return false
+        }
+        
+        // 常见代理软件的bundle identifier列表
+        let proxyAppIdentifiers = [
+            // VPN 客户端
+            "com.expressvpn.ExpressVPN",
+            "com.nordvpn.osx",
+            "com.surfshark.vpnclient.macos",
+            "com.cyberghostvpn.mac",
+            "com.privateinternetaccess.vpn",
+            "com.tunnelbear.mac.TunnelBear",
+            "com.protonvpn.mac",
+            "com.windscribe.desktop",
+            "com.hotspotshield.vpn.mac",
+            
+            // Shadowsocks 客户端
+            "com.qiuyuzhou.ShadowsocksX-NG",
+            "com.shadowsocks.ShadowsocksX-NG",
+            "clowwindy.ShadowsocksX",
+            "com.github.shadowsocks.ShadowsocksX-NG",
+            
+            // V2Ray 客户端
+            "com.v2ray.V2RayU",
+            "com.yanue.V2rayU",
+            "com.v2rayx.V2RayX",
+            "net.qiuyuzhou.V2RayX",
+            
+            // Clash 客户端
+            "com.west2online.ClashX",
+            "com.dreamacro.clash.for.windows",
+            "com.clash.for.windows",
+            "com.github.yichengchen.clashX",
+            
+            // Surge
+            "com.nssurge.surge-mac",
+            "com.nssurge.surge.mac",
+            
+            // Proxyman
+            "com.proxyman.NSProxy",
+            
+            // Charles
+            "com.xk72.Charles",
+            
+            // Wireshark
+            "org.wireshark.Wireshark",
+            
+            // Proxifier
+            "com.proxifier.macos",
+            
+            // Tor Browser
+            "org.torproject.torbrowser",
+            
+            // Lantern
+            "org.getlantern.lantern",
+            
+            // Psiphon
+            "ca.psiphon.Psiphon",
+            
+            // Tunnelblick
+            "net.tunnelblick.tunnelblick",
+            
+            // OpenVPN Connect
+            "net.openvpn.connect.app",
+            
+            // Viscosity
+            "com.viscosityvpn.Viscosity"
+        ]
+        
+        // 检查完全匹配
+        if proxyAppIdentifiers.contains(bundleId) {
+            return true
+        }
+        
+        // 检查部分匹配的关键词
+        let proxyKeywords = [
+            "vpn", "proxy", "shadowsocks", "v2ray", "clash", 
+            "surge", "trojan", "ssr", "vmess", "vless",
+            "wireguard", "openvpn", "tunnel", "tor"
+        ]
+        
+        let lowercaseBundleId = bundleId.lowercased()
+        let appName = (app.localizedName ?? "").lowercased()
+        
+        for keyword in proxyKeywords {
+            if lowercaseBundleId.contains(keyword) || appName.contains(keyword) {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
+    /// 判断应用是否为代理软件（通过应用ID）
+    ///
+    /// - Parameter appId: 应用程序的bundle identifier
+    /// - Returns: 如果是代理软件返回true，否则返回false
+    static func isProxyApp(withId appId: String) -> Bool {
+        guard let app = getApp(appId) else {
+            // 如果找不到运行中的应用，仍然可以通过ID进行基本判断
+            let proxyKeywords = [
+                "vpn", "proxy", "shadowsocks", "v2ray", "clash", 
+                "surge", "trojan", "ssr", "vmess", "vless",
+                "wireguard", "openvpn", "tunnel", "tor"
+            ]
+            
+            let lowercaseId = appId.lowercased()
+            for keyword in proxyKeywords {
+                if lowercaseId.contains(keyword) {
+                    return true
+                }
+            }
+            return false
+        }
+        
+        return isProxyApp(app)
+    }
 }
 
 // MARK: - Preview

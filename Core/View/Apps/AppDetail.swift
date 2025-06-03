@@ -18,6 +18,9 @@ struct AppDetail: View, SuperLog {
     /// 当前页码（从0开始）
     @State private var currentPage: Int = 0
     
+    /// 是否显示代理解释视图
+    @State private var showProxyExplanation = false
+    
     /// 每页显示的事件数量
     private let eventsPerPage: Int = 20
     
@@ -77,11 +80,45 @@ struct AppDetail: View, SuperLog {
                         .font(.subheadline)
                         .fontWeight(.medium)
                     
-                    VStack {
+                    VStack(spacing: 4) {
                         Label("系统应用 (System App)", systemImage: app.isSystemApp ? "checkmark.circle.fill" : "xmark.circle")
                             .foregroundColor(app.isSystemApp ? .green : .secondary)
                             .font(.caption)
+                        
+                        HStack(spacing: 4) {
+                            Label("代理应用 (Proxy App)", systemImage: SmartApp.isProxyApp(withId: app.id) ? "shield.fill" : "shield")
+                                .foregroundColor(SmartApp.isProxyApp(withId: app.id) ? .orange : .secondary)
+                                .font(.caption)
+                            
+                            Button(action: {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    showProxyExplanation.toggle()
+                                }
+                            }) {
+                                Image(systemName: showProxyExplanation ? "chevron.up.circle.fill" : "info.circle")
+                                    .foregroundColor(.blue)
+                                    .font(.caption)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .help(showProxyExplanation ? "收起代理应用说明" : "了解代理应用对网络监控的影响")
+                        }
                     }
+                }
+                
+                // 代理应用解释视图（折叠/展开）
+                if showProxyExplanation {
+                    ProxyExplanationView()
+                        .frame(height: 380)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(.controlBackgroundColor).opacity(0.8))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                )
+                        )
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
                 }
                 
                 Divider()
