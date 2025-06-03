@@ -9,35 +9,12 @@ struct SmartApp: Identifiable, Sendable {
 
     var id: String
     var name: String
-    var events: [FirewallEvent] = []
     var isSystemApp: Bool = false
     var isSample: Bool = false
 
     var isNotSample: Bool { !isSample }
     var hasId: Bool { id.isNotEmpty }
     var hasNoId: Bool { id.isEmpty }
-}
-
-// MARK: - Initialization
-
-extension SmartApp {
-    /// 使用ID和名称初始化SmartApp
-    /// - Parameters:
-    ///   - id: 应用程序唯一标识符
-    ///   - name: 应用程序名称
-    ///   - isSystemApp: 是否为系统应用程序（默认值为false）
-    ///   - isSample: 是否为示例应用程序（默认值为false）
-    init(
-        id: String, 
-        name: String, 
-        isSystemApp: Bool = false, 
-        isSample: Bool = false
-    ) {
-        self.id = id
-        self.name = name
-        self.isSystemApp = isSystemApp
-        self.isSample = isSample
-    }
 }
 
 // MARK: - Instance Methods
@@ -59,7 +36,7 @@ extension SmartApp {
         // 尝试寻找Package
         if let packageApp = Self.getPackage(id), let icon = packageApp.icon {
             return AnyView(Image(nsImage: icon))
-        }
+    }
         
         return AnyView(SmartApp.getDefaultIcon())
     }

@@ -12,7 +12,7 @@ struct AppList: View, SuperLog {
     /// 获取主应用列表（过滤掉子应用，只显示顶级应用）
     private var apps: [SmartApp] {
         data.apps.sorted(by: {
-            $0.events.count > $1.events.count
+            $0.name < $1.name
         })
 //        .filter({
 //            $0.events.count > 0 || data.shouldDeny($0.id)

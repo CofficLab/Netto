@@ -326,6 +326,9 @@
     "入站" : {
 
     },
+    "共 %lld 条事件" : {
+
+    },
     "共 %lld 条记录" : {
       "localizations" : {
         "en" : {
@@ -579,6 +582,16 @@
     },
     "端口" : {
 
+    },
+    "第 %lld 页，共 %lld 页" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "第 %1$lld 页，共 %2$lld 页"
+          }
+        }
+      }
     },
     "管理Mac的整体设置和相关设置..." : {
       "localizations" : {

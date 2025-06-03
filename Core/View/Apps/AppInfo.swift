@@ -36,9 +36,6 @@ struct AppInfo: View {
                     }
 
                     HStack(alignment: .top, spacing: 4) {
-                        Text("\(app.events.count)")
-                            .font(.callout)
-
                         Text(app.id)
                             .font(.callout)
                             .foregroundColor(app.isSystemApp ? .orange.opacity(0.7) : .primary)
@@ -161,127 +158,6 @@ extension AppInfo {
                 await MainActor.run {
                     // 只有当用户没有悬停在popover上且当前popover仍然是这个应用的时才隐藏
                     if !popoverHovering && ui.shouldShowPopover(for: self.app.id) {
-                        ui.hidePopover()
-                    }
-                }
-            }
-        }
-    }
-
-    /// 处理popover悬停状态变化
-    private func handlePopoverHoverChange() {
-        if popoverHovering {
-            // 用户悬停在popover上，取消隐藏任务
-            hidePopoverTask?.cancel()
-            hidePopoverTask = nil
-        } else {
-            // 用户离开popover，安排隐藏
-            scheduleHidePopover()
-        }
-    }
-}
-
-/// 子应用行组件，支持hover和详情展示
-struct ChildAppRow: View {
-    @EnvironmentObject var data: DataProvider
-    @EnvironmentObject var ui: UIProvider
-
-    let childApp: SmartApp
-
-    @State private var hovering: Bool = false
-    @State private var popoverHovering: Bool = false
-    @State private var hidePopoverTask: Task<Void, Never>?
-    @State private var shouldAllow: Bool = true
-
-    var body: some View {
-        HStack(spacing: 12) {
-            // 缩进指示器
-            Rectangle()
-                .fill(Color.secondary.opacity(0.3))
-                .frame(width: 2, height: 20)
-                .padding(.leading, 20)
-
-            childApp.getIcon().frame(width: 32, height: 32)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(childApp.name)
-                    .font(.caption)
-                    .lineLimit(1)
-
-                HStack(alignment: .top, spacing: 4) {
-                    Text("\(childApp.events.count)")
-                        .font(.caption2)
-
-                    Text(childApp.id)
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                }
-            }
-
-            Spacer()
-
-            if hovering && childApp.isNotSample {
-                AppAction(shouldAllow: $shouldAllow, appId: childApp.id)
-            }
-        }
-        .padding(.vertical, 3)
-        .padding(.horizontal, 10)
-        .background(hovering ? Color.secondary.opacity(0.1) : Color.secondary.opacity(0.05))
-        .contentShape(Rectangle())
-        .onHover(perform: onHover)
-        .popover(isPresented: Binding(
-            get: { ui.shouldShowPopover(for: childApp.id) },
-            set: { _ in }
-        ), arrowEdge: .leading) {
-            AppDetail(
-                popoverHovering: $popoverHovering,
-                app: childApp
-            ).frame(width: 600)
-        }
-        .onChange(of: self.popoverHovering) {
-            handlePopoverHoverChange()
-        }
-        .onAppear {
-            self.shouldAllow = data.shouldAllow(childApp.id)
-        }
-    }
-
-    /// 处理鼠标悬停状态变化
-    /// - Parameter hovering: 是否悬停
-    private func onHover(_ hovering: Bool) {
-        self.hovering = hovering
-
-        if self.hovering {
-            // 取消之前的隐藏任务
-            hidePopoverTask?.cancel()
-            hidePopoverTask = nil
-
-            // 设置当前悬停的应用ID并显示popover
-            self.ui.showPopover(for: self.childApp.id)
-        } else {
-            // 延迟隐藏popover，给用户时间移动到popover上
-            if ui.shouldShowPopover(for: self.childApp.id) {
-                scheduleHidePopover()
-            }
-        }
-    }
-
-    /// 安排延迟隐藏popover
-    private func scheduleHidePopover() {
-        // 取消之前的隐藏任务
-        hidePopoverTask?.cancel()
-
-        // 创建新的延迟隐藏任务
-        hidePopoverTask = Task {
-            try? await Task.sleep(nanoseconds: 150000000) // 150ms延迟
-
-            // 检查任务是否被取消
-            if !Task.isCancelled {
-                await MainActor.run {
-                    // 只有当用户没有悬停在popover上且当前popover仍然是这个应用的时才隐藏
-                    if !popoverHovering && ui.shouldShowPopover(for: self.childApp.id) {
                         ui.hidePopover()
                     }
                 }
