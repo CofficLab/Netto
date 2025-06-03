@@ -3,7 +3,7 @@ import MagicCore
 import OSLog
 
 struct BtnStart: View, SuperLog {
-    @EnvironmentObject private var channel: ChannelProvider
+    @EnvironmentObject private var channel: FirewallService
     @EnvironmentObject var m: MessageProvider
     
     private var asToolbarItem: Bool = false

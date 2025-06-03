@@ -3,7 +3,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var app: UIProvider
-    @EnvironmentObject private var channel: ChannelProvider
+    @EnvironmentObject private var channel: FirewallService
 
     var body: some View {
         VStack(spacing: 0) {

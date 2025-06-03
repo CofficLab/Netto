@@ -8,7 +8,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var app = UIProvider.shared
     private var p = PluginProvider.shared
     private var data = DataProvider.shared
-    private var channel = ChannelProvider.shared
+    private var channel = FirewallService.shared
 
     @StateObject var m = MessageProvider.shared
 

@@ -5,7 +5,7 @@ import SwiftUI
 struct AppList: View, SuperLog {
     @EnvironmentObject private var ui: UIProvider
     @EnvironmentObject private var data: DataProvider
-    @EnvironmentObject private var channel: ChannelProvider
+    @EnvironmentObject private var channel: FirewallService
 
     nonisolated static let emoji = "🖥️"
 

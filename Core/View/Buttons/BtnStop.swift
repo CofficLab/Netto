@@ -2,7 +2,7 @@ import MagicCore
 import SwiftUI
 
 struct BtnStop: View, SuperLog {
-    @EnvironmentObject private var channel: ChannelProvider
+    @EnvironmentObject private var channel: FirewallService
     @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var app: UIProvider
     

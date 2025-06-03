@@ -3,7 +3,7 @@ import MagicCore
 
 struct GuideView: View {
     @EnvironmentObject private var app: UIProvider
-    @EnvironmentObject private var channel: ChannelProvider
+    @EnvironmentObject private var channel: FirewallService
 
     var body: some View {
         ZStack {

@@ -6,8 +6,8 @@ import SwiftUI
 import SystemExtensions
 
 @MainActor
-class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
-    static let shared = ChannelProvider()
+class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
+    static let shared = FirewallService()
 
     private let s: AppPermissionService = .shared
 
@@ -275,7 +275,7 @@ class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
 
 // MARK: OSSystemExtensionActivationRequestDelegate
 
-extension ChannelProvider: OSSystemExtensionRequestDelegate {
+extension FirewallService: OSSystemExtensionRequestDelegate {
     nonisolated func request(
         _ request: OSSystemExtensionRequest,
         didFinishWithResult result: OSSystemExtensionRequest.Result
@@ -323,7 +323,7 @@ extension ChannelProvider: OSSystemExtensionRequestDelegate {
 
 // MARK: AppCommunication
 
-extension ChannelProvider: AppCommunication {
+extension FirewallService: AppCommunication {
     nonisolated func extensionLog(_ words: String) {
         let verbose = false
 
