@@ -7,10 +7,10 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var content: Content
     private var app = UIProvider.shared
     private var p = PluginProvider.shared
-    private var data = DataProvider()
+    private var data = DataProvider.shared
+    private var channel = ChannelProvider.shared
 
     @StateObject var m = MessageProvider.shared
-    @StateObject var channel = ChannelProvider.shared
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -44,11 +44,8 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
             }, completion: {
                 m.clearError()
             })
-
     }
 }
-
-
 
 #Preview("APP") {
     RootView(content: {

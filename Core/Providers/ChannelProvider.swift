@@ -9,7 +9,7 @@ import SystemExtensions
 class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
     static let shared = ChannelProvider()
 
-    private let data: DataProvider = DataProvider()
+    private let data: AppPermissionService = AppPermissionService()
 
     override private init() {
         super.init()
@@ -350,32 +350,35 @@ extension ChannelProvider: AppCommunication {
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
         let verbose = false
 
-        let shouldAllow = DataProvider().shouldAllow(id)
+        let shouldAllow = AppPermissionService().shouldAllow(id)
         if shouldAllow {
             if verbose {
                 os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(id) -> Allow")
             }
             responseHandler(true)
 
-            NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
-                id: id,
-                hostname: hostname,
-                port: port,
-                allowed: true,
-                direction: direction
-            ))
-
+            DispatchQueue.main.sync {
+                NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
+                    id: id,
+                    hostname: hostname,
+                    port: port,
+                    allowed: true,
+                    direction: direction
+                ))
+            }
         } else {
             if verbose {
                 os_log("\(self.t)🈲 Channel.promptUser 👤 with App -> \(id) -> Deny")
             }
-            NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
-                id: id,
-                hostname: hostname,
-                port: port,
-                allowed: false,
-                direction: direction
-            ))
+            DispatchQueue.main.sync {
+                NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
+                    id: id,
+                    hostname: hostname,
+                    port: port,
+                    allowed: false,
+                    direction: direction
+                ))
+            }
             responseHandler(false)
         }
     }
