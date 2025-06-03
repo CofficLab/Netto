@@ -20,6 +20,10 @@ class ServiceProvider: ObservableObject, SuperLog {
         try await firewallService.stopFilter(reason: reason)
     }
     
+    func installFilter() {
+        firewallService.installFilter()
+    }
+    
     func viewWillDisappear() {
         firewallService.viewWillDisappear()
     }

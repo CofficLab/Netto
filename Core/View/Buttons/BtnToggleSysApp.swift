@@ -2,7 +2,6 @@ import MagicCore
 import SwiftUI
 
 struct BtnToggleSysApp: View, SuperLog {
-    @EnvironmentObject private var channel: FirewallService
     @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var app: UIProvider
     @EnvironmentObject var ui: UIProvider

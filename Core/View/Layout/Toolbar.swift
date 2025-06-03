@@ -3,7 +3,6 @@ import SwiftUI
 
 struct Toolbar: View, SuperLog {
     @EnvironmentObject private var app: UIProvider
-    @EnvironmentObject private var channel: FirewallService
     @EnvironmentObject private var data: DataProvider
 
     var body: some View {

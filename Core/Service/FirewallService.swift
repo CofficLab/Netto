@@ -6,7 +6,7 @@ import SwiftUI
 import SystemExtensions
 
 @MainActor
-class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
+class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
     static let shared = FirewallService()
 
     private let s: AppPermissionService = .shared
@@ -41,7 +41,7 @@ class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     private var extensionManager = OSSystemExtensionManager.shared
     private var extensionBundle = AppConfig.extensionBundle
 
-    @Published var error: Error?
+    var error: Error?
     private var _status: FilterStatus = .stopped
 
     var observer: Any?
