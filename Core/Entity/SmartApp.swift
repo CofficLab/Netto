@@ -9,8 +9,15 @@ struct SmartApp: Identifiable, Sendable {
 
     var id: String
     var name: String
+
+    /// 是否是系统应用
     var isSystemApp: Bool = false
+
+    /// 是否是示例应用
     var isSample: Bool = false
+
+    /// 是否是代理软件
+    var isProxy: Bool = false
 
     var isNotSample: Bool { !isSample }
     var hasId: Bool { id.isNotEmpty }
@@ -32,11 +39,6 @@ extension SmartApp {
         if let runningApp = Self.getApp(self.id), let icon = runningApp.icon {
             return AnyView(Image(nsImage: icon))
         }
-        
-        // 尝试寻找Package
-        if let packageApp = Self.getPackage(id), let icon = packageApp.icon {
-            return AnyView(Image(nsImage: icon))
-    }
         
         return AnyView(SmartApp.getDefaultIcon())
     }
@@ -61,14 +63,6 @@ extension SmartApp {
         }
         
         let unknownApp = Self.unknownApp(id)
-
-        // 尝试寻找Package
-        if let packageApp = Self.getPackage(id) {
-            return SmartApp(
-                id: id,
-                name: packageApp.localizedName ?? ""
-            )
-        }
 
         return unknownApp
     }
