@@ -11,12 +11,13 @@ import MagicCore
 
 /// The IPCConnection class is used by both the app and the system extension to communicate with each other
 class IPCConnection: NSObject, SuperLog {
-    static let emoji = "🤝"
+    nonisolated static let emoji = "🤝"
     var listener: NSXPCListener?
     var currentConnection: NSXPCConnection?
     weak var delegate: AppCommunication?
-    static let shared = IPCConnection()
-
+    
+    nonisolated(unsafe) static let shared = IPCConnection()
+    
     /**
         The NetworkExtension framework registers a Mach service with the name in the system extension's NEMachServiceName Info.plist key.
         The Mach service name must be prefixed with one of the app groups in the system extension's com.apple.security.application-groups entitlement.
@@ -67,7 +68,7 @@ class IPCConnection: NSObject, SuperLog {
         newConnection.resume()
 
         guard let providerProxy = newConnection.remoteObjectProxyWithErrorHandler({ registerError in
-            os_log(.error, "Failed to register with the provider: %@", registerError.localizedDescription)
+            os_log(.error, "\(self.t)Failed to register with the provider: \(registerError)")
             self.currentConnection?.invalidate()
             self.currentConnection = nil
             completionHandler(false)
@@ -99,7 +100,7 @@ class IPCConnection: NSObject, SuperLog {
             fatalError("Failed to create a remote object proxy for the app")
         }
 
-        appProxy.promptUser(flow: flow, responseHandler: responseHandler)
+        appProxy.promptUser(id: flow.getAppId(), hostname:flow.getHostname(), port: flow.getLocalPort(), direction: flow.direction, responseHandler: responseHandler)
 
         return true
     }

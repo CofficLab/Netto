@@ -3,6 +3,7 @@ import MagicCore
 
 struct GuideView: View {
     @EnvironmentObject private var app: UIProvider
+    @EnvironmentObject private var channel: ChannelProvider
 
     var body: some View {
         ZStack {
@@ -10,7 +11,7 @@ struct GuideView: View {
             MagicBackground.forest.opacity(0.3)
 
             VStack(spacing: 0) {
-                switch app.status {
+                switch channel.status {
                 case .disabled, .stopped:
                     StopView()
                 case .indeterminate:
@@ -28,14 +29,7 @@ struct GuideView: View {
                         .font(.title)
                     Image("Ask")
                 case let .error(error):
-                    VStack {
-                        InstallView()
-
-                        Text("Error: \(error.localizedDescription)")
-                            .font(.callout)
-                            .padding(20)
-                            .background(MagicBackground.cherry)
-                    }
+                    ErrorView(error: error)
                 }
             }
             .background(.background)

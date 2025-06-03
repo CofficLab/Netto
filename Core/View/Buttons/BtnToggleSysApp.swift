@@ -1,13 +1,19 @@
 import MagicCore
 import SwiftUI
 
-struct BtnStop: View, SuperLog {
+struct BtnToggleSysApp: View, SuperLog {
     @EnvironmentObject private var channel: ChannelProvider
     @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var app: UIProvider
+    @EnvironmentObject var ui: UIProvider
     
     private var asToolbarItem: Bool = false
-    private var icon: String = "stop.circle"
+    private var icon: String {
+        ui.showSystemApps ? "eye.slash" : "eye.circle"
+    }
+    private var title: String {
+        ui.showSystemApps ? "隐藏系统APP" : "显示系统APP"
+    }
     
     init(asToolbarItem: Bool = false) {
         self.asToolbarItem = asToolbarItem
@@ -19,7 +25,7 @@ struct BtnStop: View, SuperLog {
                 action()
             } label: {
                 Label {
-                    Text("Stop")
+                    Text(title)
                 } icon: {
                     Image(systemName: icon)
                 }
@@ -29,7 +35,7 @@ struct BtnStop: View, SuperLog {
             MagicButton(icon: icon, size: .auto, action: {
                 action()
             })
-            .magicTitle("停止")
+            .magicTitle(title)
             .magicShape(.roundedRectangle)
             .frame(width: 150)
             .frame(height: 50)
@@ -37,13 +43,7 @@ struct BtnStop: View, SuperLog {
     }
     
     private func action() -> Void {
-        Task {
-            do {
-                try await channel.stopFilter(reason: self.className)
-            } catch {
-                self.m.error(error)
-            }
-        }
+        ui.showSystemApps.toggle()
     }
 }
 

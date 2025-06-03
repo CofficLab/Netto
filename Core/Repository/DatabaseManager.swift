@@ -1,4 +1,3 @@
-//
 import SwiftData
 import OSLog
 import MagicCore
@@ -126,20 +125,45 @@ class DatabaseManager {
         return AppSettingRepository(context: mainContext)
     }()
     
-    // MARK: - Singleton
-    
-    /// 共享的数据库管理器实例
-    static let shared = DatabaseManager()
+    /// FirewallEvent仓库
+    lazy var firewallEventRepository: FirewallEventRepository = {
+        return FirewallEventRepository(context: mainContext)
+    }()
+
+    static func container() -> ModelContainer  {
+        let schema = Schema([
+            AppSetting.self,
+            FirewallEventModel.self,
+        ])
+
+        let modelConfiguration = ModelConfiguration(
+            schema: schema,
+            url: AppConfig.databaseURL,
+            allowsSave: true,
+            cloudKitDatabase: .none
+        )
+
+        do {
+            let container = try ModelContainer(
+                for: schema,
+                configurations: [modelConfiguration]
+            )
+
+            return container
+        } catch {
+            fatalError("无法创建 primaryContainer: \n\(error)")
+        }
+    }
     
     // MARK: - Initialization
     
     /// 初始化数据库管理器
     /// - Parameter container: 数据库容器，如果为nil则使用默认配置
-    private init(container: ModelContainer? = nil) {
+    init(container: ModelContainer? = nil) {
         if let container = container {
             self.container = container
         } else {
-            self.container = AppConfig.container
+            self.container = Self.container()
         }
         
         self.mainContext = ModelContext(self.container)
@@ -170,21 +194,6 @@ class DatabaseManager {
         }
     }
     
-    /// 在后台上下文中执行操作
-    /// - Parameter operation: 要执行的操作闭包
-    /// - Throws: 操作执行时可能抛出的错误
-    func performBackgroundTask(_ operation: @escaping (ModelContext) throws -> Void) async throws {
-        let backgroundContext = createBackgroundContext()
-        
-        try await Task {
-            try operation(backgroundContext)
-            
-            if backgroundContext.hasChanges {
-                try backgroundContext.save()
-            }
-        }.value
-    }
-    
     // MARK: - Database Operations
     
     /// 清空所有数据
@@ -194,6 +203,12 @@ class DatabaseManager {
         let appSettings = try mainContext.fetch(FetchDescriptor<AppSetting>())
         for setting in appSettings {
             mainContext.delete(setting)
+        }
+        
+        // 删除所有FirewallEvent记录
+        let firewallEvents = try mainContext.fetch(FetchDescriptor<FirewallEventModel>())
+        for event in firewallEvents {
+            mainContext.delete(event)
         }
         
         try saveMainContext()
@@ -206,9 +221,11 @@ class DatabaseManager {
     /// - Throws: 查询时可能抛出的错误
     func getDatabaseStats() throws -> [String: Int] {
         let appSettingsCount = try mainContext.fetch(FetchDescriptor<AppSetting>()).count
+        let firewallEventsCount = try mainContext.fetch(FetchDescriptor<FirewallEventModel>()).count
         
         return [
-            "appSettings": appSettingsCount
+            "appSettings": appSettingsCount,
+            "firewallEvents": firewallEventsCount
         ]
     }
     

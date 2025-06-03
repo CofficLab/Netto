@@ -5,6 +5,7 @@ import StoreKit
 import SwiftData
 import SwiftUI
 
+@MainActor
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     static let shared = PluginProvider()
 
@@ -16,7 +17,8 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
         HStack(spacing: 0) {
             TileSwitcher()
             Spacer()
-            TileEventList()
+            TileFilter()
+            Spacer()
             TileMore()
         }
     }

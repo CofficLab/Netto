@@ -9,8 +9,6 @@ struct ContentView: View {
         VStack(spacing: 0) {
             Topbar()
 
-            FilterBar()
-
             AppList()
         }
         .frame(maxWidth: .infinity)

@@ -2,40 +2,31 @@ import Foundation
 import Combine
 import SwiftUI
 
+@MainActor
 class UIProvider: ObservableObject {
     static let shared = UIProvider()
-    private init() {
-        setupNotificationListeners()
-    }
     
-    @Published var status: FilterStatus = .indeterminate
     @Published var dbVisible: Bool = false
     @Published var displayType: DisplayType = .All
     @Published var showSystemApps: Bool = false
-
-    private var cancellables = Set<AnyCancellable>()
+    @Published var activePopoverAppId: String = ""
     
-    func start() {
-        self.status = .running
+    /// 显示指定应用的popover，同时隐藏其他应用的popover
+    /// - Parameter appId: 要显示popover的应用ID
+    func showPopover(for appId: String) {
+        self.activePopoverAppId = appId
     }
     
-    func stop() {
-        self.status = .stopped
+    /// 隐藏当前显示的popover
+    func hidePopover() {
+        self.activePopoverAppId = ""
     }
     
-    func setFilterStatus(_ status: FilterStatus) {
-        self.status = status
-    }
-
-    /// 设置通知监听器
-    private func setupNotificationListeners() {
-        NotificationCenter.default.publisher(for: .FilterStatusChanged)
-            .compactMap { $0.object as? FilterStatus }
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] status in
-                self?.setFilterStatus(status)
-            }
-            .store(in: &cancellables)
+    /// 检查指定应用的popover是否应该显示
+    /// - Parameter appId: 应用ID
+    /// - Returns: 是否应该显示popover
+    func shouldShowPopover(for appId: String) -> Bool {
+        return activePopoverAppId == appId
     }
 }
 

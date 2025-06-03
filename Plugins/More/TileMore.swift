@@ -28,6 +28,7 @@ struct TileMore: View, SuperLog, SuperThread {
                 BtnInstall()
                 BtnStop()
                 BtnStart()
+                BtnToggleSysApp()
                 BtnSetting()
                 BtnGuide()
                 BtnAbout()

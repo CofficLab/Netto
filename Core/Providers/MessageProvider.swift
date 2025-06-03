@@ -5,9 +5,10 @@ import SwiftData
 import SwiftUI
 import Combine
 
+@MainActor
 class MessageProvider: ObservableObject, SuperLog, SuperThread, SuperEvent {
     static let shared = MessageProvider()
-    static let emoji = "📪"
+    nonisolated static let emoji = "📪"
     let maxMessageCount = 100
 
     @Published var messages: [SmartMessage] = []

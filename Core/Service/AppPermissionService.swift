@@ -175,7 +175,7 @@ import SwiftUI
  *    - 实现适当的错误报告机制
  */
 class AppPermissionService: SuperLog {
-    static let emoji = "💁"
+    nonisolated static let emoji = "💁"
     
     // MARK: - Properties
 
@@ -187,17 +187,12 @@ class AppPermissionService: SuperLog {
         return databaseManager.appSettingRepository
     }
 
-    // MARK: - Singleton
-
-    /// 共享的应用权限服务实例
-    static let shared = AppPermissionService()
-
     // MARK: - Initialization
 
     /// 初始化应用权限服务
     /// - Parameter databaseManager: 数据库管理器，如果为nil则使用共享实例
-    private init(databaseManager: DatabaseManager? = nil) {
-        self.databaseManager = databaseManager ?? DatabaseManager.shared
+    init(databaseManager: DatabaseManager? = nil) {
+        self.databaseManager = databaseManager ?? DatabaseManager()
     }
 
     // MARK: - Permission Management

@@ -5,16 +5,18 @@ import SwiftUI
 struct AppList: View, SuperLog {
     @EnvironmentObject private var ui: UIProvider
     @EnvironmentObject private var data: DataProvider
+    @EnvironmentObject private var channel: ChannelProvider
 
-    static var emoji = "🖥️"
+    nonisolated static let emoji = "🖥️"
 
+    /// 获取主应用列表（过滤掉子应用，只显示顶级应用）
     private var apps: [SmartApp] {
         data.apps.sorted(by: {
-            $0.events.count > $1.events.count
+            $0.name < $1.name
         })
-        .filter({
-            $0.events.count > 0 || data.shouldDeny($0.id)
-        })
+//        .filter({
+//            $0.events.count > 0 || data.shouldDeny($0.id)
+//        })
         .filter({
             if ui.showSystemApps {
                 return true
@@ -43,7 +45,7 @@ struct AppList: View, SuperLog {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(Array((apps.isNotEmpty ? apps : data.samples).enumerated()), id: \.element.id) { index, app in
-                        AppLine(app: app)
+                        AppInfo(app: app)
                         if index < (apps.isNotEmpty ? apps : data.samples).count - 1 {
                             Divider()
                         }
@@ -51,7 +53,7 @@ struct AppList: View, SuperLog {
                 }
             }
 
-            if ui.status.isNotRunning() || apps.isEmpty {
+            if channel.status.isNotRunning() || apps.isEmpty {
                 GuideView()
             }
         }
@@ -68,11 +70,5 @@ struct AppList: View, SuperLog {
 #Preview("AppList") {
     RootView {
         AppList()
-    }
-}
-
-#Preview("EventList") {
-    RootView {
-        EventList()
     }
 }

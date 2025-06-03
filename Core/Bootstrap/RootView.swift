@@ -7,7 +7,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var content: Content
     private var app = UIProvider.shared
     private var p = PluginProvider.shared
-    private var data = DataProvider.shared
+    private var data = DataProvider()
 
     @StateObject var m = MessageProvider.shared
     @StateObject var channel = ChannelProvider.shared
@@ -21,7 +21,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
             .environmentObject(app)
             .environmentObject(data)
             .environmentObject(channel)
-            .modelContainer(AppConfig.container)
+            .modelContainer(DatabaseManager.container())
             .environmentObject(m)
             .environmentObject(p)
             .toast(isPresenting: $m.showToast, alert: {

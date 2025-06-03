@@ -47,8 +47,8 @@ class AppSettingRepository {
 
     /// 初始化AppSettingRepository实例
     /// - Parameter context: SwiftData模型上下文，如果为nil则使用默认容器
-    init(context: ModelContext? = nil) {
-        self.context = context ?? ModelContext(AppConfig.container)
+    init(context: ModelContext) {
+        self.context = context
     }
 
     // MARK: - CRUD Operations
@@ -153,13 +153,6 @@ class AppSettingRepository {
         try updateAllowedStatus(id, allowed: true)
         self.emitDidSetAllow(id)
     }
-}
-
-// MARK: - Singleton Pattern
-
-extension AppSettingRepository {
-    /// 共享的AppSettingRepository实例
-    static let shared = AppSettingRepository()
 }
 
 // MARK: - Event Emission
