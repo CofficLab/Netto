@@ -1,6 +1,7 @@
 import SwiftUI
 import MagicCore
 import OSLog
+import NetworkExtension
 
 struct AppDetail: View, SuperLog {
     nonisolated static let emoji = "🖥️"
@@ -199,99 +200,13 @@ struct AppDetail: View, SuperLog {
             
             // 事件详细列表
             if !events.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("事件详情 (Event Details)")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                    
-                    // 筛选工具栏
-                    HStack(spacing: 8) {
-                        // 状态筛选
-                        Picker("状态", selection: $statusFilter) {
-                            ForEach(StatusFilter.allCases, id: \.self) { filter in
-                                Text(filter.rawValue).tag(filter)
-                            }
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .frame(width: 180)
-                        
-                        Spacer()
-                        
-                        // 方向筛选
-                        Picker("方向", selection: $directionFilter) {
-                            ForEach(DirectionFilter.allCases, id: \.self) { filter in
-                                Text(filter.rawValue).tag(filter)
-                            }
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .frame(width: 180)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.bottom, 4)
-                    
-                    // 筛选后的事件数量
-                    HStack {
-                        Spacer()
-                        Text("共 \(getFilteredEvents().count) 条事件")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.horizontal, 12)
-                    
-                    Table(getCurrentPageEvents(), columns: {
-                        TableColumn("Time", value: \.timeFormatted).width(150)
-                        TableColumn("Address", value: \.address)
-                        TableColumn("Port", value: \.port).width(60)
-                        TableColumn("Direction") { event in
-                            Text(event.direction == .inbound ? "入" : "出")
-                                .foregroundStyle(event.isAllowed ? .green : .red)
-                        }.width(60)
-                        TableColumn("Status") { event in
-                            Text(event.status == .allowed ? "允许" : "拒绝")
-                                .foregroundStyle(event.isAllowed ? .green : .red)
-                        }.width(60)
-                    })
-                    .frame(minHeight: 200)
-                    .frame(maxHeight: 300)
-                    
-                    // 分页控制
-                    if getTotalPages() > 1 {
-                        HStack {
-                            Button(action: {
-                                if currentPage > 0 {
-                                    currentPage -= 1
-                                }
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .foregroundColor(currentPage > 0 ? .primary : .secondary)
-                            }
-                            .disabled(currentPage <= 0)
-                            
-                            Spacer()
-                            
-                            Text("第 \(currentPage + 1) 页，共 \(getTotalPages()) 页")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                if currentPage < getTotalPages() - 1 {
-                                    currentPage += 1
-                                }
-                            }) {
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(currentPage < getTotalPages() - 1 ? .primary : .secondary)
-                            }
-                            .disabled(currentPage >= getTotalPages() - 1)
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.bottom, 8)
-                    }
-                }
-                .padding(12)
-                .background(Color(.controlBackgroundColor))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                // 使用独立的事件详情视图组件
+                EventDetailView(
+                    events: $events,
+                    currentPage: $currentPage,
+                    statusFilter: $statusFilter,
+                    directionFilter: $directionFilter
+                )
             }
             
             // 注意：子应用程序现在在主列表中通过折叠方式展示
@@ -333,60 +248,6 @@ extension AppDetail {
             events = []
             currentPage = 0
         }
-    }
-    
-    /// 根据筛选条件获取事件列表
-    private func getFilteredEvents() -> [FirewallEvent] {
-        var filteredEvents = events
-        
-        // 应用状态筛选
-        if statusFilter != .all {
-            filteredEvents = filteredEvents.filter { event in
-                switch statusFilter {
-                case .allowed:
-                    return event.status == .allowed
-                case .rejected:
-                    return event.status == .rejected
-                case .all:
-                    return true
-                }
-            }
-        }
-        
-        // 应用方向筛选
-        if directionFilter != .all {
-            filteredEvents = filteredEvents.filter { event in
-                switch directionFilter {
-                case .inbound:
-                    return event.direction == .inbound
-                case .outbound:
-                    return event.direction == .outbound
-                case .all:
-                    return true
-                }
-            }
-        }
-        
-        return filteredEvents
-    }
-    
-    /// 获取当前页的事件数据
-    private func getCurrentPageEvents() -> [FirewallEvent] {
-        let filteredEvents = getFilteredEvents()
-        let reversedEvents = Array(filteredEvents.reversed())
-        let startIndex = currentPage * eventsPerPage
-        let endIndex = min(startIndex + eventsPerPage, reversedEvents.count)
-        
-        if startIndex >= reversedEvents.count {
-            return []
-        }
-        
-        return Array(reversedEvents[startIndex..<endIndex])
-    }
-    
-    /// 获取总页数
-    private func getTotalPages() -> Int {
-        return max(1, Int(ceil(Double(getFilteredEvents().count) / Double(eventsPerPage))))
     }
     
     /// 复制App ID到剪贴板的方法
