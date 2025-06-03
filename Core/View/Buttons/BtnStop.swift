@@ -2,7 +2,7 @@ import MagicCore
 import SwiftUI
 
 struct BtnStop: View, SuperLog {
-    @EnvironmentObject private var channel: FirewallService
+    @EnvironmentObject private var service: ServiceProvider
     @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var app: UIProvider
     
@@ -39,7 +39,7 @@ struct BtnStop: View, SuperLog {
     private func action() -> Void {
         Task {
             do {
-                try await channel.stopFilter(reason: self.className)
+                try await service.stopFilter(reason: self.className)
             } catch {
                 self.m.error(error)
             }

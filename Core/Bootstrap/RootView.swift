@@ -11,7 +11,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var app = UIProvider.shared
     private var p = PluginProvider.shared
     private var data = DataProvider.shared
-    private var channel = FirewallService.shared
+    private var service = ServiceProvider.shared
 
     @StateObject var m = MessageProvider.shared
 
@@ -23,10 +23,9 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
         content
             .environmentObject(app)
             .environmentObject(data)
-            .environmentObject(channel)
-            .modelContainer(DatabaseManager.container())
             .environmentObject(m)
             .environmentObject(p)
+            .environmentObject(service)
             .onReceive(self.nc.publisher(for: .FilterStatusChanged), perform: onFilterStatusChanged)
             .toast(isPresenting: $m.showToast, alert: {
                 AlertToast(type: .systemImage("info.circle", .blue), title: m.toast)

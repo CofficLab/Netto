@@ -3,8 +3,8 @@ import MagicCore
 import OSLog
 
 struct BtnStart: View, SuperLog {
-    @EnvironmentObject private var channel: FirewallService
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject private var service: ServiceProvider
+    @EnvironmentObject private var m: MessageProvider
     
     private var asToolbarItem: Bool = false
     
@@ -39,7 +39,7 @@ struct BtnStart: View, SuperLog {
     private func action() -> Void {
         Task {
             do {
-                try await channel.startFilter(reason: self.className)
+                try await service.startFilter(reason: self.className)
             } catch (let error) {
                 os_log("\(self.t)开启过滤器失败 -> \(error.localizedDescription)")
                 m.error(error)
