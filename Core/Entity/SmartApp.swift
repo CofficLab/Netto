@@ -56,7 +56,7 @@ extension SmartApp {
     static func fromId(_ id: String) -> Self {
         if let runningApp = getApp(id) {
             return SmartApp(
-                id: runningApp.bundleIdentifier ?? "",
+                id: id,
                 name: runningApp.localizedName ?? "",
                 isProxy: Self.isProxyApp(runningApp),
                 bundleURL: runningApp.bundleURL

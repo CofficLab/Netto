@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import MagicCore
 
 struct DBSettingView: View {
     @Query(sort: \AppSetting.appId, order: .forward)
@@ -104,6 +105,10 @@ struct DBSettingView: View {
                 .frame(width: 180)
             }
             
+            Button("Finder中显示") {
+                try? URL.database.openFolder()
+            }
+            
             Spacer()
             
             // 统计信息
@@ -140,7 +145,7 @@ struct DBSettingView: View {
     }.frame(width: 500)
 }
 
-#Preview {
+#Preview("DBSetting") {
     RootView {
         DBSettingView()
     }

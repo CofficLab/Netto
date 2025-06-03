@@ -9,6 +9,43 @@ struct DBEventView: View {
     @Query(sort: \FirewallEventModel.time, order: .reverse)
     var events: [FirewallEventModel]
     
+    // 分页控制状态
+    @State private var currentPage = 0
+    @State private var itemsPerPage = 20
+    @State private var shouldCheckPageBounds = false
+    
+    // 计算总页数
+    private var totalPages: Int {
+        let total = events.count
+        return max(1, (total + itemsPerPage - 1) / itemsPerPage)
+    }
+    
+    // 获取当前页的事件数据
+    private var currentPageEvents: [FirewallEventModel] {
+        // 安全检查，避免索引越界
+        guard !events.isEmpty else { return [] }
+        
+        // 计算有效的当前页码
+        let validCurrentPage = min(currentPage, max(0, totalPages - 1))
+        let startIndex = validCurrentPage * itemsPerPage
+        let endIndex = min(startIndex + itemsPerPage, events.count)
+        
+        // 如果索引有效，返回当前页数据
+        if startIndex < events.count {
+            return Array(events[startIndex..<endIndex])
+        }
+        
+        return []
+    }
+    
+    /// 检查并修正页码边界
+    private func checkPageBounds() {
+        let maxPage = max(0, totalPages - 1)
+        if currentPage > maxPage {
+            currentPage = maxPage
+        }
+    }
+    
     var body: some View {
         VStack {
             // 标题和统计信息
@@ -29,7 +66,7 @@ struct DBEventView: View {
             .padding(.horizontal)
             
             // 事件表格
-            Table(events) {
+            Table(currentPageEvents) {
                 // 时间列
                 TableColumn("时间", value: \.timeFormatted)
                     .width(min: 120, ideal: 150)
@@ -88,8 +125,76 @@ struct DBEventView: View {
                 }
                 .width(min: 100, ideal: 150)
             }
+            
+            // 分页控制
+            HStack {
+                // 每页显示数量选择器
+                HStack(spacing: 4) {
+                    Text("每页显示:")
+                        .foregroundStyle(.secondary)
+                    
+                    Picker("", selection: $itemsPerPage) {
+                        Text("10").tag(10)
+                        Text("20").tag(20)
+                        Text("50").tag(50)
+                        Text("100").tag(100)
+                    }
+                    .pickerStyle(.menu)
+                    .frame(width: 70)
+                    .onChange(of: itemsPerPage) { _, _ in
+                        // 当每页显示数量变化时，检查页码边界
+                        checkPageBounds()
+                    }
+                }
+                
+                Spacer()
+                
+                // 页码控制
+                HStack(spacing: 8) {
+                    Button(action: {
+                        currentPage = 0
+                    }) {
+                        Image(systemName: "backward.end.fill")
+                    }
+                    .disabled(currentPage == 0)
+                    
+                    Button(action: {
+                        currentPage = max(0, currentPage - 1)
+                    }) {
+                        Image(systemName: "chevron.backward")
+                    }
+                    .disabled(currentPage == 0)
+                    
+                    Text("\(currentPage + 1) / \(totalPages)")
+                        .frame(minWidth: 60)
+                    
+                    Button(action: {
+                        currentPage = min(totalPages - 1, currentPage + 1)
+                    }) {
+                        Image(systemName: "chevron.forward")
+                    }
+                    .disabled(currentPage >= totalPages - 1)
+                    
+                    Button(action: {
+                        currentPage = totalPages - 1
+                    }) {
+                        Image(systemName: "forward.end.fill")
+                    }
+                    .disabled(currentPage >= totalPages - 1)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 8)
         }
         .navigationTitle("防火墙事件")
+        .onAppear {
+            // 视图出现时检查页码边界
+            checkPageBounds()
+        }
+        .onChange(of: events.count) { _, _ in
+            // 当事件数量变化时检查页码边界
+            checkPageBounds()
+        }
     }
 }
 
@@ -105,4 +210,11 @@ struct DBEventView: View {
         ContentView()
     }
     .frame(width: 500)
+}
+
+#Preview("DBSettingView") {
+    RootView {
+        DBSettingView()
+    }
+    .frame(width: 600, height: 800)
 }
