@@ -2,8 +2,11 @@ import AlertToast
 import MagicCore
 import SwiftData
 import SwiftUI
+import OSLog
 
 struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
+    nonisolated static var emoji: String { "🌳" }
+    
     private var content: Content
     private var app = UIProvider.shared
     private var p = PluginProvider.shared
@@ -24,6 +27,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
             .modelContainer(DatabaseManager.container())
             .environmentObject(m)
             .environmentObject(p)
+            .onReceive(self.nc.publisher(for: .FilterStatusChanged), perform: onFilterStatusChanged)
             .toast(isPresenting: $m.showToast, alert: {
                 AlertToast(type: .systemImage("info.circle", .blue), title: m.toast)
             }, completion: {
@@ -44,6 +48,17 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
             }, completion: {
                 m.clearError()
             })
+    }
+}
+
+// MARK: - Event
+
+extension RootView {
+    func onFilterStatusChanged(_ n: Notification) {
+        if let status = n.object as? FilterStatus {
+            os_log("\(self.t)状态变更为 -> \(status.description)")
+            self.data.status = status
+        }
     }
 }
 

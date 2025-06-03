@@ -12,6 +12,7 @@ class DataProvider: ObservableObject, SuperLog {
 
     @Published var apps: [SmartApp] = []
     @Published var samples: [SmartApp] = SmartApp.samples
+    @Published var status: FilterStatus = .disabled
 
     private var cancellables = Set<AnyCancellable>()
     private let appPermissionService: AppPermissionService
