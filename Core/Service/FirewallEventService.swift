@@ -312,6 +312,26 @@ class FirewallEventService: SuperLog {
         return eventModels.map { $0.toFirewallEvent() }
     }
     
+    /// 获取所有防火墙事件（分页）
+    /// - Parameters:
+    ///   - page: 页码（从0开始）
+    ///   - pageSize: 每页记录数
+    /// - Returns: 分页后的防火墙事件数组
+    /// - Throws: 查询数据时可能抛出的错误
+    func getAllEventsPaginated(
+        page: Int,
+        pageSize: Int
+    ) throws -> [FirewallEvent] {
+        os_log("\(self.t)获取所有防火墙事件(分页), 页码: \(page), 每页: \(pageSize)")
+        
+        let eventModels = try repository.fetchAllPaginated(
+            page: page,
+            pageSize: pageSize
+        )
+        
+        return eventModels.map { $0.toFirewallEvent() }
+    }
+    
     /// 获取所有防火墙事件
     /// - Returns: 所有防火墙事件数组
     /// - Throws: 查询数据时可能抛出的错误

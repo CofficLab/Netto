@@ -7,8 +7,8 @@ import Combine
 /// 数据库防火墙事件展示视图
 /// 用于展示数据库中存储的所有防火墙事件记录
 struct DBEventView: View {
-    // 使用ModelContext替代直接Query
-    @Environment(\.modelContext) private var modelContext
+    // 直接使用FirewallEventRepository
+    private let repository: FirewallEventRepository = DatabaseManager().firewallEventRepository
     
     // 存储加载的事件数据
     @State private var events: [FirewallEventModel] = []
@@ -18,6 +18,10 @@ struct DBEventView: View {
     @State private var currentPage = 0
     @State private var itemsPerPage = 20
     @State private var isLoading = false
+    
+    // 筛选控制
+    @State private var filterAppId: String = ""
+    @State private var showFilterOptions = false
     
     // 刷新控制
     @State private var refreshTrigger = false
@@ -34,26 +38,33 @@ struct DBEventView: View {
         
         isLoading = true
         
-        // 计算分页参数
-        let startIndex = currentPage * itemsPerPage
-        
-        // 创建查询描述符，按时间倒序排列
-        var descriptor = FetchDescriptor<FirewallEventModel>(sortBy: [SortDescriptor(\.time, order: .reverse)])
-        
-        // 设置分页限制
-        descriptor.fetchLimit = itemsPerPage
-        descriptor.fetchOffset = startIndex
-        
         do {
-            // 获取总数
-            let countDescriptor = FetchDescriptor<FirewallEventModel>()
-            totalCount = try modelContext.fetchCount(countDescriptor)
-            
-            // 获取当前页数据
-            events = try modelContext.fetch(descriptor)
+            // 使用筛选条件获取事件总数
+            if !filterAppId.isEmpty {
+                totalCount = try repository.getEventCountByAppId(filterAppId)
+            } else {
+                // 获取所有事件总数
+                totalCount = try repository.getEventCount()
+            }
             
             // 检查页码边界
             checkPageBounds()
+            
+            // 使用筛选条件获取分页数据
+            if !filterAppId.isEmpty {
+                // 使用应用ID筛选
+                events = try repository.fetchByAppIdPaginated(
+                    filterAppId,
+                    page: currentPage,
+                    pageSize: itemsPerPage
+                )
+            } else {
+                // 获取所有事件（分页）
+                events = try repository.fetchAllPaginated(
+                    page: currentPage,
+                    pageSize: itemsPerPage
+                )
+            }
         } catch {
             print("加载事件数据失败: \(error)")
             events = []
@@ -83,9 +94,16 @@ struct DBEventView: View {
             }
     }
     
+    /// 清除筛选条件
+    private func clearFilter() {
+        filterAppId = ""
+        currentPage = 0
+        loadEvents()
+    }
+    
     var body: some View {
         VStack {
-            // 标题和统计信息
+            // 第一行工具栏：标题和基本操作
             HStack {
                 Text("防火墙事件记录")
                     .font(.title2)
@@ -105,6 +123,38 @@ struct DBEventView: View {
                 }
             }
             .padding()
+            
+            // 第二行工具栏：筛选控制
+            HStack {
+                Text("应用ID筛选:")
+                    .foregroundStyle(.secondary)
+                
+                TextField("输入应用ID", text: $filterAppId)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 200)
+                
+                Button("应用筛选") {
+                    currentPage = 0 // 重置到第一页
+                    loadEvents()
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(filterAppId.isEmpty)
+                
+                if !filterAppId.isEmpty {
+                    Button("清除筛选") {
+                        clearFilter()
+                    }
+                    .buttonStyle(.bordered)
+                }
+                
+                Spacer()
+                
+                Text("提示: 应用ID通常是应用的Bundle ID，例如 com.apple.Safari")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 8)
             
             // 事件表格
             Table(events) {
@@ -250,24 +300,10 @@ struct DBEventView: View {
     }
 }
 
-#Preview("防火墙事件视图") {
+#Preview {
     RootView {
         DBEventView()
     }
-    .frame(width: 600, height: 700)
-}
-
-#Preview("App") {
-    RootView {
-        ContentView()
-    }
-    .frame(width: 500)
-    .frame(height: 800)
-}
-
-#Preview("DBSettingView") {
-    RootView {
-        DBSettingView()
-    }
-    .frame(width: 600, height: 800)
+    .frame(height: 600)
+    .frame(width: 800)
 }

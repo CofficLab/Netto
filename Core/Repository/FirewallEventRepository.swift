@@ -132,8 +132,32 @@ class FirewallEventRepository: SuperLog {
     /// - Throws: 查询数据时可能抛出的错误
     func fetchAll() throws -> [FirewallEventModel] {
         let descriptor = FetchDescriptor<FirewallEventModel>(
-            sortBy: [SortDescriptor(\FirewallEventModel.time, order: .reverse)]
+            sortBy: [SortDescriptor(\.time, order: .reverse)]
         )
+        return try context.fetch(descriptor)
+    }
+    
+    /// 分页获取所有FirewallEvent记录
+    /// - Parameters:
+    ///   - page: 页码（从0开始）
+    ///   - pageSize: 每页记录数
+    /// - Returns: 分页后的FirewallEventModel记录数组
+    /// - Throws: 查询数据时可能抛出的错误
+    func fetchAllPaginated(
+        page: Int,
+        pageSize: Int
+    ) throws -> [FirewallEventModel] {
+        os_log("\(self.t)分页获取所有FirewallEvent记录, 页码: \(page), 每页: \(pageSize)")
+        
+        // 创建查询描述符
+        var descriptor = FetchDescriptor<FirewallEventModel>(
+            sortBy: [SortDescriptor(\.time, order: .reverse)]
+        )
+        
+        // 设置分页参数
+        descriptor.fetchOffset = page * pageSize
+        descriptor.fetchLimit = pageSize
+        
         return try context.fetch(descriptor)
     }
     
@@ -428,4 +452,11 @@ extension Notification.Name {
     }
     .frame(width: 700)
     .frame(height: 800)
+}
+
+#Preview("防火墙事件视图") {
+    RootView {
+        DBEventView()
+    }
+    .frame(width: 600, height: 700)
 }

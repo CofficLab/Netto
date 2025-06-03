@@ -124,8 +124,16 @@ final class FirewallEventModel: SuperLog, SuperEvent {
     }
 }
 
-#Preview("FirewallEvent Model") {
+#Preview("App") {
     RootView(content: {
         ContentView()
     }).frame(width: 700)
+        .frame(height: 600)
+}
+
+#Preview("防火墙事件视图") {
+    RootView {
+        DBEventView()
+    }
+    .frame(width: 600, height: 700)
 }
