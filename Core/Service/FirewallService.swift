@@ -42,13 +42,7 @@ class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     private var extensionBundle = AppConfig.extensionBundle
 
     @Published var error: Error?
-    @Published private var _status: FilterStatus = .stopped
-
-    /// 过滤器状态（只读）
-    /// 只能通过updateFilterStatus方法修改状态
-    var status: FilterStatus {
-        return _status
-    }
+    private var _status: FilterStatus = .stopped
 
     var observer: Any?
 
@@ -146,7 +140,7 @@ class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, SuperTh
     }
 
     func startFilter(reason: String) async throws {
-        os_log("\(self.t)🚀 开启过滤器 🐛 \(reason)  ➡️ Current Status: \(self.status.description)")
+        os_log("\(self.t)🚀 开启过滤器 🐛 \(reason)  ➡️ Current Status: \(self._status.description)")
 
         self.emit(.willStart)
 

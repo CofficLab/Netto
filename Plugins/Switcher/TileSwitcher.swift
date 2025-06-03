@@ -5,19 +5,19 @@ import SwiftUI
 struct TileSwitcher: View, SuperLog, SuperThread {
     @EnvironmentObject var m: MessageProvider
     @EnvironmentObject var app: UIProvider
-    @EnvironmentObject var channel: FirewallService
-
+    @EnvironmentObject var data: DataProvider
+    
     @State var hovered = false
     @State var isPresented = false
 
     var body: some View {
         HStack {
-            if channel.status.isRunning() {
+            if data.status.isRunning() {
                 BtnStop(asToolbarItem: true).labelStyle(.iconOnly)
             } else {
                 BtnStart(asToolbarItem: true)
                     .labelStyle(.iconOnly)
-                    .disabled(!channel.status.canStart())
+                    .disabled(!data.status.canStart())
             }
         }
         .frame(maxHeight: .infinity)
