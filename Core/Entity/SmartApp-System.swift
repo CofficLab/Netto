@@ -200,6 +200,13 @@ extension SmartApp {
             id: ".com.apple.configd",
             name: "配置守护进程",
             isSystemApp: true
+        ),
+        
+        // App Store
+        SmartApp(
+            id: ".com.apple.AppStore",
+            name: "App Store",
+            isSystemApp: true
         )
     ]
 }
@@ -337,6 +344,11 @@ extension SmartApp {
                 iconName: "gearshape.2",
                 gradientColors: [Color.gray.opacity(0.8), Color.secondary]
             ))
+        case ".com.apple.AppStore":
+            return AnyView(IconHelper.createSystemIcon(
+                iconName: "bag",
+                gradientColors: [Color.blue.opacity(0.8), Color.cyan]
+            ))
         default:
             // 未知系统应用的默认图标
             if id.hasPrefix(".") {
@@ -350,9 +362,47 @@ extension SmartApp {
     }
 }
 
-#Preview {
+/// 系统应用网格视图，用于展示所有系统应用及其图标
+struct SystemAppGridView: View {
+    var body: some View {
+        ScrollView {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 4), spacing: 16) {
+                ForEach(SmartApp.allSystemApps) { app in
+                    VStack {
+                        if let iconView = SmartApp.getSystemAppIcon(app.id) {
+                            iconView
+                                .frame(width: 60, height: 60)
+                        } else {
+                            SmartApp.getDefaultIcon()
+                                .frame(width: 60, height: 60)
+                        }
+                        
+                        Text(app.name)
+                            .font(.caption)
+                            .foregroundColor(.primary)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.bottom, 8)
+                }
+            }
+            .padding()
+        }
+        .background(Color(.windowBackgroundColor))
+        .navigationTitle("系统应用列表")
+    }
+}
+
+#Preview("ContentView") {
     RootView {
         ContentView()
     }
     .frame(height: 800)
+}
+
+#Preview("系统应用列表") {
+    RootView {
+        SystemAppGridView()
+    }
+    .frame(width: 600, height: 800)
 }
