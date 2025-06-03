@@ -15,6 +15,12 @@ struct AppDetail: View, SuperLog {
     /// 从数据库加载的事件列表
     @State private var events: [FirewallEvent] = []
     
+    /// 当前页码（从0开始）
+    @State private var currentPage: Int = 0
+    
+    /// 每页显示的事件数量
+    private let eventsPerPage: Int = 20
+    
     /// 防火墙事件服务
     private let firewallEventService = FirewallEventService()
 
@@ -116,12 +122,20 @@ struct AppDetail: View, SuperLog {
             // 事件详细列表
             if !events.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("事件详情 (Event Details)")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .padding(.horizontal, 12)
+                    HStack {
+                        Text("事件详情 (Event Details)")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                        
+                        Spacer()
+                        
+                        Text("共 \(events.count) 条事件")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.horizontal, 12)
                     
-                    Table(events.reversed(), columns: {
+                    Table(getCurrentPageEvents(), columns: {
                         TableColumn("Time", value: \.timeFormatted).width(150)
                         TableColumn("Address", value: \.address)
                         TableColumn("Port", value: \.port).width(60)
@@ -136,6 +150,41 @@ struct AppDetail: View, SuperLog {
                     })
                     .frame(minHeight: 200)
                     .frame(maxHeight: 300)
+                    
+                    // 分页控制
+                    if getTotalPages() > 1 {
+                        HStack {
+                            Button(action: {
+                                if currentPage > 0 {
+                                    currentPage -= 1
+                                }
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .foregroundColor(currentPage > 0 ? .primary : .secondary)
+                            }
+                            .disabled(currentPage <= 0)
+                            
+                            Spacer()
+                            
+                            Text("第 \(currentPage + 1) 页，共 \(getTotalPages()) 页")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                if currentPage < getTotalPages() - 1 {
+                                    currentPage += 1
+                                }
+                            }) {
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(currentPage < getTotalPages() - 1 ? .primary : .secondary)
+                            }
+                            .disabled(currentPage >= getTotalPages() - 1)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.bottom, 8)
+                    }
                 }
                 .padding(12)
                 .background(Color(.controlBackgroundColor))
@@ -158,11 +207,31 @@ struct AppDetail: View, SuperLog {
         do {
             let allEvents = try firewallEventService.getEventsByAppId(app.id)
             events = allEvents
+            currentPage = 0 // 重置到第一页
             os_log("\(self.t)加载了 \(allEvents.count) 个事件")
         } catch {
             print("加载事件数据失败: \(error)")
             events = []
+            currentPage = 0
         }
+    }
+    
+    /// 获取当前页的事件数据
+    private func getCurrentPageEvents() -> [FirewallEvent] {
+        let reversedEvents = Array(events.reversed())
+        let startIndex = currentPage * eventsPerPage
+        let endIndex = min(startIndex + eventsPerPage, reversedEvents.count)
+        
+        if startIndex >= reversedEvents.count {
+            return []
+        }
+        
+        return Array(reversedEvents[startIndex..<endIndex])
+    }
+    
+    /// 获取总页数
+    private func getTotalPages() -> Int {
+        return max(1, Int(ceil(Double(events.count) / Double(eventsPerPage))))
     }
     
     /// 复制App ID到剪贴板的方法
