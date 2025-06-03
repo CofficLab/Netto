@@ -21,7 +21,7 @@ class DataProvider: ObservableObject, SuperLog {
     /// - Parameters:
     ///   - appPermissionService: 应用权限服务
     ///   - firewallEventService: 防火墙事件服务
-    private init(appPermissionService: AppPermissionService = AppPermissionService(),
+    private init(appPermissionService: AppPermissionService = .shared,
          firewallEventService: FirewallEventService = FirewallEventService()) {
         self.appPermissionService = appPermissionService
         self.firewallEventService = firewallEventService
@@ -40,12 +40,6 @@ class DataProvider: ObservableObject, SuperLog {
         }
 
         setupNotificationListeners()
-    }
-
-    /// 私有初始化方法，用于单例模式
-    private convenience init() {
-        self.init(appPermissionService: AppPermissionService(),
-                  firewallEventService: FirewallEventService())
     }
 }
 

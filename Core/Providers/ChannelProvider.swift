@@ -9,7 +9,7 @@ import SystemExtensions
 class ChannelProvider: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread {
     static let shared = ChannelProvider()
 
-    private let data: AppPermissionService = AppPermissionService()
+    private let s: AppPermissionService = .shared
 
     override private init() {
         super.init()
@@ -350,7 +350,10 @@ extension ChannelProvider: AppCommunication {
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
         let verbose = false
 
-        let shouldAllow = AppPermissionService().shouldAllow(id)
+        // 在主线程上同步执行 shouldAllow 调用
+        let shouldAllow = DispatchQueue.main.sync {
+            self.s.shouldAllow(id)
+        }
         if shouldAllow {
             if verbose {
                 os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(id) -> Allow")

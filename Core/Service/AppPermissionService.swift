@@ -177,6 +177,9 @@ import SwiftUI
 class AppPermissionService: SuperLog {
     nonisolated static let emoji = "💁"
     
+    @MainActor
+    static let shared = AppPermissionService()
+    
     // MARK: - Properties
 
     /// 数据库管理器
@@ -191,7 +194,7 @@ class AppPermissionService: SuperLog {
 
     /// 初始化应用权限服务
     /// - Parameter databaseManager: 数据库管理器，如果为nil则使用共享实例
-    init(databaseManager: DatabaseManager? = nil) {
+    private init(databaseManager: DatabaseManager? = nil) {
         self.databaseManager = databaseManager ?? DatabaseManager()
     }
 
