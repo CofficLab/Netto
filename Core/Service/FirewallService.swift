@@ -79,7 +79,6 @@ final class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
         os_log("\(self.t)\(Location.did(.IfReady))")
 
         if NEFilterManager.shared().isEnabled {
-//            registerWithProvider()
             self.updateFilterStatus(.running)
 
             return true
@@ -197,7 +196,6 @@ extension FirewallService {
 
         guard !NEFilterManager.shared().isEnabled else {
             os_log("\(self.t)FilterManager is Disabled, registerWithProvider")
-//            registerWithProvider()
             return
         }
 

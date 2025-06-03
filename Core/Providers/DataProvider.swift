@@ -78,28 +78,12 @@ extension DataProvider {
     /// 更新应用列表（确保在主线程执行）
     /// - Parameters:
     ///   - app: 要更新或添加的应用
-    ///   - verbose: 是否输出详细日志
-    @MainActor
-    private func updateAppsList(app: SmartApp, verbose: Bool) {
+    private func updateAppsList(app: SmartApp) {
         // 检查应用是否已在列表中
         let appExists = apps.firstIndex(where: { $0.id == app.id }) != nil
 
-        if appExists {
-            if verbose {
-                os_log("\(self.t)🍋 监听到网络流量，更新已知APP")
-            }
-        } else {
-            if verbose {
-                os_log("\(self.t)🛋️ 监听到网络流量，没见过这个APP，加入列表 -> \(app.id)")
-            }
-            // 直接在主线程上添加应用，不需要再次使用DispatchQueue.main.async
+        if appExists == false {
             self.apps.append(app)
-        }
-
-        let total = self.apps.count
-
-        if verbose {
-            os_log("\(self.t)📈 当前APP数量 -> \(total)")
         }
     }
 }
@@ -120,42 +104,28 @@ extension DataProvider {
 
     /// 处理网络流量事件
     /// - Parameter wrapper: 包装的网络流量数据
-    private func handleNetworkFlow(_ wrapper: FlowWrapper) {
-        let verbose = false
-        let app = SmartApp.fromId(wrapper.id)
+    private func handleNetworkFlow(_ wrapper: FlowWrapper, verbose: Bool = false) {
+        Task(priority: .background) {
+            let event = FirewallEvent(
+                address: wrapper.getAddress(),
+                port: wrapper.getPort(),
+                sourceAppIdentifier: wrapper.id,
+                status: wrapper.allowed ? .allowed : .rejected,
+                direction: wrapper.direction
+            )
 
-        // 验证和处理端口信息
-        let validPort: String
-        if wrapper.port.isEmpty {
-            validPort = "0" // 默认端口
-        } else if let portNumber = Int(wrapper.port), portNumber > 0 && portNumber <= 65535 {
-            validPort = wrapper.port
-        } else {
-            validPort = "0" // 无效端口时使用默认值
-        }
-
-        // 验证地址信息
-        let validAddress = wrapper.hostname.isEmpty ? "unknown" : wrapper.hostname
-
-        let event = FirewallEvent(
-            address: validAddress,
-            port: validPort,
-            sourceAppIdentifier: wrapper.id,
-            status: wrapper.allowed ? .allowed : .rejected,
-            direction: wrapper.direction
-        )
-
-        // 将事件存储到数据库
-        do {
-            try firewallEventService.recordEvent(event)
-            if verbose {
-                os_log("\(self.t)💾 事件已存储到数据库: \(event.description)")
+            // 将事件存储到数据库
+            do {
+                try firewallEventService.recordEvent(event)
+                if verbose {
+                    os_log("\(self.t)💾 事件已存储到数据库: \(event.description)")
+                }
+            } catch {
+                os_log(.error, "\(self.t)❌ 存储事件到数据库失败: \(error)")
             }
-        } catch {
-            os_log(.error, "\(self.t)❌ 存储事件到数据库失败: \(error)")
         }
 
-        self.updateAppsList(app: app, verbose: verbose)
+        self.updateAppsList(app: wrapper.getApp())
     }
 }
 
