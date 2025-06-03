@@ -2,40 +2,64 @@ import SwiftUI
 import SwiftData
 import MagicCore
 import NetworkExtension
+import Combine
 
 /// 数据库防火墙事件展示视图
 /// 用于展示数据库中存储的所有防火墙事件记录
 struct DBEventView: View {
-    @Query(sort: \FirewallEventModel.time, order: .reverse)
-    var events: [FirewallEventModel]
+    // 使用ModelContext替代直接Query
+    @Environment(\.modelContext) private var modelContext
+    
+    // 存储加载的事件数据
+    @State private var events: [FirewallEventModel] = []
+    @State private var totalCount: Int = 0
     
     // 分页控制状态
     @State private var currentPage = 0
     @State private var itemsPerPage = 20
-    @State private var shouldCheckPageBounds = false
+    @State private var isLoading = false
+    
+    // 刷新控制
+    @State private var refreshTrigger = false
+    @State private var refreshTimer: AnyCancellable?
     
     // 计算总页数
     private var totalPages: Int {
-        let total = events.count
-        return max(1, (total + itemsPerPage - 1) / itemsPerPage)
+        return max(1, (totalCount + itemsPerPage - 1) / itemsPerPage)
     }
     
-    // 获取当前页的事件数据
-    private var currentPageEvents: [FirewallEventModel] {
-        // 安全检查，避免索引越界
-        guard !events.isEmpty else { return [] }
+    /// 加载当前页的事件数据
+    private func loadEvents() {
+        guard !isLoading else { return }
         
-        // 计算有效的当前页码
-        let validCurrentPage = min(currentPage, max(0, totalPages - 1))
-        let startIndex = validCurrentPage * itemsPerPage
-        let endIndex = min(startIndex + itemsPerPage, events.count)
+        isLoading = true
         
-        // 如果索引有效，返回当前页数据
-        if startIndex < events.count {
-            return Array(events[startIndex..<endIndex])
+        // 计算分页参数
+        let startIndex = currentPage * itemsPerPage
+        
+        // 创建查询描述符，按时间倒序排列
+        var descriptor = FetchDescriptor<FirewallEventModel>(sortBy: [SortDescriptor(\.time, order: .reverse)])
+        
+        // 设置分页限制
+        descriptor.fetchLimit = itemsPerPage
+        descriptor.fetchOffset = startIndex
+        
+        do {
+            // 获取总数
+            let countDescriptor = FetchDescriptor<FirewallEventModel>()
+            totalCount = try modelContext.fetchCount(countDescriptor)
+            
+            // 获取当前页数据
+            events = try modelContext.fetch(descriptor)
+            
+            // 检查页码边界
+            checkPageBounds()
+        } catch {
+            print("加载事件数据失败: \(error)")
+            events = []
         }
         
-        return []
+        isLoading = false
     }
     
     /// 检查并修正页码边界
@@ -44,6 +68,19 @@ struct DBEventView: View {
         if currentPage > maxPage {
             currentPage = maxPage
         }
+    }
+    
+    /// 设置刷新定时器
+    private func setupRefreshTimer() {
+        // 取消现有定时器
+        refreshTimer?.cancel()
+        
+        // 创建新定时器，每5秒刷新一次数据
+        refreshTimer = Timer.publish(every: 5, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                loadEvents()
+            }
     }
     
     var body: some View {
@@ -56,17 +93,21 @@ struct DBEventView: View {
                 
                 Spacer()
                 
-                Text("共 \(events.count) 条记录")
+                Text("共 \(totalCount) 条记录")
                     .foregroundStyle(.secondary)
+                
+                Button("刷新") {
+                    loadEvents()
+                }
                 
                 Button("打开数据库文件夹") {
                     try? URL.database.openFolder()
                 }
             }
-            .padding(.horizontal)
+            .padding()
             
             // 事件表格
-            Table(currentPageEvents) {
+            Table(events) {
                 // 时间列
                 TableColumn("时间", value: \.timeFormatted)
                     .width(min: 120, ideal: 150)
@@ -125,6 +166,11 @@ struct DBEventView: View {
                 }
                 .width(min: 100, ideal: 150)
             }
+            .overlay {
+                if isLoading {
+                    ProgressView("加载中...")
+                }
+            }
             
             // 分页控制
             HStack {
@@ -142,8 +188,8 @@ struct DBEventView: View {
                     .pickerStyle(.menu)
                     .frame(width: 70)
                     .onChange(of: itemsPerPage) { _, _ in
-                        // 当每页显示数量变化时，检查页码边界
-                        checkPageBounds()
+                        currentPage = 0 // 重置到第一页
+                        loadEvents()
                     }
                 }
                 
@@ -153,34 +199,38 @@ struct DBEventView: View {
                 HStack(spacing: 8) {
                     Button(action: {
                         currentPage = 0
+                        loadEvents()
                     }) {
                         Image(systemName: "backward.end.fill")
                     }
-                    .disabled(currentPage == 0)
+                    .disabled(currentPage == 0 || isLoading)
                     
                     Button(action: {
                         currentPage = max(0, currentPage - 1)
+                        loadEvents()
                     }) {
                         Image(systemName: "chevron.backward")
                     }
-                    .disabled(currentPage == 0)
+                    .disabled(currentPage == 0 || isLoading)
                     
                     Text("\(currentPage + 1) / \(totalPages)")
                         .frame(minWidth: 60)
                     
                     Button(action: {
                         currentPage = min(totalPages - 1, currentPage + 1)
+                        loadEvents()
                     }) {
                         Image(systemName: "chevron.forward")
                     }
-                    .disabled(currentPage >= totalPages - 1)
+                    .disabled(currentPage >= totalPages - 1 || isLoading)
                     
                     Button(action: {
                         currentPage = totalPages - 1
+                        loadEvents()
                     }) {
                         Image(systemName: "forward.end.fill")
                     }
-                    .disabled(currentPage >= totalPages - 1)
+                    .disabled(currentPage >= totalPages - 1 || isLoading)
                 }
             }
             .padding(.horizontal)
@@ -188,12 +238,14 @@ struct DBEventView: View {
         }
         .navigationTitle("防火墙事件")
         .onAppear {
-            // 视图出现时检查页码边界
-            checkPageBounds()
+            // 视图出现时加载数据
+            loadEvents()
+            // 设置刷新定时器
+            setupRefreshTimer()
         }
-        .onChange(of: events.count) { _, _ in
-            // 当事件数量变化时检查页码边界
-            checkPageBounds()
+        .onDisappear {
+            // 视图消失时取消定时器
+            refreshTimer?.cancel()
         }
     }
 }
@@ -202,7 +254,7 @@ struct DBEventView: View {
     RootView {
         DBEventView()
     }
-    .frame(width: 600, height: 600)
+    .frame(width: 600, height: 700)
 }
 
 #Preview("App") {
