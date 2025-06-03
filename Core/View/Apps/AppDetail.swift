@@ -26,6 +26,12 @@ struct AppDetail: View, SuperLog {
     
     /// 防火墙事件服务
     private let firewallEventService = FirewallEventService()
+    
+    /// 状态筛选选项
+    @State private var statusFilter: StatusFilter = .all
+    
+    /// 方向筛选选项
+    @State private var directionFilter: DirectionFilter = .all
 
     var app: SmartApp
 
@@ -232,7 +238,33 @@ struct AppDetail: View, SuperLog {
                         
                         Spacer()
                         
-                        Text("共 \(events.count) 条事件")
+                        // 筛选控件
+                        HStack(spacing: 8) {
+                            // 状态筛选
+                            Picker("状态", selection: $statusFilter) {
+                                ForEach(StatusFilter.allCases, id: \.self) { filter in
+                                    Text(filter.rawValue).tag(filter)
+                                }
+                            }
+                            .pickerStyle(SegmentedPickerStyle())
+                            .frame(width: 150)
+                            
+                            // 方向筛选
+                            Picker("方向", selection: $directionFilter) {
+                                ForEach(DirectionFilter.allCases, id: \.self) { filter in
+                                    Text(filter.rawValue).tag(filter)
+                                }
+                            }
+                            .pickerStyle(SegmentedPickerStyle())
+                            .frame(width: 120)
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    
+                    // 筛选后的事件数量
+                    HStack {
+                        Spacer()
+                        Text("共 \(getFilteredEvents().count) 条事件")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -300,11 +332,27 @@ struct AppDetail: View, SuperLog {
         .onHover { hovering in
             popoverHovering = hovering
         }
-        .onAppear {
-            loadEvents()
+        .onAppear(perform: onAppear)
+        .onChange(of: statusFilter) { _, _ in
+            currentPage = 0 // 重置到第一页
+        }
+        .onChange(of: directionFilter) { _, _ in
+            currentPage = 0 // 重置到第一页
         }
     }
-    
+}
+
+// MARK: - Event
+
+extension AppDetail {
+    func onAppear() {
+        loadEvents()
+    }
+}
+
+// MARK: - Action
+
+extension AppDetail {
     /// 从数据库加载指定应用的事件数据
     private func loadEvents() {
         do {
@@ -319,9 +367,45 @@ struct AppDetail: View, SuperLog {
         }
     }
     
+    /// 根据筛选条件获取事件列表
+    private func getFilteredEvents() -> [FirewallEvent] {
+        var filteredEvents = events
+        
+        // 应用状态筛选
+        if statusFilter != .all {
+            filteredEvents = filteredEvents.filter { event in
+                switch statusFilter {
+                case .allowed:
+                    return event.status == .allowed
+                case .rejected:
+                    return event.status == .rejected
+                case .all:
+                    return true
+                }
+            }
+        }
+        
+        // 应用方向筛选
+        if directionFilter != .all {
+            filteredEvents = filteredEvents.filter { event in
+                switch directionFilter {
+                case .inbound:
+                    return event.direction == .inbound
+                case .outbound:
+                    return event.direction == .outbound
+                case .all:
+                    return true
+                }
+            }
+        }
+        
+        return filteredEvents
+    }
+    
     /// 获取当前页的事件数据
     private func getCurrentPageEvents() -> [FirewallEvent] {
-        let reversedEvents = Array(events.reversed())
+        let filteredEvents = getFilteredEvents()
+        let reversedEvents = Array(filteredEvents.reversed())
         let startIndex = currentPage * eventsPerPage
         let endIndex = min(startIndex + eventsPerPage, reversedEvents.count)
         
@@ -334,7 +418,7 @@ struct AppDetail: View, SuperLog {
     
     /// 获取总页数
     private func getTotalPages() -> Int {
-        return max(1, Int(ceil(Double(events.count) / Double(eventsPerPage))))
+        return max(1, Int(ceil(Double(getFilteredEvents().count) / Double(eventsPerPage))))
     }
     
     /// 复制App ID到剪贴板的方法

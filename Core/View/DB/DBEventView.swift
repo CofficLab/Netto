@@ -262,6 +262,7 @@ struct DBEventView: View {
         ContentView()
     }
     .frame(width: 500)
+    .frame(height: 800)
 }
 
 #Preview("DBSettingView") {
