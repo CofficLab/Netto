@@ -24,18 +24,6 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         Window(Self.welcomeWindowTitle, id: AppConfig.welcomeWindowId) {
             if shouldShowLoading && !shouldShowWelcomeWindow {
                 LoadingView(isPresented: $shouldShowLoading, message: "启动中")
-                    .onReceive(nc.publisher(for: .shouldOpenWelcomeWindow)) { _ in
-                        os_log("\(self.t)🖥️ 打开欢迎窗口")
-                        openWindow(id: AppConfig.welcomeWindowId)
-                        shouldShowWelcomeWindow = true
-                        shouldShowMenuApp = false
-                    }
-                    .onReceive(nc.publisher(for: .shouldCloseWelcomeWindow)) { _ in
-                        os_log("\(self.t)🖥️ 关闭欢迎窗口，关闭LoadingView")
-                        shouldShowWelcomeWindow = false
-                        shouldShowLoading = false
-                        shouldShowMenuApp = true
-                    }
                     .onAppear {
                         let shouldShowWelcome = versionService.shouldShowWelcomeWindow()
 
@@ -57,18 +45,12 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                             window.orderFrontRegardless()
                         }
                     }
-                    .onReceive(nc.publisher(for: .shouldCloseWelcomeWindow)) { _ in
-                        os_log("\(self.t)关闭欢迎窗口")
-                        shouldShowWelcomeWindow = false
-                        shouldShowMenuApp = true
-                    }
             }
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
         .defaultPosition(.center)
         .defaultSize(width: 500, height: 600)
-        .keyboardShortcut("w", modifiers: [.command, .shift])
 
         // 主要的菜单栏应用
         MenuBarExtra(content: {
