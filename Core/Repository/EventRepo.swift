@@ -175,7 +175,7 @@ class EventRepo: SuperLog {
         
         if deletedCount > 0 {
             try context.save()
-            os_log("\(self.t)已清理超过 \(days) 天的 \(deletedCount) 条事件记录")
+            os_log("\(self.t)🧹 已清理超过 \(days) 天的 \(deletedCount) 条事件记录")
         }
         
         return deletedCount

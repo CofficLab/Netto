@@ -183,11 +183,11 @@ class DBManager: SuperLog {
         self.startPeriodicCleanup()
         
         // 初始化时执行一次数据库维护
-        Task { @MainActor in
+        Task {
             do {
                 try await self.performDatabaseMaintenance()
             } catch {
-                os_log("初始化数据库维护失败: \(error.localizedDescription)")
+                os_log("\(self.t)❌ 初始化数据库维护失败: \(error.localizedDescription)")
             }
         }
     }
@@ -236,28 +236,20 @@ class DBManager: SuperLog {
         os_log("All database data cleared successfully")
     }
     
-    /// 获取数据库统计信息
-    /// - Returns: 包含各种数据统计的字典
-    /// - Throws: 查询时可能抛出的错误
-    func getDatabaseStats() throws -> [String: Int] {
-        let appSettingsCount = try mainContext.fetch(FetchDescriptor<AppSetting>()).count
-        let firewallEventsCount = try mainContext.fetch(FetchDescriptor<FirewallEventModel>()).count
-        
-        return [
-            "appSettings": appSettingsCount,
-            "firewallEvents": firewallEventsCount
-        ]
-    }
-    
     /// 检查数据库健康状态
     /// - Returns: 数据库是否健康
-    func checkDatabaseHealth() -> Bool {
+    nonisolated func checkDatabaseHealth() async -> Bool {
+        os_log("\(self.t)🔍 开始检查数据库健康状态")
         do {
-            // 尝试执行一个简单的查询来检查数据库连接
-            _ = try mainContext.fetch(FetchDescriptor<AppSetting>())
-            return true
+            // 使用后台上下文执行健康检查
+            let isHealthy = try await performBackgroundTask { context in
+                // 尝试执行一个简单的查询来检查数据库连接
+                _ = try context.fetch(FetchDescriptor<AppSetting>())
+                return true
+            }
+            return isHealthy
         } catch {
-            os_log("Database health check failed: \(error.localizedDescription)")
+            os_log("\(self.t)❌ 数据库健康检查失败: \(error.localizedDescription)")
             return false
         }
     }
@@ -288,7 +280,8 @@ extension DBManager {
     /// 清理所有应用超过30天的事件记录
     /// - Returns: 删除的总记录数量
     /// - Throws: 清理操作时可能抛出的错误
-    func cleanupOldFirewallEvents() async throws -> Int {
+    nonisolated func cleanupOldFirewallEvents() async throws -> Int {
+        os_log("\(self.t)🧹 开始清理过期的防火墙事件")
         return try await performBackgroundTask { context in
             let repository = EventRepo(context: context)
             return try repository.cleanupOldEvents(olderThanDays: 30)
@@ -311,37 +304,41 @@ extension DBManager {
     /// - Returns: 维护任务的执行结果
     /// - Throws: 维护操作时可能抛出的错误
     @discardableResult
-    func performDatabaseMaintenance() async throws -> DBMaintenanceResult {
-        os_log("\(self.t)👷 开始执行数据库维护任务")
-        
-        let startTime = Date()
-        var result = DBMaintenanceResult()
-        
-        do {
-            // 1. 清理过期的防火墙事件
-            result.deletedFirewallEvents = try await cleanupOldFirewallEvents()
+    nonisolated func performDatabaseMaintenance() async throws -> DBMaintenanceResult {
+        // 确保在最低优先级后台执行
+        return try await Task.detached(priority: .background) {
+            os_log("\(self.t)👷 开始执行数据库维护任务")
             
-            // 2. 检查数据库健康状态
-            result.isDatabaseHealthy = checkDatabaseHealth()
+            let startTime = Date()
+            var result = DBMaintenanceResult()
             
-            // 3. 获取数据库统计信息
-            result.databaseStats = try getDatabaseStats()
+            do {
+                // 1. 清理过期的防火墙事件
+                result.deletedFirewallEvents = try await self.cleanupOldFirewallEvents()
+
+                os_log("\(self.t)🧹 已清理过期的防火墙事件，共删除 \(result.deletedFirewallEvents) 条记录")
+                
+                // 2. 检查数据库健康状态
+                result.isDatabaseHealthy = await self.checkDatabaseHealth()
+
+                os_log("\(self.t)🧐 已 \(result.isDatabaseHealthy ? "通过" : "未通过") 数据库健康检查")
+
+                result.executionTime = Date().timeIntervalSince(startTime)
+                result.isSuccessful = true
+                
+                os_log("\(self.t)✅ 数据库维护任务完成，删除了 \(result.deletedFirewallEvents) 条过期记录，耗时 \(String(format: "%.2f", result.executionTime)) 秒")
+                
+            } catch {
+                result.error = error
+                result.isSuccessful = false
+                result.executionTime = Date().timeIntervalSince(startTime)
+                
+                os_log("\(self.t)❌ 数据库维护任务失败: \(error.localizedDescription)")
+                throw error
+            }
             
-            result.executionTime = Date().timeIntervalSince(startTime)
-            result.isSuccessful = true
-            
-            os_log("\(self.t)✅ 数据库维护任务完成，删除了 \(result.deletedFirewallEvents) 条过期记录，耗时 \(String(format: "%.2f", result.executionTime)) 秒")
-            
-        } catch {
-            result.error = error
-            result.isSuccessful = false
-            result.executionTime = Date().timeIntervalSince(startTime)
-            
-            os_log("数据库维护任务失败: \(error.localizedDescription)")
-            throw error
-        }
-        
-        return result
+            return result
+        }.value
     }
     
     /// 启动定期清理任务
@@ -351,9 +348,9 @@ extension DBManager {
             Task { @MainActor in
                 do {
                     let result = try await strongSelf.performDatabaseMaintenance()
-                    os_log("定期清理任务完成: 删除 \(result.deletedFirewallEvents) 条记录")
+                    os_log("\(strongSelf.t)🧹 定期清理任务完成: 删除 \(result.deletedFirewallEvents) 条记录")
                 } catch {
-                    os_log("定期清理任务失败: \(error.localizedDescription)")
+                    os_log("\(strongSelf.t)⚠️ 定期清理任务失败: \(error.localizedDescription)")
                 }
             }
         }
