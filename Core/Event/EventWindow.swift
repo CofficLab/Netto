@@ -16,4 +16,7 @@ extension Notification.Name  {
 
     /// 应该关闭欢迎窗口的通知
     static let shouldCloseWelcomeWindow = Notification.Name("shouldCloseWelcomeWindow")
+    
+    /// 检查版本以决定是否显示欢迎窗口的通知
+    static let checkVersionForWelcomeWindow = Notification.Name("checkVersionForWelcomeWindow")
 }

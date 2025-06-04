@@ -7,8 +7,6 @@ import SystemExtensions
 
 @MainActor
 final class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
-    static let shared = FirewallService()
-
     nonisolated static let emoji = "🛡️"
 
     private var ipc = IPCConnection.shared
@@ -16,19 +14,22 @@ final class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
     private var extensionBundle = AppConfig.extensionBundle
     private var error: Error?
     private var observer: Any?
-    private let s: AppPermissionService = .shared
-    var status: FilterStatus = .stopped
+    private var s: PermissionService
+    var status: FilterStatus = .indeterminate
 
-    override private init() {
+    init(appPermissionService: PermissionService, reason: String) {
+        os_log("\(Self.onInit)(\(reason))")
+
+        self.s = appPermissionService
+
         super.init()
-        os_log("\(Self.onInit)")
-
+        
         self.emit(.willBoot)
-        self.updateFilterStatus(.indeterminate)
         self.setObserver()
 
         // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
         Task {
+            
             do {
                 try await loadFilterConfiguration(reason: "Boot")
             } catch {

@@ -10,6 +10,8 @@ import SwiftUI
  * 直接通过appId获取事件数据，支持分页加载和筛选
  */
 struct EventDetailView: View, SuperLog {
+    @EnvironmentObject private var service: ServiceProvider
+    
     nonisolated static let emoji = "📋"
 
     /// 应用ID
@@ -32,9 +34,10 @@ struct EventDetailView: View, SuperLog {
 
     /// 每页显示的事件数量
     private let eventsPerPage: Int = 20
-
-    /// 防火墙事件服务
-    private let firewallEventService = FirewallEventService()
+    
+    private var firewallEventService: EventService {
+        service.firewallEventService
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {

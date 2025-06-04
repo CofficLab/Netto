@@ -110,8 +110,10 @@ import SwiftUI
  *    - 处理并发访问的冲突
  *    - 实现适当的数据验证机制
  */
-class DBManager: @unchecked Sendable, SuperLog {
-    static let emoji = "🏭"
+@MainActor
+class DBManager: SuperLog {
+    nonisolated static let emoji = "🏭"
+    
     static let shared = DBManager()
     
     // MARK: - Properties
@@ -123,13 +125,13 @@ class DBManager: @unchecked Sendable, SuperLog {
     private let mainContext: ModelContext
     
     /// AppSetting仓库
-    lazy var appSettingRepository: AppSettingRepository = {
-        return AppSettingRepository(context: mainContext)
+    lazy var appSettingRepo: AppSettingRepo = {
+        return AppSettingRepo(context: mainContext)
     }()
     
     /// FirewallEvent仓库
-    lazy var firewallEventRepository: FirewallEventRepository = {
-        return FirewallEventRepository(context: mainContext)
+    lazy var firewallEventRepository: EventRepo = {
+        return EventRepo(context: mainContext)
     }()
 
     static func container() -> ModelContainer  {
@@ -274,7 +276,7 @@ extension DBManager {
     /// - Throws: 清理操作时可能抛出的错误
     func cleanupOldFirewallEvents() async throws -> Int {
         return try await performBackgroundTask { context in
-            let repository = FirewallEventRepository(context: context)
+            let repository = EventRepo(context: context)
             return try repository.cleanupOldEvents(olderThanDays: 30)
         }
     }
@@ -285,7 +287,7 @@ extension DBManager {
     /// - Throws: 清理操作时可能抛出的错误
     func cleanupOldFirewallEvents(for appId: String) async throws -> Int {
         return try await performBackgroundTask { context in
-            let repository = FirewallEventRepository(context: context)
+            let repository = EventRepo(context: context)
             return try repository.deleteOldEventsByAppId(appId, olderThanDays: 30)
         }
     }
@@ -331,10 +333,10 @@ extension DBManager {
     /// 每24小时自动执行一次数据库维护
     func startPeriodicCleanup() {
         Timer.scheduledTimer(withTimeInterval: 24 * 60 * 60, repeats: true) { [weak self] _ in
-            Task {
-                guard let self = self else { return }
+            guard let strongSelf = self else { return }
+            Task { @MainActor in
                 do {
-                    let result = try await self.performDatabaseMaintenance()
+                    let result = try await strongSelf.performDatabaseMaintenance()
                     os_log("定期清理任务完成: 删除 \(result.deletedFirewallEvents) 条记录")
                 } catch {
                     os_log("定期清理任务失败: \(error.localizedDescription)")

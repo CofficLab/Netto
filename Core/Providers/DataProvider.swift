@@ -7,23 +7,21 @@ import SwiftUI
 @MainActor
 class DataProvider: ObservableObject, SuperLog {
     nonisolated static let emoji = "💾"
-    
-    static let shared = DataProvider()
 
     @Published var apps: [SmartApp] = []
     @Published var samples: [SmartApp] = SmartApp.samples
     @Published var status: FilterStatus = .disabled
 
     private var cancellables = Set<AnyCancellable>()
-    private let appPermissionService: AppPermissionService
-    private let firewallEventService: FirewallEventService
+    private let appPermissionService: PermissionService
+    private let firewallEventService: EventService
 
     /// 初始化DataProvider
     /// - Parameters:
     ///   - appPermissionService: 应用权限服务
     ///   - firewallEventService: 防火墙事件服务
-    private init(appPermissionService: AppPermissionService = .shared,
-         firewallEventService: FirewallEventService = FirewallEventService()) {
+    init(appPermissionService: PermissionService,
+         firewallEventService: EventService) {
         self.appPermissionService = appPermissionService
         self.firewallEventService = firewallEventService
 

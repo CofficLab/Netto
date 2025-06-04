@@ -1,4 +1,3 @@
-//
 import MagicCore
 import OSLog
 import SwiftData
@@ -37,7 +36,7 @@ import SwiftUI
  * - ✅ 权限检查逻辑
  *
  */
-class AppSettingRepository {
+class AppSettingRepo: SuperEvent {
     // MARK: - Properties
 
     /// 数据库上下文
@@ -46,7 +45,7 @@ class AppSettingRepository {
     // MARK: - Initialization
 
     /// 初始化AppSettingRepository实例
-    /// - Parameter context: SwiftData模型上下文，如果为nil则使用默认容器
+    /// - Parameter context: SwiftData模型上下文
     init(context: ModelContext) {
         self.context = context
     }
@@ -157,11 +156,11 @@ class AppSettingRepository {
 
 // MARK: - Event Emission
 
-extension AppSettingRepository {
+extension AppSettingRepo {
     /// 发送允许访问事件通知
     /// - Parameter appId: 应用程序ID
     func emitDidSetAllow(_ appId: String) {
-        NotificationCenter.default.post(name: .didSetAllow, object: nil, userInfo: [
+        emit(name: .didSetAllow, object: nil, userInfo: [
             "appId": appId,
         ])
     }
@@ -169,7 +168,7 @@ extension AppSettingRepository {
     /// 发送拒绝访问事件通知
     /// - Parameter appId: 应用程序ID
     func emitDidSetDeny(_ appId: String) {
-        NotificationCenter.default.post(name: .didSetDeny, object: nil, userInfo: [
+        emit(name: .didSetDeny, object: nil, userInfo: [
             "appId": appId,
         ])
     }

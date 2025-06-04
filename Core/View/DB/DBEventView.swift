@@ -8,7 +8,7 @@ import Combine
 /// 用于展示数据库中存储的所有防火墙事件记录
 struct DBEventView: View {
     // 直接使用FirewallEventRepository
-    private let repository: FirewallEventRepository = DBManager.shared.firewallEventRepository
+    private let repository: EventRepo = DBManager.shared.firewallEventRepository
     
     // 存储加载的事件数据
     @State private var events: [FirewallEventModel] = []

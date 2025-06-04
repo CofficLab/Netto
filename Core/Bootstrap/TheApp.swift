@@ -22,22 +22,19 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         // 欢迎引导窗口
         Window(Self.welcomeWindowTitle, id: AppConfig.welcomeWindowId) {
             if shouldShowLoading && !shouldShowWelcomeWindow {
-                // 使用 RootView 包裹，让 Providers 开始初始化
-                RootView {
-                    LoadingView(isPresented: $shouldShowLoading, message: "启动中")
-                        .onReceive(nc.publisher(for: .shouldOpenWelcomeWindow)) { _ in
-                            os_log("\(self.t)🖥️ 打开欢迎窗口")
-                            openWindow(id: AppConfig.welcomeWindowId)
-                            shouldShowWelcomeWindow = true
-                            shouldShowMenuApp = false
-                        }
-                        .onReceive(nc.publisher(for: .shouldCloseWelcomeWindow)) { _ in
-                            os_log("\(self.t)🖥️ 关闭欢迎窗口，关闭LoadingView")
-                            shouldShowWelcomeWindow = false
-                            shouldShowLoading = false
-                            shouldShowMenuApp = true
-                        }
-                }
+                LoadingView(isPresented: $shouldShowLoading, message: "启动中")
+                    .onReceive(nc.publisher(for: .shouldOpenWelcomeWindow)) { _ in
+                        os_log("\(self.t)🖥️ 打开欢迎窗口")
+                        openWindow(id: AppConfig.welcomeWindowId)
+                        shouldShowWelcomeWindow = true
+                        shouldShowMenuApp = false
+                    }
+                    .onReceive(nc.publisher(for: .shouldCloseWelcomeWindow)) { _ in
+                        os_log("\(self.t)🖥️ 关闭欢迎窗口，关闭LoadingView")
+                        shouldShowWelcomeWindow = false
+                        shouldShowLoading = false
+                        shouldShowMenuApp = true
+                    }
             }
 
             if shouldShowWelcomeWindow {

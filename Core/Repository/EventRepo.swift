@@ -40,7 +40,7 @@ import NetworkExtension
  * - ✅ 按应用ID查询
  *
  */
-class FirewallEventRepository: SuperLog {
+class EventRepo: SuperLog {
     // MARK: - Properties
     
     nonisolated static let emoji = "🏠"
@@ -484,7 +484,7 @@ class FirewallEventRepository: SuperLog {
 
 // MARK: - Event Emission
 
-extension FirewallEventRepository {
+extension EventRepo {
     /// 发送新事件创建通知
     /// - Parameter event: 新创建的事件
     func emitEventCreated(_ event: FirewallEventModel) {
