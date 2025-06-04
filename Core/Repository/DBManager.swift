@@ -110,7 +110,9 @@ import SwiftUI
  *    - 处理并发访问的冲突
  *    - 实现适当的数据验证机制
  */
-class DatabaseManager {
+class DBManager: @unchecked Sendable, SuperLog {
+    static let emoji = "🏭"
+    static let shared = DBManager()
     
     // MARK: - Properties
     
@@ -159,7 +161,7 @@ class DatabaseManager {
     
     /// 初始化数据库管理器
     /// - Parameter container: 数据库容器，如果为nil则使用默认配置
-    init(container: ModelContainer? = nil) {
+    private init(container: ModelContainer? = nil) {
         if let container = container {
             self.container = container
         } else {
@@ -170,6 +172,8 @@ class DatabaseManager {
         
         // 配置上下文
         configureContext()
+        
+        self.startPeriodicCleanup()
     }
     
     // MARK: - Context Management
@@ -241,11 +245,133 @@ class DatabaseManager {
             return false
         }
     }
+    
+    /// 执行后台任务
+    /// - Parameter task: 要执行的后台任务闭包
+    /// - Throws: 任务执行时可能抛出的错误
+    func performBackgroundTask<T: Sendable>(_ task: @escaping @Sendable (ModelContext) throws -> T) async throws -> T {
+        return try await withCheckedThrowingContinuation { continuation in
+            let backgroundContext = createBackgroundContext()
+            
+            Task {
+                do {
+                    let result = try task(backgroundContext)
+                    continuation.resume(returning: result)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Data Cleanup
+
+extension DBManager {
+    
+    /// 清理所有应用超过30天的事件记录
+    /// - Returns: 删除的总记录数量
+    /// - Throws: 清理操作时可能抛出的错误
+    func cleanupOldFirewallEvents() async throws -> Int {
+        return try await performBackgroundTask { context in
+            let repository = FirewallEventRepository(context: context)
+            return try repository.cleanupOldEvents(olderThanDays: 30)
+        }
+    }
+    
+    /// 清理指定应用超过30天的事件记录
+    /// - Parameter appId: 应用程序ID
+    /// - Returns: 删除的记录数量
+    /// - Throws: 清理操作时可能抛出的错误
+    func cleanupOldFirewallEvents(for appId: String) async throws -> Int {
+        return try await performBackgroundTask { context in
+            let repository = FirewallEventRepository(context: context)
+            return try repository.deleteOldEventsByAppId(appId, olderThanDays: 30)
+        }
+    }
+    
+    /// 执行定期数据库维护任务
+    /// 包括清理过期数据、优化数据库等操作
+    /// - Returns: 维护任务的执行结果
+    /// - Throws: 维护操作时可能抛出的错误
+    func performDatabaseMaintenance() async throws -> DatabaseMaintenanceResult {
+        os_log("开始执行数据库维护任务")
+        
+        let startTime = Date()
+        var result = DatabaseMaintenanceResult()
+        
+        do {
+            // 1. 清理过期的防火墙事件
+            result.deletedFirewallEvents = try await cleanupOldFirewallEvents()
+            
+            // 2. 检查数据库健康状态
+            result.isDatabaseHealthy = checkDatabaseHealth()
+            
+            // 3. 获取数据库统计信息
+            result.databaseStats = try getDatabaseStats()
+            
+            result.executionTime = Date().timeIntervalSince(startTime)
+            result.isSuccessful = true
+            
+            os_log("数据库维护任务完成，删除了 \(result.deletedFirewallEvents) 条过期记录，耗时 \(String(format: "%.2f", result.executionTime)) 秒")
+            
+        } catch {
+            result.error = error
+            result.isSuccessful = false
+            result.executionTime = Date().timeIntervalSince(startTime)
+            
+            os_log("数据库维护任务失败: \(error.localizedDescription)")
+            throw error
+        }
+        
+        return result
+    }
+    
+    /// 启动定期清理任务
+    /// 每24小时自动执行一次数据库维护
+    func startPeriodicCleanup() {
+        Timer.scheduledTimer(withTimeInterval: 24 * 60 * 60, repeats: true) { [weak self] _ in
+            Task {
+                guard let self = self else { return }
+                do {
+                    let result = try await self.performDatabaseMaintenance()
+                    os_log("定期清理任务完成: 删除 \(result.deletedFirewallEvents) 条记录")
+                } catch {
+                    os_log("定期清理任务失败: \(error.localizedDescription)")
+                }
+            }
+        }
+        
+        os_log("\(self.t)🚀 已启动定期数据库清理任务，每24小时执行一次")
+    }
+}
+
+// MARK: - Database Maintenance Result
+
+/// 数据库维护任务执行结果
+struct DatabaseMaintenanceResult {
+    /// 删除的防火墙事件数量
+    var deletedFirewallEvents: Int = 0
+    
+    /// 数据库是否健康
+    var isDatabaseHealthy: Bool = false
+    
+    /// 数据库统计信息
+    var databaseStats: [String: Int] = [:]
+    
+    /// 执行时间（秒）
+    var executionTime: TimeInterval = 0
+    
+    /// 是否执行成功
+    var isSuccessful: Bool = false
+    
+    /// 错误信息（如果有）
+    var error: Error?
 }
 
 // MARK: - Migration Support
 
-extension DatabaseManager {
+extension DBManager {
     
     /// 执行数据库迁移
     /// - Parameter version: 目标版本

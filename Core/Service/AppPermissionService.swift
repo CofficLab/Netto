@@ -183,7 +183,7 @@ class AppPermissionService: SuperLog {
     // MARK: - Properties
 
     /// 数据库管理器
-    private let databaseManager: DatabaseManager
+    private let databaseManager: DBManager
 
     /// AppSetting仓库
     private var repository: AppSettingRepository {
@@ -194,8 +194,8 @@ class AppPermissionService: SuperLog {
 
     /// 初始化应用权限服务
     /// - Parameter databaseManager: 数据库管理器，如果为nil则使用共享实例
-    private init(databaseManager: DatabaseManager? = nil) {
-        self.databaseManager = databaseManager ?? DatabaseManager()
+    private init(databaseManager: DBManager? = nil) {
+        self.databaseManager = databaseManager ?? DBManager.shared
     }
 
     // MARK: - Permission Management

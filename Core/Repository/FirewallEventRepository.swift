@@ -126,6 +126,69 @@ class FirewallEventRepository: SuperLog {
         }
         try context.save()
     }
+    
+    /// 删除指定应用ID超过指定天数的事件记录
+    /// - Parameters:
+    ///   - appId: 应用程序ID
+    ///   - days: 保留天数，超过此天数的记录将被删除
+    /// - Returns: 删除的记录数量
+    /// - Throws: 删除数据时可能抛出的错误
+    func deleteOldEventsByAppId(_ appId: String, olderThanDays days: Int) throws -> Int {
+        let cutoffDate = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+        
+        let predicate = #Predicate<FirewallEventModel> { item in
+            item.sourceAppIdentifier == appId && item.time < cutoffDate
+        }
+        
+        let events = try context.fetch(FetchDescriptor(predicate: predicate))
+        let deletedCount = events.count
+        
+        for event in events {
+            context.delete(event)
+        }
+        
+        if deletedCount > 0 {
+            try context.save()
+            os_log("\(self.t)已删除应用 \(appId) 超过 \(days) 天的 \(deletedCount) 条事件记录")
+        }
+        
+        return deletedCount
+    }
+    
+    /// 批量清理所有应用超过指定天数的事件记录
+    /// - Parameter days: 保留天数，超过此天数的记录将被删除
+    /// - Returns: 删除的总记录数量
+    /// - Throws: 删除数据时可能抛出的错误
+    func cleanupOldEvents(olderThanDays days: Int) throws -> Int {
+        let cutoffDate = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+        
+        let predicate = #Predicate<FirewallEventModel> { item in
+            item.time < cutoffDate
+        }
+        
+        let events = try context.fetch(FetchDescriptor(predicate: predicate))
+        let deletedCount = events.count
+        
+        for event in events {
+            context.delete(event)
+        }
+        
+        if deletedCount > 0 {
+            try context.save()
+            os_log("\(self.t)已清理超过 \(days) 天的 \(deletedCount) 条事件记录")
+        }
+        
+        return deletedCount
+    }
+    
+    /// 获取所有应用的唯一ID列表
+    /// - Returns: 应用ID数组
+    /// - Throws: 查询数据时可能抛出的错误
+    func getAllUniqueAppIds() throws -> [String] {
+        let events = try context.fetch(FetchDescriptor<FirewallEventModel>())
+        let uniqueAppIds = Set(events.compactMap { $0.sourceAppIdentifier })
+        return Array(uniqueAppIds)
+    }
 
     /// 获取所有FirewallEvent记录
     /// - Returns: 所有FirewallEventModel记录的数组

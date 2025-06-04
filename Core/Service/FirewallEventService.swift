@@ -132,7 +132,7 @@ class FirewallEventService: SuperLog {
     // MARK: - Properties
 
     /// 数据库管理器
-    private let databaseManager: DatabaseManager
+    private let databaseManager: DBManager
 
     /// FirewallEvent仓库
     private var repository: FirewallEventRepository {
@@ -143,8 +143,8 @@ class FirewallEventService: SuperLog {
 
     /// 初始化防火墙事件服务
     /// - Parameter databaseManager: 数据库管理器，如果为nil则使用共享实例
-    init(databaseManager: DatabaseManager? = nil) {
-        self.databaseManager = databaseManager ?? DatabaseManager()
+    init(databaseManager: DBManager? = nil) {
+        self.databaseManager = databaseManager ?? DBManager.shared
     }
 
     // MARK: - Event Management
