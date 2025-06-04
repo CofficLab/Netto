@@ -7,7 +7,7 @@ import SwiftUI
  * 应用权限服务
  * 
  * ## 概述
- * AppPermissionService是应用权限管理的核心业务逻辑服务，负责处理应用程序的核心业务规则和逻辑。
+ * PermissionService是应用权限管理的核心业务逻辑服务，负责处理应用程序的核心业务规则和逻辑。
  * 它位于Repository层和UI层之间，提供了一个清晰的业务API接口。
  * 
  * ## 设计原则
@@ -174,25 +174,18 @@ import SwiftUI
  *    - 监控Service的性能指标
  *    - 实现适当的错误报告机制
  */
-class AppPermissionService: SuperLog {
+class PermissionService: SuperLog {
     nonisolated static let emoji = "💁"
     
     // MARK: - Properties
 
-    /// 数据库管理器
-    private let databaseManager: DatabaseManager
-
     /// AppSetting仓库
-    private var repository: AppSettingRepository {
-        return databaseManager.appSettingRepository
-    }
+    private var repo: AppSettingRepo
 
     // MARK: - Initialization
 
-    /// 初始化应用权限服务
-    /// - Parameter databaseManager: 数据库管理器，如果为nil则使用共享实例
-    init(databaseManager: DatabaseManager? = nil) {
-        self.databaseManager = databaseManager ?? DatabaseManager()
+    init(repo: AppSettingRepo) {
+        self.repo = repo
     }
 
     // MARK: - Permission Management
@@ -201,14 +194,14 @@ class AppPermissionService: SuperLog {
     /// - Parameter id: 应用程序或进程ID
     /// - Returns: 如果允许访问返回true，否则返回false
     func shouldAllow(_ id: String) -> Bool {
-        return repository.shouldAllow(id)
+        return repo.shouldAllow(id)
     }
 
     /// 设置指定ID的应用为允许访问
     /// - Parameter id: 应用程序ID
     /// - Throws: 保存数据时可能抛出的错误
     func allow(_ id: String) throws {
-        try repository.setAllow(id)
+        try repo.setAllow(id)
         os_log("App \(id) has been allowed network access")
     }
 
@@ -216,7 +209,7 @@ class AppPermissionService: SuperLog {
     /// - Parameter id: 应用程序ID
     /// - Throws: 保存数据时可能抛出的错误
     func deny(_ id: String) throws {
-        try repository.setDeny(id)
+        try repo.setDeny(id)
         os_log("\(self.t)💾 App \(id) has been denied network access")
     }
 
@@ -242,9 +235,9 @@ class AppPermissionService: SuperLog {
     func setBatchPermissions(_ appIds: [String], allowed: Bool) throws {
         for appId in appIds {
             if allowed {
-                try repository.setAllow(appId)
+                try repo.setAllow(appId)
             } else {
-                try repository.setDeny(appId)
+                try repo.setDeny(appId)
             }
         }
 
@@ -255,10 +248,10 @@ class AppPermissionService: SuperLog {
     /// 重置所有应用权限为默认状态（允许）
     /// - Throws: 保存数据时可能抛出的错误
     func resetAllPermissions() throws {
-        let allSettings = try repository.fetchAll()
+        let allSettings = try repo.fetchAll()
 
         for setting in allSettings {
-            try repository.setAllow(setting.appId)
+            try repo.setAllow(setting.appId)
         }
 
         os_log("All app permissions have been reset to default (allowed)")
@@ -270,7 +263,7 @@ class AppPermissionService: SuperLog {
     /// - Returns: 被拒绝的应用ID数组
     /// - Throws: 查询数据时可能抛出的错误
     func getDeniedApps() throws -> [String] {
-        let allSettings = try repository.fetchAll()
+        let allSettings = try repo.fetchAll()
         return allSettings.filter { !$0.allowed }.map { $0.appId }
     }
 
@@ -278,7 +271,7 @@ class AppPermissionService: SuperLog {
     /// - Returns: 被允许的应用ID数组
     /// - Throws: 查询数据时可能抛出的错误
     func getAllowedApps() throws -> [String] {
-        let allSettings = try repository.fetchAll()
+        let allSettings = try repo.fetchAll()
         return allSettings.filter { $0.allowed }.map { $0.appId }
     }
 
@@ -286,7 +279,7 @@ class AppPermissionService: SuperLog {
     /// - Returns: 包含允许和拒绝数量的统计信息
     /// - Throws: 查询数据时可能抛出的错误
     func getPermissionStats() throws -> (allowed: Int, denied: Int, total: Int) {
-        let allSettings = try repository.fetchAll()
+        let allSettings = try repo.fetchAll()
         let allowedCount = allSettings.filter { $0.allowed }.count
         let deniedCount = allSettings.filter { !$0.allowed }.count
 
@@ -305,12 +298,12 @@ class AppPermissionService: SuperLog {
     /// 清理无效的权限记录
     /// - Throws: 删除数据时可能抛出的错误
     func cleanupInvalidPermissions() throws {
-        let allSettings = try repository.fetchAll()
+        let allSettings = try repo.fetchAll()
         var deletedCount = 0
 
         for setting in allSettings {
             if !isValidAppId(setting.appId) {
-                try repository.delete(setting.appId)
+                try repo.delete(setting.appId)
                 deletedCount += 1
             }
         }

@@ -8,7 +8,7 @@ import NetworkExtension
  * 防火墙事件服务
  * 
  * ## 概述
- * FirewallEventService是防火墙事件管理的核心业务逻辑服务，负责处理防火墙事件的核心业务规则和逻辑。
+ * EventService是防火墙事件管理的核心业务逻辑服务，负责处理防火墙事件的核心业务规则和逻辑。
  * 它位于Repository层和UI层之间，提供了一个清晰的业务API接口。
  * 
  * ## 设计原则
@@ -126,25 +126,19 @@ import NetworkExtension
  * - 提供有意义的错误信息
  * - 实现优雅的降级策略
  */
-class FirewallEventService: SuperLog {
+class EventService: SuperLog {
     nonisolated static let emoji = "🔥"
     
     // MARK: - Properties
 
-    /// 数据库管理器
-    private let databaseManager: DatabaseManager
-
     /// FirewallEvent仓库
-    private var repository: FirewallEventRepository {
-        return databaseManager.firewallEventRepository
-    }
+    private var repository: EventRepo
 
     // MARK: - Initialization
 
     /// 初始化防火墙事件服务
-    /// - Parameter databaseManager: 数据库管理器，如果为nil则使用共享实例
-    init(databaseManager: DatabaseManager? = nil) {
-        self.databaseManager = databaseManager ?? DatabaseManager()
+    init(repo: EventRepo) {
+        self.repository = repo
     }
 
     // MARK: - Event Management

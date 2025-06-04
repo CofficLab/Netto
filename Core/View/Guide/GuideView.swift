@@ -3,7 +3,7 @@ import MagicCore
 
 struct GuideView: View {
     @EnvironmentObject private var app: UIProvider
-    @EnvironmentObject private var channel: ChannelProvider
+    @EnvironmentObject private var data: DataProvider
 
     var body: some View {
         ZStack {
@@ -11,7 +11,7 @@ struct GuideView: View {
             MagicBackground.forest.opacity(0.3)
 
             VStack(spacing: 0) {
-                switch channel.status {
+                switch data.status {
                 case .disabled, .stopped:
                     StopView()
                 case .indeterminate:

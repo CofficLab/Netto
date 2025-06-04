@@ -2,8 +2,8 @@ import MagicCore
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject private var app: UIProvider
-    @EnvironmentObject private var channel: ChannelProvider
+    @EnvironmentObject private var ui: UIProvider
+    @EnvironmentObject private var service: ServiceProvider
 
     var body: some View {
         VStack(spacing: 0) {
@@ -13,12 +13,12 @@ struct ContentView: View {
         }
         .frame(maxWidth: .infinity)
         .onDisappear {
-            channel.viewWillDisappear()
+            service.viewWillDisappear()
         }
         .navigationTitle("")
         .toolbar {
             ToolbarItem(placement: .navigation, content: {
-                Picker("Type", selection: $app.displayType) {
+                Picker("Type", selection: $ui.displayType) {
                     Text("All").tag(DisplayType.All)
                     Text("Allowed").tag(DisplayType.Allowed)
                     Text("Rejected").tag(DisplayType.Rejected)

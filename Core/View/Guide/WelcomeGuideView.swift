@@ -117,9 +117,9 @@ struct WelcomeGuideView: View {
             resetToFirstStep()
         }
         // 监听关闭的通知
-        .onReceive(NotificationCenter.default.publisher(for: .shouldCloseWelcomeWindow)) { _ in 
-            closeWindow()
-        }
+//        .onReceive(NotificationCenter.default.publisher(for: .shouldCloseWelcomeWindow)) { _ in 
+//            closeWindow()
+//        }
     }
     
     /**

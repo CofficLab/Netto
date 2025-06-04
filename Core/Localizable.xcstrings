@@ -23,22 +23,58 @@
             "value" : "%1$lld / %2$lld"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "💡 当代理应用运行时，部分应用的网络流量会被代理应用接管，\n这些应用的网络活动将无法被本软件直接监控到。" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💡 When proxy apps are running, some apps' network traffic will be taken over by the proxy app,\nand these apps' network activities cannot be directly monitored by this software."
+          }
+        }
+      }
     },
     "10" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10"
+          }
+        }
+      }
     },
     "20" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20"
+          }
+        }
+      }
     },
     "50" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "50"
+          }
+        }
+      }
     },
     "100" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "100"
+          }
+        }
+      }
     },
     "Action" : {
       "localizations" : {
@@ -84,31 +120,15 @@
       },
       "shouldTranslate" : false
     },
-    "APP" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "APP"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
-    "App ID 已复制到剪贴板" : {
-      "extractionState" : "stale",
+    "Bundle路径 (Bundle Path)" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App ID copied to clipboard"
+            "value" : "Bundle Path"
           }
         }
       }
-    },
-    "Bundle路径 (Bundle Path)" : {
-
     },
     "Clear" : {
       "localizations" : {
@@ -175,7 +195,14 @@
       "shouldTranslate" : false
     },
     "Finder中显示" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show in Finder"
+          }
+        }
+      }
     },
     "ID" : {
       "localizations" : {
@@ -194,7 +221,14 @@
       }
     },
     "ID: %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ID: %@"
+          }
+        }
+      }
     },
     "Message" : {
       "localizations" : {
@@ -241,7 +275,15 @@
       "shouldTranslate" : false
     },
     "Status" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状态"
+          }
+        }
+      },
+      "shouldTranslate" : false
     },
     "Status Unknown" : {
       "localizations" : {
@@ -329,19 +371,54 @@
       }
     },
     "了解代理应用对网络监控的影响" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Understanding the Impact of Proxy Apps on Network Monitoring"
+          }
+        }
+      }
     },
     "事件详情 (Event Details)" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Event Details"
+          }
+        }
+      }
     },
     "代理应用" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proxy Apps"
+          }
+        }
+      }
     },
     "代理应用 (Proxy App)" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proxy App"
+          }
+        }
+      }
     },
     "代理应用对网络监控的影响" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impact of Proxy Apps on Network Monitoring"
+          }
+        }
+      }
     },
     "允许" : {
       "localizations" : {
@@ -364,10 +441,24 @@
       }
     },
     "入站" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inbound"
+          }
+        }
+      }
     },
     "共 %lld 条事件" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total %lld events"
+          }
+        }
+      }
     },
     "共 %lld 条记录" : {
       "localizations" : {
@@ -390,25 +481,74 @@
       }
     },
     "出站" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outbound"
+          }
+        }
+      }
     },
     "刷新" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refresh"
+          }
+        }
+      }
     },
     "加载中..." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading..."
+          }
+        }
+      }
     },
     "在 Finder 中显示" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show in Finder"
+          }
+        }
+      }
     },
     "地址" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Address"
+          }
+        }
+      }
     },
     "复制 App ID" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy App ID"
+          }
+        }
+      }
     },
     "复制错误信息" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy Error Message"
+          }
+        }
+      }
     },
     "将鼠标悬停在应用上查看操作按钮" : {
       "localizations" : {
@@ -421,13 +561,34 @@
       }
     },
     "属性信息 (Properties)" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Properties"
+          }
+        }
+      }
     },
     "已复制" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copied"
+          }
+        }
+      }
     },
     "已复制!" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copied!"
+          }
+        }
+      }
     },
     "已禁止" : {
       "localizations" : {
@@ -435,6 +596,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Blocked"
+          }
+        }
+      }
+    },
+    "应用ID筛选:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App ID Filter:"
           }
         }
       }
@@ -450,10 +621,34 @@
       }
     },
     "应用程序" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Applications"
+          }
+        }
+      }
+    },
+    "应用筛选" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Filter"
+          }
+        }
+      }
     },
     "应用详情 (Application Details)" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Application Details"
+          }
+        }
+      }
     },
     "开关" : {
       "localizations" : {
@@ -466,7 +661,14 @@
       }
     },
     "开启代理" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable Proxy"
+          }
+        }
+      }
     },
     "开始" : {
       "localizations" : {
@@ -509,10 +711,24 @@
       }
     },
     "当前运行的应用程序" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Currently Running Applications"
+          }
+        }
+      }
     },
     "总计: %lld" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total: %lld"
+          }
+        }
+      }
     },
     "所有应用可自由联网" : {
       "localizations" : {
@@ -525,7 +741,14 @@
       }
     },
     "打开数据库文件夹" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Database Folder"
+          }
+        }
+      }
     },
     "扩展" : {
       "localizations" : {
@@ -548,7 +771,14 @@
       }
     },
     "拒绝" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deny"
+          }
+        }
+      }
     },
     "按下方示意图进行设置" : {
       "localizations" : {
@@ -561,16 +791,54 @@
       }
     },
     "描述" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description"
+          }
+        }
+      }
+    },
+    "提示: 应用ID通常是应用的Bundle ID，例如 com.apple.Safari" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tip: App ID is usually the app's Bundle ID, e.g., com.apple.Safari"
+          }
+        }
+      }
     },
     "搜索应用ID" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search App ID"
+          }
+        }
+      }
     },
     "操作系统 (macOS)" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operating System (macOS)"
+          }
+        }
+      }
     },
     "收起代理应用说明" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collapse Proxy App Description"
+          }
+        }
+      }
     },
     "数据交换" : {
       "localizations" : {
@@ -583,7 +851,14 @@
       }
     },
     "方向" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direction"
+          }
+        }
+      }
     },
     "日志" : {
       "localizations" : {
@@ -596,10 +871,24 @@
       }
     },
     "时间" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time"
+          }
+        }
+      }
     },
     "显示: %lld" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Showing: %lld"
+          }
+        }
+      }
     },
     "更多操作" : {
       "localizations" : {
@@ -612,10 +901,34 @@
       }
     },
     "未开启代理" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proxy Not Enabled"
+          }
+        }
+      }
     },
     "每页显示:" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Items per page:"
+          }
+        }
+      }
+    },
+    "清除筛选" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear Filter"
+          }
+        }
+      }
     },
     "点击这里访问应用" : {
       "localizations" : {
@@ -628,30 +941,23 @@
       }
     },
     "状态" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Status"
+          }
+        }
+      }
     },
     "状态:" : {
 
     },
     "登录项与扩展" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Login Items & Extensions"
-          }
-        }
-      }
+
     },
     "禁止" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Block"
-          }
-        }
-      }
+
     },
     "端口" : {
 
@@ -667,7 +973,14 @@
       }
     },
     "筛选状态" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter Status"
+          }
+        }
+      }
     },
     "管理Mac的整体设置和相关设置..." : {
       "localizations" : {
@@ -680,7 +993,24 @@
       }
     },
     "系统应用 (System App)" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System App"
+          }
+        }
+      }
+    },
+    "系统应用列表" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System App List"
+          }
+        }
+      }
     },
     "系统扩展" : {
       "localizations" : {
@@ -707,20 +1037,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Network filtering and monitoring tool"
+            "value" : "Network Filtering and Monitoring Tool"
           }
         }
       }
     },
     "联网的 APP 将显示在这里" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Network-connected apps will be shown here"
-          }
-        }
-      }
+
     },
     "聚焦" : {
       "localizations" : {
@@ -762,6 +1085,16 @@
         }
       }
     },
+    "输入应用ID" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter App ID"
+          }
+        }
+      }
+    },
     "通用" : {
       "localizations" : {
         "en" : {
@@ -773,10 +1106,24 @@
       }
     },
     "防火墙事件" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firewall Events"
+          }
+        }
+      }
     },
     "防火墙事件记录" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firewall Event Records"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

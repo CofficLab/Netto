@@ -3,12 +3,12 @@ import SwiftUI
 
 struct Toolbar: View, SuperLog {
     @EnvironmentObject private var app: UIProvider
-    @EnvironmentObject private var channel: ChannelProvider
+    @EnvironmentObject private var data: DataProvider
 
     var body: some View {
         HStack {
             ZStack {
-                switch channel.status {
+                switch data.status {
                 case .stopped:
                     BtnStart(asToolbarItem: true).labelStyle(.iconOnly)
                 case .indeterminate:

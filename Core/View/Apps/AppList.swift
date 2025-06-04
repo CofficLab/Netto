@@ -5,7 +5,6 @@ import SwiftUI
 struct AppList: View, SuperLog {
     @EnvironmentObject private var ui: UIProvider
     @EnvironmentObject private var data: DataProvider
-    @EnvironmentObject private var channel: ChannelProvider
 
     nonisolated static let emoji = "🖥️"
 
@@ -53,7 +52,7 @@ struct AppList: View, SuperLog {
                 }
             }
 
-            if channel.status.isNotRunning() || apps.isEmpty {
+            if data.status.isNotRunning() || apps.isEmpty {
                 GuideView()
             }
         }

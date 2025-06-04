@@ -12,32 +12,26 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @Environment(\.openWindow) private var openWindow
 
     @State private var shouldShowLoading = true
-    @State private var shouldShowMenuApp = true
+    @State private var shouldShowMenuApp = false
     @State private var shouldShowWelcomeWindow = false
 
     nonisolated static let emoji = "🐦"
     static let welcomeWindowTitle = "Welcome to TravelMode"
+    private let versionService = VersionService()
 
     var body: some Scene {
         // 欢迎引导窗口
         Window(Self.welcomeWindowTitle, id: AppConfig.welcomeWindowId) {
             if shouldShowLoading && !shouldShowWelcomeWindow {
-                // 使用 RootView 包裹，让 Providers 开始初始化
-                RootView {
-                    LoadingView(isPresented: $shouldShowLoading, message: "启动中")
-                        .onReceive(nc.publisher(for: .shouldOpenWelcomeWindow)) { _ in
-                            os_log("\(self.t)🖥️ 打开欢迎窗口")
-                            openWindow(id: AppConfig.welcomeWindowId)
-                            shouldShowWelcomeWindow = true
-                            shouldShowMenuApp = false
-                        }
-                        .onReceive(nc.publisher(for: .shouldCloseWelcomeWindow)) { _ in
-                            os_log("\(self.t)🖥️ 关闭欢迎窗口，关闭LoadingView")
-                            shouldShowWelcomeWindow = false
-                            shouldShowLoading = false
-                            shouldShowMenuApp = true
-                        }
-                }
+                LoadingView(isPresented: $shouldShowLoading, message: "启动中")
+                    .onAppear {
+                        let shouldShowWelcome = versionService.shouldShowWelcomeWindow()
+
+                        os_log("\(self.t)🚩 检查版本，shouldShowWelcome: \(shouldShowWelcome)")
+
+                        self.shouldShowWelcomeWindow = shouldShowWelcome
+                        self.shouldShowLoading = false
+                    }
             }
 
             if shouldShowWelcomeWindow {
@@ -51,18 +45,12 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                             window.orderFrontRegardless()
                         }
                     }
-                    .onReceive(nc.publisher(for: .shouldCloseWelcomeWindow)) { _ in
-                        os_log("\(self.t)关闭欢迎窗口")
-                        shouldShowWelcomeWindow = false
-                        shouldShowMenuApp = true
-                    }
             }
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
         .defaultPosition(.center)
         .defaultSize(width: 500, height: 600)
-        .keyboardShortcut("w", modifiers: [.command, .shift])
 
         // 主要的菜单栏应用
         MenuBarExtra(content: {
