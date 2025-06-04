@@ -12,11 +12,12 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @Environment(\.openWindow) private var openWindow
 
     @State private var shouldShowLoading = true
-    @State private var shouldShowMenuApp = true
+    @State private var shouldShowMenuApp = false
     @State private var shouldShowWelcomeWindow = false
 
     nonisolated static let emoji = "🐦"
     static let welcomeWindowTitle = "Welcome to TravelMode"
+    private let versionService = VersionService()
 
     var body: some Scene {
         // 欢迎引导窗口
@@ -34,6 +35,14 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                         shouldShowWelcomeWindow = false
                         shouldShowLoading = false
                         shouldShowMenuApp = true
+                    }
+                    .onAppear {
+                        let shouldShowWelcome = versionService.shouldShowWelcomeWindow()
+
+                        os_log("\(self.t)🚩 检查版本，shouldShowWelcome: \(shouldShowWelcome)")
+
+                        self.shouldShowWelcomeWindow = shouldShowWelcome
+                        self.shouldShowLoading = false
                     }
             }
 
