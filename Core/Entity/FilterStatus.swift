@@ -1,6 +1,6 @@
 import Foundation
 
-enum FilterStatus {
+enum FilterStatus: Equatable {
     case stopped
     case indeterminate
     case running
@@ -24,7 +24,7 @@ enum FilterStatus {
         case .needApproval:
             "待授权"
         case .waitingForApproval:
-            "请在弹出的对话框中点击“允许”"
+            "请在弹出的对话框中点击\"允许\""
         case .disabled:
             "disabled"
         case .extensionNotReady:
@@ -118,6 +118,26 @@ enum FilterStatus {
             false
         default:
             false
+        }
+    }
+    
+    // 实现 Equatable 协议的 == 运算符
+    static func == (lhs: FilterStatus, rhs: FilterStatus) -> Bool {
+        switch (lhs, rhs) {
+        case (.stopped, .stopped),
+             (.indeterminate, .indeterminate),
+             (.running, .running),
+             (.notInstalled, .notInstalled),
+             (.needApproval, .needApproval),
+             (.waitingForApproval, .waitingForApproval),
+             (.disabled, .disabled),
+             (.extensionNotReady, .extensionNotReady):
+            return true
+        case (.error(let error1), .error(let error2)):
+            // 由于 Error 不符合 Equatable，我们比较错误的描述
+            return error1.localizedDescription == error2.localizedDescription
+        default:
+            return false
         }
     }
 }

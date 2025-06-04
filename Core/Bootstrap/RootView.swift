@@ -18,23 +18,11 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     init(@ViewBuilder content: () -> Content) {
         os_log("\(Self.onInit)")
         self.content = content()
-
-        let container = DBManager.container()
-        let context = ModelContext(container)
         
-        // Repos
-        let appSettingRepo = AppSettingRepo(context: context)
-        let firewallRepo = EventRepo(context: context)
-        
-        // Services
-        let appPermissionService = PermissionService(repo: appSettingRepo)
-        let firewallEventService = EventService(repo: firewallRepo)
-        let firewallService = FirewallService(appPermissionService: appPermissionService, reason: "RootView")
-        let versionService = VersionService()
-        
-        // Providers
-        self.data = DataProvider(appPermissionService: appPermissionService, firewallEventService: firewallEventService)
-        self.service = ServiceProvider(firewallService: firewallService, firewallEventService: firewallEventService, versionService: versionService)
+        // 使用共享的核心服务，避免重复初始化
+        let coreServices = RootBox.shared
+        self.data = coreServices.data
+        self.service = coreServices.service
     }
 
     var body: some View {

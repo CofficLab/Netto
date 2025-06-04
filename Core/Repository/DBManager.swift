@@ -130,7 +130,7 @@ class DBManager: SuperLog {
     }()
     
     /// FirewallEvent仓库
-    lazy var firewallEventRepository: EventRepo = {
+    lazy var eventRepo: EventRepo = {
         return EventRepo(context: mainContext)
     }()
 
@@ -164,6 +164,7 @@ class DBManager: SuperLog {
     /// 初始化数据库管理器
     /// - Parameter container: 数据库容器，如果为nil则使用默认配置
     private init(container: ModelContainer? = nil) {
+        os_log("\(Self.onInit)")
         if let container = container {
             self.container = container
         } else {

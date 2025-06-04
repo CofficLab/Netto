@@ -23,13 +23,12 @@ final class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
         self.s = appPermissionService
 
         super.init()
-        
+
         self.emit(.willBoot)
         self.setObserver()
 
         // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
         Task {
-            
             do {
                 try await loadFilterConfiguration(reason: "Boot")
             } catch {
@@ -47,6 +46,8 @@ final class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
     /// 更新过滤器状态
     /// - Parameter status: 新的过滤器状态
     private func updateFilterStatus(_ status: FilterStatus) {
+        if self.status == status { return }
+        
         let oldValue = self.status
 
         self.status = status
@@ -241,7 +242,7 @@ extension FirewallService {
     }
 
     private func registerWithProvider(reason: String) {
-        os_log("\(self.t)🛫 registerWithProvider，让 ChannelProvider 和 Extension 关联起来(\(reason)")
+        os_log("\(self.t)🛫 registerWithProvider，让 ChannelProvider 和 Extension 关联起来(\(reason))")
 
         self.emit(.willRegisterWithProvider)
 

@@ -28,7 +28,7 @@ class VersionService: SuperLog {
         let lastShownVersion = UserDefaults.standard.string(forKey: lastShownVersionKey)
         let currentVersion = getCurrentAppVersion()
 
-        os_log("\(self.t)🚩 lastShownVersion: \(lastShownVersion ?? "nil"), currentVersion: \(currentVersion)")
+        os_log("\(self.t)🆚 last: \(lastShownVersion ?? "nil"), current: \(currentVersion)")
 
         // 首次安装或无法获取版本信息
         guard let lastVersion = lastShownVersion, !lastVersion.isEmpty else {
