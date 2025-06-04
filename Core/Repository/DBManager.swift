@@ -118,6 +118,9 @@ class DBManager: SuperLog {
     
     // MARK: - Properties
     
+    /// 数据库维护定时器间隔（秒）
+    private let maintenanceInterval: TimeInterval = 24 * 60 * 60 // 24小时
+    
     /// 数据库容器
     private let container: ModelContainer
     
@@ -176,7 +179,17 @@ class DBManager: SuperLog {
         // 配置上下文
         configureContext()
         
+        // 启动定期清理任务
         self.startPeriodicCleanup()
+        
+        // 初始化时执行一次数据库维护
+        Task { @MainActor in
+            do {
+                try await self.performDatabaseMaintenance()
+            } catch {
+                os_log("初始化数据库维护失败: \(error.localizedDescription)")
+            }
+        }
     }
     
     // MARK: - Context Management
@@ -297,8 +310,9 @@ extension DBManager {
     /// 包括清理过期数据、优化数据库等操作
     /// - Returns: 维护任务的执行结果
     /// - Throws: 维护操作时可能抛出的错误
+    @discardableResult
     func performDatabaseMaintenance() async throws -> DatabaseMaintenanceResult {
-        os_log("开始执行数据库维护任务")
+        os_log("\(self.t)👷 开始执行数据库维护任务")
         
         let startTime = Date()
         var result = DatabaseMaintenanceResult()
@@ -316,7 +330,7 @@ extension DBManager {
             result.executionTime = Date().timeIntervalSince(startTime)
             result.isSuccessful = true
             
-            os_log("数据库维护任务完成，删除了 \(result.deletedFirewallEvents) 条过期记录，耗时 \(String(format: "%.2f", result.executionTime)) 秒")
+            os_log("\(self.t)✅ 数据库维护任务完成，删除了 \(result.deletedFirewallEvents) 条过期记录，耗时 \(String(format: "%.2f", result.executionTime)) 秒")
             
         } catch {
             result.error = error
@@ -331,9 +345,8 @@ extension DBManager {
     }
     
     /// 启动定期清理任务
-    /// 每24小时自动执行一次数据库维护
     func startPeriodicCleanup() {
-        Timer.scheduledTimer(withTimeInterval: 24 * 60 * 60, repeats: true) { [weak self] _ in
+        Timer.scheduledTimer(withTimeInterval: maintenanceInterval, repeats: true) { [weak self] _ in
             guard let strongSelf = self else { return }
             Task { @MainActor in
                 do {
@@ -345,7 +358,7 @@ extension DBManager {
             }
         }
         
-        os_log("\(self.t)🚀 已启动定期数据库清理任务，每24小时执行一次")
+        os_log("\(self.t)🚀 已启动定期数据库清理任务，每\(Int(self.maintenanceInterval / 3600))小时执行一次")
     }
 }
 
