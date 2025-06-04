@@ -311,11 +311,11 @@ extension DBManager {
     /// - Returns: 维护任务的执行结果
     /// - Throws: 维护操作时可能抛出的错误
     @discardableResult
-    func performDatabaseMaintenance() async throws -> DatabaseMaintenanceResult {
+    func performDatabaseMaintenance() async throws -> DBMaintenanceResult {
         os_log("\(self.t)👷 开始执行数据库维护任务")
         
         let startTime = Date()
-        var result = DatabaseMaintenanceResult()
+        var result = DBMaintenanceResult()
         
         do {
             // 1. 清理过期的防火墙事件
@@ -360,29 +360,6 @@ extension DBManager {
         
         os_log("\(self.t)🚀 已启动定期数据库清理任务，每\(Int(self.maintenanceInterval / 3600))小时执行一次")
     }
-}
-
-// MARK: - Database Maintenance Result
-
-/// 数据库维护任务执行结果
-struct DatabaseMaintenanceResult {
-    /// 删除的防火墙事件数量
-    var deletedFirewallEvents: Int = 0
-    
-    /// 数据库是否健康
-    var isDatabaseHealthy: Bool = false
-    
-    /// 数据库统计信息
-    var databaseStats: [String: Int] = [:]
-    
-    /// 执行时间（秒）
-    var executionTime: TimeInterval = 0
-    
-    /// 是否执行成功
-    var isSuccessful: Bool = false
-    
-    /// 错误信息（如果有）
-    var error: Error?
 }
 
 // MARK: - Migration Support
