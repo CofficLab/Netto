@@ -8,11 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		0B1C653E2DE5F6C600F982C0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B1C65392DE5F6C600F982C0 /* Assets.xcassets */; };
-		0B737BAC2D12ECF000712ABA /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAB2D12ECF000712ABA /* MagicKit */; };
 		0B737BAF2D12F1EC00712ABA /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 0B737BAE2D12F1EC00712ABA /* AlertToast */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3ED2DE463A1009CC54C /* MagicCore */; };
-		F500B3F02DE4684F009CC54C /* MagicKit in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3EF2DE4684F009CC54C /* MagicKit */; };
+		F5B8C27F2DF14B8300C35A76 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F5B8C27E2DF14B8300C35A76 /* MagicCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,7 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B737BAC2D12ECF000712ABA /* MagicKit in Frameworks */,
+				F5B8C27F2DF14B8300C35A76 /* MagicCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,7 +86,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B737BAF2D12F1EC00712ABA /* AlertToast in Frameworks */,
-				F500B3F02DE4684F009CC54C /* MagicKit in Frameworks */,
 				F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -108,6 +106,7 @@
 				0BECFF622DE5FFD6001B7619 /* README.md */,
 				F5F857DF2DE815C300E03577 /* README-DEV.md */,
 				F55AAB352DEEE763002E3E36 /* TavelMode copy-Info.plist */,
+				F5B8C27B2DF14AE400C35A76 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -118,6 +117,13 @@
 				C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F5B8C27B2DF14AE400C35A76 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -545,11 +551,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0B737BAB2D12ECF000712ABA /* MagicKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
-			productName = MagicKit;
-		};
 		0B737BAE2D12F1EC00712ABA /* AlertToast */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0B737BAD2D12F1EC00712ABA /* XCRemoteSwiftPackageReference "AlertToast" */;
@@ -560,10 +561,10 @@
 			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicCore;
 		};
-		F500B3EF2DE4684F009CC54C /* MagicKit */ = {
+		F5B8C27E2DF14B8300C35A76 /* MagicCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
-			productName = MagicKit;
+			productName = MagicCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
