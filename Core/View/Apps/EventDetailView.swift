@@ -34,6 +34,15 @@ struct EventDetailView: View, SuperLog {
 
     /// 每页显示的事件数量
     private let eventsPerPage: Int = 20
+
+    /// 是否正在加载数据
+    @State private var isLoading: Bool = false
+
+    /// 是否是初始加载
+    @State private var isInitialLoad: Bool = true
+
+    /// 加载错误信息
+    @State private var loadError: String? = nil
     
     private var firewallEventService: EventService {
         service.firewallEventService
@@ -55,6 +64,7 @@ struct EventDetailView: View, SuperLog {
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .frame(width: 180)
+                .disabled(isLoading)
 
                 Spacer()
 
@@ -66,6 +76,7 @@ struct EventDetailView: View, SuperLog {
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .frame(width: 180)
+                .disabled(isLoading)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -81,30 +92,97 @@ struct EventDetailView: View, SuperLog {
             .padding(.horizontal, 0)
             .padding(.bottom, 8)
 
-            // 事件数量
+            // 事件数量和加载状态
             HStack {
+                if isLoading {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                    Text("加载中...")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                } else if let error = loadError {
+                    HStack(spacing: 4) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .foregroundColor(.red)
+                        Text("加载失败: \(error)")
+                            .font(.caption)
+                            .foregroundColor(.red)
+                        Button(action: {
+                            Task {
+                                await loadEventsAsync()
+                            }
+                        }) {
+                            Image(systemName: "arrow.clockwise")
+                                .foregroundColor(.blue)
+                        }
+                        .buttonStyle(.plain)
+                        .help("重试")
+                    }
+                } else {
+                    Text("共 \(totalEventCount) 条事件")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
                 Spacer()
-                Text("共 \(totalEventCount) 条事件")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
             }
             .padding(.horizontal, 12)
 
-            Table(events, columns: {
-                TableColumn("Time", value: \.timeFormatted).width(150)
-                TableColumn("Address", value: \.address)
-                TableColumn("Port", value: \.port).width(60)
-                TableColumn("Direction") { event in
-                    Text(event.direction == .inbound ? "入" : "出")
-                        .foregroundStyle(event.isAllowed ? .green : .red)
-                }.width(60)
-                TableColumn("Status") { event in
-                    Text(event.status == .allowed ? "允许" : "拒绝")
-                        .foregroundStyle(event.isAllowed ? .green : .red)
-                }.width(60)
-            })
-            .frame(minHeight: 200)
-            .frame(maxHeight: 300)
+            ZStack {
+                Table(events, columns: {
+                    TableColumn("Time", value: \.timeFormatted).width(150)
+                    TableColumn("Address", value: \.address)
+                    TableColumn("Port", value: \.port).width(60)
+                    TableColumn("Direction") { event in
+                        Text(event.direction == .inbound ? "入" : "出")
+                            .foregroundStyle(event.isAllowed ? .green : .red)
+                    }.width(60)
+                    TableColumn("Status") { event in
+                        Text(event.status == .allowed ? "允许" : "拒绝")
+                            .foregroundStyle(event.isAllowed ? .green : .red)
+                    }.width(60)
+                })
+                .frame(minHeight: 200)
+                .frame(maxHeight: 300)
+                .opacity(isLoading && isInitialLoad ? 0.3 : 1.0)
+
+                // 初始加载时的骨架屏
+                if isLoading && isInitialLoad {
+                    VStack(spacing: 8) {
+                        ForEach(0..<5, id: \.self) { _ in
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(width: 150, height: 16)
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(width: 120, height: 16)
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(width: 60, height: 16)
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(width: 60, height: 16)
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(width: 60, height: 16)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 8)
+                }
+
+                // 空状态
+                if !isLoading && !isInitialLoad && events.isEmpty && loadError == nil {
+                    VStack(spacing: 8) {
+                        Image(systemName: "doc.text.magnifyingglass")
+                            .font(.system(size: 32))
+                            .foregroundColor(.secondary)
+                        Text("暂无事件数据")
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
 
             // 分页控制
             if getTotalPages() > 1 {
@@ -116,9 +194,9 @@ struct EventDetailView: View, SuperLog {
                         }
                     }) {
                         Image(systemName: "chevron.left")
-                            .foregroundColor(currentPage > 0 ? .primary : .secondary)
+                            .foregroundColor((currentPage > 0 && !isLoading) ? .primary : .secondary)
                     }
-                    .disabled(currentPage <= 0)
+                    .disabled(currentPage <= 0 || isLoading)
 
                     Spacer()
 
@@ -135,9 +213,9 @@ struct EventDetailView: View, SuperLog {
                         }
                     }) {
                         Image(systemName: "chevron.right")
-                            .foregroundColor(currentPage < getTotalPages() - 1 ? .primary : .secondary)
+                            .foregroundColor((currentPage < getTotalPages() - 1 && !isLoading) ? .primary : .secondary)
                     }
-                    .disabled(currentPage >= getTotalPages() - 1)
+                    .disabled(currentPage >= getTotalPages() - 1 || isLoading)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
@@ -160,11 +238,15 @@ struct EventDetailView: View, SuperLog {
         .onAppear(perform: onAppear)
         .onChange(of: statusFilter) { _, _ in
             currentPage = 0 // 重置到第一页
-            loadEvents()
+            Task {
+                await loadEventsAsync()
+            }
         }
         .onChange(of: directionFilter) { _, _ in
             currentPage = 0 // 重置到第一页
-            loadEvents()
+            Task {
+                await loadEventsAsync()
+            }
         }
     }
 }
@@ -177,8 +259,14 @@ extension EventDetailView {
         return max(1, Int(ceil(Double(totalEventCount) / Double(eventsPerPage))))
     }
 
-    /// 加载事件数据
-    private func loadEvents() {
+    /// 异步加载事件数据
+    private func loadEventsAsync() async {
+        // 设置加载状态
+        await MainActor.run {
+            isLoading = true
+            loadError = nil
+        }
+
         do {
             // 获取状态筛选条件
             let statusFilterValue: FirewallEvent.Status? = statusFilter == .all ? nil :
@@ -188,27 +276,54 @@ extension EventDetailView {
             let directionFilterValue: NETrafficDirection? = directionFilter == .all ? nil :
                 (directionFilter == .inbound ? .inbound : .outbound)
 
-            // 获取事件总数
-            totalEventCount = try firewallEventService.getEventCountByAppId(
-                appId,
-                statusFilter: statusFilterValue,
-                directionFilter: directionFilterValue
-            )
+            // 使用Task在后台执行数据加载，避免阻塞主线程
+            let (count, eventList) = try await Task {
+                // 获取事件总数
+                let count = try firewallEventService.getEventCountByAppId(
+                    appId,
+                    statusFilter: statusFilterValue,
+                    directionFilter: directionFilterValue
+                )
 
-            // 获取分页数据
-            events = try firewallEventService.getEventsByAppIdPaginated(
-                appId,
-                page: currentPage,
-                pageSize: eventsPerPage,
-                statusFilter: statusFilterValue,
-                directionFilter: directionFilterValue
-            )
+                // 获取分页数据
+                let events = try firewallEventService.getEventsByAppIdPaginated(
+                    appId,
+                    page: currentPage,
+                    pageSize: eventsPerPage,
+                    statusFilter: statusFilterValue,
+                    directionFilter: directionFilterValue
+                )
 
-            os_log("\(self.t)🍑 (\(appId)) 加载了 \(events.count) 个事件，总数: \(totalEventCount)")
+                return (count, events)
+            }.value
+
+            // 更新UI状态
+            await MainActor.run {
+                totalEventCount = count
+                events = eventList
+                isInitialLoad = false
+                os_log("\(self.t)🍑 (\(appId)) 异步加载了 \(eventList.count) 个事件，总数: \(count)")
+            }
         } catch {
-            os_log(.error, "加载事件数据失败: \(error)")
-            events = []
-            totalEventCount = 0
+            await MainActor.run {
+                os_log(.error, "异步加载事件数据失败: \(error)")
+                loadError = error.localizedDescription
+                events = []
+                totalEventCount = 0
+                isInitialLoad = false
+            }
+        }
+
+        // 结束加载状态
+        await MainActor.run {
+            isLoading = false
+        }
+    }
+
+    /// 同步加载事件数据（向后兼容，用于分页按钮）
+    private func loadEvents() {
+        Task {
+            await loadEventsAsync()
         }
     }
 }
@@ -218,7 +333,10 @@ extension EventDetailView {
 extension EventDetailView {
     /// 视图出现时加载数据
     private func onAppear() {
-        loadEvents()
+        // 异步加载数据，不阻塞UI显示
+        Task {
+            await loadEventsAsync()
+        }
     }
 }
 
@@ -230,6 +348,8 @@ extension EventDetailView {
 }
 
 #Preview("事件详情视图") {
-    EventDetailView(appId: "59GAB85EFG.com.apple.dt.Xcode")
-        .frame(width: 600, height: 600)
+    RootView {
+        EventDetailView(appId: "59GAB85EFG.com.apple.dt.Xcode")
+    }
+    .frame(width: 600, height: 600)
 }
