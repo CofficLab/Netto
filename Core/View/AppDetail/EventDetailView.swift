@@ -19,7 +19,7 @@ struct EventDetailView: View, SuperLog {
 
     // MARK: - Environment
 
-    @EnvironmentObject private var queryRepo: EventQueryRepo
+    @EnvironmentObject private var queryRepo: EventNewRepo
 
     // MARK: - State
 

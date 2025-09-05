@@ -7,11 +7,10 @@ import Combine
 /// 数据库防火墙事件展示视图
 /// 用于展示数据库中存储的所有防火墙事件记录
 struct DBEventView: View {
-    // 直接使用FirewallEventRepository
-    private let repository: EventRepo = DBManager.shared.eventRepo
+    @EnvironmentObject private var repo: EventNewRepo
     
     // 存储加载的事件数据
-    @State private var events: [FirewallEventModel] = []
+    @State private var events: [FirewallEventDTO] = []
     @State private var totalCount: Int = 0
     
     // 分页控制状态
@@ -38,39 +37,56 @@ struct DBEventView: View {
         
         isLoading = true
         
-        do {
-            // 使用筛选条件获取事件总数
-            if !filterAppId.isEmpty {
-                totalCount = try repository.getEventCountByAppId(filterAppId)
-            } else {
-                // 获取所有事件总数
-                totalCount = try repository.getEventCount()
-            }
-            
-            // 检查页码边界
-            checkPageBounds()
-            
-            // 使用筛选条件获取分页数据
-            if !filterAppId.isEmpty {
-                // 使用应用ID筛选
-                events = try repository.fetchByAppIdPaginated(
-                    filterAppId,
-                    page: currentPage,
-                    pageSize: itemsPerPage
-                )
-            } else {
-                // 获取所有事件（分页）
-                events = try repository.fetchAllPaginated(
-                    page: currentPage,
-                    pageSize: itemsPerPage
-                )
-            }
-        } catch {
-            print("加载事件数据失败: \(error)")
-            events = []
-        }
+        // 捕获需要的值，避免在 Task 中捕获 self
+        let currentFilterAppId = filterAppId
+        let currentPage = currentPage
+        let currentItemsPerPage = itemsPerPage
+        let repo = self.repo
         
-        isLoading = false
+        Task {
+            do {
+                // 使用筛选条件获取事件总数
+                let newTotalCount: Int
+                if !currentFilterAppId.isEmpty {
+                    newTotalCount = try await repo.getEventCountByAppId(currentFilterAppId)
+                } else {
+                    // 获取所有事件总数
+                    newTotalCount = try await repo.getEventCount()
+                }
+                
+                // 使用筛选条件获取分页数据
+                let newEvents: [FirewallEventDTO]
+                if !currentFilterAppId.isEmpty {
+                    // 使用应用ID筛选
+                    newEvents = try await repo.fetchByAppIdPaginated(
+                        currentFilterAppId,
+                        page: currentPage,
+                        pageSize: currentItemsPerPage
+                    )
+                } else {
+                    // 获取所有事件（分页）
+                    newEvents = try await repo.fetchAllPaginated(
+                        page: currentPage,
+                        pageSize: currentItemsPerPage
+                    )
+                }
+                
+                await MainActor.run {
+                    self.totalCount = newTotalCount
+                    self.events = newEvents
+                    self.isLoading = false
+                    
+                    // 检查页码边界
+                    self.checkPageBounds()
+                }
+            } catch {
+                print("加载事件数据失败: \(error)")
+                await MainActor.run {
+                    self.events = []
+                    self.isLoading = false
+                }
+            }
+        }
     }
     
     /// 检查并修正页码边界

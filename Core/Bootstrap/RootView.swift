@@ -12,7 +12,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var data: DataProvider
     private var service: ServiceProvider
     private var eventRepo: EventRepo
-    private var eventQueryRepo: EventQueryRepo
+    private var eventQueryRepo: EventNewRepo
 
     @StateObject var m = MagicMessageProvider.shared
 
@@ -25,7 +25,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
         self.data = coreServices.data
         self.service = coreServices.service
         self.eventRepo = coreServices.eventRepo
-        self.eventQueryRepo = EventQueryRepo()
+        self.eventQueryRepo = EventNewRepo()
     }
 
     var body: some View {
