@@ -23,7 +23,6 @@ final class RootBox: SuperLog {
         // Repos
         let dbManager = DBManager.shared
         let appSettingRepo = dbManager.appSettingRepo
-        let firewallRepo = dbManager.eventRepo
         let eventRepo = EventRepo()
         
         // Services

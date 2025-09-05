@@ -52,5 +52,51 @@
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "187833B3-E0EE-4BB3-89C6-7B1CBFAAC6CB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Core/Repo/AppSettingRepo.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "find(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "187833B3-E0EE-4BB3-89C6-7B1CBFAAC6CB - aa1072e3d30a1e4b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "TavelMode.AppSettingRepo.find(Swift.String) throws -&gt; Swift.Optional&lt;TavelMode.AppSetting&gt;"
+                  moduleName = "TavelMode.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/angel/Code/Coffic/Netto/Core/Repo/AppSettingRepo.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "50"
+                  endingLineNumber = "50">
+               </Location>
+               <Location
+                  uuid = "187833B3-E0EE-4BB3-89C6-7B1CBFAAC6CB - aa1072e3d30a1e4b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "TavelMode.AppSettingRepo.find(Swift.String) throws -&gt; Swift.Optional&lt;TavelMode.AppSetting&gt;"
+                  moduleName = "TavelMode.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/angel/Code/Coffic/Netto/Core/Repo/AppSettingRepo.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "50"
+                  endingLineNumber = "50">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
