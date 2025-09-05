@@ -5,23 +5,20 @@ import OSLog
 import SwiftUI
 import SystemExtensions
 
-@MainActor
-final class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
+final class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread, @unchecked Sendable {
     nonisolated static let emoji = "🛡️"
 
     private var ipc = IPCConnection.shared
     private var extensionManager = OSSystemExtensionManager.shared
-    private var extensionBundle = AppConfig.extensionBundle
+    private var extensionBundle = ExtensionConfig.extensionBundle
     private var error: Error?
     private var observer: Any?
-    private var s: PermissionService
     private var repo: AppSettingRepo
     var status: FilterStatus = .indeterminate
 
-    init(appPermissionService: PermissionService, repo: AppSettingRepo, reason: String) {
+    init(repo: AppSettingRepo, reason: String) async {
         os_log("\(Self.onInit)(\(reason))")
 
-        self.s = appPermissionService
         self.repo = repo
 
         super.init()
@@ -30,26 +27,24 @@ final class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
         self.setObserver()
 
         // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
-        Task {
-            do {
-                try await loadFilterConfiguration(reason: "Boot")
-            } catch {
-                os_log(.error, "\(self.t)Boot -> \(error)")
-            }
-
-            let isEnabled = NEFilterManager.shared().isEnabled
-
-            os_log("\(self.t)\(isEnabled ? "✅ 过滤器已启用" : "⚠️ 过滤器未启用")")
-
-            updateFilterStatus(isEnabled ? .running : .disabled)
+        do {
+            try await loadFilterConfiguration(reason: "Boot")
+        } catch {
+            os_log(.error, "\(self.t)Boot -> \(error)")
         }
+
+        let isEnabled = NEFilterManager.shared().isEnabled
+
+        os_log("\(self.t)\(isEnabled ? "✅ 过滤器已启用" : "⚠️ 过滤器未启用")")
+
+        updateFilterStatus(isEnabled ? .running : .disabled)
     }
 
     /// 更新过滤器状态
     /// - Parameter status: 新的过滤器状态
     private func updateFilterStatus(_ status: FilterStatus) {
         if self.status == status { return }
-        
+
         let oldValue = self.status
 
         self.status = status
@@ -193,7 +188,7 @@ extension FirewallService {
         try await NEFilterManager.shared().loadFromPreferences()
     }
 
-    private func enableFilterConfiguration(reason: String) {
+    private func enableFilterConfiguration(reason: String) async {
         os_log("\(self.t)🦶 \(Location.did(.EnableFilterConfiguration))")
 
         self.emit(.configurationChanged)
@@ -203,44 +198,44 @@ extension FirewallService {
             return
         }
 
-        Task {
-            do {
-                try await loadFilterConfiguration(reason: reason)
+//        Task {
+        do {
+            try await loadFilterConfiguration(reason: reason)
 
-                os_log("\(self.t)🎉 加载过滤器配置成功")
+            os_log("\(self.t)🎉 加载过滤器配置成功")
 
-                if NEFilterManager.shared().providerConfiguration == nil {
-                    let providerConfiguration = NEFilterProviderConfiguration()
-                    providerConfiguration.filterSockets = true
-                    providerConfiguration.filterPackets = false
-                    NEFilterManager.shared().providerConfiguration = providerConfiguration
-                    if let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String {
-                        NEFilterManager.shared().localizedDescription = appName
-                    }
+            if NEFilterManager.shared().providerConfiguration == nil {
+                let providerConfiguration = NEFilterProviderConfiguration()
+                providerConfiguration.filterSockets = true
+                providerConfiguration.filterPackets = false
+                NEFilterManager.shared().providerConfiguration = providerConfiguration
+                if let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String {
+                    NEFilterManager.shared().localizedDescription = appName
                 }
-
-                // 如果true，加载到系统设置中后就是启动状态
-                NEFilterManager.shared().isEnabled = true
-
-                // 将过滤器加载到系统设置中
-                os_log("\(self.t)📺 将要弹出授权对话框来加载到系统设置中")
-                os_log("\(self.t)🦶 \(Location.did(.SaveToPreferences))")
-                NEFilterManager.shared().saveToPreferences { saveError in
-                    if let error = saveError {
-                        os_log(.error, "\(self.t)授权对话框报错 -> \(error.localizedDescription)")
-                        self.updateFilterStatus(.disabled)
-                        return
-                    } else {
-                        os_log("\(self.t)🦶 \(Location.did(.UserApproved))")
-                    }
-
-                    self.registerWithProvider(reason: "已授权")
-                }
-            } catch {
-                os_log("\(self.t)APP: 加载过滤器配置失败")
-                self.updateFilterStatus(.stopped)
             }
+
+            // 如果true，加载到系统设置中后就是启动状态
+            NEFilterManager.shared().isEnabled = true
+
+            // 将过滤器加载到系统设置中
+            os_log("\(self.t)📺 将要弹出授权对话框来加载到系统设置中")
+            os_log("\(self.t)🦶 \(Location.did(.SaveToPreferences))")
+            NEFilterManager.shared().saveToPreferences { saveError in
+                if let error = saveError {
+                    os_log(.error, "\(self.t)授权对话框报错 -> \(error.localizedDescription)")
+                    self.updateFilterStatus(.disabled)
+                    return
+                } else {
+                    os_log("\(self.t)🦶 \(Location.did(.UserApproved))")
+                }
+
+                self.registerWithProvider(reason: "已授权")
+            }
+        } catch {
+            os_log("\(self.t)APP: 加载过滤器配置失败")
+            self.updateFilterStatus(.stopped)
         }
+//        }
     }
 
     private func registerWithProvider(reason: String) {
@@ -280,25 +275,22 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
             os_log("\(self.t)\(result.rawValue)")
         }
 
-        DispatchQueue.main.async {
-            self.enableFilterConfiguration(reason: "didFinishWithResult")
-        }
+//            self.enableFilterConfiguration(reason: "didFinishWithResult")
     }
 
     nonisolated func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
         os_log(.error, "\(self.t)didFailWithError -> \(error.localizedDescription)")
-        DispatchQueue.main.async {
-            self.setError(error)
-            self.updateFilterStatus(.error(error))
-        }
+
+        self.setError(error)
+        self.updateFilterStatus(.error(error))
+
         self.emit(.didFailWithError, userInfo: ["error": error])
     }
 
     nonisolated func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
         os_log("\(self.t)🦶 \(Location.did(.RequestNeedsUserApproval))")
-        DispatchQueue.main.async {
-            self.updateFilterStatus(.needApproval)
-        }
+
+        self.updateFilterStatus(.needApproval)
     }
 
     nonisolated func request(
@@ -341,8 +333,7 @@ extension FirewallService: AppCommunication {
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
         let verbose = false
 
-        // let shouldAllow = self.repo.shouldAllowSync(id)
-        let shouldAllow = true
+        let shouldAllow = self.repo.shouldAllowSync(id)
 
         if shouldAllow {
             if verbose {

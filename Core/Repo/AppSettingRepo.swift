@@ -86,6 +86,14 @@ final class AppSettingRepo: ObservableObject, SuperLog, SuperEvent {
         os_log("\(self.t) fetchAll")
         return try await actor.fetchAllDTO()
     }
+    
+    /// 获取所有被拒绝访问的应用ID列表
+    /// - Returns: 被拒绝的应用ID数组
+    /// - Throws: 查询数据时可能抛出的错误
+    func getDeniedApps() async throws -> [String] {
+        let allSettings = try await fetchAll()
+        return allSettings.filter { !$0.allowed }.map { $0.appId }
+    }
 
     /// 获取所有被拒绝访问的AppSetting记录
     /// - Returns: 所有allowed为false的AppSettingDTO记录数组

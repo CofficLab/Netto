@@ -17,29 +17,18 @@ class DataProvider: ObservableObject, SuperLog {
     private let firewallEventService: EventService
     
     public var eventRepo: EventRepo
+    private let appSettingRepo: AppSettingRepo
 
     /// 初始化DataProvider
     /// - Parameters:
     ///   - appPermissionService: 应用权限服务
     ///   - firewallEventService: 防火墙事件服务
     init(appPermissionService: PermissionService,
-         firewallEventService: EventService, eventRepo: EventRepo) {
+         firewallEventService: EventService, eventRepo: EventRepo, settingRepo: AppSettingRepo) {
         self.appPermissionService = appPermissionService
         self.firewallEventService = firewallEventService
         self.eventRepo = eventRepo
-
-        // 添加被禁止的应用到apps列表中
-//        do {
-//            let deniedAppIds = try await appPermissionService.getDeniedApps()
-//            for appId in deniedAppIds {
-//                let smartApp = SmartApp.fromId(appId)
-//                if !self.apps.contains(where: { $0.id == smartApp.id }) {
-//                    self.apps.append(smartApp)
-//                }
-//            }
-//        } catch {
-//            os_log(.error, "\(self.t)获取被禁止应用列表失败: \(error)")
-//        }
+        self.appSettingRepo = settingRepo
 
         setupNotificationListeners()
     }

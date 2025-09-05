@@ -4,7 +4,6 @@ import MagicCore
 import OSLog
 import SwiftUI
 
-@MainActor
 class ServiceProvider: ObservableObject, SuperLog {
     nonisolated static let emoji = "💾"
     

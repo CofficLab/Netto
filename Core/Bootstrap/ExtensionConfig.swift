@@ -1,8 +1,8 @@
 import Foundation
 
-extension AppConfig {
+class ExtensionConfig {
     // Get the Bundle of the system extension.
-    static var extensionBundle: Bundle = {
+    static let extensionBundle: Bundle = {
         let extensionsDirectoryURL = URL(fileURLWithPath: "Contents/Library/SystemExtensions", relativeTo: Bundle.main.bundleURL)
         let extensionURLs: [URL]
         do {
