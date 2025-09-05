@@ -9,6 +9,7 @@ struct AppDetail: View, SuperLog {
     @EnvironmentObject var data: DataProvider
     
     @Binding var popoverHovering: Bool
+    @State private var appeared = false
 
     var app: SmartApp
 
@@ -21,6 +22,9 @@ struct AppDetail: View, SuperLog {
             EventDetailView(appId: app.id)
         }
         .padding(12)
+        .onAppear {
+            self.appeared = true
+        }
         .onHover { hovering in
             popoverHovering = hovering
         }
