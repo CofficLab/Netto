@@ -251,7 +251,7 @@ struct EventDetailView: View, SuperLog {
     }
 }
 
-// MARK: - 事件加载和分页方法
+// MARK: - Action
 
 extension EventDetailView {
     /// 获取总页数
@@ -331,10 +331,9 @@ extension EventDetailView {
 // MARK: - Events
 
 extension EventDetailView {
-    /// 视图出现时加载数据
     private func onAppear() {
-        // 异步加载数据，不阻塞UI显示
-        Task {
+        Task.detached(priority: .background) {
+            os_log("\(self.t)🍑 (\(appId)) 视图出现时加载数据")
             await loadEventsAsync()
         }
     }

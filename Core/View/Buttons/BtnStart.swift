@@ -4,7 +4,7 @@ import OSLog
 
 struct BtnStart: View, SuperLog {
     @EnvironmentObject private var service: ServiceProvider
-    @EnvironmentObject private var m: MessageProvider
+    @EnvironmentObject private var m: MagicMessageProvider
     
     private var asToolbarItem: Bool = false
     
@@ -25,7 +25,7 @@ struct BtnStart: View, SuperLog {
             }
             .buttonStyle(.plain)
         } else {
-            MagicButton(icon: "restart.circle", size: .auto, action: {
+            MagicButton.simple(icon: "restart.circle", size: .auto, action: {
                 action()
             })
             .magicTitle("开启")

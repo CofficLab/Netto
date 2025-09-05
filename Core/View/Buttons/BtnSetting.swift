@@ -3,7 +3,7 @@ import SwiftUI
 
 struct BtnSetting: View {
     var body: some View {
-        MagicButton(action: {
+        MagicButton.simple(action: {
             if let url = URL(string: "x-apple.systempreferences:com.apple.ExtensionsPreferences?extensionPointIdentifier=com.apple.system_extension.network_extension.extension-point") {
                 NSWorkspace.shared.open(url)
             }

@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 struct TileMore: View, SuperLog, SuperThread {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
 
     @State var hovered = false
     @State var isPresented = false

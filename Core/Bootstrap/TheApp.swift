@@ -74,7 +74,12 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                 shouldShowMenuApp = false
             }
         }, label: {
+            #if DEBUG
+            Label(AppConfig.appName, systemImage: .iconAirplane)
+                .foregroundColor(.orange)
+            #else
             Label(AppConfig.appName, systemImage: "network")
+            #endif
         })
         .menuBarExtraStyle(.window)
     }

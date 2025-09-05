@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 struct AppAction: View, SuperLog, SuperEvent {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var data: DataProvider
 
     @Binding var shouldAllow: Bool
@@ -19,7 +19,7 @@ struct AppAction: View, SuperLog, SuperEvent {
     }
 
     var body: some View {
-        MagicButton(icon: iconName, size: .auto, action: {
+        MagicButton.simple(icon: iconName, size: .auto, action: {
             shouldAllow ? deny() : allow()
         })
         .magicStyle(.primary)
@@ -33,7 +33,7 @@ struct AppAction: View, SuperLog, SuperEvent {
         do {
             try data.deny(appId)
             self.shouldAllow = false
-            self.m.toast("已禁止")
+            self.m.info("已禁止")
         } catch let error {
             os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
             m.error(error)
@@ -44,7 +44,7 @@ struct AppAction: View, SuperLog, SuperEvent {
         do {
             try data.allow(appId)
             self.shouldAllow = true
-            self.m.done("已允许")
+            self.m.info("已允许")
         } catch let error {
             os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
             m.error(error)
@@ -52,18 +52,8 @@ struct AppAction: View, SuperLog, SuperEvent {
     }
 }
 
-#Preview {
-    RootView {
-        AppAction(shouldAllow: .constant(true), appId: "")
-    }
-    .frame(width: 300)
-    .frame(height: 300)
-}
-
 #Preview("APP") {
-    RootView {
-        ContentView()
-    }
-    .frame(width: 500)
-    .frame(height: 500)
+    ContentView().inRootView()
+        .frame(width: 500)
+        .frame(height: 500)
 }

@@ -131,6 +131,7 @@
       }
     },
     "Clear" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -231,6 +232,7 @@
       }
     },
     "Message" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -509,6 +511,9 @@
           }
         }
       }
+    },
+    "加载失败: %@" : {
+
     },
     "在 Finder 中显示" : {
       "localizations" : {
@@ -890,6 +895,9 @@
         }
       }
     },
+    "暂无事件数据" : {
+
+    },
     "更多操作" : {
       "localizations" : {
         "en" : {
@@ -1104,6 +1112,9 @@
           }
         }
       }
+    },
+    "重试" : {
+
     },
     "防火墙事件" : {
       "localizations" : {
