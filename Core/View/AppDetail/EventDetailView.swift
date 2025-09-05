@@ -20,7 +20,7 @@ struct EventDetailView: View, SuperLog {
 
     // MARK: - Environment
 
-    @EnvironmentObject private var dataProvider: DataProvider
+    @EnvironmentObject private var repo: EventRepo
 
     // MARK: - State
 
@@ -148,16 +148,14 @@ extension EventDetailView {
     private func updateDataSource() async {
         isLoading = true
 
-        let eventRepo = dataProvider.eventRepo
-
         // Convert view-specific filters to data-layer filters
         let status: FirewallEvent.Status? = statusFilter == .all ? nil : (statusFilter == .allowed ? .allowed : .rejected)
         let direction: NETrafficDirection? = directionFilter == .all ? nil : (directionFilter == .inbound ? .inbound : .outbound)
 
         do {
             // Fetch count and data using the repository
-            self.totalEventCount = try eventRepo.getEventCountByAppIdFiltered(appId, statusFilter: status, directionFilter: direction)
-            self.events = try eventRepo.fetchByAppIdPaginated(appId, page: currentPage, pageSize: eventsPerPage, statusFilter: status, directionFilter: direction)
+            self.totalEventCount = try repo.getEventCountByAppIdFiltered(appId, statusFilter: status, directionFilter: direction)
+            self.events = try repo.fetchByAppIdPaginated(appId, page: currentPage, pageSize: eventsPerPage, statusFilter: status, directionFilter: direction)
         } catch {
             self.events = []
             self.totalEventCount = 0
