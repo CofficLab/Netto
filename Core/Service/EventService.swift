@@ -46,12 +46,12 @@ class EventService: SuperLog {
     // MARK: - Properties
 
     /// FirewallEvent仓库
-    private var repository: EventRepo
+    private var repository: EventNewRepo
 
     // MARK: - Initialization
 
     /// 初始化防火墙事件服务
-    init(repo: EventRepo) {
+    init(repo: EventNewRepo) {
         self.repository = repo
     }
 
@@ -60,13 +60,13 @@ class EventService: SuperLog {
     /// 记录新的防火墙事件
     /// - Parameter event: 要记录的防火墙事件
     /// - Throws: 保存数据时可能抛出的错误
-    func recordEvent(_ event: FirewallEvent) throws {
+    func recordEvent(_ event: FirewallEvent) async throws {
         let verbose = false
         if let validationError = validateEventWithReason(event) {
             throw FirewallEventError.invalidEvent(validationError)
         }
         
-        try repository.create(event)
+        try await repository.create(event)
         if verbose {
         os_log("\(self.t)📝 Recorded firewall event: \(event.description) for app \(event.sourceAppIdentifier)")
     }}

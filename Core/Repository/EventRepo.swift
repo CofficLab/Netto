@@ -38,17 +38,6 @@ class EventRepo: SuperLog, ObservableObject {
     init(context: ModelContext) {
         self.context = context
     }
-
-    // MARK: - CRUD Operations
-
-    /// 创建新的FirewallEvent记录
-    /// - Parameter event: FirewallEvent结构体实例
-    /// - Throws: 保存数据时可能抛出的错误
-    func create(_ event: FirewallEvent) throws {
-        let eventModel = FirewallEventModel.from(event)
-        context.insert(eventModel)
-        try context.save()
-    }
     
     /// 删除指定应用ID超过指定天数的事件记录
     /// - Parameters:

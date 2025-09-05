@@ -16,14 +16,14 @@ class DataProvider: ObservableObject, SuperLog {
     private let appPermissionService: PermissionService
     private let firewallEventService: EventService
     
-    public var eventRepo: EventRepo
+    public var eventRepo: EventNewRepo
 
     /// 初始化DataProvider
     /// - Parameters:
     ///   - appPermissionService: 应用权限服务
     ///   - firewallEventService: 防火墙事件服务
     init(appPermissionService: PermissionService,
-         firewallEventService: EventService, eventRepo: EventRepo) {
+         firewallEventService: EventService, eventRepo: EventNewRepo) {
         self.appPermissionService = appPermissionService
         self.firewallEventService = firewallEventService
         self.eventRepo = eventRepo
@@ -106,7 +106,8 @@ extension DataProvider {
     /// 处理网络流量事件
     /// - Parameter wrapper: 包装的网络流量数据
     private func handleNetworkFlow(_ wrapper: FlowWrapper, verbose: Bool = false) {
-        Task(priority: .background) {
+        let repo = self.eventRepo
+        Task {
             let event = FirewallEvent(
                 address: wrapper.getAddress(),
                 port: wrapper.getPort(),
@@ -117,7 +118,7 @@ extension DataProvider {
 
             // 将事件存储到数据库
             do {
-                try firewallEventService.recordEvent(event)
+                try await repo.create(event)
                 if verbose {
                     os_log("\(self.t)💾 事件已存储到数据库: \(event.description)")
                 }
