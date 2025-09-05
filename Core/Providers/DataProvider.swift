@@ -15,15 +15,18 @@ class DataProvider: ObservableObject, SuperLog {
     private var cancellables = Set<AnyCancellable>()
     private let appPermissionService: PermissionService
     private let firewallEventService: EventService
+    
+    public var eventRepo: EventRepo
 
     /// 初始化DataProvider
     /// - Parameters:
     ///   - appPermissionService: 应用权限服务
     ///   - firewallEventService: 防火墙事件服务
     init(appPermissionService: PermissionService,
-         firewallEventService: EventService) {
+         firewallEventService: EventService, eventRepo: EventRepo) {
         self.appPermissionService = appPermissionService
         self.firewallEventService = firewallEventService
+        self.eventRepo = eventRepo
 
         // 添加被禁止的应用到apps列表中
         do {

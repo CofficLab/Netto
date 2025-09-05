@@ -32,7 +32,7 @@ final class RootBox: SuperLog {
         let versionService = VersionService()
         
         // Providers
-        self.data = DataProvider(appPermissionService: appPermissionService, firewallEventService: firewallEventService)
+        self.data = DataProvider(appPermissionService: appPermissionService, firewallEventService: firewallEventService, eventRepo: firewallRepo)
         self.service = ServiceProvider(firewallService: firewallService, firewallEventService: firewallEventService, versionService: versionService)
         self.message = MagicMessageProvider.shared
         
