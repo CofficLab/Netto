@@ -50,60 +50,11 @@ class EventRepo: SuperLog, ObservableObject {
         try context.save()
     }
     
-    /// 批量创建FirewallEvent记录
-    /// - Parameter events: FirewallEvent结构体实例数组
-    /// - Throws: 保存数据时可能抛出的错误
-    func createBatch(_ events: [FirewallEvent]) throws {
-        for event in events {
-            let eventModel = FirewallEventModel.from(event)
-            context.insert(eventModel)
-        }
-        try context.save()
-    }
-
-    /// 根据ID查找FirewallEvent记录
-    /// - Parameter id: 事件ID
-    /// - Returns: 找到的FirewallEventModel实例，如果未找到则返回nil
-    /// - Throws: 查询数据时可能抛出的错误
-    func find(_ id: String) throws -> FirewallEventModel? {
-        let predicate = #Predicate<FirewallEventModel> { item in
-            item.id == id
-        }
-
-        let items = try context.fetch(FetchDescriptor(predicate: predicate))
-        return items.first
-    }
-
-    /// 删除FirewallEvent记录
-    /// - Parameter id: 事件ID
-    /// - Throws: 删除数据时可能抛出的错误
-    func delete(_ id: String) throws {
-        if let event = try find(id) {
-            context.delete(event)
-            try context.save()
-        }
-    }
-    
     /// 删除指定应用的所有事件记录
     /// - Parameter appId: 应用程序ID
     /// - Throws: 删除数据时可能抛出的错误
     func deleteByAppId(_ appId: String) throws {
         let events = try fetchByAppId(appId)
-        for event in events {
-            context.delete(event)
-        }
-        try context.save()
-    }
-    
-    /// 删除指定时间之前的所有事件记录
-    /// - Parameter date: 截止日期
-    /// - Throws: 删除数据时可能抛出的错误
-    func deleteBefore(_ date: Date) throws {
-        let predicate = #Predicate<FirewallEventModel> { item in
-            item.time < date
-        }
-        
-        let events = try context.fetch(FetchDescriptor(predicate: predicate))
         for event in events {
             context.delete(event)
         }
@@ -278,23 +229,6 @@ class EventRepo: SuperLog, ObservableObject {
         )
         return try context.fetch(descriptor)
     }
-    
-    /// 根据网络流量方向查找FirewallEvent记录
-    /// - Parameter direction: 网络流量方向
-    /// - Returns: 指定方向的所有FirewallEventModel记录数组
-    /// - Throws: 查询数据时可能抛出的错误
-    func fetchByDirection(_ direction: NETrafficDirection) throws -> [FirewallEventModel] {
-        let directionValue = direction.rawValue
-        let predicate = #Predicate<FirewallEventModel> { item in
-            item.directionRawValue == directionValue
-        }
-
-        let descriptor = FetchDescriptor(
-            predicate: predicate,
-            sortBy: [SortDescriptor(\FirewallEventModel.time, order: .reverse)]
-        )
-        return try context.fetch(descriptor)
-    }
 
     /// 根据时间范围查找FirewallEvent记录
     /// - Parameters:
@@ -305,22 +239,6 @@ class EventRepo: SuperLog, ObservableObject {
     func fetchByTimeRange(from startDate: Date, to endDate: Date) throws -> [FirewallEventModel] {
         let predicate = #Predicate<FirewallEventModel> { item in
             item.time >= startDate && item.time <= endDate
-        }
-
-        let descriptor = FetchDescriptor(
-            predicate: predicate,
-            sortBy: [SortDescriptor(\FirewallEventModel.time, order: .reverse)]
-        )
-        return try context.fetch(descriptor)
-    }
-    
-    /// 根据地址查找FirewallEvent记录
-    /// - Parameter address: 目标地址
-    /// - Returns: 指定地址的所有FirewallEventModel记录数组
-    /// - Throws: 查询数据时可能抛出的错误
-    func fetchByAddress(_ address: String) throws -> [FirewallEventModel] {
-        let predicate = #Predicate<FirewallEventModel> { item in
-            item.address == address
         }
 
         let descriptor = FetchDescriptor(
