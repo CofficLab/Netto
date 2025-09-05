@@ -20,7 +20,7 @@ struct EventDetailView: View, SuperLog {
 
     // MARK: - Environment
 
-    @EnvironmentObject private var repo: EventRepo
+    @EnvironmentObject private var queryRepo: EventQueryRepo
 
     // MARK: - State
 
@@ -142,13 +142,13 @@ extension EventDetailView {
         let status: FirewallEvent.Status? = statusFilter == .all ? nil : (statusFilter == .allowed ? .allowed : .rejected)
         let direction: NETrafficDirection? = directionFilter == .all ? nil : (directionFilter == .inbound ? .inbound : .outbound)
 
-        // 委托给仓库的后台API
-        repo.fetchByAppIdPaginatedAsync(
-            queryAppId,
+        // 查询仓库的后台API
+        queryRepo.loadAsync(
+            appId: queryAppId,
             page: queryPage,
             pageSize: queryPerPage,
-            statusFilter: status,
-            directionFilter: direction
+            status: status,
+            direction: direction
         ) { totalCount, events in
             self.setTotalEventCount(totalEventCount: totalCount)
             self.setEvents(events: events)
