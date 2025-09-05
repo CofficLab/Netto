@@ -2,6 +2,7 @@ import MagicCore
 import NetworkExtension
 import OSLog
 import SwiftUI
+import SwiftData
 
 /**
  * 事件详情视图
@@ -10,9 +11,6 @@ import SwiftUI
  * 直接通过appId获取事件数据，支持分页加载和筛选
  */
 struct EventDetailView: View, SuperLog {
-    @EnvironmentObject private var service: ServiceProvider
-    @EnvironmentObject private var repo: EventRepo
-    
     nonisolated static let emoji = "📋"
 
     /// 应用ID
@@ -26,11 +24,9 @@ struct EventDetailView: View, SuperLog {
     @State private var isLoading: Bool = false
     @State private var isInitialLoad: Bool = true
     @State private var loadError: String? = nil
-    
+
     private let eventsPerPage: Int = 20
-    private var firewallEventService: EventService {
-        service.firewallEventService
-    }
+    private let repo: EventRepo = DBManager.shared.eventRepo
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -93,7 +89,7 @@ struct EventDetailView: View, SuperLog {
                             .foregroundColor(.red)
                         Button(action: {
                             Task {
-                                await loadEventsAsync()
+                                await loadEvents()
                             }
                         }) {
                             Image(systemName: "arrow.clockwise")
@@ -131,89 +127,31 @@ struct EventDetailView: View, SuperLog {
 
                 // 初始加载时的骨架屏
                 if isLoading && isInitialLoad {
-                    VStack(spacing: 8) {
-                        ForEach(0..<5, id: \.self) { _ in
-                            HStack(spacing: 12) {
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color.gray.opacity(0.2))
-                                    .frame(width: 150, height: 16)
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color.gray.opacity(0.2))
-                                    .frame(width: 120, height: 16)
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color.gray.opacity(0.2))
-                                    .frame(width: 60, height: 16)
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color.gray.opacity(0.2))
-                                    .frame(width: 60, height: 16)
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color.gray.opacity(0.2))
-                                    .frame(width: 60, height: 16)
-                            }
-                        }
-                    }
-                    .padding(.vertical, 8)
+                    SkeletonLoadingView()
                 }
 
                 // 空状态
                 if !isLoading && !isInitialLoad && events.isEmpty && loadError == nil {
-                    VStack(spacing: 8) {
-                        Image(systemName: "doc.text.magnifyingglass")
-                            .font(.system(size: 32))
-                            .foregroundColor(.secondary)
-                        Text("暂无事件数据")
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                    }
+                    EmptyStateView(
+                        iconName: "doc.text.magnifyingglass",
+                        title: "暂无事件数据"
+                    )
                 }
             }
 
             // 分页控制
             if getTotalPages() > 1 {
-                HStack {
-                    Button(action: {
-                        if currentPage > 0 {
-                            currentPage -= 1
-                            loadEvents()
-                        }
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor((currentPage > 0 && !isLoading) ? .primary : .secondary)
+                PaginationView(
+                    currentPage: $currentPage,
+                    totalPages: getTotalPages(),
+                    isLoading: isLoading,
+                    onPreviousPage: {
+                        loadEvents()
+                    },
+                    onNextPage: {
+                        loadEvents()
                     }
-                    .disabled(currentPage <= 0 || isLoading)
-
-                    Spacer()
-
-                    Text("第 \(currentPage + 1) 页，共 \(getTotalPages()) 页")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-
-                    Spacer()
-
-                    Button(action: {
-                        if currentPage < getTotalPages() - 1 {
-                            currentPage += 1
-                            loadEvents()
-                        }
-                    }) {
-                        Image(systemName: "chevron.right")
-                            .foregroundColor((currentPage < getTotalPages() - 1 && !isLoading) ? .primary : .secondary)
-                    }
-                    .disabled(currentPage >= getTotalPages() - 1 || isLoading)
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(.controlBackgroundColor).opacity(0.6))
-                        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
                 )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.blue.opacity(0.15), lineWidth: 1)
-                )
-                .padding(.horizontal, 0)
-                .padding(.bottom, 8)
             }
         }
         .padding(12)
@@ -223,13 +161,13 @@ struct EventDetailView: View, SuperLog {
         .onChange(of: statusFilter) { _, _ in
             currentPage = 0 // 重置到第一页
             Task {
-                await loadEventsAsync()
+                await loadEvents()
             }
         }
         .onChange(of: directionFilter) { _, _ in
             currentPage = 0 // 重置到第一页
             Task {
-                await loadEventsAsync()
+                await loadEvents()
             }
         }
     }
@@ -244,7 +182,7 @@ extension EventDetailView {
     }
 
     /// 异步加载事件数据
-    private func loadEventsAsync() async {
+    private func loadEvents() async {
         // 设置加载状态
         await MainActor.run {
             isLoading = true
@@ -263,20 +201,20 @@ extension EventDetailView {
             // 使用Task在后台执行数据加载，避免阻塞主线程
             let (count, eventList) = try await Task {
                 // 获取事件总数
-                let count = try firewallEventService.getEventCountByAppId(
+                let count = try self.repo.getEventCountByAppIdFiltered(
                     appId,
                     statusFilter: statusFilterValue,
                     directionFilter: directionFilterValue
                 )
 
                 // 获取分页数据
-                let events = try firewallEventService.getEventsByAppIdPaginated(
+                let events = try self.repo.fetchByAppIdPaginated(
                     appId,
                     page: currentPage,
                     pageSize: eventsPerPage,
                     statusFilter: statusFilterValue,
                     directionFilter: directionFilterValue
-                )
+                ).map { $0.toFirewallEvent() }
 
                 return (count, events)
             }.value
@@ -307,7 +245,7 @@ extension EventDetailView {
     /// 同步加载事件数据（向后兼容，用于分页按钮）
     private func loadEvents() {
         Task {
-            await loadEventsAsync()
+            await loadEvents()
         }
     }
 }
@@ -318,7 +256,7 @@ extension EventDetailView {
     private func onAppear() {
         Task.detached(priority: .background) {
             os_log("\(self.t)🍑 (\(appId)) 视图出现时加载数据")
-            await loadEventsAsync()
+            await loadEvents()
         }
     }
 }

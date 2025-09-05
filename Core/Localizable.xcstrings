@@ -382,7 +382,11 @@
         }
       }
     },
+    "事件详情" : {
+
+    },
     "事件详情 (Event Details)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -894,9 +898,6 @@
           }
         }
       }
-    },
-    "暂无事件数据" : {
-
     },
     "更多操作" : {
       "localizations" : {
