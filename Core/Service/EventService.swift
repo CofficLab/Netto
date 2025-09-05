@@ -46,12 +46,12 @@ class EventService: SuperLog {
     // MARK: - Properties
 
     /// FirewallEvent仓库
-    private var repository: EventNewRepo
+    private var repository: EventRepo
 
     // MARK: - Initialization
 
     /// 初始化防火墙事件服务
-    init(repo: EventNewRepo) {
+    init(repo: EventRepo) {
         self.repository = repo
     }
 

@@ -11,7 +11,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var p = PluginProvider.shared
     private var data: DataProvider
     private var service: ServiceProvider
-    private var eventRepo: EventNewRepo
+    private var eventRepo: EventRepo
 
     @StateObject var m = MagicMessageProvider.shared
 
@@ -23,7 +23,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
         let coreServices = RootBox.shared
         self.data = coreServices.data
         self.service = coreServices.service
-        self.eventRepo = EventNewRepo()
+        self.eventRepo = EventRepo()
     }
 
     var body: some View {

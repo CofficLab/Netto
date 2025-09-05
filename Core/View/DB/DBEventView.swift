@@ -7,7 +7,7 @@ import Combine
 /// 数据库防火墙事件展示视图
 /// 用于展示数据库中存储的所有防火墙事件记录
 struct DBEventView: View {
-    @EnvironmentObject private var repo: EventNewRepo
+    @EnvironmentObject private var repo: EventRepo
     
     // 存储加载的事件数据
     @State private var events: [FirewallEventDTO] = []

@@ -35,7 +35,7 @@ class DBManager: SuperLog {
     
     /// FirewallEvent仓库
     lazy var eventRepo: EventRepo = {
-        return EventRepo(context: mainContext)
+        return EventRepo(container: container)
     }()
 
     static func container() -> ModelContainer  {
@@ -183,10 +183,8 @@ extension DBManager {
     /// - Throws: 清理操作时可能抛出的错误
     nonisolated func cleanupOldFirewallEvents() async throws -> Int {
         os_log("\(self.t)🧹 开始清理过期的防火墙事件")
-        return try await performBackgroundTask { context in
-            let repository = EventRepo(context: context)
-            return try repository.cleanupOldEvents(olderThanDays: 30)
-        }
+        let repository = EventRepo(container: container)
+        return try await repository.cleanupOldEvents(olderThanDays: 30)
     }
     
     /// 清理指定应用超过30天的事件记录
@@ -194,10 +192,8 @@ extension DBManager {
     /// - Returns: 删除的记录数量
     /// - Throws: 清理操作时可能抛出的错误
     func cleanupOldFirewallEvents(for appId: String) async throws -> Int {
-        return try await performBackgroundTask { context in
-            let repository = EventRepo(context: context)
-            return try repository.deleteOldEventsByAppId(appId, olderThanDays: 30)
-        }
+        let repository = EventRepo(container: container)
+        return try await repository.deleteOldEventsByAppId(appId, olderThanDays: 30)
     }
     
     /// 执行定期数据库维护任务
