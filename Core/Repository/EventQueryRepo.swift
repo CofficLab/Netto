@@ -40,8 +40,7 @@ final class EventQueryRepo: ObservableObject, SuperLog {
         self.init(container: DBManager.container())
     }
 
-    /// 异步查询，返回计数与分页结果（直接 await 查询 actor，不强制主线程）
-    @preconcurrency
+    /// 异步查询，返回计数与分页结果
     func load(
         appId: String,
         page: Int,
@@ -60,7 +59,7 @@ final class EventQueryRepo: ObservableObject, SuperLog {
         pageSize: Int,
         status: FirewallEvent.Status?,
         direction: NETrafficDirection?,
-        completion: @escaping @MainActor @Sendable (Int, [FirewallEventModel]) -> Void
+        completion: @escaping @MainActor @Sendable (Int, [FirewallEventDTO]) -> Void
     ) {
         os_log("\(self.t) loadAsync appId: \(appId)")
         let queryActor = self.actor
@@ -88,7 +87,6 @@ private actor EventQueryActor: ModelActor, SuperLog {
         self.modelExecutor = DefaultSerialModelExecutor(modelContext: ModelContext(container))
     }
 
-    @preconcurrency
     func load(
         appId: String,
         page: Int,
@@ -130,15 +128,14 @@ private actor EventQueryActor: ModelActor, SuperLog {
         listDescriptor.fetchOffset = page * pageSize
         listDescriptor.fetchLimit = pageSize
 
-        let events = try modelContext.fetch(listDescriptor)
-        return EventPageResult(totalCount: totalCount, events: events)
+        let models = try modelContext.fetch(listDescriptor)
+        let dtos = models.map(FirewallEventDTO.fromModel)
+        return EventPageResult(totalCount: totalCount, events: dtos)
     }
 }
 
 /// 结果传输对象：跨并发边界传递，声明为 @unchecked Sendable 以放宽检查
-struct EventPageResult: @unchecked Sendable {
+struct EventPageResult: Sendable {
     let totalCount: Int
-    let events: [FirewallEventModel]
+    let events: [FirewallEventDTO]
 }
-
-

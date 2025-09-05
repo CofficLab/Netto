@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct EventTableView: View {
-    let events: [FirewallEventModel]
+    let events: [FirewallEventDTO]
     @Binding var isLoading: Bool
 
     var body: some View {

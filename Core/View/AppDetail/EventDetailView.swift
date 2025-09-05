@@ -1,7 +1,6 @@
 import MagicCore
 import NetworkExtension
 import OSLog
-import SwiftData
 import SwiftUI
 
 /**
@@ -24,7 +23,7 @@ struct EventDetailView: View, SuperLog {
 
     // MARK: - State
 
-    @State private var events: [FirewallEventModel] = []
+    @State private var events: [FirewallEventDTO] = []
     @State private var totalEventCount: Int = 0
     @State private var currentPage: Int = 0
     @State private var statusFilter: StatusFilter = .all
@@ -115,7 +114,7 @@ extension EventDetailView {
         self.isLoading = loading
     }
 
-    private func setEvents(events: [FirewallEventModel]) {
+    private func setEvents(events: [FirewallEventDTO]) {
         self.events = events
     }
 

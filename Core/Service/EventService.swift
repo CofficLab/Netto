@@ -85,17 +85,6 @@ class EventService: SuperLog {
         os_log("\(self.t)📝 Batch recorded \(validEvents.count) firewall events")
     }
 
-    /// 根据ID获取防火墙事件
-    /// - Parameter id: 事件ID
-    /// - Returns: 找到的防火墙事件，如果未找到则返回nil
-    /// - Throws: 查询数据时可能抛出的错误
-    func getEventById(_ id: String) throws -> FirewallEvent? {
-        guard let eventModel = try repository.find(id) else {
-            return nil
-        }
-        return eventModel.toFirewallEvent()
-    }
-
     /// 删除指定ID的防火墙事件
     /// - Parameter id: 事件ID
     /// - Throws: 删除数据时可能抛出的错误
@@ -125,54 +114,6 @@ class EventService: SuperLog {
         return eventModels.map { $0.toFirewallEvent() }
     }
     
-    /// 获取指定应用的防火墙事件（分页）
-    /// - Parameters:
-    ///   - appId: 应用程序ID
-    ///   - page: 页码（从0开始）
-    ///   - pageSize: 每页记录数
-    ///   - statusFilter: 状态筛选（可选）
-    ///   - directionFilter: 方向筛选（可选）
-    /// - Returns: 分页后的防火墙事件数组
-    /// - Throws: 查询数据时可能抛出的错误
-    func getEventsByAppIdPaginated(
-        _ appId: String,
-        page: Int,
-        pageSize: Int,
-        statusFilter: FirewallEvent.Status? = nil,
-        directionFilter: NETrafficDirection? = nil
-    ) throws -> [FirewallEvent] {
-        os_log("\(self.t)获取防火墙事件(分页): \(appId), 页码: \(page), 每页: \(pageSize)")
-        
-        let eventModels = try repository.fetchByAppIdPaginated(
-            appId,
-            page: page,
-            pageSize: pageSize,
-            statusFilter: statusFilter,
-            directionFilter: directionFilter
-        )
-        
-        return eventModels.map { $0.toFirewallEvent() }
-    }
-    
-    /// 获取指定应用的防火墙事件总数
-    /// - Parameters:
-    ///   - appId: 应用程序ID
-    ///   - statusFilter: 状态筛选（可选）
-    ///   - directionFilter: 方向筛选（可选）
-    /// - Returns: 符合条件的事件总数
-    /// - Throws: 查询数据时可能抛出的错误
-    func getEventCountByAppId(
-        _ appId: String,
-        statusFilter: FirewallEvent.Status? = nil,
-        directionFilter: NETrafficDirection? = nil
-    ) throws -> Int {
-        return try repository.getEventCountByAppIdFiltered(
-            appId,
-            statusFilter: statusFilter,
-            directionFilter: directionFilter
-        )
-    }
-    
     /// 获取指定状态的所有防火墙事件
     /// - Parameter status: 防火墙状态
     /// - Returns: 指定状态的防火墙事件数组
@@ -190,55 +131,6 @@ class EventService: SuperLog {
         let eventModels = try repository.fetchByDirection(direction)
         return eventModels.map { $0.toFirewallEvent() }
     }
-
-    /// 获取指定时间范围内的防火墙事件
-    /// - Parameters:
-    ///   - startDate: 开始时间
-    ///   - endDate: 结束时间
-    /// - Returns: 指定时间范围内的防火墙事件数组
-    /// - Throws: 查询数据时可能抛出的错误
-    func getEventsByTimeRange(from startDate: Date, to endDate: Date) throws -> [FirewallEvent] {
-        let eventModels = try repository.fetchByTimeRange(from: startDate, to: endDate)
-        return eventModels.map { $0.toFirewallEvent() }
-    }
-    
-    /// 获取指定地址的所有防火墙事件
-    /// - Parameter address: 目标地址
-    /// - Returns: 指定地址的防火墙事件数组
-    /// - Throws: 查询数据时可能抛出的错误
-    func getEventsByAddress(_ address: String) throws -> [FirewallEvent] {
-        let eventModels = try repository.fetchByAddress(address)
-        return eventModels.map { $0.toFirewallEvent() }
-    }
-    
-    /// 获取最新的防火墙事件
-    /// - Parameter limit: 限制数量，默认100
-    /// - Returns: 最新的防火墙事件数组
-    /// - Throws: 查询数据时可能抛出的错误
-    func getLatestEvents(limit: Int = 100) throws -> [FirewallEvent] {
-        let eventModels = try repository.fetchLatest(limit: limit)
-        return eventModels.map { $0.toFirewallEvent() }
-    }
-    
-    /// 获取所有防火墙事件（分页）
-    /// - Parameters:
-    ///   - page: 页码（从0开始）
-    ///   - pageSize: 每页记录数
-    /// - Returns: 分页后的防火墙事件数组
-    /// - Throws: 查询数据时可能抛出的错误
-    func getAllEventsPaginated(
-        page: Int,
-        pageSize: Int
-    ) throws -> [FirewallEvent] {
-        os_log("\(self.t)获取所有防火墙事件(分页), 页码: \(page), 每页: \(pageSize)")
-        
-        let eventModels = try repository.fetchAllPaginated(
-            page: page,
-            pageSize: pageSize
-        )
-        
-        return eventModels.map { $0.toFirewallEvent() }
-    }
     
     /// 获取所有防火墙事件
     /// - Returns: 所有防火墙事件数组
@@ -246,19 +138,6 @@ class EventService: SuperLog {
     func getAllEvents() throws -> [FirewallEvent] {
         let eventModels = try repository.fetchAll()
         return eventModels.map { $0.toFirewallEvent() }
-    }
-
-    // MARK: - Statistics
-
-    /// 获取防火墙事件统计信息
-    /// - Returns: 包含总数、允许和拒绝数量的统计信息
-    /// - Throws: 查询数据时可能抛出的错误
-    func getEventStatistics() throws -> (total: Int, allowed: Int, rejected: Int) {
-        let totalCount = try repository.getEventCount()
-        let allowedCount = try repository.getAllowedEventCount()
-        let rejectedCount = try repository.getRejectedEventCount()
-        
-        return (total: totalCount, allowed: allowedCount, rejected: rejectedCount)
     }
     
     /// 获取指定应用的事件统计信息
@@ -271,21 +150,6 @@ class EventService: SuperLog {
         let rejectedCount = allEvents.filter { $0.status == .rejected }.count
         
         return (total: allEvents.count, allowed: allowedCount, rejected: rejectedCount)
-    }
-    
-    /// 获取今日事件统计信息
-    /// - Returns: 今日的事件统计信息
-    /// - Throws: 查询数据时可能抛出的错误
-    func getTodayEventStatistics() throws -> (total: Int, allowed: Int, rejected: Int) {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
-        
-        let todayEvents = try getEventsByTimeRange(from: today, to: tomorrow)
-        let allowedCount = todayEvents.filter { $0.status == .allowed }.count
-        let rejectedCount = todayEvents.filter { $0.status == .rejected }.count
-        
-        return (total: todayEvents.count, allowed: allowedCount, rejected: rejectedCount)
     }
 
     // MARK: - Data Maintenance
