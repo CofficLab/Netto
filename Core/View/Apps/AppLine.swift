@@ -2,7 +2,7 @@ import MagicCore
 import SwiftUI
 
 /// 通用的应用信息显示组件，用于显示应用图标、名称、ID和事件数量
-struct AppInfo: View {
+struct AppLine: View {
     @EnvironmentObject var data: DataProvider
     @EnvironmentObject var ui: UIProvider
 
@@ -78,7 +78,7 @@ struct AppInfo: View {
 
 // MARK: - View
 
-extension AppInfo {
+extension AppLine {
     var background: some View {
         Group {
             if !shouldAllow {
@@ -117,7 +117,7 @@ extension AppInfo {
 
 // MARK: - 事件
 
-extension AppInfo {
+extension AppLine {
     /// 页面出现时的处理
     func onAppear() {
         self.shouldAllow = data.shouldAllow(app.id)

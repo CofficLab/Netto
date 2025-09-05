@@ -16,7 +16,7 @@ struct EventDetailView: View, SuperLog {
     // MARK: - Dependencies & Configuration
 
     let appId: String
-    private let eventsPerPage: Int = 20
+    private let perPage: Int = 20
 
     // MARK: - Environment
 
@@ -71,31 +71,8 @@ struct EventDetailView: View, SuperLog {
             .padding(.horizontal, 0)
             .padding(.bottom, 8)
 
-
             // Data Table
-            ZStack {
-                if isLoading {
-                    SkeletonLoadingView()
-                } else if events.isEmpty {
-                    EmptyStateView()
-                } else {
-                    Table(events, columns: { // Use the new state variable 'events'
-                        TableColumn("Time", value: \.timeFormatted).width(150)
-                        TableColumn("Address", value: \.address)
-                        TableColumn("Port", value: \.port).width(60)
-                        TableColumn("Direction") { event in
-                            Text(event.direction == .inbound ? "入" : "出")
-                                .foregroundStyle(event.isAllowed ? .green : .red)
-                        }.width(60)
-                        TableColumn("Status") { event in
-                            Text(event.status == .allowed ? "允许" : "拒绝")
-                                .foregroundStyle(event.isAllowed ? .green : .red)
-                        }.width(60)
-                    })
-                    .frame(minHeight: 200)
-                    .frame(maxHeight: 300)
-                }
-            }
+            EventTableView(events: events, isLoading: $isLoading)
 
             // Pagination
             if getTotalPages() > 1 {
@@ -103,7 +80,7 @@ struct EventDetailView: View, SuperLog {
                     currentPage: $currentPage,
                     totalPages: getTotalPages(),
                     totalCount: totalEventCount,
-                    pageSize: eventsPerPage,
+                    pageSize: perPage,
                     isLoading: isLoading,
                     onPreviousPage: {},
                     onNextPage: {}
@@ -142,7 +119,7 @@ struct EventDetailView: View, SuperLog {
 
 extension EventDetailView {
     private func getTotalPages() -> Int {
-        return max(1, Int(ceil(Double(totalEventCount) / Double(eventsPerPage))))
+        return max(1, Int(ceil(Double(totalEventCount) / Double(perPage))))
     }
 
     private func updateDataSource() async {
@@ -155,7 +132,7 @@ extension EventDetailView {
         do {
             // Fetch count and data using the repository
             self.totalEventCount = try repo.getEventCountByAppIdFiltered(appId, statusFilter: status, directionFilter: direction)
-            self.events = try repo.fetchByAppIdPaginated(appId, page: currentPage, pageSize: eventsPerPage, statusFilter: status, directionFilter: direction)
+            self.events = try repo.fetchByAppIdPaginated(appId, page: currentPage, pageSize: perPage, statusFilter: status, directionFilter: direction)
         } catch {
             self.events = []
             self.totalEventCount = 0
@@ -168,6 +145,7 @@ extension EventDetailView {
 // MARK: - Preview
 
 #Preview("App") {
-    ContentView().inRootView()
+    ContentView()
+        .inRootView()
         .frame(width: 600, height: 1000)
 }

@@ -22,7 +22,7 @@ struct AppInfoView: View, SuperLog {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("应用详情 (Application Details)")
+            Text("应用详情")
                 .font(.title2)
                 .fontWeight(.semibold)
             

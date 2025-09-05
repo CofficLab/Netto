@@ -249,26 +249,20 @@ class ExampleClassTests: XCTestCase {
 }
 ```
 
-### 多平台 Preview 标题
+### 多屏幕尺寸 Preview 标题
 
 ```swift
-#if os(macOS)
-#Preview("macOS - 大屏幕") {
-    AppPreview()
+#Preview("App - 大屏幕") {
+    ContentView()
+        .inRootView()
         .frame(width: 600, height: 1000)
 }
 
-#Preview("macOS - 小屏幕") {
-    AppPreview()
+#Preview("App - 小屏幕") {
+    ContentView()
+        .inRootView()
         .frame(width: 500, height: 800)
 }
-#endif
-
-#if os(iOS)
-#Preview("iPhone") {
-    AppPreview()
-}
-#endif
 ```
 
 ### 标题命名规范
