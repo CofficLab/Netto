@@ -23,14 +23,19 @@ struct EventDetailView: View, SuperLog {
     private let eventsPerPage: Int = 20
     
     /// 使用 @Query 获取事件数据，支持动态筛选
-    @Query(sort: \FirewallEventModel.time, order: .reverse) var allEvents: [FirewallEventModel]
+    @Query var allEvents: [FirewallEventModel]
+    
+    init(appId: String) {
+        self.appId = appId
+        let predicate = #Predicate<FirewallEventModel> {
+            $0.sourceAppIdentifier == appId
+        }
+        _allEvents = Query(filter: predicate, sort: \.time, order: .reverse)
+    }
     
     /// 根据当前筛选条件过滤的事件
     private var filteredEvents: [FirewallEventModel] {
         allEvents.filter { event in
-            // 应用ID筛选
-            guard event.sourceAppIdentifier == appId else { return false }
-            
             // 状态筛选
             if statusFilter != .all {
                 let statusValue = statusFilter == .allowed ? 0 : 1
