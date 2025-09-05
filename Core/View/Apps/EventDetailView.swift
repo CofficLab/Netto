@@ -11,46 +11,30 @@ import SwiftUI
  */
 struct EventDetailView: View, SuperLog {
     @EnvironmentObject private var service: ServiceProvider
+    @EnvironmentObject private var repo: EventRepo
     
     nonisolated static let emoji = "📋"
 
     /// 应用ID
     let appId: String
 
-    /// 当前页码（从0开始）
     @State private var currentPage: Int = 0
-
-    /// 状态筛选选项
     @State private var statusFilter: StatusFilter = .all
-
-    /// 方向筛选选项
     @State private var directionFilter: DirectionFilter = .all
-
-    /// 事件列表
     @State private var events: [FirewallEvent] = []
-
-    /// 事件总数
     @State private var totalEventCount: Int = 0
-
-    /// 每页显示的事件数量
-    private let eventsPerPage: Int = 20
-
-    /// 是否正在加载数据
     @State private var isLoading: Bool = false
-
-    /// 是否是初始加载
     @State private var isInitialLoad: Bool = true
-
-    /// 加载错误信息
     @State private var loadError: String? = nil
     
+    private let eventsPerPage: Int = 20
     private var firewallEventService: EventService {
         service.firewallEventService
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("事件详情 (Event Details)")
+            Text("事件详情")
                 .font(.title2)
                 .fontWeight(.semibold)
 

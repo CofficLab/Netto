@@ -11,6 +11,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var p = PluginProvider.shared
     private var data: DataProvider
     private var service: ServiceProvider
+    private var eventRepo: EventRepo
 
     @StateObject var m = MagicMessageProvider.shared
 
@@ -22,15 +23,18 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
         let coreServices = RootBox.shared
         self.data = coreServices.data
         self.service = coreServices.service
+        self.eventRepo = coreServices.eventRepo
     }
 
     var body: some View {
         content
             .withMagicToast()
+            .modelContainer(DBManager.container())
             .environmentObject(app)
             .environmentObject(data)
             .environmentObject(m)
             .environmentObject(p)
+            .environmentObject(self.eventRepo)
             .environmentObject(service)
             .onAppear(perform: onAppear)
             .onReceive(self.nc.publisher(for: .FilterStatusChanged), perform: onFilterStatusChanged)
