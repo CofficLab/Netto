@@ -5,56 +5,91 @@ import SwiftUI
 struct AppList: View, SuperLog {
     @EnvironmentObject private var ui: UIProvider
     @EnvironmentObject private var data: DataProvider
+    @EnvironmentObject private var repo: AppSettingRepo
+    
+    /// 过滤后的应用列表
+    @State private var filteredApps: [SmartApp] = []
 
     nonisolated static let emoji = "🖥️"
-
-    /// 获取主应用列表（过滤掉子应用，只显示顶级应用）
-    private var apps: [SmartApp] {
-        data.apps.sorted(by: {
-            $0.name < $1.name
-        })
-//        .filter({
-//            $0.events.count > 0 || data.shouldDeny($0.id)
-//        })
-        .filter({
-            if ui.showSystemApps {
-                return true
-            } else {
-                return $0.isSystemApp == false
-            }
-        })
-        .filter({
-            $0.hasId
-        })
-        .filter {
-            switch ui.displayType {
-            case .All:
-                true
-            case .Allowed:
-                data.shouldAllow($0.id)
-            case .Rejected:
-                !data.shouldAllow($0.id)
-            }
-        }
-    }
 
     /// 构建应用列表视图
     var body: some View {
         ZStack {
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(Array((apps.isNotEmpty ? apps : data.samples).enumerated()), id: \.element.id) { index, app in
+                    ForEach(Array((filteredApps.isNotEmpty ? filteredApps : data.samples).enumerated()), id: \.element.id) { index, app in
                         AppLine(app: app)
-                        if index < (apps.isNotEmpty ? apps : data.samples).count - 1 {
+                        if index < (filteredApps.isNotEmpty ? filteredApps : data.samples).count - 1 {
                             Divider()
                         }
                     }
                 }
             }
 
-            if data.status.isNotRunning() || apps.isEmpty {
+            if data.status.isNotRunning() || filteredApps.isEmpty {
                 GuideView()
             }
+        }
+        .onAppear {
+            Task {
+                await loadFilteredApps()
+            }
+        }
+        .onChange(of: ui.showSystemApps) { _, _ in
+            Task {
+                await loadFilteredApps()
+            }
+        }
+        .onChange(of: ui.displayType) { _, _ in
+            Task {
+                await loadFilteredApps()
+            }
+        }
+        .onChange(of: data.apps) { _, _ in
+            Task {
+                await loadFilteredApps()
+            }
+        }
+    }
+}
+
+// MARK: - Action
+extension AppList {
+    /// 异步加载过滤后的应用列表
+    private func loadFilteredApps() async {
+        let baseApps = data.apps.sorted(by: { $0.name < $1.name })
+            .filter { ui.showSystemApps || !$0.isSystemApp }
+            .filter { $0.hasId }
+        
+        let displayType = self.ui.displayType
+        
+        // 提取 repo 引用以避免数据竞争
+        let repo = self.repo
+        
+        var filtered: [SmartApp] = []
+        
+        for app in baseApps {
+            let shouldInclude: Bool
+            switch displayType {
+            case .All:
+                shouldInclude = true
+            case .Allowed:
+                shouldInclude = await Task { @MainActor in
+                    await repo.shouldAllow(app.id)
+                }.value
+            case .Rejected:
+                shouldInclude = !(await Task { @MainActor in
+                    await repo.shouldAllow(app.id)
+                }.value)
+            }
+            
+            if shouldInclude {
+                filtered.append(app)
+            }
+        }
+        
+        await MainActor.run {
+            self.filteredApps = filtered
         }
     }
 }

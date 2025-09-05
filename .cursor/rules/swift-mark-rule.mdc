@@ -37,7 +37,6 @@ description: 统一 Swift/SwiftUI 视图文件的 MARK 分组规范（Action / S
 文件末尾必须包含多尺寸预览，使用 `AppPreview()` 作为默认内容，满足不同设备调试需求。若已有其他预览，至少补齐以下四种：
 
 ```swift
-#if os(macOS)
 #Preview("App - Large") {
     AppPreview()
         .frame(width: 600, height: 1000)
@@ -46,12 +45,6 @@ description: 统一 Swift/SwiftUI 视图文件的 MARK 分组规范（Action / S
 #Preview("App - Small") {
     AppPreview()
         .frame(width: 600, height: 600)
-}
-#endif
-
-#if os(iOS)
-#Preview("iPhone") {
-    AppPreview()
 }
 #endif
 ```

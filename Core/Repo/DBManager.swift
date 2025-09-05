@@ -30,7 +30,7 @@ class DBManager: SuperLog {
     
     /// AppSetting仓库
     lazy var appSettingRepo: AppSettingRepo = {
-        return AppSettingRepo(context: mainContext)
+        return AppSettingRepo()
     }()
     
     /// FirewallEvent仓库

@@ -4,7 +4,7 @@ import SwiftUI
 
 struct AppAction: View, SuperLog, SuperEvent {
     @EnvironmentObject var m: MagicMessageProvider
-    @EnvironmentObject var data: DataProvider
+    @EnvironmentObject var repo: AppSettingRepo
 
     @Binding var shouldAllow: Bool
 
@@ -28,26 +28,36 @@ struct AppAction: View, SuperLog, SuperEvent {
         .frame(width: 30)
         .frame(height: 30)
     }
+}
 
+// MARK: - Action
+
+extension AppAction {
     private func deny() {
-        do {
-            try data.deny(appId)
-            self.shouldAllow = false
-            self.m.info("已禁止")
-        } catch let error {
-            os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
-            m.error(error)
+        let repo = self.repo
+        Task {
+            do {
+                try await repo.setDeny(appId)
+                self.shouldAllow = false
+                self.m.info("已禁止")
+            } catch let error {
+                os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
+                m.error(error)
+            }
         }
     }
 
     private func allow() {
-        do {
-            try data.allow(appId)
-            self.shouldAllow = true
-            self.m.info("已允许")
-        } catch let error {
-            os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
-            m.error(error)
+        let repo = self.repo
+        Task {
+            do {
+                try await repo.setAllow(appId)
+                self.shouldAllow = true
+                self.m.info("已允许")
+            } catch let error {
+                os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
+                m.error(error)
+            }
         }
     }
 }

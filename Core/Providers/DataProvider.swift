@@ -29,52 +29,21 @@ class DataProvider: ObservableObject, SuperLog {
         self.eventRepo = eventRepo
 
         // 添加被禁止的应用到apps列表中
-        do {
-            let deniedAppIds = try appPermissionService.getDeniedApps()
-            for appId in deniedAppIds {
-                let smartApp = SmartApp.fromId(appId)
-                if !self.apps.contains(where: { $0.id == smartApp.id }) {
-                    self.apps.append(smartApp)
-                }
-            }
-        } catch {
-            os_log(.error, "\(self.t)获取被禁止应用列表失败: \(error)")
-        }
+//        do {
+//            let deniedAppIds = try await appPermissionService.getDeniedApps()
+//            for appId in deniedAppIds {
+//                let smartApp = SmartApp.fromId(appId)
+//                if !self.apps.contains(where: { $0.id == smartApp.id }) {
+//                    self.apps.append(smartApp)
+//                }
+//            }
+//        } catch {
+//            os_log(.error, "\(self.t)获取被禁止应用列表失败: \(error)")
+//        }
 
         setupNotificationListeners()
     }
-}
 
-// MARK: - Action
-
-extension DataProvider {
-    /// 检查应用是否应该被允许访问网络
-    /// - Parameter id: 应用标识符
-    /// - Returns: 是否允许访问
-    func shouldAllow(_ id: String) -> Bool {
-        return appPermissionService.shouldAllow(id)
-    }
-
-    /// 检查应用是否应该被拒绝访问网络
-    /// - Parameter id: 应用标识符
-    /// - Returns: 是否拒绝访问
-    func shouldDeny(_ id: String) -> Bool {
-        return !self.shouldAllow(id)
-    }
-
-    /// 允许应用访问网络
-    /// - Parameter id: 应用标识符
-    /// - Throws: 操作失败时抛出错误
-    func allow(_ id: String) throws {
-        try appPermissionService.allow(id)
-    }
-
-    /// 拒绝应用访问网络
-    /// - Parameter id: 应用标识符
-    /// - Throws: 操作失败时抛出错误
-    func deny(_ id: String) throws {
-        try appPermissionService.deny(id)
-    }
 
     /// 更新应用列表（确保在主线程执行）
     /// - Parameters:

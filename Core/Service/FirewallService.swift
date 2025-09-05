@@ -15,12 +15,14 @@ final class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread {
     private var error: Error?
     private var observer: Any?
     private var s: PermissionService
+    private var repo: AppSettingRepo
     var status: FilterStatus = .indeterminate
 
-    init(appPermissionService: PermissionService, reason: String) {
+    init(appPermissionService: PermissionService, repo: AppSettingRepo, reason: String) {
         os_log("\(Self.onInit)(\(reason))")
 
         self.s = appPermissionService
+        self.repo = repo
 
         super.init()
 
@@ -339,10 +341,9 @@ extension FirewallService: AppCommunication {
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
         let verbose = false
 
-        // 在主线程上同步执行 shouldAllow 调用
-        let shouldAllow = DispatchQueue.main.sync {
-            self.s.shouldAllow(id)
-        }
+//        let shouldAllow = self.repo.shouldAllow(id)
+        let shouldAllow = true
+
         if shouldAllow {
             if verbose {
                 os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(id) -> Allow")

@@ -12,6 +12,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var data: DataProvider
     private var service: ServiceProvider
     private var eventRepo: EventRepo
+    private var settingRepo: AppSettingRepo
 
     @StateObject var m = MagicMessageProvider.shared
 
@@ -24,6 +25,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
         self.data = coreServices.data
         self.service = coreServices.service
         self.eventRepo = EventRepo()
+        self.settingRepo = coreServices.settingRepo
     }
 
     var body: some View {
@@ -35,6 +37,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
             .environmentObject(m)
             .environmentObject(p)
             .environmentObject(self.eventRepo)
+            .environmentObject(self.settingRepo)
             .environmentObject(service)
             .onAppear(perform: onAppear)
             .onReceive(self.nc.publisher(for: .FilterStatusChanged), perform: onFilterStatusChanged)

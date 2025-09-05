@@ -16,6 +16,7 @@ final class RootBox: SuperLog {
     let service: ServiceProvider
     let message: MagicMessageProvider
     let eventRepo: EventRepo
+    let settingRepo: AppSettingRepo
     
     private init(reason: String) {
         os_log("\(Self.onInit)(\(reason))")
@@ -28,7 +29,7 @@ final class RootBox: SuperLog {
         // Services
         let appPermissionService = PermissionService(repo: appSettingRepo)
         let firewallEventService = EventService(repo: eventRepo)
-        let firewallService = FirewallService(appPermissionService: appPermissionService, reason: Self.author)
+        let firewallService = FirewallService(appPermissionService: appPermissionService, repo: appSettingRepo, reason: Self.author)
         let versionService = VersionService()
         
         // Providers
@@ -37,5 +38,6 @@ final class RootBox: SuperLog {
         self.message = MagicMessageProvider.shared
         
         self.eventRepo = eventRepo
+        self.settingRepo = appSettingRepo
     }
 }
