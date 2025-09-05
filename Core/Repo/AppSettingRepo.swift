@@ -27,15 +27,17 @@ import SwiftUI
 /// 基于 actor 的仓库
 final class AppSettingRepo: ObservableObject, SuperLog, SuperEvent {
     private let actor: AppSettingQueryActor
+    private let container: ModelContainer
 
     /// 使用自定义 ModelContainer 初始化
     init(container: ModelContainer) {
+        self.container = container
         self.actor = AppSettingQueryActor(container: container)
     }
 
     /// 使用默认容器初始化
     convenience init() {
-        self.init(container: container())
+        self.init(container: TavelMode.container())
     }
 
     // MARK: - CRUD Operations
@@ -96,7 +98,7 @@ final class AppSettingRepo: ObservableObject, SuperLog, SuperEvent {
 
     // MARK: - Permission Management
 
-    /// 检查指定ID的应用是否应该被允许访问网络
+    /// 检查指定ID的应用是否应该被允许访问网络（异步版本）
     /// - Parameter id: 应用程序或进程ID
     /// - Returns: 如果允许访问返回true，否则返回false
     func shouldAllow(_ id: String) async -> Bool {
@@ -104,6 +106,31 @@ final class AppSettingRepo: ObservableObject, SuperLog, SuperEvent {
             if let setting = try await find(id) {
                 return setting.allowed
             } else {
+                return true
+            }
+        } catch {
+            os_log("Error checking permission for \(id): \(error.localizedDescription)")
+            return true // 默认允许
+        }
+    }
+
+    /// 检查指定ID的应用是否应该被允许访问网络（同步版本）
+    /// - Parameter id: 应用程序或进程ID
+    /// - Returns: 如果允许访问返回true，否则返回false
+    func shouldAllowSync(_ id: String) -> Bool {
+        do {
+            // 直接使用 ModelContainer 进行同步查询
+            let context = ModelContext(container)
+            let predicate = #Predicate<AppSetting> { item in
+                item.appId == id
+            }
+            
+            let items = try context.fetch(FetchDescriptor(predicate: predicate))
+            if let setting = items.first {
+                os_log("\(self.t) shouldAllowSync for \(id) - found setting: \(setting.allowed)")
+                return setting.allowed
+            } else {
+                os_log("\(self.t) shouldAllowSync for \(id) - no setting found, defaulting to true")
                 return true
             }
         } catch {
