@@ -61,7 +61,6 @@ final class EventQueryRepo: ObservableObject, SuperLog {
         direction: NETrafficDirection?,
         completion: @escaping @MainActor @Sendable (Int, [FirewallEventDTO]) -> Void
     ) {
-        os_log("\(self.t) loadAsync appId: \(appId)")
         let queryActor = self.actor
         Task.detached(priority: .utility) {
             let result: EventPageResult

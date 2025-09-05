@@ -164,25 +164,6 @@ class EventRepo: SuperLog, ObservableObject {
         return deletedCount
     }
     
-    /// 获取所有应用的唯一ID列表
-    /// - Returns: 应用ID数组
-    /// - Throws: 查询数据时可能抛出的错误
-    func getAllUniqueAppIds() throws -> [String] {
-        let events = try context.fetch(FetchDescriptor<FirewallEventModel>())
-        let uniqueAppIds = Set(events.compactMap { $0.sourceAppIdentifier })
-        return Array(uniqueAppIds)
-    }
-
-    /// 获取所有FirewallEvent记录
-    /// - Returns: 所有FirewallEventModel记录的数组
-    /// - Throws: 查询数据时可能抛出的错误
-    func fetchAll() throws -> [FirewallEventModel] {
-        let descriptor = FetchDescriptor<FirewallEventModel>(
-            sortBy: [SortDescriptor(\.time, order: .reverse)]
-        )
-        return try context.fetch(descriptor)
-    }
-    
     /// 分页获取所有FirewallEvent记录
     /// - Parameters:
     ///   - page: 页码（从0开始）
@@ -204,18 +185,6 @@ class EventRepo: SuperLog, ObservableObject {
         descriptor.fetchOffset = page * pageSize
         descriptor.fetchLimit = pageSize
         
-        return try context.fetch(descriptor)
-    }
-    
-    /// 获取指定数量的最新FirewallEvent记录
-    /// - Parameter limit: 限制数量
-    /// - Returns: 最新的FirewallEventModel记录数组
-    /// - Throws: 查询数据时可能抛出的错误
-    func fetchLatest(limit: Int = 100) throws -> [FirewallEventModel] {
-        var descriptor = FetchDescriptor<FirewallEventModel>(
-            sortBy: [SortDescriptor(\FirewallEventModel.time, order: .reverse)]
-        )
-        descriptor.fetchLimit = limit
         return try context.fetch(descriptor)
     }
 
