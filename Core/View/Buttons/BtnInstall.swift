@@ -11,7 +11,7 @@ struct BtnInstall: View {
     }
 
     var body: some View {
-        MagicButton(icon: "puzzlepiece.extension", size: .auto, action: {
+        MagicButton.simple(icon: "puzzlepiece.extension", size: .auto, action: {
             service.installFilter()
         })
         .magicTitle("安装")

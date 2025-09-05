@@ -2,7 +2,7 @@ import MagicCore
 import SwiftUI
 
 struct BtnToggleSysApp: View, SuperLog {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var app: UIProvider
     @EnvironmentObject var ui: UIProvider
     
@@ -31,7 +31,7 @@ struct BtnToggleSysApp: View, SuperLog {
             }
             .buttonStyle(.plain)
         } else {
-            MagicButton(icon: icon, size: .auto, action: {
+            MagicButton.simple(icon: icon, size: .auto, action: {
                 action()
             })
             .magicTitle(title)

@@ -3,7 +3,7 @@ import SwiftUI
 
 struct BtnStop: View, SuperLog {
     @EnvironmentObject private var service: ServiceProvider
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var app: UIProvider
     
     private var asToolbarItem: Bool = false
@@ -26,7 +26,7 @@ struct BtnStop: View, SuperLog {
             }
             .buttonStyle(.plain)
         } else {
-            MagicButton(icon: icon, size: .auto, action: {
+            MagicButton.simple(icon: icon, size: .auto, action: {
                 action()
             })
             .magicTitle("停止")

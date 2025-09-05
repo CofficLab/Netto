@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 struct TileFilter: View, SuperLog, SuperThread {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var ui: UIProvider
 
     var body: some View {

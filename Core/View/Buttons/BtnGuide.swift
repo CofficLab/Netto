@@ -33,7 +33,7 @@ struct BtnGuide: View, SuperEvent {
             }
             .buttonStyle(.plain)
         } else {
-            MagicButton(icon: icon, size: .auto, action: {
+            MagicButton.simple(icon: icon, size: .auto, action: {
                 action()
             })
             .magicTitle(title)

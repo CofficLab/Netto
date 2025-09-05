@@ -3,7 +3,7 @@ import OSLog
 import SwiftUI
 
 struct TileSwitcher: View, SuperLog, SuperThread {
-    @EnvironmentObject var m: MessageProvider
+    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var app: UIProvider
     @EnvironmentObject var data: DataProvider
     
