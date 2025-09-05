@@ -29,6 +29,7 @@ struct EventDetailView: View, SuperLog {
     @State private var currentPage: Int = 0
     @State private var statusFilter: StatusFilter = .all
     @State private var directionFilter: DirectionFilter = .all
+    @State private var isLoading: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -70,38 +71,29 @@ struct EventDetailView: View, SuperLog {
             .padding(.horizontal, 0)
             .padding(.bottom, 8)
 
-            // Event Count
-            HStack {
-                Text("共 \(totalEventCount) 条事件")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                Spacer()
-            }
-            .padding(.horizontal, 12)
 
             // Data Table
             ZStack {
-                Table(events, columns: { // Use the new state variable 'events'
-                    TableColumn("Time", value: \.timeFormatted).width(150)
-                    TableColumn("Address", value: \.address)
-                    TableColumn("Port", value: \.port).width(60)
-                    TableColumn("Direction") { event in
-                        Text(event.direction == .inbound ? "入" : "出")
-                            .foregroundStyle(event.isAllowed ? .green : .red)
-                    }.width(60)
-                    TableColumn("Status") { event in
-                        Text(event.status == .allowed ? "允许" : "拒绝")
-                            .foregroundStyle(event.isAllowed ? .green : .red)
-                    }.width(60)
-                })
-                .frame(minHeight: 200)
-                .frame(maxHeight: 300)
-
-                if events.isEmpty {
-                    EmptyStateView(
-                        iconName: "doc.text.magnifyingglass",
-                        title: "暂无事件数据"
-                    )
+                if isLoading {
+                    SkeletonLoadingView()
+                } else if events.isEmpty {
+                    EmptyStateView()
+                } else {
+                    Table(events, columns: { // Use the new state variable 'events'
+                        TableColumn("Time", value: \.timeFormatted).width(150)
+                        TableColumn("Address", value: \.address)
+                        TableColumn("Port", value: \.port).width(60)
+                        TableColumn("Direction") { event in
+                            Text(event.direction == .inbound ? "入" : "出")
+                                .foregroundStyle(event.isAllowed ? .green : .red)
+                        }.width(60)
+                        TableColumn("Status") { event in
+                            Text(event.status == .allowed ? "允许" : "拒绝")
+                                .foregroundStyle(event.isAllowed ? .green : .red)
+                        }.width(60)
+                    })
+                    .frame(minHeight: 200)
+                    .frame(maxHeight: 300)
                 }
             }
 
@@ -110,7 +102,9 @@ struct EventDetailView: View, SuperLog {
                 PaginationView(
                     currentPage: $currentPage,
                     totalPages: getTotalPages(),
-                    isLoading: false,
+                    totalCount: totalEventCount,
+                    pageSize: eventsPerPage,
+                    isLoading: isLoading,
                     onPreviousPage: {},
                     onNextPage: {}
                 )
@@ -120,18 +114,26 @@ struct EventDetailView: View, SuperLog {
         .background(Color(.controlBackgroundColor))
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onAppear {
-            updateDataSource()
+            Task {
+                await updateDataSource()
+            }
         }
         .onChange(of: statusFilter) {
-            currentPage = 0
-            updateDataSource()
+            Task {
+                currentPage = 0
+                await updateDataSource()
+            }
         }
         .onChange(of: directionFilter) {
-            currentPage = 0
-            updateDataSource()
+            Task {
+                currentPage = 0
+                await updateDataSource()
+            }
         }
         .onChange(of: currentPage) {
-            updateDataSource()
+            Task {
+                await updateDataSource()
+            }
         }
     }
 }
@@ -143,7 +145,9 @@ extension EventDetailView {
         return max(1, Int(ceil(Double(totalEventCount) / Double(eventsPerPage))))
     }
 
-    private func updateDataSource() {
+    private func updateDataSource() async {
+        isLoading = true
+
         let eventRepo = dataProvider.eventRepo
 
         // Convert view-specific filters to data-layer filters
@@ -158,6 +162,8 @@ extension EventDetailView {
             self.events = []
             self.totalEventCount = 0
         }
+
+        isLoading = false
     }
 }
 

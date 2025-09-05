@@ -10,6 +10,10 @@ struct PaginationView: View {
     @Binding var currentPage: Int
     /// 总页数
     let totalPages: Int
+    /// 总数据量
+    let totalCount: Int
+    /// 每页显示数量
+    let pageSize: Int
     /// 是否正在加载
     let isLoading: Bool
     /// 上一页按钮点击回调
@@ -20,12 +24,16 @@ struct PaginationView: View {
     init(
         currentPage: Binding<Int>,
         totalPages: Int,
+        totalCount: Int,
+        pageSize: Int,
         isLoading: Bool = false,
         onPreviousPage: @escaping () -> Void,
         onNextPage: @escaping () -> Void
     ) {
         self._currentPage = currentPage
         self.totalPages = totalPages
+        self.totalCount = totalCount
+        self.pageSize = pageSize
         self.isLoading = isLoading
         self.onPreviousPage = onPreviousPage
         self.onNextPage = onNextPage
@@ -46,9 +54,15 @@ struct PaginationView: View {
 
             Spacer()
 
-            Text("第 \(currentPage + 1) 页，共 \(totalPages) 页")
-                .font(.caption)
-                .foregroundColor(.secondary)
+            VStack(spacing: 2) {
+                Text("第 \(currentPage + 1) 页，共 \(totalPages) 页")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                Text("共 \(totalCount) 条事件")
+                    .font(.caption2)
+                    .foregroundColor(.secondary.opacity(0.8))
+            }
 
             Spacer()
 
@@ -86,6 +100,8 @@ struct PaginationView: View {
         PaginationView(
             currentPage: .constant(0),
             totalPages: 5,
+            totalCount: 100,
+            pageSize: 20,
             isLoading: false,
             onPreviousPage: {},
             onNextPage: {}
@@ -94,6 +110,8 @@ struct PaginationView: View {
         PaginationView(
             currentPage: .constant(2),
             totalPages: 5,
+            totalCount: 100,
+            pageSize: 20,
             isLoading: true,
             onPreviousPage: {},
             onNextPage: {}
@@ -106,6 +124,8 @@ struct PaginationView: View {
     PaginationView(
         currentPage: .constant(1),
         totalPages: 3,
+        totalCount: 60,
+        pageSize: 20,
         isLoading: false,
         onPreviousPage: {},
         onNextPage: {}
@@ -119,6 +139,8 @@ struct PaginationView: View {
     PaginationView(
         currentPage: .constant(0),
         totalPages: 4,
+        totalCount: 80,
+        pageSize: 20,
         isLoading: false,
         onPreviousPage: {},
         onNextPage: {}
