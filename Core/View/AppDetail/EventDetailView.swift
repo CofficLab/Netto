@@ -91,27 +91,36 @@ struct EventDetailView: View, SuperLog {
         .background(Color(.controlBackgroundColor))
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onAppear {
-            Task {
-                await updateDataSource()
-            }
+            updateDataSource()
         }
         .onChange(of: statusFilter) {
-            Task {
-                currentPage = 0
-                await updateDataSource()
-            }
+            currentPage = 0
+            updateDataSource()
         }
         .onChange(of: directionFilter) {
-            Task {
-                currentPage = 0
-                await updateDataSource()
-            }
+            currentPage = 0
+            updateDataSource()
         }
         .onChange(of: currentPage) {
-            Task {
-                await updateDataSource()
-            }
+            updateDataSource()
         }
+    }
+}
+
+// MARK: - Setter
+
+extension EventDetailView {
+    @MainActor
+    private func setLoading(_ loading: Bool) {
+        self.isLoading = loading
+    }
+
+    private func setEvents(events: [FirewallEventModel]) {
+        self.events = events
+    }
+
+    private func setTotalEventCount(totalEventCount: Int) {
+        self.totalEventCount = totalEventCount
     }
 }
 
@@ -122,23 +131,38 @@ extension EventDetailView {
         return max(1, Int(ceil(Double(totalEventCount) / Double(perPage))))
     }
 
-    private func updateDataSource() async {
-        isLoading = true
+    private func updateDataSource() {
+        // 先在主线程标记加载状态
+        setLoading(true)
 
-        // Convert view-specific filters to data-layer filters
+        // 捕获当前查询参数，避免在后台任务中访问可变状态
+        let queryAppId = appId
+        let queryPage = currentPage
+        let queryPerPage = perPage
         let status: FirewallEvent.Status? = statusFilter == .all ? nil : (statusFilter == .allowed ? .allowed : .rejected)
         let direction: NETrafficDirection? = directionFilter == .all ? nil : (directionFilter == .inbound ? .inbound : .outbound)
+        let repository = repo
 
-        do {
-            // Fetch count and data using the repository
-            self.totalEventCount = try repo.getEventCountByAppIdFiltered(appId, statusFilter: status, directionFilter: direction)
-            self.events = try repo.fetchByAppIdPaginated(appId, page: currentPage, pageSize: perPage, statusFilter: status, directionFilter: direction)
-        } catch {
-            self.events = []
-            self.totalEventCount = 0
+        // 使用 GCD 在后台线程执行，避免 Swift Concurrency 的 Sendable 警告
+        DispatchQueue.global(qos: .background).async {
+            let newCount: Int
+            let newEvents: [FirewallEventModel]
+            do {
+                let count = try repository.getEventCountByAppIdFiltered(queryAppId, statusFilter: status, directionFilter: direction)
+                let events = try repository.fetchByAppIdPaginated(queryAppId, page: queryPage, pageSize: queryPerPage, statusFilter: status, directionFilter: direction)
+                newCount = count
+                newEvents = events
+            } catch {
+                newCount = 0
+                newEvents = []
+            }
+
+            DispatchQueue.main.async {
+                self.setTotalEventCount(totalEventCount: newCount)
+                self.setEvents(events: newEvents)
+                self.setLoading(false)
+            }
         }
-
-        isLoading = false
     }
 }
 

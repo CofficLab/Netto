@@ -646,7 +646,11 @@
         }
       }
     },
+    "应用详情" : {
+
+    },
     "应用详情 (Application Details)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
