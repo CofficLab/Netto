@@ -11,6 +11,33 @@ import SwiftUI
  * 它提供了一个集中化的数据库管理解决方案，确保数据访问的一致性和可靠性。
  *
  */
+
+
+func container() -> ModelContainer  {
+    let schema = Schema([
+        AppSetting.self,
+        FirewallEventModel.self,
+    ])
+
+    let modelConfiguration = ModelConfiguration(
+        schema: schema,
+        url: AppConfig.databaseURL,
+        allowsSave: true,
+        cloudKitDatabase: .none
+    )
+
+    do {
+        let container = try ModelContainer(
+            for: schema,
+            configurations: [modelConfiguration]
+        )
+
+        return container
+    } catch {
+        fatalError("无法创建 primaryContainer: \n\(error)")
+    }
+}
+
 @MainActor
 class DBManager: SuperLog {
     nonisolated static let emoji = "🏭"

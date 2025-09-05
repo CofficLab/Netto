@@ -34,9 +34,8 @@ final class AppSettingRepo: ObservableObject, SuperLog, SuperEvent {
     }
 
     /// 使用默认容器初始化
-    @MainActor
     convenience init() {
-        self.init(container: DBManager.container())
+        self.init(container: container())
     }
 
     // MARK: - CRUD Operations

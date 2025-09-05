@@ -35,9 +35,8 @@ final class EventRepo: ObservableObject, SuperLog {
     }
 
     /// 使用默认容器初始化
-    @MainActor
     convenience init() {
-        self.init(container: DBManager.container())
+        self.init(container: container())
     }
 
     /// 异步查询，返回计数与分页结果

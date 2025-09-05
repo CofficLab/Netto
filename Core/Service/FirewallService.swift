@@ -341,8 +341,8 @@ extension FirewallService: AppCommunication {
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
         let verbose = false
 
-//        let shouldAllow = self.repo.shouldAllow(id)
-        let shouldAllow = true
+        let shouldAllow = self.repo.shouldAllow(id)
+//        let shouldAllow = true
 
         if shouldAllow {
             if verbose {
