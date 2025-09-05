@@ -135,33 +135,24 @@ extension EventDetailView {
         // 先在主线程标记加载状态
         setLoading(true)
 
-        // 捕获当前查询参数，避免在后台任务中访问可变状态
+        // 捕获当前查询参数
         let queryAppId = appId
         let queryPage = currentPage
         let queryPerPage = perPage
         let status: FirewallEvent.Status? = statusFilter == .all ? nil : (statusFilter == .allowed ? .allowed : .rejected)
         let direction: NETrafficDirection? = directionFilter == .all ? nil : (directionFilter == .inbound ? .inbound : .outbound)
-        let repository = repo
 
-        // 使用 GCD 在后台线程执行，避免 Swift Concurrency 的 Sendable 警告
-        DispatchQueue.global(qos: .background).async {
-            let newCount: Int
-            let newEvents: [FirewallEventModel]
-            do {
-                let count = try repository.getEventCountByAppIdFiltered(queryAppId, statusFilter: status, directionFilter: direction)
-                let events = try repository.fetchByAppIdPaginated(queryAppId, page: queryPage, pageSize: queryPerPage, statusFilter: status, directionFilter: direction)
-                newCount = count
-                newEvents = events
-            } catch {
-                newCount = 0
-                newEvents = []
-            }
-
-            DispatchQueue.main.async {
-                self.setTotalEventCount(totalEventCount: newCount)
-                self.setEvents(events: newEvents)
-                self.setLoading(false)
-            }
+        // 委托给仓库的后台API
+        repo.fetchByAppIdPaginatedAsync(
+            queryAppId,
+            page: queryPage,
+            pageSize: queryPerPage,
+            statusFilter: status,
+            directionFilter: direction
+        ) { totalCount, events in
+            self.setTotalEventCount(totalEventCount: totalCount)
+            self.setEvents(events: events)
+            self.setLoading(false)
         }
     }
 }

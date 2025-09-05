@@ -485,6 +485,45 @@ extension EventRepo {
     }
 }
 
+// MARK: - Async Convenience APIs
+
+extension EventRepo {
+    /// 后台分页查询，并在主线程返回结果
+    /// - Parameters:
+    ///   - appId: 应用ID
+    ///   - page: 页码（从0开始）
+    ///   - pageSize: 每页数量
+    ///   - statusFilter: 状态筛选
+    ///   - directionFilter: 方向筛选
+    ///   - completion: 主线程回调 (totalCount, events)
+    func fetchByAppIdPaginatedAsync(
+        _ appId: String,
+        page: Int,
+        pageSize: Int,
+        statusFilter: FirewallEvent.Status? = nil,
+        directionFilter: NETrafficDirection? = nil,
+        completion: @escaping @MainActor (Int, [FirewallEventModel]) -> Void
+    ) {
+        DispatchQueue.global(qos: .background).async { [self] in
+            let totalCount: Int
+            let events: [FirewallEventModel]
+            do {
+                let count = try self.getEventCountByAppIdFiltered(appId, statusFilter: statusFilter, directionFilter: directionFilter)
+                let list = try self.fetchByAppIdPaginated(appId, page: page, pageSize: pageSize, statusFilter: statusFilter, directionFilter: directionFilter)
+                totalCount = count
+                events = list
+            } catch {
+                totalCount = 0
+                events = []
+            }
+
+            DispatchQueue.main.async {
+                completion(totalCount, events)
+            }
+        }
+    }
+}
+
 // MARK: - Notification Names
 
 extension Notification.Name {
