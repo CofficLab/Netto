@@ -10,31 +10,6 @@ import SwiftUI
  * Repository层是数据访问层，负责封装所有与数据存储相关的操作。
  * AppSettingRepository专门负责AppSetting模型的数据访问操作。
  *
- * ## 设计原则
- *
- * ### 1. 单一职责 Single Responsibility
- * - 只负责AppSetting Entity的数据访问
- * - 专注于CRUD操作和数据查询
- * - 不包含业务逻辑
- *
- * ### 2. 依赖注入 Dependency Injection
- * - 通过构造函数注入ModelContext
- * - 支持测试时注入mock context
- * - 便于单元测试
- *
- * ### 3. 错误处理 Error Handling
- * - 所有数据库操作都抛出异常
- * - 让上层决定如何处理错误
- * - 提供详细的错误信息
- *
- * ## 主要功能
- * - ✅ 创建新记录
- * - ✅ 根据ID查找记录
- * - ✅ 更新记录状态
- * - ✅ 删除记录
- * - ✅ 获取所有记录
- * - ✅ 权限检查逻辑
- *
  */
 class AppSettingRepo: SuperEvent {
     // MARK: - Properties

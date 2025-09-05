@@ -117,26 +117,6 @@ class DBManager: SuperLog {
     
     // MARK: - Database Operations
     
-    /// 清空所有数据
-    /// - Throws: 清空操作时可能抛出的错误
-    func clearAllData() throws {
-        // 删除所有AppSetting记录
-        let appSettings = try mainContext.fetch(FetchDescriptor<AppSetting>())
-        for setting in appSettings {
-            mainContext.delete(setting)
-        }
-        
-        // 删除所有FirewallEvent记录
-        let firewallEvents = try mainContext.fetch(FetchDescriptor<FirewallEventModel>())
-        for event in firewallEvents {
-            mainContext.delete(event)
-        }
-        
-        try saveMainContext()
-        
-        os_log("All database data cleared successfully")
-    }
-    
     /// 检查数据库健康状态
     /// - Returns: 数据库是否健康
     nonisolated func checkDatabaseHealth() async -> Bool {
@@ -186,16 +166,7 @@ extension DBManager {
         let repository = EventRepo(container: container)
         return try await repository.cleanupOldEvents(olderThanDays: 30)
     }
-    
-    /// 清理指定应用超过30天的事件记录
-    /// - Parameter appId: 应用程序ID
-    /// - Returns: 删除的记录数量
-    /// - Throws: 清理操作时可能抛出的错误
-    func cleanupOldFirewallEvents(for appId: String) async throws -> Int {
-        let repository = EventRepo(container: container)
-        return try await repository.deleteOldEventsByAppId(appId, olderThanDays: 30)
-    }
-    
+        
     /// 执行定期数据库维护任务
     /// 包括清理过期数据、优化数据库等操作
     /// - Returns: 维护任务的执行结果
@@ -253,26 +224,6 @@ extension DBManager {
         }
         
         os_log("\(self.t)🚀 已启动定期数据库清理任务，每\(Int(self.maintenanceInterval / 3600))小时执行一次")
-    }
-}
-
-// MARK: - Migration Support
-
-extension DBManager {
-    
-    /// 执行数据库迁移
-    /// - Parameter version: 目标版本
-    /// - Throws: 迁移时可能抛出的错误
-    func migrate(to version: String) throws {
-        // 这里可以添加数据库迁移逻辑
-        os_log("Database migration to version \(version) completed")
-    }
-    
-    /// 获取当前数据库版本
-    /// - Returns: 当前数据库版本字符串
-    func getCurrentVersion() -> String {
-        // 这里可以从某个配置或元数据表中读取版本信息
-        return "1.0.0"
     }
 }
 
