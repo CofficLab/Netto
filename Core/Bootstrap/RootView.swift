@@ -37,7 +37,6 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
             } else if let service = service, let eventRepo = eventRepo, let settingRepo = settingRepo {
                 content
                     .withMagicToast()
-                    .modelContainer(DBManager.container())
                     .environmentObject(app)
                     .environmentObject(m)
                     .environmentObject(p)
@@ -50,7 +49,6 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
         }
         .task {
             await initializeServices()
-            addDeniedApps()
         }
     }
 }
@@ -58,9 +56,6 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
 // MARK: - Action
 
 extension RootView {
-    private func addDeniedApps() {
-    }
-
     /// 异步初始化所有服务
     private func initializeServices() async {
         os_log("\(self.t)开始初始化服务...")

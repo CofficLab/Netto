@@ -36,46 +36,16 @@ class DBManager: SuperLog {
     
     /// FirewallEvent仓库
     lazy var eventRepo: EventRepo = {
-        return EventRepo(container: container)
+        return EventRepo()
     }()
-
-    static func container() -> ModelContainer  {
-        let schema = Schema([
-            AppSetting.self,
-            FirewallEventModel.self,
-        ])
-
-        let modelConfiguration = ModelConfiguration(
-            schema: schema,
-            url: AppConfig.databaseURL,
-            allowsSave: true,
-            cloudKitDatabase: .none
-        )
-
-        do {
-            let container = try ModelContainer(
-                for: schema,
-                configurations: [modelConfiguration]
-            )
-
-            return container
-        } catch {
-            fatalError("无法创建 primaryContainer: \n\(error)")
-        }
-    }
     
     // MARK: - Initialization
     
     /// 初始化数据库管理器
     /// - Parameter container: 数据库容器，如果为nil则使用默认配置
-    private init(container: ModelContainer? = nil) {
+    private init() {
         os_log("\(Self.onInit)")
-        if let container = container {
-            self.container = container
-        } else {
-            self.container = Self.container()
-        }
-        
+        self.container = TavelMode.container()
         self.mainContext = ModelContext(self.container)
         
         // 配置上下文
