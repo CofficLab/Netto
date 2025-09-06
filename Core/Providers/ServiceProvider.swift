@@ -27,12 +27,13 @@ class ServiceProvider: ObservableObject, SuperLog {
         firewallService.installFilter()
     }
     
-    func viewWillDisappear() {
-        firewallService.removeObserver()
-    }
-    
     func getFirewallServiceStatus() -> FilterStatus {
         firewallService.status
+    }
+    
+    /// 清理资源，释放内存
+    func cleanup() {
+        firewallService.removeObserver()
     }
 }
 

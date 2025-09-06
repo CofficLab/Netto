@@ -93,9 +93,14 @@ extension RootView {
     func onDisappear() {
         os_log("\(self.t)📴 视图消失，清理和释放内存")
         
-        self.service?.viewWillDisappear()
+        self.service?.cleanup()
         self.app.cleanup()
         self.p.cleanup()
+        
+        // 清理状态变量，强制释放引用
+        self.service = nil
+        self.eventRepo = nil
+        self.settingRepo = nil
     }
 
     func onFilterStatusChanged(_ n: Notification) {

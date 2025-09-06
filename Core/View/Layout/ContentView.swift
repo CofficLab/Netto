@@ -12,9 +12,6 @@ struct ContentView: View {
             AppList()
         }
         .frame(maxWidth: .infinity)
-        .onDisappear {
-            service.viewWillDisappear()
-        }
         .navigationTitle("")
         .toolbar {
             ToolbarItem(placement: .navigation, content: {
