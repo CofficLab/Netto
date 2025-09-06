@@ -9,6 +9,7 @@ enum FilterStatus: Equatable {
     case waitingForApproval
     case disabled
     case extensionNotReady
+    case notInApplicationsFolder
     case error(Error)
     
     var description: String {
@@ -29,6 +30,8 @@ enum FilterStatus: Equatable {
             "disabled"
         case .extensionNotReady:
             "extensionNotReady"
+        case .notInApplicationsFolder:
+            "APP未安装在Applications目录"
         case .error(let error):
             "错误: \(error.localizedDescription)"
         }
@@ -81,6 +84,15 @@ enum FilterStatus: Equatable {
         default:
             false
         }
+    }
+
+    func isNotInApplicationsFolder() -> Bool {
+        switch self {
+        case.notInApplicationsFolder:
+            true
+        default:
+            false
+        }
     }   
 
     func isNeedApproval() -> Bool {
@@ -114,7 +126,7 @@ enum FilterStatus: Equatable {
         switch self {
         case.stopped, .indeterminate,  .disabled:
             true
-        case .error, .notInstalled,.waitingForApproval, .needApproval, .extensionNotReady:
+        case .error, .notInstalled,.waitingForApproval, .needApproval, .extensionNotReady, .notInApplicationsFolder:
             false
         default:
             false
@@ -131,7 +143,8 @@ enum FilterStatus: Equatable {
              (.needApproval, .needApproval),
              (.waitingForApproval, .waitingForApproval),
              (.disabled, .disabled),
-             (.extensionNotReady, .extensionNotReady):
+             (.extensionNotReady, .extensionNotReady),
+             (.notInApplicationsFolder, .notInApplicationsFolder):
             return true
         case (.error(let error1), .error(let error2)):
             // 由于 Error 不符合 Equatable，我们比较错误的描述

@@ -3,19 +3,25 @@ import SwiftUI
 
 struct Toolbar: View, SuperLog {
     @EnvironmentObject private var app: UIProvider
-    @EnvironmentObject private var data: DataProvider
+    @EnvironmentObject private var firewall: FirewallService
 
     var body: some View {
         HStack {
             ZStack {
-                switch data.status {
+                switch firewall.status {
                 case .stopped:
                     BtnStart(asToolbarItem: true).labelStyle(.iconOnly)
                 case .indeterminate:
                     Button("Status Unknown") {}
                 case .running:
                     BtnStop(asToolbarItem: true).labelStyle(.iconOnly)
-                case .notInstalled, .disabled, .extensionNotReady, .needApproval, .waitingForApproval, .error:
+                case .notInstalled,
+                     .disabled,
+                     .extensionNotReady,
+                     .needApproval,
+                     .notInApplicationsFolder,
+                     .waitingForApproval,
+                     .error:
                     EmptyView()
                 }
             }
@@ -25,8 +31,7 @@ struct Toolbar: View, SuperLog {
 }
 
 #Preview {
-    RootView {
-        ContentView()
-    }
-    .frame(height: 500)
+    ContentView()
+        .inRootView()
+        .frame(height: 500)
 }

@@ -7,52 +7,91 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     nonisolated static var emoji: String { "🌳" }
 
     private var content: Content
-    private var app = UIProvider.shared
-    private var p = PluginProvider.shared
-    private var data: DataProvider
-    private var service: ServiceProvider
-    private var eventRepo: EventRepo
-
-    @StateObject var m = MagicMessageProvider.shared
+    
+    // 核心服务 - 改为实例对象
+    @StateObject private var app = UIProvider()
+    @StateObject private var p = PluginProvider()
+    @State private var eventRepo: EventRepo?
+    @State private var settingRepo: AppSettingRepo?
+    @State private var firewall: FirewallService?
+    @StateObject private var m = MagicMessageProvider.shared
+    @State private var isLoading = true
+    @State private var initializationError: Error?
 
     init(@ViewBuilder content: () -> Content) {
         os_log("\(Self.onInit)")
         self.content = content()
-        
-        // 使用共享的核心服务，避免重复初始化
-        let coreServices = RootBox.shared
-        self.data = coreServices.data
-        self.service = coreServices.service
-        self.eventRepo = coreServices.eventRepo
     }
 
     var body: some View {
-        content
-            .withMagicToast()
-            .modelContainer(DBManager.container())
-            .environmentObject(app)
-            .environmentObject(data)
-            .environmentObject(m)
-            .environmentObject(p)
-            .environmentObject(self.eventRepo)
-            .environmentObject(service)
-            .onAppear(perform: onAppear)
-            .onReceive(self.nc.publisher(for: .FilterStatusChanged), perform: onFilterStatusChanged)
+        Group {
+            if isLoading {
+                RootLoadingView()
+            } else if let error = initializationError {
+                error.makeView()
+            } else if let eventRepo = eventRepo, let settingRepo = settingRepo, let firewall = self.firewall {
+                content
+                    .withMagicToast()
+                    .environmentObject(app)
+                    .environmentObject(m)
+                    .environmentObject(p)
+                    .environmentObject(eventRepo)
+                    .environmentObject(settingRepo)
+                    .environmentObject(firewall)
+                    .onAppear(perform: onAppear)
+            }
+        }
+        .task {
+            await initializeServices()
+        }
+        .onDisappear(perform: onDisappear)
     }
 }
 
-// MARK: - Event
+// MARK: - Action
+
+extension RootView {
+    /// 异步初始化所有服务
+    private func initializeServices() async {
+        os_log("\(self.i)初始化服务...")
+
+        // Repos
+        let eventRepo = EventRepo.shared
+        let appSettingRepo = AppSettingRepo()
+
+        // Services
+        let firewallService = await FirewallService(repo: appSettingRepo)
+
+        await MainActor.run {
+            self.eventRepo = eventRepo
+            self.settingRepo = appSettingRepo
+            self.isLoading = false
+            self.firewall = firewallService
+            self.initializationError = nil
+        }
+
+        os_log("\(self.t)✅ 服务初始化完成")
+    }
+}
+
+// MARK: - Event Handler
 
 extension RootView {
     func onAppear() {
-        self.data.status = service.getFirewallServiceStatus()
     }
 
-    func onFilterStatusChanged(_ n: Notification) {
-        if let status = n.object as? FilterStatus {
-            os_log("\(self.t)状态变更为 -> \(status.description)")
-            self.data.status = status
-        }
+    func onDisappear() {
+        os_log("\(self.t)📴 视图消失，清理和释放内存")
+
+        self.app.cleanup()
+        self.p.cleanup()
+        self.firewall?.removeObserver()
+        
+        // 清理状态变量，强制释放引用
+        self.eventRepo = nil
+        self.settingRepo = nil
+        self.firewall = nil
+        self.initializationError = nil
     }
 }
 
@@ -65,6 +104,24 @@ extension View {
         }
     }
 }
+
+// MARK: - Loading View
+
+struct RootLoadingView: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            ProgressView()
+                .scaleEffect(1.5)
+            Text("正在初始化服务...")
+                .font(.headline)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(NSColor.controlBackgroundColor))
+    }
+}
+
+// MARK: - Preview
 
 #Preview("APP") {
     RootView(content: {

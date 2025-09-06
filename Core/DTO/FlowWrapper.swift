@@ -1,6 +1,6 @@
 import NetworkExtension
 
-struct FlowWrapper {
+struct FlowWrapper: Sendable {
     var id: String
     var hostname: String
     var port: String

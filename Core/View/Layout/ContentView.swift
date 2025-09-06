@@ -3,7 +3,6 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var ui: UIProvider
-    @EnvironmentObject private var service: ServiceProvider
 
     var body: some View {
         VStack(spacing: 0) {
@@ -12,9 +11,6 @@ struct ContentView: View {
             AppList()
         }
         .frame(maxWidth: .infinity)
-        .onDisappear {
-            service.viewWillDisappear()
-        }
         .navigationTitle("")
         .toolbar {
             ToolbarItem(placement: .navigation, content: {

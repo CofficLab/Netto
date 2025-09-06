@@ -2,7 +2,7 @@ import MagicCore
 import SwiftUI
 
 struct BtnInstall: View {
-    @EnvironmentObject private var service: ServiceProvider
+    @EnvironmentObject private var service: FirewallService
 
     private var width: CGFloat = 150
 

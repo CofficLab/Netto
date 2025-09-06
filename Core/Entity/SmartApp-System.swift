@@ -218,12 +218,11 @@ extension SmartApp {
     /// - Returns: 对应的图标视图
     static func getSystemAppIcon(_ id: String) -> AnyView? {
         switch id {
-        case ".com.apple.mDNSResponder":
-            return AnyView(IconHelper.createSystemIcon(
-                iconName: "network",
-                gradientColors: [Color.blue.opacity(0.6), Color.cyan],
-                isSystemIcon: false
-            ))
+         case ".com.apple.mDNSResponder":
+             return AnyView(IconHelper.createSystemIcon(
+                 iconName: "network",
+                 gradientColors: [Color.blue.opacity(0.6), Color.cyan]
+             ))
         case ".com.apple.AMPDeviceDiscoveryAgent":
             return AnyView(IconHelper.createSystemIcon(
                 iconName: "bonjour",

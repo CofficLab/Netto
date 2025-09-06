@@ -1,7 +1,6 @@
 import MagicCore
 import NetworkExtension
 import OSLog
-import SwiftData
 import SwiftUI
 
 /**
@@ -16,15 +15,15 @@ struct EventDetailView: View, SuperLog {
     // MARK: - Dependencies & Configuration
 
     let appId: String
-    private let eventsPerPage: Int = 20
+    private let perPage: Int = 20
 
     // MARK: - Environment
 
-    @EnvironmentObject private var dataProvider: DataProvider
+    @EnvironmentObject private var queryRepo: EventRepo
 
     // MARK: - State
 
-    @State private var events: [FirewallEventModel] = []
+    @State private var events: [FirewallEventDTO] = []
     @State private var totalEventCount: Int = 0
     @State private var currentPage: Int = 0
     @State private var statusFilter: StatusFilter = .all
@@ -71,31 +70,8 @@ struct EventDetailView: View, SuperLog {
             .padding(.horizontal, 0)
             .padding(.bottom, 8)
 
-
             // Data Table
-            ZStack {
-                if isLoading {
-                    SkeletonLoadingView()
-                } else if events.isEmpty {
-                    EmptyStateView()
-                } else {
-                    Table(events, columns: { // Use the new state variable 'events'
-                        TableColumn("Time", value: \.timeFormatted).width(150)
-                        TableColumn("Address", value: \.address)
-                        TableColumn("Port", value: \.port).width(60)
-                        TableColumn("Direction") { event in
-                            Text(event.direction == .inbound ? "入" : "出")
-                                .foregroundStyle(event.isAllowed ? .green : .red)
-                        }.width(60)
-                        TableColumn("Status") { event in
-                            Text(event.status == .allowed ? "允许" : "拒绝")
-                                .foregroundStyle(event.isAllowed ? .green : .red)
-                        }.width(60)
-                    })
-                    .frame(minHeight: 200)
-                    .frame(maxHeight: 300)
-                }
-            }
+            EventTableView(events: events, isLoading: $isLoading)
 
             // Pagination
             if getTotalPages() > 1 {
@@ -103,7 +79,7 @@ struct EventDetailView: View, SuperLog {
                     currentPage: $currentPage,
                     totalPages: getTotalPages(),
                     totalCount: totalEventCount,
-                    pageSize: eventsPerPage,
+                    pageSize: perPage,
                     isLoading: isLoading,
                     onPreviousPage: {},
                     onNextPage: {}
@@ -114,27 +90,36 @@ struct EventDetailView: View, SuperLog {
         .background(Color(.controlBackgroundColor))
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onAppear {
-            Task {
-                await updateDataSource()
-            }
+            updateDataSource()
         }
         .onChange(of: statusFilter) {
-            Task {
-                currentPage = 0
-                await updateDataSource()
-            }
+            currentPage = 0
+            updateDataSource()
         }
         .onChange(of: directionFilter) {
-            Task {
-                currentPage = 0
-                await updateDataSource()
-            }
+            currentPage = 0
+            updateDataSource()
         }
         .onChange(of: currentPage) {
-            Task {
-                await updateDataSource()
-            }
+            updateDataSource()
         }
+    }
+}
+
+// MARK: - Setter
+
+extension EventDetailView {
+    @MainActor
+    private func setLoading(_ loading: Bool) {
+        self.isLoading = loading
+    }
+
+    private func setEvents(events: [FirewallEventDTO]) {
+        self.events = events
+    }
+
+    private func setTotalEventCount(totalEventCount: Int) {
+        self.totalEventCount = totalEventCount
     }
 }
 
@@ -142,34 +127,39 @@ struct EventDetailView: View, SuperLog {
 
 extension EventDetailView {
     private func getTotalPages() -> Int {
-        return max(1, Int(ceil(Double(totalEventCount) / Double(eventsPerPage))))
+        return max(1, Int(ceil(Double(totalEventCount) / Double(perPage))))
     }
 
-    private func updateDataSource() async {
-        isLoading = true
+    private func updateDataSource() {
+        // 先在主线程标记加载状态
+        setLoading(true)
 
-        let eventRepo = dataProvider.eventRepo
-
-        // Convert view-specific filters to data-layer filters
+        // 捕获当前查询参数
+        let queryAppId = appId
+        let queryPage = currentPage
+        let queryPerPage = perPage
         let status: FirewallEvent.Status? = statusFilter == .all ? nil : (statusFilter == .allowed ? .allowed : .rejected)
         let direction: NETrafficDirection? = directionFilter == .all ? nil : (directionFilter == .inbound ? .inbound : .outbound)
 
-        do {
-            // Fetch count and data using the repository
-            self.totalEventCount = try eventRepo.getEventCountByAppIdFiltered(appId, statusFilter: status, directionFilter: direction)
-            self.events = try eventRepo.fetchByAppIdPaginated(appId, page: currentPage, pageSize: eventsPerPage, statusFilter: status, directionFilter: direction)
-        } catch {
-            self.events = []
-            self.totalEventCount = 0
+        // 查询仓库的后台API
+        queryRepo.loadAsync(
+            appId: queryAppId,
+            page: queryPage,
+            pageSize: queryPerPage,
+            status: status,
+            direction: direction
+        ) { totalCount, events in
+            self.setTotalEventCount(totalEventCount: totalCount)
+            self.setEvents(events: events)
+            self.setLoading(false)
         }
-
-        isLoading = false
     }
 }
 
 // MARK: - Preview
 
 #Preview("App") {
-    ContentView().inRootView()
+    ContentView()
+        .inRootView()
         .frame(width: 600, height: 1000)
 }

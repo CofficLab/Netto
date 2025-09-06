@@ -3,7 +3,7 @@ import MagicCore
 
 struct GuideView: View {
     @EnvironmentObject private var app: UIProvider
-    @EnvironmentObject private var data: DataProvider
+    @EnvironmentObject private var firewall: FirewallService
 
     var body: some View {
         ZStack {
@@ -11,7 +11,7 @@ struct GuideView: View {
             MagicBackground.forest.opacity(0.3)
 
             VStack(spacing: 0) {
-                switch data.status {
+                switch firewall.status {
                 case .disabled, .stopped:
                     StopView()
                 case .indeterminate:
@@ -24,6 +24,8 @@ struct GuideView: View {
                     ApprovalView()
                 case .extensionNotReady:
                     ExtensionNotReady()
+                case .notInApplicationsFolder:
+                    NotInApplicationsFolderView()
                 case .waitingForApproval:
                     Text("Click \"Allow\" to install extension")
                         .font(.title)

@@ -7,10 +7,6 @@ import SwiftUI
 
 @MainActor
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
-    static let shared = PluginProvider()
-
-    private init() {}
-
     let emoji = "🧩"
 
     func getPlugins() -> some View {
@@ -21,6 +17,12 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
             Spacer()
             TileMore()
         }
+    }
+    
+    /// 清理资源，释放内存
+    func cleanup() {
+        // PluginProvider 目前没有需要清理的状态
+        // 如果将来添加了状态，可以在这里清理
     }
 }
 

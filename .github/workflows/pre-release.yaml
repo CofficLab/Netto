@@ -1,0 +1,54 @@
+name: Pre Release
+
+on:
+  push:
+    tags:
+      - '*p'
+  workflow_run:
+    workflows:
+      - 'Pre Bump'
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+env:
+  tag: '-'
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v5
+      - run: ls -alhR
+      - name: 读取版本号
+        run: |
+          # 读取配置文件路径
+          projectFile=$(find $(pwd) -type f -name "*.pbxproj" | head -n 1)
+
+          # 读取文件中的版本号
+          version=$(grep -o 'MARKETING_VERSION = [^"]*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+
+          echo "版本号->$version"
+
+          build=$(agvtool what-version -terse)
+
+          echo "tag=p$version" >> $GITHUB_ENV
+      - name: Generate Changelog
+        run: echo ""> ${{ github.workspace }}-CHANGELOG.txt
+      - uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.tag }}
+          body_path: ${{ github.workspace }}-CHANGELOG.txt
+          prerelease: true
+          files: |
+            ./**/*.dmg
+            ./**/*.zip
+            ./**/*.exe
+            ./**/*.pkg
+            ./**/*.deb
+            ./**/*.ipa
+            ./**/*.AppImage
+            ./**/*.snap

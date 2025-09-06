@@ -42,7 +42,6 @@
 		0BECFF622DE5FFD6001B7619 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4B45DB522739FFF0050C59B /* TavelMode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TavelMode.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F55AAB352DEEE763002E3E36 /* TavelMode copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "TavelMode copy-Info.plist"; path = "/Users/colorfy/Code/CofficLab/Netto/TavelMode copy-Info.plist"; sourceTree = "<absolute>"; };
 		F5F857DF2DE815C300E03577 /* README-DEV.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "README-DEV.md"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -103,7 +102,6 @@
 				C4B45DB622739FFF0050C59B /* Products */,
 				0BECFF622DE5FFD6001B7619 /* README.md */,
 				F5F857DF2DE815C300E03577 /* README-DEV.md */,
-				F55AAB352DEEE763002E3E36 /* TavelMode copy-Info.plist */,
 				F5B8C27B2DF14AE400C35A76 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -265,7 +263,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extension/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 42;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Extension/Info.plist;
@@ -275,7 +273,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 2.1.7;
+				MARKETING_VERSION = 2.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode.Extension;
 				PRODUCT_NAME = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -291,7 +289,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extension/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 42;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Extension/Info.plist;
@@ -301,7 +299,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 2.1.7;
+				MARKETING_VERSION = 2.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode.Extension;
 				PRODUCT_NAME = "$(PRODUCT_BUNDLE_IDENTIFIER)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -447,7 +445,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 42;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Core/Info.plist;
@@ -458,7 +456,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 2.1.7;
+				MARKETING_VERSION = 2.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -476,7 +474,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 42;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Core/Info.plist;
@@ -487,7 +485,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 2.1.7;
+				MARKETING_VERSION = 2.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

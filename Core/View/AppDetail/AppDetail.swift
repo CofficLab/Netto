@@ -6,8 +6,6 @@ import NetworkExtension
 struct AppDetail: View, SuperLog {
     nonisolated static let emoji = "🖥️"
     
-    @EnvironmentObject var data: DataProvider
-    
     @Binding var popoverHovering: Bool
 
     var app: SmartApp

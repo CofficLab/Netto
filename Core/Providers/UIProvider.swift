@@ -4,8 +4,6 @@ import SwiftUI
 
 @MainActor
 class UIProvider: ObservableObject {
-    static let shared = UIProvider()
-    
     @Published var dbVisible: Bool = false
     @Published var displayType: DisplayType = .All
     @Published var showSystemApps: Bool = false
@@ -27,6 +25,14 @@ class UIProvider: ObservableObject {
     /// - Returns: 是否应该显示popover
     func shouldShowPopover(for appId: String) -> Bool {
         return activePopoverAppId == appId
+    }
+    
+    /// 清理所有状态，释放内存
+    func cleanup() {
+        dbVisible = false
+        displayType = .All
+        showSystemApps = false
+        activePopoverAppId = ""
     }
 }
 

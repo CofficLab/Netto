@@ -2,7 +2,7 @@ import AppKit
 import Foundation
 import SwiftUI
 
-struct SmartApp: Identifiable, Sendable {
+struct SmartApp: Identifiable, Sendable, Equatable {
     // MARK: - Properties
     
     static let emoji = "🐒"
@@ -25,6 +25,17 @@ struct SmartApp: Identifiable, Sendable {
     var isNotSample: Bool { !isSample }
     var hasId: Bool { id.isNotEmpty }
     var hasNoId: Bool { id.isEmpty }
+    
+    // MARK: - Equatable
+    
+    static func == (lhs: SmartApp, rhs: SmartApp) -> Bool {
+        return lhs.id == rhs.id &&
+               lhs.name == rhs.name &&
+               lhs.isSystemApp == rhs.isSystemApp &&
+               lhs.isSample == rhs.isSample &&
+               lhs.isProxy == rhs.isProxy &&
+               lhs.bundleURL == rhs.bundleURL
+    }
 }
 
 // MARK: - Instance Methods
