@@ -50,6 +50,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
         .task {
             await initializeServices()
         }
+        .onDisappear(perform: onDisappear)
     }
 }
 
@@ -87,6 +88,10 @@ extension RootView {
 
 extension RootView {
     func onAppear() {
+    }
+
+    func onDisappear() {
+        os_log("\(self.t)📴 视图消失")
     }
 
     func onFilterStatusChanged(_ n: Notification) {
