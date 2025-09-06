@@ -80,12 +80,8 @@ extension FirewallService {
 
         self.emit(.firewallWillStart)
 
-        // macOS 15， 系统设置 - 网络 - 过滤器，用户能删除过滤器，所以要确保过滤器已加载
-
-        try await loadFilterConfiguration(reason: reason)
-
         guard !NEFilterManager.shared().isEnabled else {
-            os_log("\(self.t)👌 过滤器已启用，直接关联")
+            os_log("\(self.t)👌 过滤器已启用")
             self.emit(.firewallDidStart)
             return
         }
@@ -102,8 +98,6 @@ extension FirewallService {
             await self.updateFilterStatus(.stopped)
             return
         }
-
-        try await loadFilterConfiguration(reason: reason)
 
         NEFilterManager.shared().isEnabled = false
         try await NEFilterManager.shared().saveToPreferences()

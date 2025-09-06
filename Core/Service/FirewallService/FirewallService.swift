@@ -23,13 +23,6 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
         self.emit(.firewallWillBoot)
         self.setObserver()
 
-        // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
-        do {
-            try await loadFilterConfiguration(reason: "Boot")
-        } catch {
-            os_log(.error, "\(self.t)Boot -> \(error)")
-        }
-
         let isEnabled = NEFilterManager.shared().isEnabled
 
         os_log("\(self.t)\(isEnabled ? "✅ 过滤器已启用" : "⚠️ 过滤器未启用")")
@@ -97,27 +90,11 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
 // MARK: Content Filter Configuration Management
 
 extension FirewallService {
-    func loadFilterConfiguration(reason: String) async throws {
-        os_log("\(self.t)🚩 读取过滤器配置 🐛 \(reason)")
-
-        // You must call this method at least once before calling saveToPreferencesWithCompletionHandler: for the first time after your app launches.
-        try await NEFilterManager.shared().loadFromPreferences()
-    }
-
     private func enableFilterConfiguration(reason: String) async {
         self.emit(.firewallConfigurationChanged)
 
         guard !NEFilterManager.shared().isEnabled else {
             os_log("\(self.t)FilterManager is Disabled, registerWithProvider")
-            return
-        }
-
-        do {
-            try await loadFilterConfiguration(reason: reason)
-            os_log("\(self.t)🎉 加载过滤器配置成功")
-        } catch {
-            os_log(.error, "\(self.t)加载过滤器配置失败 -> \(error.localizedDescription)")
-            await self.updateFilterStatus(.stopped)
             return
         }
         

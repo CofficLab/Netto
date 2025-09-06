@@ -82,7 +82,7 @@ extension FirewallGate: AppCommunication {
     ///   - responseHandler: 响应处理回调
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
         let verbose = true
-        let printAllowed = true
+        let printAllowed = false
         let printDenied = true
 
         let shouldAllow = self.repo.shouldAllowSync(id)
