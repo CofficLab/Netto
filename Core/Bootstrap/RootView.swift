@@ -14,7 +14,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     @State private var service: ServiceProvider?
     @State private var eventRepo: EventRepo?
     @State private var settingRepo: AppSettingRepo?
-
+    @State private var firewall: FirewallService?
     @StateObject private var m = MagicMessageProvider.shared
     @State private var isLoading = true
     @State private var initializationError: Error?
@@ -30,7 +30,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
                 RootLoadingView()
             } else if let error = initializationError {
                 error.makeView()
-            } else if let service = service, let eventRepo = eventRepo, let settingRepo = settingRepo {
+            } else if let service = service, let eventRepo = eventRepo, let settingRepo = settingRepo, let firewall = self.firewall {
                 content
                     .withMagicToast()
                     .environmentObject(app)
@@ -39,6 +39,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
                     .environmentObject(eventRepo)
                     .environmentObject(settingRepo)
                     .environmentObject(service)
+                    .environmentObject(firewall)
                     .onAppear(perform: onAppear)
             }
         }
@@ -65,13 +66,14 @@ extension RootView {
         let versionService = VersionService()
 
         // Providers
-        let serviceProvider = ServiceProvider(firewallService: firewallService, versionService: versionService)
+        let serviceProvider = ServiceProvider(versionService: versionService)
 
         await MainActor.run {
             self.service = serviceProvider
             self.eventRepo = eventRepo
             self.settingRepo = appSettingRepo
             self.isLoading = false
+            self.firewall = firewallService
             self.initializationError = nil
         }
 
@@ -87,8 +89,7 @@ extension RootView {
 
     func onDisappear() {
         os_log("\(self.t)📴 视图消失，清理和释放内存")
-        
-        self.service?.cleanup()
+
         self.app.cleanup()
         self.p.cleanup()
         

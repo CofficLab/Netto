@@ -228,7 +228,7 @@ extension AppSettingRepo {
     /// 发送允许访问事件通知
     /// - Parameter appId: 应用程序ID
     func emitDidSetAllow(_ appId: String) {
-        emit(name: .didSetAllow, object: nil, userInfo: [
+        emit(name: .firewallDidSetAllow, object: nil, userInfo: [
             "appId": appId,
         ])
     }
@@ -236,7 +236,7 @@ extension AppSettingRepo {
     /// 发送拒绝访问事件通知
     /// - Parameter appId: 应用程序ID
     func emitDidSetDeny(_ appId: String) {
-        emit(name: .didSetDeny, object: nil, userInfo: [
+        emit(name: .firewallDidSetDeny, object: nil, userInfo: [
             "appId": appId,
         ])
     }

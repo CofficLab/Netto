@@ -9,7 +9,6 @@ final class FirewallGate: NSObject, SuperLog, SuperEvent, SuperThread, @unchecke
     nonisolated static let emoji = "🛡️"
 
     private var ipc = IPCConnection.shared
-    private var extensionManager = OSSystemExtensionManager.shared
     private var extensionBundle = ExtensionConfig.extensionBundle
     private var observer: Any?
     private var repo: AppSettingRepo
@@ -24,7 +23,7 @@ final class FirewallGate: NSObject, SuperLog, SuperEvent, SuperThread, @unchecke
 
         super.init()
 
-        self.emit(.willBoot)
+        self.emit(.firewallWillBoot)
         self.setObserver()
 
         // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
@@ -97,13 +96,13 @@ extension FirewallGate {
     private func registerWithProvider(reason: String) {
         os_log("\(self.t)🛫 registerWithProvider，让 ChannelProvider 和 Extension 关联起来(\(reason))")
 
-        self.emit(.willRegisterWithProvider)
+        self.emit(.firewallWillRegisterWithProvider)
 
         ipc.register(withExtension: extensionBundle, delegate: self) { success in
             if success {
                 os_log("\(self.t)🎉 ChannelProvider 和 Extension 关联成功")
 
-                NotificationCenter.default.post(name: .didRegisterWithProvider, object: nil)
+                NotificationCenter.default.post(name: .firewallDidRegisterWithProvider, object: nil)
 
                 self.updateFilterStatus(.running)
             } else {
@@ -139,7 +138,7 @@ extension FirewallGate: OSSystemExtensionRequestDelegate {
 
         self.updateFilterStatus(.error(error))
 
-        self.emit(.didFailWithError, userInfo: ["error": error])
+        self.emit(.firewallDidFailWithError, userInfo: ["error": error])
     }
 
     nonisolated func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
@@ -172,7 +171,7 @@ extension FirewallGate: AppCommunication {
 
     nonisolated func needApproval() {
         NotificationCenter.default.post(
-            name: .NeedApproval,
+            name: .firewallNeedApproval,
             object: nil,
             userInfo: nil
         )
@@ -206,7 +205,7 @@ extension FirewallGate: AppCommunication {
             responseHandler(true)
 
             DispatchQueue.main.sync {
-                NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
+                NotificationCenter.default.post(name: .firewallNetWorkFilterFlow, object: FlowWrapper(
                     id: id,
                     hostname: hostname,
                     port: port,
@@ -221,7 +220,7 @@ extension FirewallGate: AppCommunication {
             }
             
             DispatchQueue.main.sync {
-                NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
+                NotificationCenter.default.post(name: .firewallNetWorkFilterFlow, object: FlowWrapper(
                     id: id,
                     hostname: hostname,
                     port: port,

@@ -5,6 +5,7 @@ import OSLog
 struct BtnStart: View, SuperLog {
     @EnvironmentObject private var service: ServiceProvider
     @EnvironmentObject private var m: MagicMessageProvider
+    @EnvironmentObject private var firewall: FirewallService
     
     private var asToolbarItem: Bool = false
     
@@ -40,7 +41,7 @@ struct BtnStart: View, SuperLog {
         let service = self.service
         Task {
             do {
-                try await service.startFilter(reason: self.className)
+                try await firewall.startFilter(reason: self.className)
             } catch (let error) {
                 os_log("\(self.t)开启过滤器失败 -> \(error.localizedDescription)")
                 m.error(error)

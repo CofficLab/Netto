@@ -7,6 +7,7 @@ struct AppList: View, SuperLog {
     @EnvironmentObject private var serviceProvider: ServiceProvider
     @EnvironmentObject private var repo: AppSettingRepo
     @EnvironmentObject private var eventRepo: EventRepo
+    @EnvironmentObject private var firewall: FirewallService
     
     /// 过滤后的应用列表
     @State private var filteredApps: [SmartApp] = []
@@ -27,7 +28,7 @@ struct AppList: View, SuperLog {
                 }
             }
 
-            if serviceProvider.firewallStatus.isNotRunning() || filteredApps.isEmpty {
+            if firewall.status.isNotRunning() || filteredApps.isEmpty {
                 GuideView()
             }
         }

@@ -6,18 +6,19 @@ struct TileSwitcher: View, SuperLog, SuperThread {
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var app: UIProvider
     @EnvironmentObject var s: ServiceProvider
+    @EnvironmentObject private var firewall: FirewallService
     
     @State var hovered = false
     @State var isPresented = false
 
     var body: some View {
         HStack {
-            if s.getFirewallServiceStatus().isRunning() {
+            if firewall.status.isRunning() {
                 BtnStop(asToolbarItem: true).labelStyle(.iconOnly)
             } else {
                 BtnStart(asToolbarItem: true)
                     .labelStyle(.iconOnly)
-                    .disabled(!s.getFirewallServiceStatus().canStart())
+                    .disabled(!firewall.status.canStart())
             }
         }
         .frame(maxHeight: .infinity)

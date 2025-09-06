@@ -4,6 +4,7 @@ import MagicCore
 struct GuideView: View {
     @EnvironmentObject private var app: UIProvider
     @EnvironmentObject private var s: ServiceProvider
+    @EnvironmentObject private var firewall: FirewallService
 
     var body: some View {
         ZStack {
@@ -11,7 +12,7 @@ struct GuideView: View {
             MagicBackground.forest.opacity(0.3)
 
             VStack(spacing: 0) {
-                switch s.getFirewallServiceStatus() {
+                switch firewall.status {
                 case .disabled, .stopped:
                     StopView()
                 case .indeterminate:
