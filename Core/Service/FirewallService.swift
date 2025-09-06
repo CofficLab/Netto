@@ -96,7 +96,8 @@ extension FirewallService {
         self.error = error
     }
 
-    func viewWillDisappear() {
+    func removeObserver() {
+        os_log("\(self.t)👀 移除监听")
         guard let changeObserver = observer else {
             return
         }
@@ -195,7 +196,6 @@ extension FirewallService {
             return
         }
 
-//        Task {
         do {
             try await loadFilterConfiguration(reason: reason)
 
@@ -230,7 +230,6 @@ extension FirewallService {
             os_log("\(self.t)APP: 加载过滤器配置失败")
             self.updateFilterStatus(.stopped)
         }
-//        }
     }
 }
 

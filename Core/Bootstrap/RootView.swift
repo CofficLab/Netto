@@ -7,10 +7,10 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     nonisolated static var emoji: String { "🌳" }
 
     private var content: Content
-    private var app = UIProvider.shared
-    private var p = PluginProvider.shared
-
-    // 核心服务
+    
+    // 核心服务 - 改为实例对象
+    @StateObject private var app = UIProvider()
+    @StateObject private var p = PluginProvider()
     @State private var service: ServiceProvider?
     @State private var eventRepo: EventRepo?
     @State private var settingRepo: AppSettingRepo?
@@ -91,7 +91,11 @@ extension RootView {
     }
 
     func onDisappear() {
-        os_log("\(self.t)📴 视图消失")
+        os_log("\(self.t)📴 视图消失，清理和释放内存")
+        
+        self.service?.viewWillDisappear()
+        self.app.cleanup()
+        self.p.cleanup()
     }
 
     func onFilterStatusChanged(_ n: Notification) {

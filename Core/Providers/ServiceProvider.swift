@@ -28,7 +28,7 @@ class ServiceProvider: ObservableObject, SuperLog {
     }
     
     func viewWillDisappear() {
-        firewallService.viewWillDisappear()
+        firewallService.removeObserver()
     }
     
     func getFirewallServiceStatus() -> FilterStatus {
