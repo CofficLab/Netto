@@ -186,7 +186,9 @@ extension FirewallGate: AppCommunication {
     ///   - direction: 网络流量方向
     ///   - responseHandler: 响应处理回调
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
-        let verbose = false
+        let verbose = true
+        let printAllowed = false
+        let printDenied = true
 
         let shouldAllow = self.repo.shouldAllowSync(id)
         var wrapper = FlowWrapper(
@@ -198,8 +200,8 @@ extension FirewallGate: AppCommunication {
         )
 
         if shouldAllow {
-            if verbose {
-                os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(id) -> Allow")
+            if verbose && printAllowed {
+                os_log("\(self.t)✅ \(id)")
             }
             responseHandler(true)
 
@@ -214,8 +216,8 @@ extension FirewallGate: AppCommunication {
             }
             wrapper.allowed = true
         } else {
-            if verbose {
-                os_log("\(self.t)🈲 Channel.promptUser 👤 with App -> \(id) -> Deny")
+            if verbose && printDenied {
+                os_log("\(self.t)🈲 \(id)")
             }
             
             DispatchQueue.main.sync {
@@ -243,9 +245,6 @@ extension FirewallGate: AppCommunication {
         Task {
             do {
                 try await eventRepo.create(event)
-                if verbose {
-                    os_log("\(self.t)💾 事件已存储到数据库: \(event.description)")
-                }
             } catch {
                 os_log(.error, "\(self.t)❌ 存储事件到数据库失败: \(error)")
             }

@@ -26,17 +26,35 @@ import SwiftData
 import SwiftUI
 
 /// 基于 actor 的仓库
-final class EventRepo: ObservableObject, SuperLog {
+final class EventRepo: ObservableObject, SuperLog, Sendable {
+    static let shared = EventRepo()
+    
     private let actor: EventQueryActor
+    
+    // MARK: - Properties
+    
+    /// 数据库维护管理器
+    private let maintenanceManager: DatabaseMaintenanceManager
 
     /// 使用自定义 ModelContainer 初始化
-    init(container: ModelContainer) {
+    private init(container: ModelContainer) {
         self.actor = EventQueryActor(container: container)
+        self.maintenanceManager = DatabaseMaintenanceManager()
+        
+        // 设置维护管理器的引用
+        self.maintenanceManager.setRepo(self)
+        
+        // 启动定期清理任务
+        self.maintenanceManager.startPeriodicCleanup()
     }
 
     /// 使用默认容器初始化
-    convenience init() {
+    private convenience init() {
         self.init(container: container())
+    }
+    
+    deinit {
+        maintenanceManager.stopPeriodicCleanup()
     }
 
     /// 异步查询，返回计数与分页结果
@@ -80,7 +98,6 @@ final class EventRepo: ObservableObject, SuperLog {
     /// - Parameter event: FirewallEvent结构体实例
     /// - Throws: 保存数据时可能抛出的错误
     func create(_ event: FirewallEvent) async throws {
-        os_log("\(self.t) create event: \(event.id)")
         try await actor.create(event)
     }
 
@@ -110,6 +127,51 @@ final class EventRepo: ObservableObject, SuperLog {
     func cleanupOldEvents(olderThanDays days: Int) async throws -> Int {
         os_log("\(self.t) cleanupOldEvents, days: \(days)")
         return try await actor.cleanupOldEvents(olderThanDays: days)
+    }
+    
+    // MARK: - Database Maintenance
+    
+    /// 检查数据库健康状态
+    /// - Returns: 数据库是否健康
+    nonisolated func checkDatabaseHealth() async -> Bool {
+        os_log("\(self.t)🔍 开始检查数据库健康状态")
+        do {
+            // 使用后台上下文执行健康检查
+            let isHealthy = try await performBackgroundTask { context in
+                // 尝试执行一个简单的查询来检查数据库连接
+                _ = try context.fetch(FetchDescriptor<AppSetting>())
+                return true
+            }
+            return isHealthy
+        } catch {
+            os_log("\(self.t)❌ 数据库健康检查失败: \(error.localizedDescription)")
+            return false
+        }
+    }
+    
+    /// 执行后台任务
+    /// - Parameter task: 要执行的后台任务闭包
+    /// - Throws: 任务执行时可能抛出的错误
+    func performBackgroundTask<T: Sendable>(_ task: @escaping @Sendable (ModelContext) throws -> T) async throws -> T {
+        return try await withCheckedThrowingContinuation { continuation in
+            let backgroundContext = ModelContext(actor.modelContainer)
+            
+            Task {
+                do {
+                    let result = try task(backgroundContext)
+                    continuation.resume(returning: result)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
+    /// 手动触发数据库维护
+    /// - Returns: 维护任务的执行结果
+    /// - Throws: 维护操作时可能抛出的错误
+    func triggerMaintenance() async throws -> DBMaintenanceResult {
+        return try await maintenanceManager.performMaintenance()
     }
 
     // MARK: - Query Operations
@@ -341,7 +403,6 @@ private actor EventQueryActor: ModelActor, SuperLog {
         status: FirewallEvent.Status?,
         direction: NETrafficDirection?
     ) throws -> EventPageResult {
-        os_log("\(self.t) load appId: \(appId)")
         // 组合查询谓词
         var predicates: [Predicate<FirewallEventModel>] = [
             #Predicate<FirewallEventModel> { item in item.sourceAppIdentifier == appId },
@@ -384,7 +445,6 @@ private actor EventQueryActor: ModelActor, SuperLog {
 
     /// 创建新的FirewallEvent记录
     func create(_ event: FirewallEvent) throws {
-        os_log("\(self.t) create event: \(event.id)")
         let eventModel = FirewallEventModel.from(event)
         modelContext.insert(eventModel)
         try modelContext.save()
@@ -662,8 +722,6 @@ private actor EventQueryActor: ModelActor, SuperLog {
     
     /// 获取所有唯一的应用ID列表
     func getAllAppIds() throws -> [String] {
-        os_log("\(self.t) getAllAppIds")
-        
         // 创建查询描述符，只获取 sourceAppIdentifier 字段
         let descriptor = FetchDescriptor<FirewallEventModel>(
             sortBy: [SortDescriptor(\.sourceAppIdentifier, order: .forward)]
@@ -691,6 +749,106 @@ struct EventPageResult: Sendable {
 extension Notification.Name {
     static let firewallEventCreated = Notification.Name("firewallEventCreated")
     static let firewallEventDeleted = Notification.Name("firewallEventDeleted")
+}
+
+// MARK: - Database Maintenance Manager
+
+/// 数据库维护管理器
+/// 负责处理定期清理、健康检查等维护任务
+private final class DatabaseMaintenanceManager: @unchecked Sendable, SuperLog {
+    nonisolated static let emoji = "👷"
+    
+    // MARK: - Properties
+    
+    /// 数据库维护定时器间隔（秒）
+    private let maintenanceInterval: TimeInterval = 24 * 60 * 60 // 24小时
+    
+    /// 定期清理定时器
+    private var cleanupTimer: Timer?
+    
+    /// 弱引用到 EventRepo，避免循环引用
+    private weak var repo: EventRepo?
+    
+    // MARK: - Init
+    
+    init() {
+        // 延迟设置 repo 引用
+    }
+    
+    /// 设置 EventRepo 引用
+    func setRepo(_ repo: EventRepo) {
+        self.repo = repo
+    }
+    
+    deinit {
+        stopPeriodicCleanup()
+    }
+    
+    // MARK: - Public Methods
+    
+    /// 启动定期清理任务
+    func startPeriodicCleanup() {
+        cleanupTimer = Timer.scheduledTimer(withTimeInterval: self.maintenanceInterval, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            
+            Task { @MainActor in
+                do {
+                    let result = try await self.performMaintenance()
+                    os_log("🧹 定期清理任务完成: 删除 \(result.deletedFirewallEvents) 条记录")
+                } catch {
+                    os_log("⚠️ 定期清理任务失败: \(error.localizedDescription)")
+                }
+            }
+        }
+        
+        os_log("\(self.t)🚀 已启动定期数据库清理任务，每\(Int(self.maintenanceInterval / 3600))小时执行一次")
+    }
+    
+    /// 停止定期清理任务
+    func stopPeriodicCleanup() {
+        cleanupTimer?.invalidate()
+        cleanupTimer = nil
+        os_log("⏹️ 已停止定期数据库维护任务")
+    }
+    
+    /// 执行数据库维护任务
+    /// - Returns: 维护任务的执行结果
+    /// - Throws: 维护操作时可能抛出的错误
+    func performMaintenance() async throws -> DBMaintenanceResult {
+        guard let repo = repo else {
+            throw NSError(domain: "DatabaseMaintenanceManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "EventRepo reference is nil"])
+        }
+        
+        os_log("👷 开始执行数据库维护任务")
+        
+        let startTime = Date()
+        var result = DBMaintenanceResult()
+        
+        do {
+            // 1. 清理过期的防火墙事件
+            result.deletedFirewallEvents = try await repo.cleanupOldEvents(olderThanDays: 30)
+            os_log("🧹 已清理过期的防火墙事件，共删除 \(result.deletedFirewallEvents) 条记录")
+            
+            // 2. 检查数据库健康状态
+            result.isDatabaseHealthy = await repo.checkDatabaseHealth()
+            os_log("🧐 已 \(result.isDatabaseHealthy ? "通过" : "未通过") 数据库健康检查")
+
+            result.executionTime = Date().timeIntervalSince(startTime)
+            result.isSuccessful = true
+            
+            os_log("✅ 数据库维护任务完成，删除了 \(result.deletedFirewallEvents) 条过期记录，耗时 \(String(format: "%.2f", result.executionTime)) 秒")
+            
+        } catch {
+            result.error = error
+            result.isSuccessful = false
+            result.executionTime = Date().timeIntervalSince(startTime)
+            
+            os_log("❌ 数据库维护任务失败: \(error.localizedDescription)")
+            throw error
+        }
+        
+        return result
+    }
 }
 
 // MARK: - Preview

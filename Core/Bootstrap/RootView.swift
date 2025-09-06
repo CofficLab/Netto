@@ -58,10 +58,10 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
 extension RootView {
     /// 异步初始化所有服务
     private func initializeServices() async {
-        os_log("\(self.t)开始初始化服务...")
+        os_log("\(self.i)开始初始化服务...")
 
         // Repos
-        let eventRepo = EventRepo()
+        let eventRepo = EventRepo.shared
         let appSettingRepo = AppSettingRepo()
 
         // Services
@@ -79,7 +79,7 @@ extension RootView {
             self.initializationError = nil
         }
 
-        os_log("\(self.t)服务初始化完成")
+        os_log("\(self.t)✅ 服务初始化完成")
     }
 }
 

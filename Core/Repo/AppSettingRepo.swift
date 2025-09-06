@@ -53,11 +53,13 @@ final class AppSettingRepo: ObservableObject, SuperLog, SuperEvent {
     }
 
     /// 根据ID查找AppSetting记录
-    /// - Parameter id: 应用程序ID
+    /// - Parameter id: 应用程序ID verbose: 是否打印详细信息
     /// - Returns: 找到的AppSettingDTO实例，如果未找到则返回nil
     /// - Throws: 查询数据时可能抛出的错误
-    func find(_ id: String) async throws -> AppSettingDTO? {
-        os_log("\(self.t) find appId: \(id)")
+    func find(_ id: String, verbose: Bool = false) async throws -> AppSettingDTO? {
+        if verbose {
+            os_log("\(self.t) find appId: \(id)")
+        }
         return try await actor.findDTO(id)
     }
 
@@ -86,7 +88,7 @@ final class AppSettingRepo: ObservableObject, SuperLog, SuperEvent {
         os_log("\(self.t) fetchAll")
         return try await actor.fetchAllDTO()
     }
-    
+
     /// 获取所有被拒绝访问的应用ID列表
     /// - Returns: 被拒绝的应用ID数组
     /// - Throws: 查询数据时可能抛出的错误
@@ -102,7 +104,6 @@ final class AppSettingRepo: ObservableObject, SuperLog, SuperEvent {
         os_log("\(self.t) fetchDeniedApps")
         return try await actor.fetchDeniedAppsDTO()
     }
-
 
     // MARK: - Permission Management
 
@@ -132,13 +133,11 @@ final class AppSettingRepo: ObservableObject, SuperLog, SuperEvent {
             let predicate = #Predicate<AppSetting> { item in
                 item.appId == id
             }
-            
+
             let items = try context.fetch(FetchDescriptor(predicate: predicate))
             if let setting = items.first {
-                os_log("\(self.t) shouldAllowSync for \(id) - found setting: \(setting.allowed)")
                 return setting.allowed
             } else {
-                os_log("\(self.t) shouldAllowSync for \(id) - no setting found, defaulting to true")
                 return true
             }
         } catch {
@@ -221,7 +220,6 @@ extension AppSettingRepo {
             }
         }
     }
-
 }
 
 // MARK: - Event Emission
@@ -264,14 +262,13 @@ private actor AppSettingQueryActor: ModelActor, SuperLog {
         try modelContext.save()
     }
 
-
     /// 更新AppSetting记录的允许状态
     func updateAllowedStatus(_ id: String, allowed: Bool) throws {
         os_log("\(self.t) updateAllowedStatus appId: \(id), allowed: \(allowed)")
         let predicate = #Predicate<AppSetting> { item in
             item.appId == id
         }
-        
+
         let items = try modelContext.fetch(FetchDescriptor(predicate: predicate))
         if let setting = items.first {
             setting.allowed = allowed
@@ -288,7 +285,7 @@ private actor AppSettingQueryActor: ModelActor, SuperLog {
         let predicate = #Predicate<AppSetting> { item in
             item.appId == id
         }
-        
+
         let items = try modelContext.fetch(FetchDescriptor(predicate: predicate))
         if let setting = items.first {
             modelContext.delete(setting)
@@ -296,12 +293,13 @@ private actor AppSettingQueryActor: ModelActor, SuperLog {
         }
     }
 
-
     // MARK: - DTO Operations
 
     /// 根据ID查找AppSetting记录（返回DTO）
-    func findDTO(_ id: String) throws -> AppSettingDTO? {
-        os_log("\(self.t) findDTO appId: \(id)")
+    func findDTO(_ id: String, verbose: Bool = false) throws -> AppSettingDTO? {
+        if verbose {
+            os_log("\(self.t) findDTO appId: \(id)")
+        }
         let predicate = #Predicate<AppSetting> { item in
             item.appId == id
         }
