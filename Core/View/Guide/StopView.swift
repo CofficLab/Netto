@@ -50,15 +50,13 @@ struct StopView: View {
 }
 
 #Preview("APP") {
-    RootView {
-        ContentView()
-    }
-    .frame(height: 800)
+    ContentView()
+        .inRootView()
+        .frame(height: 600)
 }
 
 #Preview {
-    RootView {
-        StopView()
-    }
-    .frame(height: 800)
+    StopView()
+        .inRootView()
+        .frame(height: 400)
 }

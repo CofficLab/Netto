@@ -1,13 +1,13 @@
-import SwiftUI
 import MagicCore
 import OSLog
+import SwiftUI
 
 struct BtnStart: View, SuperLog {
     @EnvironmentObject private var m: MagicMessageProvider
     @EnvironmentObject private var firewall: FirewallService
-    
+
     private var asToolbarItem: Bool = false
-    
+
     init(asToolbarItem: Bool = false) {
         self.asToolbarItem = asToolbarItem
     }
@@ -35,13 +35,12 @@ struct BtnStart: View, SuperLog {
             .frame(height: 50)
         }
     }
-    
-    private func action() -> Void {
+
+    private func action() {
         Task {
             do {
                 try await firewall.startFilter(reason: self.className)
-            } catch (let error) {
-                os_log("\(self.t)开启过滤器失败 -> \(error.localizedDescription)")
+            } catch let error {
                 m.error(error)
             }
         }
@@ -49,14 +48,12 @@ struct BtnStart: View, SuperLog {
 }
 
 #Preview("APP") {
-    RootView {
-        ContentView()
-    }
-    .frame(height: 500)
+    ContentView()
+        .inRootView()
+        .frame(height: 500)
 }
 
 #Preview {
-    RootView {
-        BtnStart()
-    }
+    BtnStart()
+        .inRootView()
 }

@@ -15,7 +15,13 @@ struct Toolbar: View, SuperLog {
                     Button("Status Unknown") {}
                 case .running:
                     BtnStop(asToolbarItem: true).labelStyle(.iconOnly)
-                case .notInstalled, .disabled, .extensionNotReady, .needApproval, .waitingForApproval, .error:
+                case .notInstalled,
+                     .disabled,
+                     .extensionNotReady,
+                     .needApproval,
+                     .notInApplicationsFolder,
+                     .waitingForApproval,
+                     .error:
                     EmptyView()
                 }
             }
@@ -25,8 +31,7 @@ struct Toolbar: View, SuperLog {
 }
 
 #Preview {
-    RootView {
-        ContentView()
-    }
-    .frame(height: 500)
+    ContentView()
+        .inRootView()
+        .frame(height: 500)
 }

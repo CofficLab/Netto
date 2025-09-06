@@ -27,7 +27,8 @@ struct MyView: View {
 }
 
 #Preview("App - Large") {
-    AppPreview()
+    ContentView()
+        .inRootView()
         .frame(width: 600, height: 1000) // 尺寸可根据需要调整
 }
 ```

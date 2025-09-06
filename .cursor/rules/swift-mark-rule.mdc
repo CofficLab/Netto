@@ -1,6 +1,6 @@
 ---
 globs: *.swift
-description: 统一 Swift/SwiftUI 视图文件的 MARK 分组规范（Action / Setter / Event Handler / Preview）
+description: 视图文件的 MARK 分组规范
 ---
 
 # Swift 文件 MARK 分组规范（基于 `AudioList.swift`）

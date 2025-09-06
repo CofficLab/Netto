@@ -24,6 +24,8 @@ struct GuideView: View {
                     ApprovalView()
                 case .extensionNotReady:
                     ExtensionNotReady()
+                case .notInApplicationsFolder:
+                    NotInApplicationsFolderView()
                 case .waitingForApproval:
                     Text("Click \"Allow\" to install extension")
                         .font(.title)
