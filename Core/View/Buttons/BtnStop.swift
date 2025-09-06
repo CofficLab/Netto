@@ -37,7 +37,6 @@ struct BtnStop: View, SuperLog {
     }
     
     private func action() -> Void {
-        let service = self.firewall
         Task {
             do {
                 try await firewall.stopFilter(reason: self.className)
