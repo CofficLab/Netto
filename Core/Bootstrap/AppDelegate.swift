@@ -14,7 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SuperEvent, SuperLog, SuperT
     var gate: FirewallGate? = nil
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        os_log("\(Self.t)应用启动完成")
+        os_log("\(self.t)应用启动完成")
         // 发送应用启动完成通知
         NotificationCenter.default.post(name: .appDidFinishLaunching, object: nil)
         
@@ -27,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SuperEvent, SuperLog, SuperT
     }
     
     func applicationWillTerminate(_ notification: Notification) {
-        os_log("\(Self.t)应用即将退出")
+        os_log("\(self.t)应用即将退出")
     }
 }
 
