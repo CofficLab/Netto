@@ -2,7 +2,7 @@ import Foundation
 import NetworkExtension
 import MagicCore
 
-struct FirewallEvent: Hashable, Identifiable {
+struct FirewallEvent: Hashable, Identifiable, Sendable {
     enum Status {
         case allowed
         case rejected

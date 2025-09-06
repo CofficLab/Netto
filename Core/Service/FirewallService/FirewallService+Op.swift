@@ -37,9 +37,6 @@ extension FirewallService {
         let applicationsPath = "/Applications"
         let isInApplications = appPath.hasPrefix(applicationsPath)
         
-        os_log("\(self.t)APP路径: \(appPath)")
-        os_log("\(self.t)是否在Applications目录: \(isInApplications)")
-        
         return isInApplications
     }
 
@@ -73,8 +70,6 @@ extension FirewallService {
     }
 
     func installFilter() {
-        os_log("\(self.t)\(Location.did(.InstallFilter))")
-
         self.clearError()
         self.emit(.firewallWillInstall)
         self.activateSystemExtension()
@@ -112,7 +107,5 @@ extension FirewallService {
 
         NEFilterManager.shared().isEnabled = false
         try await NEFilterManager.shared().saveToPreferences()
-
-        await self.updateFilterStatus(.stopped)
     }
 }

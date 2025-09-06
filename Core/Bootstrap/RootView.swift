@@ -53,14 +53,14 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
 extension RootView {
     /// 异步初始化所有服务
     private func initializeServices() async {
-        os_log("\(self.i)开始初始化服务...")
+        os_log("\(self.i)初始化服务...")
 
         // Repos
         let eventRepo = EventRepo.shared
         let appSettingRepo = AppSettingRepo()
 
         // Services
-        let firewallService = await FirewallService(repo: appSettingRepo, reason: Self.author)
+        let firewallService = await FirewallService(repo: appSettingRepo)
 
         await MainActor.run {
             self.eventRepo = eventRepo
@@ -85,10 +85,13 @@ extension RootView {
 
         self.app.cleanup()
         self.p.cleanup()
+        self.firewall?.removeObserver()
         
         // 清理状态变量，强制释放引用
         self.eventRepo = nil
         self.settingRepo = nil
+        self.firewall = nil
+        self.initializationError = nil
     }
 }
 

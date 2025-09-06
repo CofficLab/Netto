@@ -100,6 +100,22 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
     func create(_ event: FirewallEvent) async throws {
         try await actor.create(event)
     }
+    
+    /// 从DTO创建新的FirewallEvent记录
+    /// - Parameter dto: FirewallEventDTO实例
+    /// - Throws: 保存数据时可能抛出的错误
+    func createFromDTO(_ dto: FirewallEventDTO) async throws {
+        let event = FirewallEvent(
+            id: dto.id,
+            time: dto.time,
+            address: dto.address,
+            port: dto.port,
+            sourceAppIdentifier: dto.sourceAppIdentifier,
+            status: dto.status,
+            direction: dto.direction
+        )
+        try await create(event)
+    }
 
     /// 删除指定应用的所有事件记录
     /// - Parameter appId: 应用程序ID
@@ -761,7 +777,7 @@ private final class DatabaseMaintenanceManager: @unchecked Sendable, SuperLog {
     // MARK: - Properties
     
     /// 数据库维护定时器间隔（秒）
-    private let maintenanceInterval: TimeInterval = 24 * 60 * 60 // 24小时
+    private let maintenanceInterval: TimeInterval = 1 * 60 * 60
     
     /// 定期清理定时器
     private var cleanupTimer: Timer?
@@ -801,7 +817,7 @@ private final class DatabaseMaintenanceManager: @unchecked Sendable, SuperLog {
             }
         }
         
-        os_log("\(self.t)🚀 已启动定期数据库清理任务，每\(Int(self.maintenanceInterval / 3600))小时执行一次")
+        os_log("\(self.i)已启动定期数据库清理任务，每\(Int(self.maintenanceInterval / 3600))小时执行一次")
     }
     
     /// 停止定期清理任务

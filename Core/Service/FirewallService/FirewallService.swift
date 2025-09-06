@@ -15,8 +15,8 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
     var observer: Any?
     @Published var status: FilterStatus = .indeterminate
 
-    init(repo: AppSettingRepo, reason: String) async {
-        os_log("\(Self.onInit)(\(reason))")
+    init(repo: AppSettingRepo) async {
+        os_log("\(Self.onInit)")
 
         super.init()
 
@@ -47,7 +47,7 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
 
         self.status = status
 
-        os_log("\(self.t)🍋 更新状态 -> \(status.description) 原状态 -> \(oldValue.description)")
+        os_log("\(self.t)🍋 更新状态 \(oldValue.description) -> \(status.description)")
 
         // 发送状态变化事件
         self.emit(.firewallStatusChanged, object: status)
@@ -84,8 +84,6 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
 
     /// 过滤器是否已经启动了
     @MainActor private func ifFilterReady() -> Bool {
-        os_log("\(self.t)\(Location.did(.IfReady))")
-
         if NEFilterManager.shared().isEnabled {
             self.updateFilterStatus(.running)
 
@@ -107,8 +105,6 @@ extension FirewallService {
     }
 
     private func enableFilterConfiguration(reason: String) async {
-        os_log("\(self.t)🦶 \(Location.did(.EnableFilterConfiguration))")
-
         self.emit(.firewallConfigurationChanged)
 
         guard !NEFilterManager.shared().isEnabled else {
@@ -118,8 +114,15 @@ extension FirewallService {
 
         do {
             try await loadFilterConfiguration(reason: reason)
-
             os_log("\(self.t)🎉 加载过滤器配置成功")
+        } catch {
+            os_log(.error, "\(self.t)加载过滤器配置失败 -> \(error.localizedDescription)")
+            await self.updateFilterStatus(.stopped)
+            return
+        }
+        
+        do {
+            os_log("\(self.t)🚀 请求用户授权")
 
             if NEFilterManager.shared().providerConfiguration == nil {
                 let providerConfiguration = NEFilterProviderConfiguration()
@@ -136,22 +139,12 @@ extension FirewallService {
 
             // 将过滤器加载到系统设置中
             os_log("\(self.t)📺 将要弹出授权对话框来加载到系统设置中")
-            os_log("\(self.t)🦶 \(Location.did(.SaveToPreferences))")
-            NEFilterManager.shared().saveToPreferences { saveError in
-                if let error = saveError {
-                    os_log(.error, "\(self.t)授权对话框报错 -> \(error.localizedDescription)")
-                    Task { @MainActor in
-                        self.updateFilterStatus(.disabled)
-                    }
-                    return
-                } else {
-                    os_log("\(self.t)🦶 \(Location.did(.UserApproved))")
-                    self.emit(.firewallUserApproved)
-                }
-            }
+            try await NEFilterManager.shared().saveToPreferences()
+            os_log("\(self.t)🎉 用户授权成功")
+            self.emit(.firewallUserApproved)
         } catch {
-            os_log("\(self.t)APP: 加载过滤器配置失败")
-            await self.updateFilterStatus(.stopped)
+            os_log(.error, "\(self.t)❌ 请求用户授权失败 -> \(error.localizedDescription)")
+            await self.updateFilterStatus(.needApproval)
         }
     }
 }
@@ -159,13 +152,13 @@ extension FirewallService {
 // MARK: OSSystemExtensionActivationRequestDelegate
 
 extension FirewallService: OSSystemExtensionRequestDelegate {
-    nonisolated func request(
+    func request(
         _ request: OSSystemExtensionRequest,
         didFinishWithResult result: OSSystemExtensionRequest.Result
     ) {
         switch result {
         case .completed:
-            os_log("\(self.t)🍋 OSSystemExtensionRequestDelegate -> completed")
+            os_log("\(self.t)✅ 系统扩展已激活")
             self.emit(.firewallDidInstall)
         case .willCompleteAfterReboot:
             os_log("\(self.t)🍋 willCompleteAfterReboot")
@@ -173,7 +166,9 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
             os_log("\(self.t)\(result.rawValue)")
         }
 
-//            self.enableFilterConfiguration(reason: "didFinishWithResult")
+        Task {
+            await self.enableFilterConfiguration(reason: "已请求系统扩展")
+        }
     }
 
     nonisolated func request(_ request: OSSystemExtensionRequest, didFailWithError error: Error) {
@@ -188,8 +183,7 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
     }
 
     nonisolated func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
-        os_log("\(self.t)🦶 \(Location.did(.RequestNeedsUserApproval))")
-
+        os_log("\(self.t)🙆 需要用户同意")
         Task { @MainActor in
             self.updateFilterStatus(.needApproval)
         }
