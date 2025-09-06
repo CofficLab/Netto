@@ -29,11 +29,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
             if isLoading {
                 RootLoadingView()
             } else if let error = initializationError {
-                RootErrorView(error: error) {
-                    Task {
-                        await initializeServices()
-                    }
-                }
+                error.makeView()
             } else if let service = service, let eventRepo = eventRepo, let settingRepo = settingRepo {
                 content
                     .withMagicToast()
@@ -120,7 +116,7 @@ extension View {
     }
 }
 
-// MARK: - Loading & Error Views
+// MARK: - Loading View
 
 struct RootLoadingView: View {
     var body: some View {
@@ -130,35 +126,6 @@ struct RootLoadingView: View {
             Text("正在初始化服务...")
                 .font(.headline)
                 .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(NSColor.controlBackgroundColor))
-    }
-}
-
-struct RootErrorView: View {
-    let error: Error
-    let retryAction: () -> Void
-
-    var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 50))
-                .foregroundColor(.red)
-
-            Text("初始化失败")
-                .font(.headline)
-
-            Text(error.localizedDescription)
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-
-            Button("重试") {
-                retryAction()
-            }
-            .buttonStyle(.borderedProminent)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(NSColor.controlBackgroundColor))

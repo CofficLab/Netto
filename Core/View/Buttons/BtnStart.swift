@@ -37,14 +37,15 @@ struct BtnStart: View, SuperLog {
     }
     
     private func action() -> Void {
-//        Task {
-//            do {
-//                try await service.startFilter(reason: self.className)
-//            } catch (let error) {
-//                os_log("\(self.t)开启过滤器失败 -> \(error.localizedDescription)")
-//                m.error(error)
-//            }
-//        }
+        let service = self.service
+        Task {
+            do {
+                try await service.startFilter(reason: self.className)
+            } catch (let error) {
+                os_log("\(self.t)开启过滤器失败 -> \(error.localizedDescription)")
+                m.error(error)
+            }
+        }
     }
 }
 

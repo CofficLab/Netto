@@ -97,7 +97,6 @@ extension FirewallService {
     }
 
     func removeObserver() {
-        os_log("\(self.t)👀 移除监听")
         guard let changeObserver = observer else {
             return
         }

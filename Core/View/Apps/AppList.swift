@@ -27,7 +27,7 @@ struct AppList: View, SuperLog {
                 }
             }
 
-            if serviceProvider.getFirewallServiceStatus().isNotRunning() || filteredApps.isEmpty {
+            if serviceProvider.firewallStatus.isNotRunning() || filteredApps.isEmpty {
                 GuideView()
             }
         }

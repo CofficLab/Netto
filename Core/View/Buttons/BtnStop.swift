@@ -37,13 +37,14 @@ struct BtnStop: View, SuperLog {
     }
     
     private func action() -> Void {
-//        Task {
-//            do {
-//                try await service.stopFilter(reason: self.className)
-//            } catch {
-//                self.m.error(error)
-//            }
-//        }
+        let service = self.service
+        Task {
+            do {
+                try await service.stopFilter(reason: self.className)
+            } catch {
+                self.m.error(error)
+            }
+        }
     }
 }
 
