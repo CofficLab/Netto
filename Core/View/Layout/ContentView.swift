@@ -3,7 +3,6 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var ui: UIProvider
-    @EnvironmentObject private var service: ServiceProvider
 
     var body: some View {
         VStack(spacing: 0) {

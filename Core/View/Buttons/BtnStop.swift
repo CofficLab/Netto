@@ -2,7 +2,6 @@ import MagicCore
 import SwiftUI
 
 struct BtnStop: View, SuperLog {
-    @EnvironmentObject private var service: ServiceProvider
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var app: UIProvider
     @EnvironmentObject private var firewall: FirewallService
@@ -38,7 +37,7 @@ struct BtnStop: View, SuperLog {
     }
     
     private func action() -> Void {
-        let service = self.service
+        let service = self.firewall
         Task {
             do {
                 try await firewall.stopFilter(reason: self.className)

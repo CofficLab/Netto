@@ -3,7 +3,6 @@ import MagicCore
 import OSLog
 
 struct BtnStart: View, SuperLog {
-    @EnvironmentObject private var service: ServiceProvider
     @EnvironmentObject private var m: MagicMessageProvider
     @EnvironmentObject private var firewall: FirewallService
     
@@ -38,7 +37,7 @@ struct BtnStart: View, SuperLog {
     }
     
     private func action() -> Void {
-        let service = self.service
+        let service = self.firewall
         Task {
             do {
                 try await firewall.startFilter(reason: self.className)

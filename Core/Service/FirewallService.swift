@@ -13,13 +13,10 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
     private var extensionBundle = ExtensionConfig.extensionBundle
     private var error: Error?
     private var observer: Any?
-    private var repo: AppSettingRepo
     @Published var status: FilterStatus = .indeterminate
 
     init(repo: AppSettingRepo, reason: String) async {
         os_log("\(Self.onInit)(\(reason))")
-
-        self.repo = repo
 
         super.init()
 

@@ -4,7 +4,6 @@ import SwiftUI
 
 struct AppList: View, SuperLog {
     @EnvironmentObject private var ui: UIProvider
-    @EnvironmentObject private var serviceProvider: ServiceProvider
     @EnvironmentObject private var repo: AppSettingRepo
     @EnvironmentObject private var eventRepo: EventRepo
     @EnvironmentObject private var firewall: FirewallService

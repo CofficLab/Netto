@@ -11,7 +11,6 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     // 核心服务 - 改为实例对象
     @StateObject private var app = UIProvider()
     @StateObject private var p = PluginProvider()
-    @State private var service: ServiceProvider?
     @State private var eventRepo: EventRepo?
     @State private var settingRepo: AppSettingRepo?
     @State private var firewall: FirewallService?
@@ -30,7 +29,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
                 RootLoadingView()
             } else if let error = initializationError {
                 error.makeView()
-            } else if let service = service, let eventRepo = eventRepo, let settingRepo = settingRepo, let firewall = self.firewall {
+            } else if let eventRepo = eventRepo, let settingRepo = settingRepo, let firewall = self.firewall {
                 content
                     .withMagicToast()
                     .environmentObject(app)
@@ -38,7 +37,6 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
                     .environmentObject(p)
                     .environmentObject(eventRepo)
                     .environmentObject(settingRepo)
-                    .environmentObject(service)
                     .environmentObject(firewall)
                     .onAppear(perform: onAppear)
             }
@@ -63,13 +61,8 @@ extension RootView {
 
         // Services
         let firewallService = await FirewallService(repo: appSettingRepo, reason: Self.author)
-        let versionService = VersionService()
-
-        // Providers
-        let serviceProvider = ServiceProvider(versionService: versionService)
 
         await MainActor.run {
-            self.service = serviceProvider
             self.eventRepo = eventRepo
             self.settingRepo = appSettingRepo
             self.isLoading = false
@@ -94,7 +87,6 @@ extension RootView {
         self.p.cleanup()
         
         // 清理状态变量，强制释放引用
-        self.service = nil
         self.eventRepo = nil
         self.settingRepo = nil
     }

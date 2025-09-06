@@ -6,7 +6,7 @@ import OSLog
  * 版本服务，处理应用版本相关的逻辑
  * 包括版本比较、版本更新检查等功能
  */
-class VersionService: SuperLog {
+class VersionService: SuperLog, ObservableObject {
     nonisolated static let emoji = "🏷️"
     
     // MARK: - Properties
