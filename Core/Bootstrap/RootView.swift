@@ -11,7 +11,6 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     private var p = PluginProvider.shared
 
     // 核心服务
-    @State private var data: DataProvider?
     @State private var service: ServiceProvider?
     @State private var eventRepo: EventRepo?
     @State private var settingRepo: AppSettingRepo?
@@ -35,12 +34,11 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
                         await initializeServices()
                     }
                 }
-            } else if let data = data, let service = service, let eventRepo = eventRepo, let settingRepo = settingRepo {
+            } else if let service = service, let eventRepo = eventRepo, let settingRepo = settingRepo {
                 content
                     .withMagicToast()
                     .modelContainer(DBManager.container())
                     .environmentObject(app)
-                    .environmentObject(data)
                     .environmentObject(m)
                     .environmentObject(p)
                     .environmentObject(eventRepo)
@@ -61,8 +59,6 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
 
 extension RootView {
     private func addDeniedApps() {
-        guard let data = self.data else { return }
-        guard let appSettingRepo = self.settingRepo else { return }
     }
 
     /// 异步初始化所有服务
@@ -74,17 +70,13 @@ extension RootView {
         let appSettingRepo = AppSettingRepo()
 
         // Services
-        let appPermissionService = PermissionService(repo: appSettingRepo)
-        let firewallEventService = EventService(repo: eventRepo)
         let firewallService = await FirewallService(repo: appSettingRepo, reason: Self.author)
         let versionService = VersionService()
 
         // Providers
-        let dataProvider = DataProvider(appPermissionService: appPermissionService, firewallEventService: firewallEventService, eventRepo: eventRepo, settingRepo: appSettingRepo)
-        let serviceProvider = ServiceProvider(firewallService: firewallService, firewallEventService: firewallEventService, versionService: versionService)
+        let serviceProvider = ServiceProvider(firewallService: firewallService, versionService: versionService)
 
         await MainActor.run {
-            self.data = dataProvider
             self.service = serviceProvider
             self.eventRepo = eventRepo
             self.settingRepo = appSettingRepo
@@ -100,14 +92,11 @@ extension RootView {
 
 extension RootView {
     func onAppear() {
-        guard let data = data, let service = service else { return }
-        data.status = service.getFirewallServiceStatus()
     }
 
     func onFilterStatusChanged(_ n: Notification) {
         if let status = n.object as? FilterStatus {
             os_log("\(self.t)状态变更为 -> \(status.description)")
-            self.data?.status = status
         }
     }
 }

@@ -4,7 +4,7 @@ import SwiftUI
 
 struct AppList: View, SuperLog {
     @EnvironmentObject private var ui: UIProvider
-    @EnvironmentObject private var data: DataProvider
+    @EnvironmentObject private var serviceProvider: ServiceProvider
     @EnvironmentObject private var repo: AppSettingRepo
     @EnvironmentObject private var eventRepo: EventRepo
     
@@ -18,16 +18,16 @@ struct AppList: View, SuperLog {
         ZStack {
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(Array((filteredApps.isNotEmpty ? filteredApps : data.samples).enumerated()), id: \.element.id) { index, app in
+                    ForEach(Array((filteredApps.isNotEmpty ? filteredApps : SmartApp.samples).enumerated()), id: \.element.id) { index, app in
                         AppLine(app: app)
-                        if index < (filteredApps.isNotEmpty ? filteredApps : data.samples).count - 1 {
+                        if index < (filteredApps.isNotEmpty ? filteredApps : SmartApp.samples).count - 1 {
                             Divider()
                         }
                     }
                 }
             }
 
-            if data.status.isNotRunning() || filteredApps.isEmpty {
+            if serviceProvider.getFirewallServiceStatus().isNotRunning() || filteredApps.isEmpty {
                 GuideView()
             }
         }

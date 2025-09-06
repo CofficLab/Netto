@@ -8,12 +8,10 @@ class ServiceProvider: ObservableObject, SuperLog {
     nonisolated static let emoji = "💾"
     
     let firewallService: FirewallService
-    let firewallEventService: EventService
     let versionService: VersionService
     
-    init(firewallService: FirewallService, firewallEventService: EventService, versionService: VersionService) {
+    init(firewallService: FirewallService, versionService: VersionService) {
         self.firewallService = firewallService
-        self.firewallEventService = firewallEventService
         self.versionService = versionService
     }
     

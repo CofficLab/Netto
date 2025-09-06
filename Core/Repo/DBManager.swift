@@ -12,32 +12,6 @@ import SwiftUI
  *
  */
 
-
-func container() -> ModelContainer  {
-    let schema = Schema([
-        AppSetting.self,
-        FirewallEventModel.self,
-    ])
-
-    let modelConfiguration = ModelConfiguration(
-        schema: schema,
-        url: AppConfig.databaseURL,
-        allowsSave: true,
-        cloudKitDatabase: .none
-    )
-
-    do {
-        let container = try ModelContainer(
-            for: schema,
-            configurations: [modelConfiguration]
-        )
-
-        return container
-    } catch {
-        fatalError("无法创建 primaryContainer: \n\(error)")
-    }
-}
-
 @MainActor
 class DBManager: SuperLog {
     nonisolated static let emoji = "🏭"

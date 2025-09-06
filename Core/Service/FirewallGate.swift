@@ -54,8 +54,6 @@ final class FirewallGate: NSObject, SuperLog, SuperEvent, SuperThread, @unchecke
         if oldValue.isNotRunning() && status.isRunning() {
             registerWithProvider(reason: "not running -> running")
         }
-
-        self.emit(.FilterStatusChanged, object: status)
     }
 
     private func setObserver() {
@@ -191,6 +189,13 @@ extension FirewallGate: AppCommunication {
         let verbose = false
 
         let shouldAllow = self.repo.shouldAllowSync(id)
+        var wrapper = FlowWrapper(
+            id: id,
+            hostname: hostname,
+            port: port,
+            allowed: false,
+            direction: direction
+        )
 
         if shouldAllow {
             if verbose {
@@ -207,6 +212,7 @@ extension FirewallGate: AppCommunication {
                     direction: direction
                 ))
             }
+            wrapper.allowed = true
         } else {
             if verbose {
                 os_log("\(self.t)🈲 Channel.promptUser 👤 with App -> \(id) -> Deny")
@@ -222,15 +228,8 @@ extension FirewallGate: AppCommunication {
                 ))
             }
             responseHandler(false)
+            wrapper.allowed = false
         }
-        
-        let wrapper = FlowWrapper(
-            id: id,
-            hostname: hostname,
-            port: port,
-            allowed: false,
-            direction: direction
-        )
         
         let event = FirewallEvent(
             address: wrapper.getAddress(),

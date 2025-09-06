@@ -5,7 +5,7 @@ import OSLog
 import SwiftUI
 import SystemExtensions
 
-final class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread, @unchecked Sendable {
+final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread, @unchecked Sendable {
     nonisolated static let emoji = "🛡️"
 
     private var ipc = IPCConnection.shared
@@ -50,9 +50,7 @@ final class FirewallService: NSObject, SuperLog, SuperEvent, SuperThread, @unche
         self.status = status
 
         os_log("\(self.t)🍋 更新状态 -> \(status.description) 原状态 -> \(oldValue.description)")
-        if oldValue.isNotRunning() && status.isRunning() {
-            registerWithProvider(reason: "not running -> running")
-        }
+
 
         self.emit(.FilterStatusChanged, object: status)
     }
@@ -147,7 +145,6 @@ extension FirewallService {
 
         guard !NEFilterManager.shared().isEnabled else {
             os_log("\(self.t)👌 过滤器已启用，直接关联")
-            registerWithProvider(reason: reason)
             return
         }
 
@@ -228,34 +225,12 @@ extension FirewallService {
                 } else {
                     os_log("\(self.t)🦶 \(Location.did(.UserApproved))")
                 }
-
-                self.registerWithProvider(reason: "已授权")
             }
         } catch {
             os_log("\(self.t)APP: 加载过滤器配置失败")
             self.updateFilterStatus(.stopped)
         }
 //        }
-    }
-
-    private func registerWithProvider(reason: String) {
-        os_log("\(self.t)🛫 registerWithProvider，让 ChannelProvider 和 Extension 关联起来(\(reason))")
-
-        self.emit(.willRegisterWithProvider)
-
-        ipc.register(withExtension: extensionBundle, delegate: self) { success in
-            if success {
-                os_log("\(self.t)🎉 ChannelProvider 和 Extension 关联成功")
-
-                NotificationCenter.default.post(name: .didRegisterWithProvider, object: nil)
-
-                self.updateFilterStatus(.running)
-            } else {
-                os_log("\(self.t)💔 ChannelProvider 和 Extension 关联失败")
-
-                self.updateFilterStatus(.extensionNotReady)
-            }
-        }
     }
 }
 
@@ -301,70 +276,6 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
         os_log("\(self.t)actionForReplacingExtension")
 
         return .replace
-    }
-}
-
-// MARK: AppCommunication
-
-extension FirewallService: AppCommunication {
-    nonisolated func extensionLog(_ words: String) {
-        let verbose = false
-
-        if verbose {
-            os_log("\(self.t)💬 Extension said -> \(words)")
-        }
-    }
-
-    nonisolated func needApproval() {
-        NotificationCenter.default.post(
-            name: .NeedApproval,
-            object: nil,
-            userInfo: nil
-        )
-    }
-
-    /// 提示用户是否允许网络连接
-    /// - Parameters:
-    ///   - id: 应用标识符
-    ///   - hostname: 主机名
-    ///   - port: 端口号
-    ///   - direction: 网络流量方向
-    ///   - responseHandler: 响应处理回调
-    nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
-        let verbose = false
-
-        let shouldAllow = self.repo.shouldAllowSync(id)
-
-        if shouldAllow {
-            if verbose {
-                os_log("\(self.t)✅ Channel.promptUser 👤 with App -> \(id) -> Allow")
-            }
-            responseHandler(true)
-
-            DispatchQueue.main.sync {
-                NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
-                    id: id,
-                    hostname: hostname,
-                    port: port,
-                    allowed: true,
-                    direction: direction
-                ))
-            }
-        } else {
-            if verbose {
-                os_log("\(self.t)🈲 Channel.promptUser 👤 with App -> \(id) -> Deny")
-            }
-            DispatchQueue.main.sync {
-                NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
-                    id: id,
-                    hostname: hostname,
-                    port: port,
-                    allowed: false,
-                    direction: direction
-                ))
-            }
-            responseHandler(false)
-        }
     }
 }
 

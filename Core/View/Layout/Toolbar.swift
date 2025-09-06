@@ -3,12 +3,12 @@ import SwiftUI
 
 struct Toolbar: View, SuperLog {
     @EnvironmentObject private var app: UIProvider
-    @EnvironmentObject private var data: DataProvider
+    @EnvironmentObject private var s: ServiceProvider
 
     var body: some View {
         HStack {
             ZStack {
-                switch data.status {
+                switch s.getFirewallServiceStatus() {
                 case .stopped:
                     BtnStart(asToolbarItem: true).labelStyle(.iconOnly)
                 case .indeterminate:
