@@ -217,6 +217,14 @@ final class EventRepo: ObservableObject, SuperLog {
         return try await actor.fetchAllPaginated(page: page, pageSize: pageSize)
     }
     
+    /// 获取所有应用ID列表
+    /// - Returns: 所有唯一的应用ID数组
+    /// - Throws: 查询数据时可能抛出的错误
+    func getAllAppIds() async throws -> [String] {
+        os_log("\(self.t) getAllAppIds")
+        return try await actor.getAllAppIds()
+    }
+    
     /// 根据应用ID分页查找FirewallEvent记录
     /// - Parameters:
     ///   - appId: 应用程序ID
@@ -296,6 +304,24 @@ extension EventRepo {
             }
         }
     }
+    
+    /// 后台获取所有应用ID列表，并在主线程回调
+    /// - Parameter completion: 主线程回调，返回应用ID数组
+    func getAllAppIdsAsync(completion: @escaping @MainActor ([String]) -> Void) {
+        let queryActor = self.actor
+        Task.detached(priority: .utility) {
+            let appIds: [String]
+            do {
+                appIds = try await queryActor.getAllAppIds()
+            } catch {
+                appIds = []
+            }
+            
+            await MainActor.run {
+                completion(appIds)
+            }
+        }
+    }
 }
 
 /// 串行执行 SwiftData 查询的 actor（对外隐藏实现细节）
@@ -316,7 +342,7 @@ private actor EventQueryActor: ModelActor, SuperLog {
         direction: NETrafficDirection?
     ) throws -> EventPageResult {
         os_log("\(self.t) load appId: \(appId)")
-        // 组合查询谓词（与 EventRepo 逻辑保持一致）
+        // 组合查询谓词
         var predicates: [Predicate<FirewallEventModel>] = [
             #Predicate<FirewallEventModel> { item in item.sourceAppIdentifier == appId },
         ]
@@ -632,6 +658,25 @@ private actor EventQueryActor: ModelActor, SuperLog {
         
         let models = try modelContext.fetch(descriptor)
         return models.map(FirewallEventDTO.fromModel)
+    }
+    
+    /// 获取所有唯一的应用ID列表
+    func getAllAppIds() throws -> [String] {
+        os_log("\(self.t) getAllAppIds")
+        
+        // 创建查询描述符，只获取 sourceAppIdentifier 字段
+        let descriptor = FetchDescriptor<FirewallEventModel>(
+            sortBy: [SortDescriptor(\.sourceAppIdentifier, order: .forward)]
+        )
+        
+        // 获取所有记录
+        let models = try modelContext.fetch(descriptor)
+        
+        // 提取唯一的应用ID并去重
+        let uniqueAppIds = Set(models.map { $0.sourceAppIdentifier })
+        
+        // 转换为数组并排序
+        return Array(uniqueAppIds).sorted()
     }
 }
 

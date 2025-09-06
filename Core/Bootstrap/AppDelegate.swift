@@ -20,8 +20,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, SuperEvent, SuperLog, SuperT
         
         Task {
             let repo = AppSettingRepo()
+            let eventRepo = EventRepo()
             
-            self.gate = await FirewallGate(repo: repo, reason: self.className)
+            self.gate = await FirewallGate(repo: repo,eventRepo: eventRepo, reason: self.className)
         }
     }
     

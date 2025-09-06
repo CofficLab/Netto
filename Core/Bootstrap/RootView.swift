@@ -63,21 +63,6 @@ extension RootView {
     private func addDeniedApps() {
         guard let data = self.data else { return }
         guard let appSettingRepo = self.settingRepo else { return }
-
-        Task {
-            // 添加被禁止的应用到apps列表中
-            do {
-                let deniedAppIds = try await appSettingRepo.getDeniedApps()
-                for appId in deniedAppIds {
-                    let smartApp = SmartApp.fromId(appId)
-                    if !data.apps.contains(where: { $0.id == smartApp.id }) {
-                        data.apps.append(smartApp)
-                    }
-                }
-            } catch {
-                os_log(.error, "\(self.t)获取被禁止应用列表失败: \(error)")
-            }
-        }
     }
 
     /// 异步初始化所有服务

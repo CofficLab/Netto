@@ -6,6 +6,7 @@ struct AppList: View, SuperLog {
     @EnvironmentObject private var ui: UIProvider
     @EnvironmentObject private var data: DataProvider
     @EnvironmentObject private var repo: AppSettingRepo
+    @EnvironmentObject private var eventRepo: EventRepo
     
     /// 过滤后的应用列表
     @State private var filteredApps: [SmartApp] = []
@@ -45,11 +46,6 @@ struct AppList: View, SuperLog {
                 await loadFilteredApps()
             }
         }
-        .onChange(of: data.apps) { _, _ in
-            Task {
-                await loadFilteredApps()
-            }
-        }
     }
 }
 
@@ -57,14 +53,24 @@ struct AppList: View, SuperLog {
 extension AppList {
     /// 异步加载过滤后的应用列表
     private func loadFilteredApps() async {
-        let baseApps = data.apps.sorted(by: { $0.name < $1.name })
+        // 提取环境对象引用以避免数据竞争
+        let repo = self.repo
+        let eventRepo = self.eventRepo
+        
+        // 使用异步回调方式获取应用ID列表，避免数据竞争
+        let appIds = await withCheckedContinuation { continuation in
+            eventRepo.getAllAppIdsAsync { appIds in
+                continuation.resume(returning: appIds)
+            }
+        }
+        
+        let apps = appIds.map({SmartApp.fromId($0)})
+        
+        let baseApps = apps.sorted(by: { $0.name < $1.name })
             .filter { ui.showSystemApps || !$0.isSystemApp }
             .filter { $0.hasId }
         
         let displayType = self.ui.displayType
-        
-        // 提取 repo 引用以避免数据竞争
-        let repo = self.repo
         
         var filtered: [SmartApp] = []
         

@@ -8,7 +8,6 @@ import SwiftUI
 class DataProvider: ObservableObject, SuperLog {
     nonisolated static let emoji = "💾"
 
-    @Published var apps: [SmartApp] = []
     @Published var samples: [SmartApp] = SmartApp.samples
     @Published var status: FilterStatus = .disabled
 
@@ -32,19 +31,6 @@ class DataProvider: ObservableObject, SuperLog {
 
         setupNotificationListeners()
     }
-
-
-    /// 更新应用列表（确保在主线程执行）
-    /// - Parameters:
-    ///   - app: 要更新或添加的应用
-    private func updateAppsList(app: SmartApp) {
-        // 检查应用是否已在列表中
-        let appExists = apps.firstIndex(where: { $0.id == app.id }) != nil
-
-        if appExists == false {
-            self.apps.append(app)
-        }
-    }
 }
 
 // MARK: - Event
@@ -64,28 +50,7 @@ extension DataProvider {
     /// 处理网络流量事件
     /// - Parameter wrapper: 包装的网络流量数据
     private func handleNetworkFlow(_ wrapper: FlowWrapper, verbose: Bool = false) {
-        let repo = self.eventRepo
-        Task {
-            let event = FirewallEvent(
-                address: wrapper.getAddress(),
-                port: wrapper.getPort(),
-                sourceAppIdentifier: wrapper.id,
-                status: wrapper.allowed ? .allowed : .rejected,
-                direction: wrapper.direction
-            )
-
-            // 将事件存储到数据库
-            do {
-                try await repo.create(event)
-                if verbose {
-                    os_log("\(self.t)💾 事件已存储到数据库: \(event.description)")
-                }
-            } catch {
-                os_log(.error, "\(self.t)❌ 存储事件到数据库失败: \(error)")
-            }
-        }
-
-        self.updateAppsList(app: wrapper.getApp())
+        
     }
 }
 

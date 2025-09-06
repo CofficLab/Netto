@@ -13,12 +13,14 @@ final class FirewallGate: NSObject, SuperLog, SuperEvent, SuperThread, @unchecke
     private var extensionBundle = ExtensionConfig.extensionBundle
     private var observer: Any?
     private var repo: AppSettingRepo
+    private var eventRepo: EventRepo
     var status: FilterStatus = .indeterminate
 
-    init(repo: AppSettingRepo, reason: String) async {
+    init(repo: AppSettingRepo, eventRepo: EventRepo, reason: String) async {
         os_log("\(Self.onInit)(\(reason))")
 
         self.repo = repo
+        self.eventRepo = eventRepo
 
         super.init()
 
@@ -209,6 +211,7 @@ extension FirewallGate: AppCommunication {
             if verbose {
                 os_log("\(self.t)🈲 Channel.promptUser 👤 with App -> \(id) -> Deny")
             }
+            
             DispatchQueue.main.sync {
                 NotificationCenter.default.post(name: .NetWorkFilterFlow, object: FlowWrapper(
                     id: id,
@@ -219,6 +222,34 @@ extension FirewallGate: AppCommunication {
                 ))
             }
             responseHandler(false)
+        }
+        
+        let wrapper = FlowWrapper(
+            id: id,
+            hostname: hostname,
+            port: port,
+            allowed: false,
+            direction: direction
+        )
+        
+        let event = FirewallEvent(
+            address: wrapper.getAddress(),
+            port: wrapper.getPort(),
+            sourceAppIdentifier: wrapper.id,
+            status: wrapper.allowed ? .allowed : .rejected,
+            direction: wrapper.direction
+        )
+        
+        // 将事件存储到数据库
+        Task {
+            do {
+                try await eventRepo.create(event)
+                if verbose {
+                    os_log("\(self.t)💾 事件已存储到数据库: \(event.description)")
+                }
+            } catch {
+                os_log(.error, "\(self.t)❌ 存储事件到数据库失败: \(error)")
+            }
         }
     }
 }
