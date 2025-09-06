@@ -40,7 +40,6 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
                     .environmentObject(settingRepo)
                     .environmentObject(service)
                     .onAppear(perform: onAppear)
-                    .onReceive(self.nc.publisher(for: .FilterStatusChanged), perform: onFilterStatusChanged)
             }
         }
         .task {
@@ -97,12 +96,6 @@ extension RootView {
         self.service = nil
         self.eventRepo = nil
         self.settingRepo = nil
-    }
-
-    func onFilterStatusChanged(_ n: Notification) {
-        if let status = n.object as? FilterStatus {
-            os_log("\(self.t)状态变更为 -> \(status.description)")
-        }
     }
 }
 
