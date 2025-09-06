@@ -66,7 +66,7 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
             os_log("\(self.t)\(enabled ? "👀 监听到 Filter 已打开 " : "👀 监听到 Fitler 已关闭")")
 
             Task {
-                await self.updateFilterStatus(enabled ? .running : .stopped)
+                self.updateFilterStatus(enabled ? .running : .stopped)
             }
         }
     }
