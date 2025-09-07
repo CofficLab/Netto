@@ -2,6 +2,7 @@ import MagicCore
 import OSLog
 import SwiftData
 import SwiftUI
+import MagicAlert
 
 struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     nonisolated static var emoji: String { "🌳" }

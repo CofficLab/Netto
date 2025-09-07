@@ -1,5 +1,5 @@
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 // MARK: - Firewall Service Events
 

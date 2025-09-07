@@ -1,4 +1,5 @@
 import MagicCore
+import MagicAlert
 import SwiftUI
 
 struct BtnStop: View, SuperLog {

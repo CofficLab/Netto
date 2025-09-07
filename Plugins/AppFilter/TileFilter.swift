@@ -1,4 +1,5 @@
 import MagicCore
+import MagicAlert
 import OSLog
 import SwiftUI
 
