@@ -33,6 +33,7 @@ struct BtnStop: View, SuperLog {
             })
             .magicTitle("停止")
             .magicShape(.roundedRectangle)
+            .magicDisabled(firewall.status.isNotRunning() ? "未开启" : nil)
             .frame(width: 150)
             .frame(height: 50)
         }

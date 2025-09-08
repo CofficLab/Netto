@@ -85,8 +85,9 @@ extension FirewallService {
             self.emit(.firewallDidStart)
             return
         }
-
-        self.activateSystemExtension()
+        
+        NEFilterManager.shared().isEnabled = true
+        try await NEFilterManager.shared().saveToPreferences()
     }
 
     func stopFilter(reason: String) async throws {

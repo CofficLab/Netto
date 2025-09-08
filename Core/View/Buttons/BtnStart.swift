@@ -33,6 +33,7 @@ struct BtnStart: View, SuperLog {
             .magicTitle("开启")
             .magicBackgroundColor(.blue)
             .magicShape(.roundedRectangle)
+            .magicDisabled(firewall.status.isRunning() ? "已开启" : nil)
             .frame(width: 150)
             .frame(height: 50)
         }

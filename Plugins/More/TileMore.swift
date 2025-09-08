@@ -26,10 +26,10 @@ struct TileMore: View, SuperLog, SuperThread {
         .clipShape(RoundedRectangle(cornerRadius: 0))
         .popover(isPresented: $isPresented, content: {
             VStack {
-                BtnInstall()
+//                BtnInstall()
                 BtnStop()
                 BtnStart()
-                BtnToggleSysApp()
+//                BtnToggleSysApp() 
                 BtnSetting()
                 BtnGuide()
                 BtnAbout()
