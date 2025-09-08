@@ -4,17 +4,23 @@ import SwiftUI
 struct AppListDemo: View {
     /// 最大显示的应用数量，默认为全部
     let maxCount: Int?
+    
+    /// 尺寸水平，数字越大，内部的文字、图片等越大，默认为1.0
+    let scaleLevel: Double
 
     /// 初始化演示视图
-    /// - Parameter maxCount: 最大显示数量，nil表示显示全部
-    init(maxCount: Int? = nil) {
+    /// - Parameters:
+    ///   - maxCount: 最大显示数量，nil表示显示全部
+    ///   - scaleLevel: 尺寸水平，数字越大，内部的文字、图片等越大，默认为1.0
+    init(maxCount: Int? = nil, scaleLevel: Double = 1.0) {
         self.maxCount = maxCount
+        self.scaleLevel = scaleLevel
     }
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(Array(displayedApps.enumerated()), id: \.element.id) { index, app in
-                SimpleAppLine(app: app)
+                SimpleAppLine(app: app, scaleLevel: scaleLevel)
                 if index < displayedApps.count - 1 {
                     Divider()
                 }
@@ -37,53 +43,54 @@ struct AppListDemo: View {
 /// 简单的应用信息展示组件
 struct SimpleAppLine: View {
     let app: SmartApp
+    let scaleLevel: Double
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 12 * scaleLevel) {
             // 应用图标
             app.getIcon()
-                .frame(width: 40, height: 40)
+                .frame(width: 40 * scaleLevel, height: 40 * scaleLevel)
 
             // 应用信息
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 4 * scaleLevel) {
                 Text(app.name)
-                    .font(.body)
+                    .font(.system(size: 16 * scaleLevel, weight: .regular))
                     .lineLimit(1)
 
                 Text(app.id)
-                    .font(.callout)
-                    .foregroundColor(app.isSystemApp ? .orange.opacity(0.7) : .primary)
+                    .font(.system(size: 14 * scaleLevel, weight: .regular))
+                    .foregroundColor(app.isSystemApp ? .orange.opacity(1) : .primary)
                     .lineLimit(1)
                     .truncationMode(.tail)
             }
 
             Spacer()
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
+        .padding(.vertical, 8 * scaleLevel)
+        .padding(.horizontal, 12 * scaleLevel)
     }
 }
 
 // MARK: - Preview
 
-#Preview("App - Large (All)") {
-    AppListDemo()
-        .frame(width: 600, height: 1000)
-}
-
-#Preview("App - Small (All)") {
-    AppListDemo()
-        .frame(width: 600, height: 600)
-}
-
-#Preview("App - Limited (5)") {
-    AppListDemo(maxCount: 5)
+#Preview("App - Normal Scale") {
+    AppListDemo(maxCount: 5, scaleLevel: 1.0)
         .frame(width: 600, height: 400)
 }
 
-#Preview("App - Limited (3)") {
-    AppListDemo(maxCount: 3)
-        .frame(width: 600, height: 300)
+#Preview("App - Large Scale") {
+    AppListDemo(maxCount: 5, scaleLevel: 1.5)
+        .frame(width: 600, height: 500)
+}
+
+#Preview("App - Small Scale") {
+    AppListDemo(maxCount: 5, scaleLevel: 0.7)
+        .frame(width: 600, height: 350)
+}
+
+#Preview("App - Extra Large Scale") {
+    AppListDemo(maxCount: 3, scaleLevel: 2.0)
+        .frame(width: 600, height: 400)
 }
 
 #Preview("App Store Hero") {

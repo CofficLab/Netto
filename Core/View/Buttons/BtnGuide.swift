@@ -1,5 +1,6 @@
 import SwiftUI
 import MagicCore
+import MagicUI
 
 /**
  * 引导按钮组件

@@ -1,5 +1,6 @@
 import SwiftUI
 import MagicCore
+import MagicUI
 
 struct BtnQuit: View {
     @EnvironmentObject var app: UIProvider

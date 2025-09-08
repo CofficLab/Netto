@@ -38,10 +38,10 @@ struct AppStoreHero: View {
 
                     // 主要功能
                     VStack(alignment: .leading, spacing: 32) {
-                        featureRow("实时监控", "监控所有应用的网络连接", "eye.fill", .blue)
-                        featureRow("智能过滤", "自动识别并阻止可疑连接", "shield.checkered", .green)
-                        featureRow("流量分析", "详细的网络使用统计报告", "chart.bar.fill", .orange)
-                        featureRow("隐私保护", "本地处理，保护用户隐私", "lock.shield.fill", .purple)
+                        MagicFeature(title: "实时监控", description:"监控所有应用的网络连接", iconName: "eye.fill",color: .blue)
+                        MagicFeature(title: "智能过滤", description: "自动识别并阻止可疑连接", iconName: "shield.checkered", color: .green)
+                        MagicFeature(title: "流量分析", description: "详细的网络使用统计报告", iconName: "chart.bar.fill", color: .orange)
+                        MagicFeature(title: "隐私保护", description: "本地处理，保护用户隐私", iconName: "lock.shield.fill", color: .purple)
                     }
 
                     Spacer()
@@ -49,8 +49,9 @@ struct AppStoreHero: View {
                 .frame(width: geo.size.width * 0.3)
 
                 // 右侧：应用界面预览
-                AppListDemo(maxCount: 15)
-                    .inMagicBackgroundGalaxySpiral(0.9)
+                AppListDemo(maxCount: 10, scaleLevel: 2)
+                    .background(.background.opacity(0.5))
+                    .magicRoundedLarge()
                     .inMagicVStackCenter()
                     .inMagicHStackCenter()
                     .frame(height: geo.size.height * 0.5)
@@ -58,28 +59,7 @@ struct AppStoreHero: View {
 
                 Spacer()
             }
-            .inMagicBackgroundForest(0.9)
-        }
-    }
-
-    private func featureRow(_ title: String, _ description: String, _ iconName: String, _ color: Color) -> some View {
-        HStack(spacing: 32) {
-            Image(systemName: iconName)
-                .font(.system(size: 48))
-                .foregroundColor(color)
-                .frame(width: 48, height: 48)
-
-            VStack(alignment: .leading, spacing: 16) {
-                Text(title)
-                    .font(.system(size: 32))
-                    .foregroundColor(.primary)
-
-                Text(description)
-                    .font(.system(size: 30))
-                    .foregroundColor(.secondary)
-            }
-
-            Spacer()
+            .inMagicBackgroundMint(0.9)
         }
     }
 }
@@ -88,5 +68,5 @@ struct AppStoreHero: View {
 
 #Preview("App Store Hero") {
     AppStoreHero()
-        .inMagicContainer(.macBook13, scale: 0.5)
+        .inMagicContainer(.macBook13, scale: 0.3)
 }
