@@ -1,5 +1,12 @@
 import SwiftUI
 
+@objc(MoreRegistrant)
+class MoreRegistrant: NSObject, PluginRegistrant {
+    static func register() {
+        Task { await PluginRegistry.shared.register(id: "More", order: 30) { MorePlugin() } }
+    }
+}
+
 actor MorePlugin: SuperPlugin {
     nonisolated let label: String = "More"
 
@@ -12,3 +19,7 @@ actor MorePlugin: SuperPlugin {
 }
 
 
+#Preview("APP") {
+    ContentView().inRootView()
+        .frame(height: 600)
+}

@@ -8,21 +8,27 @@ import SwiftUI
 @MainActor
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     let emoji = "🧩"
-    private let plugins: [any SuperPlugin] = [
-        SwitcherPlugin(),
-        FilterPlugin(),
-        MorePlugin(),
-    ]
+    @Published private var toolbarButtons: [(id: String, view: AnyView)] = []
+
+    init(autoDiscover: Bool = true) {
+        if autoDiscover {
+            autoRegisterPlugins()
+            Task { [weak self] in
+                guard let self else { return }
+                let plugins = await PluginRegistry.shared.buildAll()
+                let buttons: [(id: String, view: AnyView)] = plugins.flatMap { plugin in
+                    plugin.addToolBarButtons()
+                }
+                self.toolbarButtons = buttons
+            }
+        }
+    }
 
     func getPlugins() -> some View {
-        let buttons: [(id: String, view: AnyView)] = plugins.flatMap { plugin in
-            plugin.addToolBarButtons()
-        }
-
         return HStack(spacing: 0) {
-            ForEach(Array(buttons.enumerated()), id: \.element.id) { index, button in
+            ForEach(Array(self.toolbarButtons.enumerated()), id: \.element.id) { index, button in
                 button.view
-                if index < buttons.count - 1 {
+                if index < self.toolbarButtons.count - 1 {
                     Spacer()
                 }
             }

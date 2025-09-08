@@ -11,4 +11,14 @@ actor FilterPlugin: SuperPlugin {
     }
 }
 
+@objc(FilterRegistrant)
+class FilterRegistrant: NSObject, PluginRegistrant {
+    static func register() {
+        Task { await PluginRegistry.shared.register(id: "Filter", order: 20) { FilterPlugin() } }
+    }
+}
 
+#Preview("APP") {
+    ContentView().inRootView()
+        .frame(height: 600)
+}

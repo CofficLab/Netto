@@ -12,3 +12,14 @@ actor SwitcherPlugin: SuperPlugin {
 }
 
 
+@objc(SwitcherRegistrant)
+class SwitcherRegistrant: NSObject, PluginRegistrant {
+    static func register() {
+        Task { await PluginRegistry.shared.register(id: "Switcher", order: 10) { SwitcherPlugin() } }
+    }
+}
+
+#Preview("APP") {
+    ContentView().inRootView()
+        .frame(height: 600)
+}
