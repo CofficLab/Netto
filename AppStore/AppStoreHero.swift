@@ -1,6 +1,7 @@
 import MagicBackground
 import MagicContainer
 import MagicCore
+import MagicUI
 import SwiftUI
 
 /**
@@ -10,7 +11,7 @@ import SwiftUI
 struct AppStoreHero: View {
     var body: some View {
         GeometryReader { geo in
-            HStack(spacing: 0) {
+            HStack(spacing: 60) {
                 Spacer()
 
                 // 左侧：应用介绍
@@ -27,13 +28,7 @@ struct AppStoreHero: View {
                         VStack(alignment: .leading, spacing: 48) {
                             Text(AppConfig.appName)
                                 .font(.system(size: 120, weight: .bold, design: .rounded))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [.blue, .purple],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
+                                .magicBluePurpleGradient()
 
                             Text("网络监控工具")
                                 .font(.system(size: 50))
@@ -51,52 +46,19 @@ struct AppStoreHero: View {
 
                     Spacer()
                 }
-                .frame(alignment: .leading)
-                .padding(.horizontal, 60)
-                .padding(.vertical, 80)
                 .frame(width: geo.size.width * 0.3)
 
                 // 右侧：应用界面预览
-                VStack(spacing: 0) {
-                    Spacer()
-                    // 状态栏
-                    HStack {
-                        HStack(spacing: 8) {
-                            Circle()
-                                .fill(.green)
-                                .frame(width: 8, height: 8)
-                            Text("监控中")
-                                .font(.headline)
-                                .foregroundColor(.green)
-                        }
-
-                        Spacer()
-
-                        Text("12 个活跃连接")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
-                    .background(Color.green.opacity(0.1))
-
-                    // 连接列表
-                    VStack(spacing: 8) {
-                        connectionRow("Safari", "允许", .green, "https://www.apple.com")
-                        connectionRow("Chrome", "监控中", .blue, "https://www.google.com")
-                        connectionRow("Xcode", "允许", .green, "https://developer.apple.com")
-                        connectionRow("可疑应用", "已阻止", .red, "suspicious-site.com")
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
-
-                    Spacer()
-
-                }.frame(width: geo.size.width * 0.3)
+                AppListDemo(maxCount: 15)
+                    .inMagicBackgroundGalaxySpiral(0.9)
+                    .inMagicVStackCenter()
+                    .inMagicHStackCenter()
+                    .frame(height: geo.size.height * 0.5)
+                    .frame(width: geo.size.width * 0.3)
 
                 Spacer()
             }
-            .inMagicBackgroundForest(0.5)
+            .inMagicBackgroundForest(0.9)
         }
     }
 
@@ -119,47 +81,6 @@ struct AppStoreHero: View {
 
             Spacer()
         }
-    }
-
-    private func connectionRow(_ app: String, _ status: String, _ color: Color, _ url: String) -> some View {
-        HStack(spacing: 12) {
-            // 应用图标
-            Circle()
-                .fill(color.opacity(0.2))
-                .frame(width: 28, height: 28)
-                .overlay(
-                    Text(String(app.prefix(1)))
-                        .font(.headline)
-                        .foregroundColor(color)
-                )
-
-            // 应用信息
-            VStack(alignment: .leading, spacing: 4) {
-                Text(app)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-
-                Text(url)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-            }
-
-            Spacer()
-
-            // 状态
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(color)
-                    .frame(width: 6, height: 6)
-
-                Text(status)
-                    .font(.caption)
-                    .foregroundColor(color)
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
     }
 }
 
