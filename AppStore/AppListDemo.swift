@@ -8,19 +8,27 @@ struct AppListDemo: View {
     /// 尺寸水平，数字越大，内部的文字、图片等越大，默认为1.0
     let scaleLevel: Double
 
+    /// 在指定序号的应用右侧显示“禁止联网”按钮（基于 0 的索引）。nil 表示不显示。
+    let showBlockButtonAt: Int?
+
     /// 初始化演示视图
     /// - Parameters:
     ///   - maxCount: 最大显示数量，nil表示显示全部
     ///   - scaleLevel: 尺寸水平，数字越大，内部的文字、图片等越大，默认为1.0
-    init(maxCount: Int? = nil, scaleLevel: Double = 1.0) {
+    init(maxCount: Int? = nil, scaleLevel: Double = 1.0, showBlockButtonAt: Int? = nil) {
         self.maxCount = maxCount
         self.scaleLevel = scaleLevel
+        self.showBlockButtonAt = showBlockButtonAt
     }
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(Array(displayedApps.enumerated()), id: \.element.id) { index, app in
-                SimpleAppLine(app: app, scaleLevel: scaleLevel)
+                SimpleAppLine(
+                    app: app,
+                    scaleLevel: scaleLevel,
+                    showBlockButton: index == showBlockButtonAt
+                )
                 if index < displayedApps.count - 1 {
                     Divider()
                 }
@@ -44,6 +52,7 @@ struct AppListDemo: View {
 struct SimpleAppLine: View {
     let app: SmartApp
     let scaleLevel: Double
+    let showBlockButton: Bool
 
     var body: some View {
         HStack(spacing: 12 * scaleLevel) {
@@ -65,6 +74,20 @@ struct SimpleAppLine: View {
             }
 
             Spacer()
+
+            if showBlockButton {
+                HStack(spacing: 6 * scaleLevel) {
+                    Text("禁止联网")
+                        .foregroundColor(.white)
+                }
+                .font(.system(size: 14 * scaleLevel, weight: .semibold))
+                .padding(.vertical, 6 * scaleLevel)
+                .padding(.horizontal, 10 * scaleLevel)
+                .background(
+                    RoundedRectangle(cornerRadius: 8 * scaleLevel, style: .continuous)
+                        .fill(Color.red)
+                )
+            }
         }
         .padding(.vertical, 8 * scaleLevel)
         .padding(.horizontal, 12 * scaleLevel)
@@ -74,7 +97,7 @@ struct SimpleAppLine: View {
 // MARK: - Preview
 
 #Preview("App - Normal Scale") {
-    AppListDemo(maxCount: 5, scaleLevel: 1.0)
+    AppListDemo(maxCount: 5, scaleLevel: 1.0, showBlockButtonAt: 1)
         .frame(width: 600, height: 400)
 }
 

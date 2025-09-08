@@ -30,9 +30,14 @@ struct AppStoreHero: View {
                                 .font(.system(size: 120, weight: .bold, design: .rounded))
                                 .magicBluePurpleGradient()
 
-                            Text("网络监控工具")
-                                .font(.system(size: 50))
-                                .foregroundColor(.secondary)
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("实时监控，简单可靠。")
+                                    .font(.system(size: 40, weight: .semibold, design: .rounded))
+                                    .foregroundColor(.primary)
+                                Text("看得见的网络安全，清晰而从容。")
+                                    .font(.system(size: 26))
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
 
@@ -66,5 +71,5 @@ struct AppStoreHero: View {
 
 #Preview("App Store Hero") {
     AppStoreHero()
-        .inMagicContainer(.macBook13, scale: 0.3)
+        .inMagicContainer(.macBook13, scale: 0.4)
 }
