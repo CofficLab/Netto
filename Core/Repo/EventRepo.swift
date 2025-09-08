@@ -852,7 +852,7 @@ private final class DatabaseMaintenanceManager: @unchecked Sendable, SuperLog {
 
         do {
             // 1. 清理过期的防火墙事件
-            result.deletedFirewallEvents = try await repo.cleanupOldEvents(olderThanDays: 7)
+            result.deletedFirewallEvents = try await repo.cleanupOldEvents(olderThanDays: 30)
             os_log("\(Self.t)🧹 已清理过期的防火墙事件，共删除 \(result.deletedFirewallEvents) 条记录")
 
             // 2. 检查数据库健康状态

@@ -188,6 +188,12 @@
         }
       }
     },
+    "com.example.app%lld" : {
+
+    },
+    "Count" : {
+
+    },
     "Direction" : {
       "localizations" : {
         "zh-Hans" : {
@@ -198,6 +204,9 @@
         }
       },
       "shouldTranslate" : false
+    },
+    "Edit" : {
+
     },
     "Error: %@" : {
       "localizations" : {
@@ -210,6 +219,9 @@
       },
       "shouldTranslate" : false
     },
+    "File" : {
+
+    },
     "Finder中显示" : {
       "localizations" : {
         "en" : {
@@ -219,6 +231,9 @@
           }
         }
       }
+    },
+    "Help" : {
+
     },
     "ID" : {
       "localizations" : {
@@ -347,6 +362,9 @@
       },
       "shouldTranslate" : false
     },
+    "View" : {
+
+    },
     "Wi-Fi" : {
       "localizations" : {
         "en" : {
@@ -356,6 +374,9 @@
           }
         }
       }
+    },
+    "Window" : {
+
     },
     "Yes" : {
       "localizations" : {
@@ -531,6 +552,9 @@
           }
         }
       }
+    },
+    "合计 %lld" : {
+
     },
     "在 Finder 中显示" : {
       "localizations" : {
@@ -997,7 +1021,13 @@
     "登录项与扩展" : {
 
     },
+    "示例应用 %lld" : {
+
+    },
     "禁止" : {
+
+    },
+    "禁止联网" : {
 
     },
     "端口" : {
@@ -1073,9 +1103,6 @@
         }
       }
     },
-    "网络监控工具" : {
-
-    },
     "网络过滤与监控工具" : {
       "localizations" : {
         "en" : {
@@ -1098,6 +1125,9 @@
           }
         }
       }
+    },
+    "范围" : {
+
     },
     "被允许联网的 APP 将显示在这里" : {
       "localizations" : {
