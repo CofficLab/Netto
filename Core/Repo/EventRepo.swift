@@ -28,11 +28,11 @@ import SwiftUI
 /// 基于 actor 的仓库
 final class EventRepo: ObservableObject, SuperLog, Sendable {
     static let shared = EventRepo()
-    
+
     private let actor: EventQueryActor
-    
+
     // MARK: - Properties
-    
+
     /// 数据库维护管理器
     private let maintenanceManager: DatabaseMaintenanceManager
 
@@ -40,19 +40,29 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
     private init(container: ModelContainer) {
         self.actor = EventQueryActor(container: container)
         self.maintenanceManager = DatabaseMaintenanceManager()
-        
+
         // 设置维护管理器的引用
         self.maintenanceManager.setRepo(self)
-        
+
         // 启动定期清理任务
         self.maintenanceManager.startPeriodicCleanup()
+
+        // 初始化时执行一次数据库维护任务
+        Task.detached(priority: .utility) { [maintenanceManager] in
+            do {
+                let result = try await maintenanceManager.performMaintenance()
+                os_log("\(Self.t)👷 初始化维护任务完成: 删除 \(result.deletedFirewallEvents) 条记录，健康: \(String(result.isDatabaseHealthy))")
+            } catch {
+                os_log(.error, "\(Self.t)⚠️ 初始化维护任务失败: \(error.localizedDescription)")
+            }
+        }
     }
 
     /// 使用默认容器初始化
     private convenience init() {
         self.init(container: container())
     }
-    
+
     deinit {
         maintenanceManager.stopPeriodicCleanup()
     }
@@ -100,7 +110,7 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
     func create(_ event: FirewallEvent) async throws {
         try await actor.create(event)
     }
-    
+
     /// 从DTO创建新的FirewallEvent记录
     /// - Parameter dto: FirewallEventDTO实例
     /// - Throws: 保存数据时可能抛出的错误
@@ -144,9 +154,9 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
         os_log("\(self.t) cleanupOldEvents, days: \(days)")
         return try await actor.cleanupOldEvents(olderThanDays: days)
     }
-    
+
     // MARK: - Database Maintenance
-    
+
     /// 检查数据库健康状态
     /// - Returns: 数据库是否健康
     nonisolated func checkDatabaseHealth() async -> Bool {
@@ -164,14 +174,14 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
             return false
         }
     }
-    
+
     /// 执行后台任务
     /// - Parameter task: 要执行的后台任务闭包
     /// - Throws: 任务执行时可能抛出的错误
     func performBackgroundTask<T: Sendable>(_ task: @escaping @Sendable (ModelContext) throws -> T) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
             let backgroundContext = ModelContext(actor.modelContainer)
-            
+
             Task {
                 do {
                     let result = try task(backgroundContext)
@@ -182,7 +192,7 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
             }
         }
     }
-    
+
     /// 手动触发数据库维护
     /// - Returns: 维护任务的执行结果
     /// - Throws: 维护操作时可能抛出的错误
@@ -200,7 +210,7 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
         os_log("\(self.t) fetchByAppId: \(appId)")
         return try await actor.fetchByAppId(appId)
     }
-    
+
     /// 根据状态查找FirewallEvent记录
     /// - Parameter status: 防火墙状态
     /// - Returns: 指定状态的所有FirewallEventDTO记录数组
@@ -208,7 +218,7 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
     func fetchByStatus(_ status: FirewallEvent.Status) async throws -> [FirewallEventDTO] {
         return try await actor.fetchByStatus(status)
     }
-    
+
     /// 根据时间范围查找FirewallEvent记录
     /// - Parameters:
     ///   - startDate: 开始时间
@@ -219,7 +229,7 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
         os_log("\(self.t) fetchByTimeRange: \(startDate) - \(endDate)")
         return try await actor.fetchByTimeRange(from: startDate, to: endDate)
     }
-    
+
     /// 复合查询：根据应用ID和状态查找记录
     /// - Parameters:
     ///   - appId: 应用程序ID
@@ -280,7 +290,7 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
         os_log("\(self.t) getAllowedEventCount")
         return try await actor.getAllowedEventCount()
     }
-    
+
     /// 分页获取所有FirewallEvent记录
     /// - Parameters:
     ///   - page: 页码（从0开始）
@@ -294,7 +304,7 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
         os_log("\(self.t) fetchAllPaginated, page: \(page), pageSize: \(pageSize)")
         return try await actor.fetchAllPaginated(page: page, pageSize: pageSize)
     }
-    
+
     /// 获取所有应用ID列表
     /// - Returns: 所有唯一的应用ID数组
     /// - Throws: 查询数据时可能抛出的错误
@@ -302,7 +312,7 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
         os_log("\(self.t) getAllAppIds")
         return try await actor.getAllAppIds()
     }
-    
+
     /// 根据应用ID分页查找FirewallEvent记录
     /// - Parameters:
     ///   - appId: 应用程序ID
@@ -382,7 +392,7 @@ extension EventRepo {
             }
         }
     }
-    
+
     /// 后台获取所有应用ID列表，并在主线程回调
     /// - Parameter completion: 主线程回调，返回应用ID数组
     func getAllAppIdsAsync(completion: @escaping @MainActor ([String]) -> Void) {
@@ -394,7 +404,7 @@ extension EventRepo {
             } catch {
                 appIds = []
             }
-            
+
             await MainActor.run {
                 completion(appIds)
             }
@@ -548,7 +558,7 @@ private actor EventQueryActor: ModelActor, SuperLog {
         let models = try modelContext.fetch(descriptor)
         return models.map(FirewallEventDTO.fromModel)
     }
-    
+
     /// 根据状态查找FirewallEvent记录
     func fetchByStatus(_ status: FirewallEvent.Status) throws -> [FirewallEventDTO] {
         let statusValue = status == .allowed ? 0 : 1
@@ -563,7 +573,7 @@ private actor EventQueryActor: ModelActor, SuperLog {
         let models = try modelContext.fetch(descriptor)
         return models.map(FirewallEventDTO.fromModel)
     }
-    
+
     /// 根据时间范围查找FirewallEvent记录
     func fetchByTimeRange(from startDate: Date, to endDate: Date) throws -> [FirewallEventDTO] {
         os_log("\(self.t) fetchByTimeRange: \(startDate) - \(endDate)")
@@ -578,7 +588,7 @@ private actor EventQueryActor: ModelActor, SuperLog {
         let models = try modelContext.fetch(descriptor)
         return models.map(FirewallEventDTO.fromModel)
     }
-    
+
     /// 复合查询：根据应用ID和状态查找记录
     func fetchByAppIdAndStatus(_ appId: String, status: FirewallEvent.Status) throws -> [FirewallEventDTO] {
         let statusValue = status == .allowed ? 0 : 1
@@ -715,40 +725,40 @@ private actor EventQueryActor: ModelActor, SuperLog {
         let models = try modelContext.fetch(descriptor)
         return models.map(FirewallEventDTO.fromModel)
     }
-    
+
     /// 分页获取所有FirewallEvent记录
     func fetchAllPaginated(
         page: Int,
         pageSize: Int
     ) throws -> [FirewallEventDTO] {
         os_log("\(self.t) fetchAllPaginated, page: \(page), pageSize: \(pageSize)")
-        
+
         // 创建查询描述符
         var descriptor = FetchDescriptor<FirewallEventModel>(
             sortBy: [SortDescriptor(\.time, order: .reverse)]
         )
-        
+
         // 设置分页参数
         descriptor.fetchOffset = page * pageSize
         descriptor.fetchLimit = pageSize
-        
+
         let models = try modelContext.fetch(descriptor)
         return models.map(FirewallEventDTO.fromModel)
     }
-    
+
     /// 获取所有唯一的应用ID列表
     func getAllAppIds() throws -> [String] {
         // 创建查询描述符，只获取 sourceAppIdentifier 字段
         let descriptor = FetchDescriptor<FirewallEventModel>(
             sortBy: [SortDescriptor(\.sourceAppIdentifier, order: .forward)]
         )
-        
+
         // 获取所有记录
         let models = try modelContext.fetch(descriptor)
-        
+
         // 提取唯一的应用ID并去重
         let uniqueAppIds = Set(models.map { $0.sourceAppIdentifier })
-        
+
         // 转换为数组并排序
         return Array(uniqueAppIds).sorted()
     }
@@ -773,40 +783,40 @@ extension Notification.Name {
 /// 负责处理定期清理、健康检查等维护任务
 private final class DatabaseMaintenanceManager: @unchecked Sendable, SuperLog {
     nonisolated static let emoji = "👷"
-    
+
     // MARK: - Properties
-    
+
     /// 数据库维护定时器间隔（秒）
     private let maintenanceInterval: TimeInterval = 1 * 60 * 60
-    
+
     /// 定期清理定时器
     private var cleanupTimer: Timer?
-    
+
     /// 弱引用到 EventRepo，避免循环引用
     private weak var repo: EventRepo?
-    
+
     // MARK: - Init
-    
+
     init() {
         // 延迟设置 repo 引用
     }
-    
+
     /// 设置 EventRepo 引用
     func setRepo(_ repo: EventRepo) {
         self.repo = repo
     }
-    
+
     deinit {
         stopPeriodicCleanup()
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// 启动定期清理任务
     func startPeriodicCleanup() {
         cleanupTimer = Timer.scheduledTimer(withTimeInterval: self.maintenanceInterval, repeats: true) { [weak self] _ in
             guard let self = self else { return }
-            
+
             Task { @MainActor in
                 do {
                     let result = try await self.performMaintenance()
@@ -816,17 +826,17 @@ private final class DatabaseMaintenanceManager: @unchecked Sendable, SuperLog {
                 }
             }
         }
-        
+
         os_log("\(self.i)已启动定期数据库清理任务，每\(Int(self.maintenanceInterval / 3600))小时执行一次")
     }
-    
+
     /// 停止定期清理任务
     func stopPeriodicCleanup() {
         cleanupTimer?.invalidate()
         cleanupTimer = nil
         os_log("⏹️ 已停止定期数据库维护任务")
     }
-    
+
     /// 执行数据库维护任务
     /// - Returns: 维护任务的执行结果
     /// - Throws: 维护操作时可能抛出的错误
@@ -834,35 +844,35 @@ private final class DatabaseMaintenanceManager: @unchecked Sendable, SuperLog {
         guard let repo = repo else {
             throw NSError(domain: "DatabaseMaintenanceManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "EventRepo reference is nil"])
         }
-        
-        os_log("👷 开始执行数据库维护任务")
-        
+
+        os_log("\(Self.t)👷 开始执行数据库维护任务")
+
         let startTime = Date()
         var result = DBMaintenanceResult()
-        
+
         do {
             // 1. 清理过期的防火墙事件
-            result.deletedFirewallEvents = try await repo.cleanupOldEvents(olderThanDays: 30)
-            os_log("🧹 已清理过期的防火墙事件，共删除 \(result.deletedFirewallEvents) 条记录")
-            
+            result.deletedFirewallEvents = try await repo.cleanupOldEvents(olderThanDays: 7)
+            os_log("\(Self.t)🧹 已清理过期的防火墙事件，共删除 \(result.deletedFirewallEvents) 条记录")
+
             // 2. 检查数据库健康状态
             result.isDatabaseHealthy = await repo.checkDatabaseHealth()
-            os_log("🧐 已 \(result.isDatabaseHealthy ? "通过" : "未通过") 数据库健康检查")
+            os_log("\(Self.t)🧐 已 \(result.isDatabaseHealthy ? "通过" : "未通过") 数据库健康检查")
 
             result.executionTime = Date().timeIntervalSince(startTime)
             result.isSuccessful = true
-            
-            os_log("✅ 数据库维护任务完成，删除了 \(result.deletedFirewallEvents) 条过期记录，耗时 \(String(format: "%.2f", result.executionTime)) 秒")
-            
+
+            os_log("\(Self.t)✅ 数据库维护任务完成，删除了 \(result.deletedFirewallEvents) 条过期记录，耗时 \(String(format: "%.2f", result.executionTime)) 秒")
+
         } catch {
             result.error = error
             result.isSuccessful = false
             result.executionTime = Date().timeIntervalSince(startTime)
-            
+
             os_log("❌ 数据库维护任务失败: \(error.localizedDescription)")
             throw error
         }
-        
+
         return result
     }
 }
