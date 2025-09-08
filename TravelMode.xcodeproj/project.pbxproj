@@ -70,7 +70,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				AppStoreHero.swift,
-				AppStoreSimple.swift,
 			);
 			target = C4B45DB422739FFF0050C59B /* TavelMode */;
 		};
