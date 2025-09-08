@@ -1,6 +1,7 @@
 import SwiftUI
 import MagicCore
 import MagicContainer
+import MagicBackground
 
 /**
  * App Store 主页面
@@ -144,17 +145,9 @@ struct AppStoreHero: View {
                     )
                     .shadow(color: .black.opacity(0.1), radius: 15, x: 0, y: 8)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 60)
-            .padding(.vertical, 80)
         }
-        .background(
-            LinearGradient(
-                colors: [Color.blue.opacity(0.05), Color.purple.opacity(0.03)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
+        .frame(maxWidth: .infinity)
+        .inMagicBackgroundCoral()
     }
     
     private func featureRow(_ title: String, _ description: String, _ iconName: String, _ color: Color) -> some View {
@@ -218,15 +211,11 @@ struct AppStoreHero: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(.regularMaterial)
-        )
     }
 }
 
 // MARK: - Preview
 #Preview("App Store Hero") {
     AppStoreHero()
-        .inMagicContainer(.macBook13_20Percent)
+        .inMagicContainer(.macBook13_40Percent)
 }

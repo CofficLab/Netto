@@ -1,5 +1,6 @@
 import SwiftUI
 import MagicCore
+import MagicBackground
 
 /**
  * App Store 简洁易用页面
@@ -149,14 +150,7 @@ struct AppStoreSimple: View {
             
             Spacer()
         }
-        .frame(width: 1600, height: 1000)
-        .background(
-            LinearGradient(
-                colors: [Color.blue.opacity(0.03), Color.green.opacity(0.02)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
+        .inMagicBackgroundOcean()
     }
     
     private func featureRow(_ text: String, icon: String, color: Color) -> some View {
@@ -219,5 +213,5 @@ struct AppStoreSimple: View {
 // MARK: - Preview
 #Preview("App Store Simple") {
     AppStoreSimple()
-        .inMagicContainer(containerHeight: 1000)
+        .inMagicContainer(.macBook13_40Percent)
 }
