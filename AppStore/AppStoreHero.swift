@@ -39,9 +39,7 @@ struct AppStoreHero: View {
                     // 主要功能
                     VStack(alignment: .leading, spacing: 32) {
                         MagicFeature(title: "实时监控", description:"监控所有应用的网络连接", iconName: "eye.fill",color: .blue)
-                        MagicFeature(title: "智能过滤", description: "自动识别并阻止可疑连接", iconName: "shield.checkered", color: .green)
-                        MagicFeature(title: "流量分析", description: "详细的网络使用统计报告", iconName: "chart.bar.fill", color: .orange)
-                        MagicFeature(title: "隐私保护", description: "本地处理，保护用户隐私", iconName: "lock.shield.fill", color: .purple)
+                        MagicFeature(title: "禁止联网", description: "快速禁止某个应用联网", iconName: "shield.checkered", color: .red)
                     }
 
                     Spacer()

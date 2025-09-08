@@ -90,10 +90,10 @@ extension SmartApp {
             isSystemApp: true
         ),
         
-        // 系统鸟类服务
+        // iCloud 数据同步和文件系统管理
         SmartApp(
             id: ".com.apple.bird",
-            name: "系统鸟类服务",
+            name: "iCloud 数据同步和文件系统管理",
             isSystemApp: true
         ),
         
