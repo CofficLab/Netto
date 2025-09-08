@@ -303,6 +303,7 @@
       "shouldTranslate" : false
     },
     "Status Unknown" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
