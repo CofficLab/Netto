@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// 应用列表演示视图
-struct AppListDemo: View {
+/// 应用演示视图
+struct AppDemo: View {
     /// 最大显示的应用数量，默认为全部
     let maxCount: Int?
     
@@ -97,22 +97,22 @@ struct SimpleAppLine: View {
 // MARK: - Preview
 
 #Preview("App - Normal Scale") {
-    AppListDemo(maxCount: 5, scaleLevel: 1.0, showBlockButtonAt: 1)
+    AppDemo(maxCount: 5, scaleLevel: 1.0, showBlockButtonAt: 1)
         .frame(width: 600, height: 400)
 }
 
 #Preview("App - Large Scale") {
-    AppListDemo(maxCount: 5, scaleLevel: 1.5)
+    AppDemo(maxCount: 5, scaleLevel: 1.5)
         .frame(width: 600, height: 500)
 }
 
 #Preview("App - Small Scale") {
-    AppListDemo(maxCount: 5, scaleLevel: 0.7)
+    AppDemo(maxCount: 5, scaleLevel: 0.7)
         .frame(width: 600, height: 350)
 }
 
 #Preview("App - Extra Large Scale") {
-    AppListDemo(maxCount: 3, scaleLevel: 2.0)
+    AppDemo(maxCount: 3, scaleLevel: 2.0)
         .frame(width: 600, height: 400)
 }
 

@@ -52,7 +52,7 @@ struct AppStoreHero: View {
                 .frame(width: geo.size.width * 0.3)
 
                 // 右侧：应用界面预览
-                AppListDemo(maxCount: 10, scaleLevel: 2)
+                AppDemo(maxCount: 10, scaleLevel: 2)
                     .background(.background.opacity(0.5))
                     .magicRoundedLarge()
                     .inMagicVStackCenter()

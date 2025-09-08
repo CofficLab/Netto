@@ -38,7 +38,7 @@ struct AppStoreHeroBlock: View {
                 .frame(width: geo.size.width * 0.3)
 
                 // 右侧：列表视图示意（在某个应用右侧显示“禁止联网”按钮）
-                AppListDemo(maxCount: 8, scaleLevel: 1.8, showBlockButtonAt: 4)
+                AppDemo(maxCount: 8, scaleLevel: 1.8, showBlockButtonAt: 4)
                     .background(.background.opacity(0.5))
                     .magicRoundedLarge()
                 .inMagicVStackCenter()
