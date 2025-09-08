@@ -21,6 +21,7 @@
 		0B3485AA2E6DDC4400EBD371 /* MagicError in Frameworks */ = {isa = PBXBuildFile; productRef = 0B3485A92E6DDC4400EBD371 /* MagicError */; };
 		0B4D15AF2E6D248200CAB5C7 /* MagicAsset in Frameworks */ = {isa = PBXBuildFile; productRef = 0B4D15AE2E6D248200CAB5C7 /* MagicAsset */; };
 		0B4D15B12E6D248200CAB5C7 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0B4D15B02E6D248200CAB5C7 /* MagicCore */; };
+		0BE0D9ED2E6F164E00B5F80C /* MagicUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0BE0D9EC2E6F164E00B5F80C /* MagicUI */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3ED2DE463A1009CC54C /* MagicCore */; };
 		F52D4A1E2E6E8A24007F53A3 /* MagicAlert in Frameworks */ = {isa = PBXBuildFile; productRef = F52D4A1D2E6E8A24007F53A3 /* MagicAlert */; };
@@ -118,6 +119,7 @@
 				0B3485A42E6DDC4400EBD371 /* MagicContainer in Frameworks */,
 				0B3485A82E6DDC4400EBD371 /* MagicDevice in Frameworks */,
 				0B08D5412E6DD82A001902DD /* MagicAsset in Frameworks */,
+				0BE0D9ED2E6F164E00B5F80C /* MagicUI in Frameworks */,
 				F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */,
 				F52D4A1E2E6E8A24007F53A3 /* MagicAlert in Frameworks */,
 				F5D27E2D2E6E60F5006B3CB2 /* MagicBackground in Frameworks */,
@@ -678,6 +680,11 @@
 		0B4D15B02E6D248200CAB5C7 /* MagicCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MagicCore;
+		};
+		0BE0D9EC2E6F164E00B5F80C /* MagicUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F52D4A1C2E6E8A24007F53A3 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicUI;
 		};
 		F500B3ED2DE463A1009CC54C /* MagicCore */ = {
 			isa = XCSwiftPackageProductDependency;
