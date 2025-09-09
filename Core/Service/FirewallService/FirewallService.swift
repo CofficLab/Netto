@@ -22,26 +22,32 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
 
         self.emit(.firewallWillBoot)
         self.setObserver()
-
-        // 检查系统扩展的状态
-        self.requestSystemExtensionStatus()
-
-        // 检查系统扩展的标识符
-        let id = self.getExtensionIdentifier()
-
-        os_log("\(Self.t)🆔 系统扩展的标识符是：\(id)")
-
-        let isEnabled = NEFilterManager.shared().isEnabled
-
+        Task {
+            await self.refreshStatus()
+        }
+    }
+    
+    @MainActor func refreshStatus() async {
+        let isEnabled = await self.isFilterEnabled()
+        
         os_log("\(self.t)\(isEnabled ? "✅ 过滤器已启用" : "⚠️ 过滤器未启用")")
-
-        await updateFilterStatus(isEnabled ? .running : .disabled)
+        
+        if isEnabled {
+            self.updateStatus(.running)
+            return
+        }
+        
+        // 检查系统扩展的状态，系统会异步通知
+        self.requestSystemExtensionStatus()
+        
+        // 默认处于停止状态
+        self.updateStatus(.stopped)
     }
 
-    /// 更新过滤器状态
+    /// 更新状态
     /// - Parameter status: 新的过滤器状态
     @MainActor
-    func updateFilterStatus(_ status: FilterStatus) {
+    func updateStatus(_ status: FilterStatus) {
         if self.status == status { return }
 
         let oldValue = self.status
@@ -78,7 +84,7 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
             os_log("\(self.t)\(enabled ? "👀 监听到 Filter 已打开 " : "👀 监听到 Fitler 已关闭")")
 
             Task {
-                await self.updateFilterStatus(enabled ? .running : .stopped)
+                await self.updateStatus(enabled ? .running : .stopped)
             }
         }
     }
@@ -86,12 +92,40 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
     /// 过滤器是否已经启动了
     @MainActor private func ifFilterReady() -> Bool {
         if NEFilterManager.shared().isEnabled {
-            self.updateFilterStatus(.running)
+            self.updateStatus(.running)
 
             return true
         } else {
             return false
         }
+    }
+}
+
+// MARK: - 基础操作
+// 负责 FirewallService 的基础操作，包括：
+// - 错误处理（设置和清除错误）
+// - 观察者管理（添加和移除观察者）
+// - 其他基础工具方法
+
+extension FirewallService {
+    func clearError() {
+        self.error = nil
+    }
+
+    func setError(_ error: Error) {
+        self.error = error
+    }
+
+    func removeObserver() {
+        guard let changeObserver = observer else {
+            return
+        }
+
+        nc.removeObserver(
+            changeObserver,
+            name: .NEFilterConfigurationDidChange,
+            object: NEFilterManager.shared()
+        )
     }
 }
 

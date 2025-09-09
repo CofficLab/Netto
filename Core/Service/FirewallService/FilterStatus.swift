@@ -6,11 +6,13 @@ enum FilterStatus: Equatable {
     case running
     case notInstalled
     case needSystemExtensionApproval
+    case filterNeedApproval
     case waitingForApproval
     case disabled
-    case extensionNotReady
+    case extensionNotActivated
     case notInApplicationsFolder
     case systemExtensionNotInstalled
+    case filterNotInstalled
     case error(Error)
     
     var description: String {
@@ -25,16 +27,20 @@ enum FilterStatus: Equatable {
             "未安装"
         case .needSystemExtensionApproval:
             "需要用户同意安装系统扩展"
+        case .filterNeedApproval:
+            "过滤器需要用户授权"
         case .waitingForApproval:
             "请在弹出的对话框中点击\"允许\""
         case .disabled:
             "disabled"
-        case .extensionNotReady:
-            "extension未启用"
+        case .extensionNotActivated:
+            "extension未激活"
         case .notInApplicationsFolder:
             "APP未安装在Applications目录"
         case .systemExtensionNotInstalled:
             "系统扩展未安装"
+        case .filterNotInstalled:
+            "过滤器未安装"
         case .error(let error):
             "错误: \(error.localizedDescription)"
         }
@@ -80,9 +86,9 @@ enum FilterStatus: Equatable {
         }
     }
 
-    func isExtensionNotReady() -> Bool {
+    func isExtensionNotActivated() -> Bool {
         switch self {
-        case.extensionNotReady:
+        case.extensionNotActivated:
             true
         default:
             false
@@ -107,9 +113,27 @@ enum FilterStatus: Equatable {
         }
     }
 
+    func isFilterNotInstalled() -> Bool {
+        switch self {
+        case.filterNotInstalled:
+            true
+        default:
+            false
+        }
+    }
+
     func isNeedSystemExtensionApproval() -> Bool {
         switch self {
         case.needSystemExtensionApproval:
+            true
+        default:
+            false
+        }
+    }
+
+    func isFilterNeedApproval() -> Bool {
+        switch self {
+        case.filterNeedApproval:
             true
         default:
             false
@@ -138,7 +162,7 @@ enum FilterStatus: Equatable {
         switch self {
         case.stopped, .indeterminate,  .disabled:
             true
-        case .error, .notInstalled,.waitingForApproval, .needSystemExtensionApproval, .extensionNotReady, .notInApplicationsFolder, .systemExtensionNotInstalled:
+        case .error, .notInstalled,.waitingForApproval, .needSystemExtensionApproval, .filterNeedApproval, .extensionNotActivated, .notInApplicationsFolder, .systemExtensionNotInstalled, .filterNotInstalled:
             false
         default:
             false
@@ -153,11 +177,13 @@ enum FilterStatus: Equatable {
              (.running, .running),
              (.notInstalled, .notInstalled),
              (.needSystemExtensionApproval, .needSystemExtensionApproval),
+             (.filterNeedApproval, .filterNeedApproval),
              (.waitingForApproval, .waitingForApproval),
              (.disabled, .disabled),
-             (.extensionNotReady, .extensionNotReady),
+             (.extensionNotActivated, .extensionNotActivated),
              (.notInApplicationsFolder, .notInApplicationsFolder),
-             (.systemExtensionNotInstalled, .systemExtensionNotInstalled):
+             (.systemExtensionNotInstalled, .systemExtensionNotInstalled),
+             (.filterNotInstalled, .filterNotInstalled):
             return true
         case (.error(let error1), .error(let error2)):
             // 由于 Error 不符合 Equatable，我们比较错误的描述

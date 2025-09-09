@@ -25,7 +25,7 @@ struct BtnSetting: View {
 
 #Preview {
     RootView {
-        BtnInstall()
+        BtnInstallExtension()
     }
     .frame(height: 800)
 }

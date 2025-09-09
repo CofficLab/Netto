@@ -16,10 +16,10 @@ extension FirewallService {
             os_log("\(self.t)无法获取APP路径")
             return false
         }
-
+        
         let applicationsPath = "/Applications"
         let isInApplications = appPath.hasPrefix(applicationsPath)
-
+        
         return isInApplications
     }
 
@@ -31,7 +31,7 @@ extension FirewallService {
         guard isAppInApplicationsFolder() else {
             os_log("\(self.t)❌ APP未安装在Applications目录，无法激活系统扩展")
             Task { @MainActor in
-                self.updateFilterStatus(.notInApplicationsFolder)
+                self.updateStatus(.notInApplicationsFolder)
             }
             return
         }
@@ -39,7 +39,7 @@ extension FirewallService {
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
             os_log("\(self.t)extensionBundle.bundleIdentifier 为空")
             Task { @MainActor in
-                self.updateFilterStatus(.stopped)
+                self.updateStatus(.stopped)
             }
             return
         }
@@ -66,7 +66,7 @@ extension FirewallService {
             queue: .main
         )
         deactivationRequest.delegate = self
-        extensionManager.submitRequest(deactivationRequest) 
+        extensionManager.submitRequest(deactivationRequest)
     }
 
     /// 请求系统扩展的状态，会发出请求
@@ -75,7 +75,7 @@ extension FirewallService {
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
             os_log("\(self.t)extensionBundle.bundleIdentifier 为空")
             Task { @MainActor in
-                self.updateFilterStatus(.stopped)
+                self.updateStatus(.stopped)
             }
             return
         }
@@ -104,6 +104,31 @@ extension FirewallService {
         }
         return extensionIdentifier
     }
+
+    /// 获取当前app对应的系统扩展版本信息
+    func getCurrentExtensionVersion() -> (version: String, shortVersion: String, identifier: String)? {
+        guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
+            os_log("\(self.t)extensionBundle.bundleIdentifier 为空")
+            return nil
+        }
+
+        guard let version = extensionBundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String else {
+            os_log("\(self.t)extensionBundle CFBundleVersion 为空")
+            return nil
+        }
+
+        guard let shortVersion = extensionBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String else {
+            os_log("\(self.t)extensionBundle CFBundleShortVersionString 为空")
+            return nil
+        }
+
+        os_log("\(self.t)📱 当前app带有的系统扩展版本信息:")
+        os_log("\(self.t)  - 标识符: \(extensionIdentifier)")
+        os_log("\(self.t)  - 版本号: \(version)")
+        os_log("\(self.t)  - 短版本: \(shortVersion)")
+
+        return (version: version, shortVersion: shortVersion, identifier: extensionIdentifier)
+    }
 }
 
 // MARK: - 接收系统扩展相关操作的结果
@@ -118,15 +143,18 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
         switch result {
         case .completed:
             os_log("\(self.t)✅ 收到结果：系统扩展已激活")
-            self.emit(.firewallDidInstall)
+            self.emit(.extensionDidInstall)
+            
+            // 更新系统状态
+            if self.status.isExtensionNotActivated() {
+                Task {
+                    await self.updateStatus(.stopped)
+                }
+            }
         case .willCompleteAfterReboot:
             os_log("\(self.t)✅ 收到结果：系统扩展将在重启后激活")
         @unknown default:
             os_log("\(self.t)\(result.rawValue)")
-        }
-
-        Task {
-            await self.enableFilterConfiguration(reason: "已请求系统扩展")
         }
     }
 
@@ -136,7 +164,7 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
 
         self.setError(error)
         Task { @MainActor in
-            self.updateFilterStatus(.error(error))
+            self.updateStatus(.error(error))
         }
 
         self.emit(.firewallDidFailWithError, userInfo: ["error": error])
@@ -146,7 +174,7 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
     func requestNeedsUserApproval(_ request: OSSystemExtensionRequest) {
         os_log("\(self.t)🙆 需要用户同意激活系统扩展")
         Task { @MainActor in
-            self.updateFilterStatus(.needSystemExtensionApproval)
+            self.updateStatus(.needSystemExtensionApproval)
         }
     }
 
@@ -154,47 +182,79 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
     func request(_ request: OSSystemExtensionRequest, foundProperties properties: [OSSystemExtensionProperties]) {
         os_log("\(self.t)🔔 收到了系统扩展的属性请求结果")
 
-        // 记录最新的版本号
+        // 获取当前app的系统扩展版本信息
+        guard let currentVersion = getCurrentExtensionVersion() else {
+            os_log("\(self.t)❌ 无法获取当前app的系统扩展版本信息")
+            return
+        }
+
+        // 查找当前版本的扩展是否已安装
+        var currentVersionInstalled: OSSystemExtensionProperties?
         var latestVersion: String = ""
         var latestProperty: OSSystemExtensionProperties?
-        
+
         // 输出详细的系统扩展属性信息
         for property in properties {
-            os_log("\(self.t)📦 系统扩展信息:")
+            if property.isUninstalling {
+                continue
+            }
+
+            os_log("\(self.t)📦 已安装的系统扩展信息:")
             os_log("\(self.t)  - 包标识符: \(property.bundleIdentifier)")
             os_log("\(self.t)  - 版本号: \(property.bundleVersion)")
             os_log("\(self.t)  - 短版本: \(property.bundleShortVersion)")
             os_log("\(self.t)  - 文件路径: \(property.url.path)")
             os_log("\(self.t)  - 是否启用: \(property.isEnabled ? "✅" : "❌")")
             os_log("\(self.t)  - 等待用户授权: \(property.isAwaitingUserApproval ? "✅" : "❌")")
-            os_log("\(self.t)  - 正在卸载: \(property.isUninstalling ? "✅" : "❌")")
-            
+
+            // 检查是否是当前版本的扩展
+            if property.bundleVersion == currentVersion.version {
+                currentVersionInstalled = property
+            }
+
             // 比较版本号，记录最新的
             if property.bundleVersion > latestVersion {
                 latestVersion = property.bundleVersion
                 latestProperty = property
             }
         }
-        
-        // 输出最新版本信息
-        if let latest = latestProperty {
-            os_log("\(self.t)🏆 最新版本信息:")
-            os_log("\(self.t)  - 最新版本号: \(latest.bundleVersion)")
-            os_log("\(self.t)  - 最新短版本: \(latest.bundleShortVersion)")
-            os_log("\(self.t)  - 最新版本路径: \(latest.url.path)")
-            os_log("\(self.t)  - 最新版本状态: 启用=\(latest.isEnabled ? "是" : "否"), 等待授权=\(latest.isAwaitingUserApproval ? "是" : "否")")
-            
+
+        // 输出版本安装状态信息
+        os_log("\(self.t)🏆 版本安装状态:")
+        os_log("\(self.t)  - 当前app版本: \(currentVersion.version) (\(currentVersion.shortVersion))")
+
+        if let currentInstalled = currentVersionInstalled {
+            os_log("\(self.t)  - 当前版本状态: ✅ 已安装")
+            os_log("\(self.t)  - 安装路径: \(currentInstalled.url.path)")
+            os_log("\(self.t)  - 启用状态: \(currentInstalled.isEnabled ? "✅" : "❌")")
+            os_log("\(self.t)  - 等待授权: \(currentInstalled.isAwaitingUserApproval ? "✅" : "❌")")
+            os_log("\(self.t)  - 正在卸载: \(currentInstalled.isUninstalling ? "✅" : "❌")")
+
             var status = self.status
-            if latest.isEnabled == false {
-                status = .extensionNotReady
+            if currentInstalled.isEnabled == false {
+                status = .extensionNotActivated
             }
-            
-            if latest.isUninstalling {
+
+            if currentInstalled.isUninstalling {
                 status = .systemExtensionNotInstalled
             }
-            
+
             Task {
-                await self.updateFilterStatus(status)
+                await self.updateStatus(status)
+            }
+        } else {
+            os_log("\(self.t)  - 当前版本状态: ❌ 未安装")
+
+            if let latest = latestProperty {
+                os_log("\(self.t)  - 已安装版本: \(latest.bundleVersion) (\(latest.bundleShortVersion))")
+                os_log("\(self.t)  - 版本差异: 当前版本未安装，但有其他版本已安装")
+            } else {
+                os_log("\(self.t)  - 版本差异: 当前版本未安装，且无其他版本")
+            }
+
+            // 当前版本未安装，设置为未安装状态
+            Task {
+                await self.updateStatus(.systemExtensionNotInstalled)
             }
         }
     }
@@ -216,13 +276,6 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
 
         os_log("\(self.t)  - 决定: 替换现有扩展")
         return .replace
-    }
-}
-
-extension FirewallService: OSSystemExtensionsWorkspaceObserver {
-    @available(macOS 15.1, *)
-    func systemExtensionWillBecomeEnabled(_ systemExtensionInfo: OSSystemExtensionInfo) {
-        os_log("\(self.t)🔄 systemExtensionWillBecomeEnabled:")
     }
 }
 

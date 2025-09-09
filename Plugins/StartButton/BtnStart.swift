@@ -41,11 +41,7 @@ struct BtnStart: View, SuperLog {
 
     private func action() {
         Task {
-            do {
-                try await firewall.startFilter(reason: self.className)
-            } catch let error {
-                m.error(error)
-            }
+            await firewall.startFilter(reason: self.className)
         }
     }
 }

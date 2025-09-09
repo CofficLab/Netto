@@ -7,7 +7,7 @@ struct InstallView: View {
             title: "需要安装系统扩展",
             iconColor: .blue
         ) {
-            BtnInstall()
+            BtnInstallExtension()
                 .controlSize(.extraLarge)
         }
     }

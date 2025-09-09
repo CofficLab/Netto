@@ -23,7 +23,9 @@ struct GuideView: View {
                     InstallView()
                 case .needSystemExtensionApproval:
                     ApprovalView()
-                case .extensionNotReady:
+                case .filterNeedApproval:
+                    ApprovalView()
+                case .extensionNotActivated:
                     ExtensionNotReady()
                 case .notInApplicationsFolder:
                     NotInApplicationsFolderView()
@@ -35,6 +37,8 @@ struct GuideView: View {
                     ErrorView(error: error)
                 case .systemExtensionNotInstalled:
                     SystemExtensionNotInstalledView()
+                case .filterNotInstalled:
+                    FilterNotInstalledView()
                 }
             }
             .background(.background)

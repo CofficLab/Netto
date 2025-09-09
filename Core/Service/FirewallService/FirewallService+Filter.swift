@@ -4,6 +4,7 @@ import OSLog
 import SwiftUI
 
 // MARK: - 过滤器配置管理
+
 // 过滤器：指的是系统设置 - 网络 - VPN与过滤条件 - 过滤条件与代理
 // 负责管理 NEFilterManager 的配置，包括：
 // - 创建和配置过滤器提供者
@@ -11,17 +12,41 @@ import SwiftUI
 // - 将过滤器加载到系统设置中
 
 extension FirewallService {
-    func enableFilterConfiguration(reason: String) async {
+    func isFilterEnabled() async -> Bool {
+        let nm = NEFilterManager.shared()
+
+        do {
+            // You must call this method at least once before calling saveToPreferencesWithCompletionHandler: for the first time after your app launches.
+            try await nm.loadFromPreferences()
+        } catch {
+            os_log(.error, "\(self.t)❌ 加载过滤器配置出错 \(error)")
+            await self.updateStatus(.error(error))
+        }
+
+        return nm.isEnabled
+    }
+
+    func installFilter(reason: String) async throws {
+        os_log("\(self.t)🚀 安装过滤器 🐛 \(reason)  ➡️ Current Status: \(self.status.description)")
+
+        do {
+            // You must call this method at least once before calling saveToPreferencesWithCompletionHandler: for the first time after your app launches.
+            try await NEFilterManager.shared().loadFromPreferences()
+        } catch {
+            os_log(.error, "\(self.t)❌ 加载过滤器配置出错 \(error)")
+            await self.updateStatus(.error(error))
+            
+            throw error
+        }
+
         self.emit(.firewallConfigurationChanged)
 
         guard !NEFilterManager.shared().isEnabled else {
-            os_log("\(self.t)FilterManager is Disabled, registerWithProvider")
+            await self.updateStatus(.filterNotInstalled)
             return
         }
-        
-        do {
-            os_log("\(self.t)🚀 请求用户授权")
 
+        do {
             if NEFilterManager.shared().providerConfiguration == nil {
                 let providerConfiguration = NEFilterProviderConfiguration()
                 providerConfiguration.filterSockets = true
@@ -33,7 +58,7 @@ extension FirewallService {
             }
 
             // 如果true，加载到系统设置中后就是启动状态
-            NEFilterManager.shared().isEnabled = true
+            NEFilterManager.shared().isEnabled = false
 
             // 将过滤器加载到系统设置中
             os_log("\(self.t)📺 将要弹出授权对话框来加载到系统设置中")
@@ -42,26 +67,49 @@ extension FirewallService {
             self.emit(.firewallUserApproved)
         } catch {
             os_log(.error, "\(self.t)❌ 请求用户授权失败 -> \(error.localizedDescription)")
-            await self.updateFilterStatus(.needSystemExtensionApproval)
+            await self.updateStatus(.filterNeedApproval)
+            
+            throw error
         }
     }
 
-    func startFilter(reason: String) async throws {
+    func startFilter(reason: String) async {
         os_log("\(self.t)🚀 开启过滤器 🐛 \(reason)  ➡️ Current Status: \(self.status.description)")
+        
+        if await self.isFilterEnabled() {
+            os_log("\(self.t)✅ 已经是开启状态")
+            return
+        }
 
         self.emit(.firewallWillStart)
 
-        guard !NEFilterManager.shared().isEnabled else {
-            os_log("\(self.t)👌 过滤器已启用")
-            self.emit(.firewallDidStart)
-            return
-        }
-        
         // 确保系统扩展已经激活
         self.activateSystemExtension()
         
-        NEFilterManager.shared().isEnabled = true
-        try await NEFilterManager.shared().saveToPreferences()
+        // 确保过滤器已安装
+        do {
+            try await self.installFilter(reason: reason)
+        } catch {
+            os_log(.error, "\(self.t)❌ 启动过滤器 - 安装过滤器失败 \(error)")
+            await self.updateStatus(.error(error))
+            return
+        }
+
+        do {
+            // You must call this method at least once before calling saveToPreferencesWithCompletionHandler: for the first time after your app launches.
+            try await NEFilterManager.shared().loadFromPreferences()
+        } catch {
+            os_log(.error, "\(self.t)❌ 加载过滤器配置出错 \(error)")
+            await self.updateStatus(.error(error))
+        }
+
+        do {
+            NEFilterManager.shared().isEnabled = true
+            try await NEFilterManager.shared().saveToPreferences()
+        } catch {
+            os_log(.error, "\(self.t)❌ 开启过滤器出错 \(error)")
+            await self.updateStatus(.error(error))
+        }
     }
 
     func stopFilter(reason: String) async throws {
@@ -70,7 +118,7 @@ extension FirewallService {
         self.emit(.firewallWillStop)
 
         guard NEFilterManager.shared().isEnabled else {
-            await self.updateFilterStatus(.stopped)
+            await self.updateStatus(.stopped)
             return
         }
 
