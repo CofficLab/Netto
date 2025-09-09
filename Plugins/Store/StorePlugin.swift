@@ -10,6 +10,12 @@ actor StorePlugin: SuperPlugin {
                 .environmentObject(StoreProvider())))
         ]
     }
+    
+    @MainActor
+    func provideRootView<Content: View>(@ViewBuilder content: () -> Content) -> AnyView? {
+        // 示例：Store 插件提供自己的 RootView 来管理 Store 相关的环境变量
+        return AnyView(StoreRootView(content: content))
+    }
 }
 
 @objc(StoreRegistrant)
@@ -20,7 +26,8 @@ class StoreRegistrant: NSObject, PluginRegistrant {
 }
 
 #Preview("APP") {
-    ContentView().inRootView()
+    ContentView()
+        .inRootView()
         .frame(height: 600)
 }
 

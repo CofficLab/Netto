@@ -9,6 +9,7 @@ import SwiftUI
 class PluginProvider: ObservableObject, SuperLog, SuperThread {
     let emoji = "🧩"
     @Published private var toolbarButtons: [(id: String, view: AnyView)] = []
+    @Published private var pluginRootViews: [(id: String, rootViewProvider: (AnyView) -> AnyView)] = []
 
     init(autoDiscover: Bool = true) {
         if autoDiscover {
@@ -19,7 +20,14 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
                 let buttons: [(id: String, view: AnyView)] = plugins.flatMap { plugin in
                     plugin.addToolBarButtons()
                 }
+                let rootViews: [(id: String, rootViewProvider: (AnyView) -> AnyView)] = plugins.compactMap { plugin in
+                    // 创建一个闭包来包装插件的 RootView 提供者
+                    return (id: plugin.id, rootViewProvider: { content in
+                        return plugin.provideRootView { content } ?? content
+                    })
+                }
                 self.toolbarButtons = buttons
+                self.pluginRootViews = rootViews
             }
         }
     }
@@ -33,6 +41,23 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
                 }
             }
         }
+    }
+    
+    /// 将内容视图包裹在所有插件的 RootView 中
+    func wrapContent<Content: View>(_ content: Content) -> AnyView {
+        var wrappedContent: AnyView = AnyView(content)
+        
+        // 按顺序应用所有插件的 RootView
+        for rootViewProvider in pluginRootViews {
+            wrappedContent = rootViewProvider.rootViewProvider(wrappedContent)
+        }
+        
+        return wrappedContent
+    }
+    
+    /// 获取指定插件的 RootView 包装器
+    func getPluginRootViewWrapper(for pluginId: String) -> ((AnyView) -> AnyView)? {
+        return pluginRootViews.first { $0.id == pluginId }?.rootViewProvider
     }
     
     /// 清理资源，释放内存

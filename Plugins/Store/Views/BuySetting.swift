@@ -1,6 +1,6 @@
+import MagicBackground
 import MagicCore
 import MagicUI
-import MagicBackground
 import OSLog
 import StoreKit
 import SwiftUI
@@ -102,14 +102,13 @@ struct BuySetting: View, SuperLog {
 }
 
 #Preview("BuyView") {
-    RootView {
-        BuySetting()
-    }
-    .frame(height: 800)
+    BuySetting()
+        .inRootView()
+        .frame(height: 800)
 }
 
 #Preview("Buy") {
     BuySetting()
-        .environmentObject(StoreProvider())
+        .inRootView()
         .frame(height: 800)
 }
