@@ -13,11 +13,11 @@ struct MySubscription: View {
     private var status: Product.SubscriptionInfo.RenewalState? {
         store.subscriptionGroupStatus
     }
-    
+
     private var product: Product? {
         store.currentSubscription
     }
-    
+
     private var statusDescription: String {
         guard let status = status else {
             return "无状态"
@@ -38,12 +38,12 @@ struct MySubscription: View {
             return "状态未知"
         }
     }
-    
+
     private var productDescription: String {
         guard let product = product else {
             return "无订阅产品"
         }
-        
+
         return product.displayName
     }
 
@@ -64,10 +64,12 @@ struct MySubscription: View {
             }
         }
         .onChange(of: store.purchasedSubscriptions, {
-            refresh("🐛 已购订阅变了")
+            Task {
+                await refresh("🐛 已购订阅变了")
+            }
         })
     }
-    
+
     private var header: some View {
         ZStack {
             if status != nil {
@@ -75,7 +77,7 @@ struct MySubscription: View {
             } else {
                 Text("现在没有订阅").font(.title3)
             }
-            
+
             HStack {
                 Spacer()
                 ZStack {
@@ -93,7 +95,9 @@ struct MySubscription: View {
 
     private var refreshButton: some View {
         Button(action: {
-            refresh("🐛 点击了我的订阅中的刷新按钮")
+            Task {
+                await refresh("🐛 点击了我的订阅中的刷新按钮")
+            }
         }, label: {
             Label(
                 title: { Text("刷新") },
@@ -101,16 +105,18 @@ struct MySubscription: View {
             ).labelStyle(.iconOnly)
         }).disabled(refreshing).buttonStyle(.plain)
     }
-    
+
     private func refresh(_ reason: String) {
         refreshing = true
+        let store = self.store
+        
         Task {
             await store.updatePurchased(reason)
             await store.updateSubscriptionStatus(reason)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
-                refreshing = false
-            })
         }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+            refreshing = false
+        })
     }
 }
 

@@ -40,7 +40,9 @@ struct AllSubscriptions: View, SuperLog {
         }
         .onAppear {
             refreshing = true
-            getProducts("AllSubscription OnAppear")
+            Task {
+                await getProducts("AllSubscription OnAppear")
+            }
         }
     }
 
@@ -52,7 +54,9 @@ struct AllSubscriptions: View, SuperLog {
                     ProgressView().scaleEffect(0.4)
                 } else {
                     Button(action: {
-                        getProducts("点击了重试按钮")
+                        Task {
+                            await getProducts("点击了重试按钮")
+                        }
                     }, label: {
                         Label("重试", systemImage: "arrow.clockwise")
                             .labelStyle(.iconOnly)
@@ -70,7 +74,7 @@ struct AllSubscriptions: View, SuperLog {
         }
         
         refreshing = true
-
+        let store = self.store
         Task {
             do {
                 try await store.requestProducts(reason)
@@ -78,11 +82,11 @@ struct AllSubscriptions: View, SuperLog {
             } catch {
                 self.error = error
             }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+                refreshing = false
+            })
         }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-            refreshing = false
-        })
     }
 
     private var footerView: some View {

@@ -147,30 +147,33 @@ struct ProductCell: View, SuperLog {
 
     // MARK: 去购买
 
-    func buy() async {
+    func buy() {
         purchasing = true
-
-        do {
-            os_log("\(self.t)点击了购买按钮")
-
-            let result = try await store.purchase(product)
-            if result != nil {
-                withAnimation {
-                    os_log("\(self.t)购买回调，更新购买状态为 true")
-                    isPurchased = true
+        let store = self.store
+        Task{
+            
+            do {
+                os_log("\(self.t)点击了购买按钮")
+                
+                let result = try await store.purchase(product)
+                if result != nil {
+                    withAnimation {
+                        os_log("\(self.t)购买回调，更新购买状态为 true")
+                        isPurchased = true
+                    }
+                } else {
+                    os_log("\(self.t)购买回调，结果为空，表示取消了")
                 }
-            } else {
-                os_log("\(self.t)购买回调，结果为空，表示取消了")
+            } catch StoreError.failedVerification {
+                errorTitle = "App Store 验证失败"
+                isShowingError = true
+            } catch {
+                errorTitle = error.localizedDescription
+                isShowingError = true
             }
-        } catch StoreError.failedVerification {
-            errorTitle = "App Store 验证失败"
-            isShowingError = true
-        } catch {
-            errorTitle = error.localizedDescription
-            isShowingError = true
+            
+            purchasing = false
         }
-
-        purchasing = false
     }
 }
 
@@ -179,6 +182,7 @@ struct ProductCell: View, SuperLog {
 extension ProductCell {
     func onAppear() {
         let verbose = false
+        let store = self.store
         Task {
             isPurchased = (try? await store.isPurchased(product)) ?? false
 

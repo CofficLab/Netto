@@ -62,6 +62,7 @@ struct NonRenewables: View {
 
     private func getProducts(_ reason: String) {
         refreshing = true
+        let store = self.store
 
         Task {
             do {

@@ -18,8 +18,8 @@ struct StoreRootView<Content: View>: View, SuperLog {
     var body: some View {
         content
             .environmentObject(storeProvider)
-            .onAppear {
-                initializeStore()
+            .task {
+                await initializeStore()
             }
             .onDisappear {
                 cleanupStore()
@@ -31,13 +31,25 @@ struct StoreRootView<Content: View>: View, SuperLog {
 
 extension StoreRootView {
     /// 初始化 Store 相关服务
-    private func initializeStore() {
+    private func initializeStore() async {
         guard !isInitialized else { return }
 
         os_log("\(self.t)🚀 初始化 Store 服务")
 
         // 这里可以执行 Store 插件特有的初始化操作
-        // 例如：加载产品列表、检查订阅状态等
+        
+
+            do {
+                let groups = try await StoreService.requestProducts(productIds: StoreService.loadProductIdToEmojiData().keys)
+
+                self.storeProvider.setCars(groups.cars)
+                self.storeProvider.setSubscriptions(groups.subscriptions)
+                self.storeProvider.setNonRenewables(groups.nonRenewables)
+                self.storeProvider.setFuel(groups.fuel)
+            } catch let error {
+                os_log(.error, "\(self.t)❌ 请求 App Store 获取产品列表出错 -> \(error.localizedDescription)")
+            }
+        
 
         isInitialized = true
         os_log("\(self.t)✅ 服务初始化完成")

@@ -62,6 +62,7 @@ struct SubscriptionSetting: View, SuperEvent, SuperLog, SuperThread {
         }
 
         refreshing = true
+        let store = self.store
 
         Task {
             do {
