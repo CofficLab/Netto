@@ -9,6 +9,11 @@ actor FilterPlugin: SuperPlugin {
             (id: label, view: AnyView(TileFilter()))
         ]
     }
+    
+    @MainActor
+    func getTopbarPosition() -> TopbarPosition {
+        return .center
+    }
 }
 
 @objc(FilterRegistrant)

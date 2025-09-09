@@ -7,8 +7,20 @@ struct Topbar: View {
 
     var body: some View {
         HStack {
-            p.getToolbarButtons()
+            // 左侧按钮
+            p.getLeftButtons()
+            
             Spacer()
+            
+            // 中心按钮
+            p.getCenterButtons()
+            
+            Spacer()
+            
+            // 右侧按钮
+            p.getRightButtons()
+            
+            // 设置按钮（始终在右侧）
             BtnSettings()
         }
         .frame(height: 30)
