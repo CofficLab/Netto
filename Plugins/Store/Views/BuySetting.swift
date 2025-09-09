@@ -61,21 +61,13 @@ struct BuySetting: View, SuperLog {
             }
             .padding(.vertical, 2)
 
-            HStack(alignment: .top, spacing: 20) {
-                ForEach(plans) { plan in
-                    PlanView(plan: plan)
-                }
-            }
-            .padding()
-            .background(MagicBackground.aurora.opacity(0.2))
-
             // 商品分组 Tab 展示（每类一个定制视图）
             TabView {
-                CarsProductsView()
-                    .tabItem { Label("一次性购买", systemImage: "car") }
-
                 SubscriptionSetting()
                     .tabItem { Label("订阅", systemImage: "repeat") }
+                
+                CarsProductsView()
+                    .tabItem { Label("一次性购买", systemImage: "car") }
 
                 NonRenewableProductsView()
                     .tabItem { Label("非续订", systemImage: "clock") }
