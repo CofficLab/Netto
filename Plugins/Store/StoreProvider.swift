@@ -252,7 +252,7 @@ public enum SubscriptionTier: Int, Comparable {
 // MARK: - Preview
 
 #Preview("BuyView") {
-    BuySetting()
+    PurchaseView()
         .inRootView()
         .frame(height: 800)
 }

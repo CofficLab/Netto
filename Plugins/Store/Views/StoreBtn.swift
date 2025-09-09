@@ -40,7 +40,7 @@ struct StoreBtn: View, SuperLog {
             }
         }
         .sheet(isPresented: $showBuySheet) {
-            BuySetting()
+            PurchaseView()
         }
     }
     

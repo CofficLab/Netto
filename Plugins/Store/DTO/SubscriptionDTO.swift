@@ -92,7 +92,7 @@ public extension Product.SubscriptionInfo.Status {
 }
 
 #Preview("Buy") {
-    BuySetting()
+    PurchaseView()
         .inRootView()
         .frame(height: 800)
 }

@@ -123,7 +123,7 @@ struct MySubscription: View {
 // MARK: - Preview
 
 #Preview("Buy") {
-    BuySetting()
+    PurchaseView()
         .inRootView()
         .frame(height: 800)
 }

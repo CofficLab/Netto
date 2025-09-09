@@ -4,7 +4,7 @@ import OSLog
 import StoreKit
 import SwiftUI
 
-struct SubscriptionSetting: View, SuperEvent, SuperLog, SuperThread {
+struct ProudctsOfSubscription: View, SuperEvent, SuperLog, SuperThread {
     @EnvironmentObject var store: StoreProvider
     @EnvironmentObject var app: AppProvider
     @Environment(\.colorScheme) var colorScheme: ColorScheme
@@ -82,7 +82,7 @@ struct SubscriptionSetting: View, SuperEvent, SuperLog, SuperThread {
 
 // MARK: Event Handler
 
-extension SubscriptionSetting {
+extension ProudctsOfSubscription {
     func onAppear() {
         self.bg.async {
             Task {
@@ -111,7 +111,7 @@ extension SubscriptionSetting {
 // MARK: - Preview
 
 #Preview("Buy") {
-    BuySetting()
+    PurchaseView()
         .inRootView()
         .frame(height: 800)
 }

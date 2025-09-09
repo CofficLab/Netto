@@ -108,7 +108,7 @@ struct AllSubscriptions: View, SuperLog {
 // MARK: - Preview
 
 #Preview("Buy") {
-    BuySetting()
+    PurchaseView()
         .inRootView()
         .frame(height: 800)
 }

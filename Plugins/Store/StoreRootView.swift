@@ -69,7 +69,7 @@ extension StoreRootView {
 // MARK: - Preview
 
 #Preview("Buy") {
-    BuySetting()
+    PurchaseView()
         .inRootView()
         .frame(height: 800)
 }

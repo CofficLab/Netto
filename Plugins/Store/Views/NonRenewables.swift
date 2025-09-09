@@ -82,7 +82,7 @@ struct NonRenewables: View {
 // MARK: - Preview
 
 #Preview("Buy") {
-    BuySetting()
+    PurchaseView()
         .inRootView()
         .frame(height: 800)
 }

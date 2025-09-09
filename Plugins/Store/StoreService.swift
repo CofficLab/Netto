@@ -292,7 +292,7 @@ public enum StoreService: SuperLog {
 }
 
 #Preview("Buy") {
-    BuySetting()
+    PurchaseView()
         .inRootView()
         .frame(height: 800)
 }

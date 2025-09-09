@@ -5,28 +5,13 @@ import OSLog
 import StoreKit
 import SwiftUI
 
-struct BuySetting: View, SuperLog {
+struct PurchaseView: View, SuperLog {
     nonisolated static let emoji = "🛒"
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var store: StoreProvider
     @State var closeBtnHovered: Bool = false
-
-    let features: [Feature] = [
-        Feature(name: "文件数量", freeVersion: "最多 \(StoreConfig.maxAudioCount)", proVersion: "无限制"),
-    ]
-
-    let plans = [
-        Plan(name: "基础版本", price: "0", period: "/month", features: [
-            "iCloud 同步": true,
-            "文件数量": "最多 \(StoreConfig.maxAudioCount)",
-        ]),
-        Plan(name: "专业版本", price: "$29", period: "/month", features: [
-            "iCloud 同步": true,
-            "文件数量": "无限制",
-        ]),
-    ]
 
     var body: some View {
         VStack {
@@ -63,7 +48,7 @@ struct BuySetting: View, SuperLog {
 
             // 商品分组 Tab 展示（每类一个定制视图）
             TabView {
-                SubscriptionSetting()
+                ProudctsOfSubscription()
                     .tabItem { Label("订阅", systemImage: "repeat") }
                 
                 CarsProductsView()
@@ -108,7 +93,7 @@ struct BuySetting: View, SuperLog {
 }
 
 #Preview("BuyView") {
-    BuySetting()
+    PurchaseView()
         .inRootView()
         .frame(height: 800)
 }

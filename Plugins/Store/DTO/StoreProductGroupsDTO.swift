@@ -24,7 +24,7 @@ public struct StoreProductGroupsDTO: Hashable, Sendable {
 }
 
 #Preview("Buy") {
-    BuySetting()
+    PurchaseView()
         .inRootView()
         .frame(height: 800)
 }

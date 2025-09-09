@@ -20,10 +20,6 @@ struct ProductCell: View, SuperLog {
         store.status
     }
 
-    var emoji: String {
-        store.emoji(for: product.id)
-    }
-
     var current: Product? {
         store.currentSubscription
     }
@@ -46,14 +42,6 @@ struct ProductCell: View, SuperLog {
 
     var body: some View {
         HStack {
-            // MARK: 图标
-
-            Text(emoji)
-                .font(.system(size: 30))
-                .frame(width: 30, height: 30)
-                .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
-                .padding(.trailing, 15)
-
             if purchasingEnabled {
                 productDetail
                 Spacer()
@@ -75,6 +63,9 @@ struct ProductCell: View, SuperLog {
             VStack(alignment: .leading) {
                 Text(product.displayName)
                     .bold()
+                Text(product.id)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
                 if isCurrent {
                     Text("正在使用")
                         .font(.footnote)
@@ -192,3 +183,19 @@ extension ProductCell {
         }
     }
 }
+
+// MARK: - Preview
+
+#Preview("Buy") {
+    PurchaseView()
+        .inRootView()
+        .frame(height: 800)
+}
+
+#Preview("APP") {
+    ContentView()
+        .inRootView()
+        .frame(width: 700)
+        .frame(height: 800)
+}
+
