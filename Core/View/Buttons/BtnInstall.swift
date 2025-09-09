@@ -13,7 +13,7 @@ struct BtnInstall: View {
 
     var body: some View {
         MagicButton.simple(icon: "puzzlepiece.extension", size: .auto, action: {
-            service.installFilter()
+            service.installExtension()
         })
         .magicTitle("安装")
         .magicShape(.roundedRectangle)

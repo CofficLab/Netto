@@ -21,7 +21,7 @@ struct GuideView: View {
                     RunningView()
                 case .notInstalled:
                     InstallView()
-                case .needApproval:
+                case .needSystemExtensionApproval:
                     ApprovalView()
                 case .extensionNotReady:
                     ExtensionNotReady()
@@ -33,6 +33,8 @@ struct GuideView: View {
                     Image("Ask")
                 case let .error(error):
                     ErrorView(error: error)
+                case .systemExtensionNotInstalled:
+                    SystemExtensionNotInstalledView()
                 }
             }
             .background(.background)
