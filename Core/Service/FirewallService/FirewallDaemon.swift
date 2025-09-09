@@ -38,6 +38,7 @@ final class FirewallDaemon: NSObject, SuperLog, @unchecked Sendable {
             os_log(.error, "\(self.t)Boot -> \(error)")
         }
 
+        // 不管系统扩展是否激活，尝试关联，失败了也没关系
         registerWithProvider(reason: "init")
     }
 }
@@ -146,6 +147,8 @@ extension FirewallDaemon: OSSystemExtensionsWorkspaceObserver {
     @available(macOS 15.1, *)
     func systemExtensionWillBecomeEnabled(_ systemExtensionInfo: OSSystemExtensionInfo) {
         os_log("\(self.t)🍋 systemExtensionWillBecomeEnabled")
+        
+        self.registerWithProvider(reason: "systemExtensionWillBecomeEnabled")
     }
 
     @available(macOS 15.1, *)

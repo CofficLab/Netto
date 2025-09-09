@@ -45,7 +45,7 @@ extension StoreRootView {
 
     /// 清理 Store 相关资源
     private func cleanupStore() {
-        os_log("\(self.t)清理 Store 资源")
+        os_log("\(self.t)📴 清理 Store 资源")
 
         // 这里可以执行 Store 插件特有的清理操作
         // 例如：取消网络请求、清理缓存等
