@@ -6,7 +6,7 @@ import SwiftUI
 import SystemExtensions
 
 /// 负责决定是否允许网络连接，与视图无关，APP启动就运行
-final class FirewallGate: NSObject, SuperLog, @unchecked Sendable {
+final class FirewallDaemon: NSObject, SuperLog, @unchecked Sendable {
     nonisolated static let emoji = "🚪"
 
     private let repo: AppSettingRepo
@@ -20,6 +20,17 @@ final class FirewallGate: NSObject, SuperLog, @unchecked Sendable {
 
         super.init()
 
+        if #available(macOS 15.1, *) {
+            os_log("\(self.t)🚩 监听系统扩展状态")
+            do {
+                try OSSystemExtensionsWorkspace.shared.addObserver(self)
+            } catch {
+                os_log(.error, "\(error)")
+            }
+        } else {
+            // Fallback on earlier versions
+        }
+
         // loadFilterConfiguration 然后 filterManager.isEnabled 才能得到正确的值
         do {
             try await loadFilterConfiguration(reason: "Boot")
@@ -27,13 +38,14 @@ final class FirewallGate: NSObject, SuperLog, @unchecked Sendable {
             os_log(.error, "\(self.t)Boot -> \(error)")
         }
 
+        // 不管系统扩展是否激活，尝试关联，失败了也没关系
         registerWithProvider(reason: "init")
     }
 }
 
 // MARK: Content Filter Configuration Management
 
-extension FirewallGate {
+extension FirewallDaemon {
     private func loadFilterConfiguration(reason: String) async throws {
         os_log("\(self.t)🚩 读取过滤器配置 🐛 \(reason)")
 
@@ -56,7 +68,7 @@ extension FirewallGate {
 
 // MARK: AppCommunication
 
-extension FirewallGate: AppCommunication {
+extension FirewallDaemon: AppCommunication {
     nonisolated func extensionLog(_ words: String) {
         let verbose = false
 
@@ -126,6 +138,27 @@ extension FirewallGate: AppCommunication {
                 os_log(.error, "\(Self.t)❌ 存储事件到数据库失败: \(error)")
             }
         }
+    }
+}
+
+// MARK: - OSSystemExtensionsWorkspaceObserver
+
+extension FirewallDaemon: OSSystemExtensionsWorkspaceObserver {
+    @available(macOS 15.1, *)
+    func systemExtensionWillBecomeEnabled(_ systemExtensionInfo: OSSystemExtensionInfo) {
+        os_log("\(self.t)🍋 systemExtensionWillBecomeEnabled")
+        
+        self.registerWithProvider(reason: "systemExtensionWillBecomeEnabled")
+    }
+
+    @available(macOS 15.1, *)
+    func systemExtensionWillBecomeDisabled(_ systemExtensionInfo: OSSystemExtensionInfo) {
+        os_log("\(self.t)🍋 systemExtensionWillBecomeDisabled")
+    }
+
+    @available(macOS 15.1, *)
+    func systemExtensionWillBecomeInactive(_ systemExtensionInfo: OSSystemExtensionInfo) {
+        os_log("\(self.t)🍋 systemExtensionWillBecomeInactive")
     }
 }
 

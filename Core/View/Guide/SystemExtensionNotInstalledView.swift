@@ -1,22 +1,32 @@
 import MagicCore
 import SwiftUI
 
-struct ExtensionNotReady: View {
+struct SystemExtensionNotInstalledView: View {
     var body: some View {
         Popview(
-            iconName: "exclamationmark.shield",
-            title: "需要激活系统扩展"
+            iconName: "exclamationmark.triangle",
+            title: "系统扩展未安装",
+            iconColor: .red
         ) {
             VStack(spacing: 20) {
-                // 激活步骤示意图
+                Text("系统扩展未安装，无法启动防火墙功能")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 20)
+
                 VStack(spacing: 16) {
+                    Text("解决方案：")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+
                     VStack(alignment: .leading, spacing: 12) {
                         HStack(spacing: 8) {
                             Text("1.")
                                 .font(.callout)
                                 .foregroundColor(.blue)
                                 .fontWeight(.medium)
-                            Text("打开系统设置")
+                            Text("点击下方按钮安装系统扩展")
                                 .font(.callout)
                         }
 
@@ -25,7 +35,7 @@ struct ExtensionNotReady: View {
                                 .font(.callout)
                                 .foregroundColor(.blue)
                                 .fontWeight(.medium)
-                            Text("找到本应用的扩展")
+                            Text("在弹出的对话框中点击\"允许\"")
                                 .font(.callout)
                         }
 
@@ -34,33 +44,35 @@ struct ExtensionNotReady: View {
                                 .font(.callout)
                                 .foregroundColor(.blue)
                                 .fontWeight(.medium)
-                            Text("将开关点击到启用状态")
+                            Text("等待系统扩展安装完成")
                                 .font(.callout)
                         }
                     }
                     .padding(.horizontal, 20)
                 }
                 .padding(.vertical, 16)
-                .background(Color.orange.opacity(0.1))
+                .background(Color.red.opacity(0.1))
                 .cornerRadius(8)
 
-                // 系统设置按钮
-                BtnSetting()
+                BtnInstallExtension()
                     .controlSize(.extraLarge)
             }
         }
     }
 }
 
-#Preview {
-    ExtensionNotReady()
-        .inRootView()
-        .frame(height: 500)
+// MARK: - Preview
+
+#Preview("App - Large") {
+    RootView {
+        SystemExtensionNotInstalledView()
+    }
+    .frame(width: 600, height: 1000)
 }
 
-#Preview("App") {
+#Preview("App - Small") {
     RootView {
-        ContentView()
+        SystemExtensionNotInstalledView()
     }
-    .frame(height: 800)
+    .frame(width: 600, height: 600)
 }

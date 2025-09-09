@@ -11,7 +11,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SuperEvent, SuperLog, SuperT
     @Environment(\.openWindow) private var openWindow
     static let emoji = "🍎"
     
-    var gate: FirewallGate? = nil
+    var gate: FirewallDaemon? = nil
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         os_log("\(self.t)✅ 应用启动完成")
@@ -22,7 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SuperEvent, SuperLog, SuperT
             let repo = AppSettingRepo()
             let eventRepo = EventRepo.shared
             
-            self.gate = await FirewallGate(repo: repo,eventRepo: eventRepo, reason: self.className)
+            self.gate = await FirewallDaemon(repo: repo,eventRepo: eventRepo, reason: self.className)
         }
     }
     

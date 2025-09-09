@@ -33,7 +33,7 @@ extension Notification.Name {
     static let firewallDidStop = Notification.Name("firewallDidStop")
     
     /// 防火墙已安装
-    static let firewallDidInstall = Notification.Name("firewallDidInstall")
+    static let extensionDidInstall = Notification.Name("firewallDidInstall")
     
     /// 用户已授权
     static let firewallUserApproved = Notification.Name("firewallUserApproved")
@@ -125,7 +125,7 @@ extension View {
     /// 监听防火墙已安装事件
     /// - Parameter action: 已安装时的回调
     func onFirewallDidInstall(_ action: @escaping () -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .firewallDidInstall)) { _ in
+        self.onReceive(NotificationCenter.default.publisher(for: .extensionDidInstall)) { _ in
             action()
         }
     }

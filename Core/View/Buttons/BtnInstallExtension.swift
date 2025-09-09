@@ -2,7 +2,7 @@ import MagicCore
 import SwiftUI
 import MagicUI
 
-struct BtnInstall: View {
+struct BtnInstallExtension: View {
     @EnvironmentObject private var service: FirewallService
 
     private var width: CGFloat = 150
@@ -13,9 +13,9 @@ struct BtnInstall: View {
 
     var body: some View {
         MagicButton.simple(icon: "puzzlepiece.extension", size: .auto, action: {
-            service.installFilter()
+            service.installExtension()
         })
-        .magicTitle("安装")
+        .magicTitle("安装系统扩展")
         .magicShape(.roundedRectangle)
         .frame(width: width)
         .frame(height: 50)
@@ -25,8 +25,8 @@ struct BtnInstall: View {
 #Preview {
     RootView {
         VStack {
-            BtnInstall()
-            BtnInstall(width: 50)
+            BtnInstallExtension()
+            BtnInstallExtension(width: 50)
         }
     }
     .frame(height: 800)
