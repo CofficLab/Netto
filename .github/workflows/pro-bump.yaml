@@ -67,3 +67,24 @@ jobs:
           commit_message: '🎨 Bump a new version'
           commit_user_name: GitHub Action
           tagging_message: ${{ env.tag }}
+  sync_dev:
+    if: github.ref == 'refs/heads/main'
+    needs:
+      - bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出 dev 分支
+        uses: actions/checkout@v3
+        with:
+          ref: dev
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      - name: 拉取 main 最新提交
+        run: git fetch origin main
+      - name: 合并 main 到 dev
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "actions@github.com"
+          git merge --no-edit origin/main || true
+      - name: 推送 dev 分支
+        run: git push origin dev
