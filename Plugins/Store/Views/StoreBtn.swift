@@ -1,37 +1,69 @@
 import Foundation
 import MagicCore
+import MagicAlert
 import MagicUI
 import OSLog
 import SwiftUI
 
-struct StoreBtn: View {
+struct StoreBtn: View, SuperLog {
     @State private var showBuySheet = false
+    @EnvironmentObject private var m: MagicMessageProvider
+    
+    private var asToolbarItem: Bool = false
+    private var icon: String = "app.gift"
+    
+    init(asToolbarItem: Bool = false) {
+        self.asToolbarItem = asToolbarItem
+    }
 
     var body: some View {
-        MagicButton.simple(title: "查看订阅") {
-            showBuySheet = true
+        Group {
+            if asToolbarItem {
+                Button {
+                    action()
+                } label: {
+                    Label {
+                        Text("Store")
+                    } icon: {
+                        Image(systemName: icon)
+                    }
+                }
+                .buttonStyle(.plain)
+            } else {
+                MagicButton.simple(icon: icon, size: .auto, action: {
+                    action()
+                })
+                .magicTitle("商店")
+                .magicShape(.roundedRectangle)
+                .frame(width: 150)
+                .frame(height: 50)
+            }
         }
-        .magicIcon("app.gift")
-        .magicShape(.circle)
-        .magicStyle(.secondary)
-        .magicSize(.small)
         .sheet(isPresented: $showBuySheet) {
             BuySetting()
         }
+    }
+    
+    private func action() -> Void {
+        showBuySheet = true
     }
 }
 
 // MARK: - Preview
 
-#Preview("Buy") {
-    BuySetting()
-        .inRootView()
-        .frame(height: 800)
+#Preview {
+    RootView {
+        VStack {
+            StoreBtn()
+            StoreBtn(asToolbarItem: true)
+        }
+    }
+    .frame(height: 500)
+    .frame(width: 500)
 }
 
-#Preview("APP") {
-    ContentView()
-        .inRootView()
-        .frame(width: 700)
-        .frame(height: 800)
+#Preview("App") {
+    RootView {
+        ContentView()
+    }
 }

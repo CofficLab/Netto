@@ -7,7 +7,9 @@ struct Topbar: View {
 
     var body: some View {
         HStack {
-            p.getPlugins()
+            p.getToolbarButtons()
+            Spacer()
+            BtnSettings()
         }
         .frame(height: 30)
         .background(MagicBackground.colorTeal.opacity(0.2))

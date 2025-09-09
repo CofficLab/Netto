@@ -10,6 +10,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     let emoji = "🧩"
     @Published private var toolbarButtons: [(id: String, view: AnyView)] = []
     @Published private var pluginRootViews: [(id: String, rootViewProvider: (AnyView) -> AnyView)] = []
+    @Published private var settingsButtons: [(id: String, view: AnyView)] = []
 
     init(autoDiscover: Bool = true) {
         if autoDiscover {
@@ -26,13 +27,17 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
                         return plugin.provideRootView { content } ?? content
                     })
                 }
+                let settingsButtons: [(id: String, view: AnyView)] = plugins.flatMap { plugin in
+                    plugin.addSettingsButtons()
+                }
                 self.toolbarButtons = buttons
                 self.pluginRootViews = rootViews
+                self.settingsButtons = settingsButtons
             }
         }
     }
 
-    func getPlugins() -> some View {
+    func getToolbarButtons() -> some View {
         return HStack(spacing: 0) {
             ForEach(Array(self.toolbarButtons.enumerated()), id: \.element.id) { index, button in
                 button.view
@@ -58,6 +63,20 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
     /// 获取指定插件的 RootView 包装器
     func getPluginRootViewWrapper(for pluginId: String) -> ((AnyView) -> AnyView)? {
         return pluginRootViews.first { $0.id == pluginId }?.rootViewProvider
+    }
+    
+    /// 获取所有设置按钮
+    func getSettingsButtons() -> some View {
+        return VStack(spacing: 8) {
+            ForEach(Array(self.settingsButtons.enumerated()), id: \.element.id) { index, button in
+                button.view
+            }
+        }
+    }
+    
+    /// 获取指定设置按钮
+    func getSettingsButton(for buttonId: String) -> AnyView? {
+        return settingsButtons.first { $0.id == buttonId }?.view
     }
     
     /// 清理资源，释放内存
