@@ -75,10 +75,10 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
             }
         }, label: {
             #if DEBUG
-            Label(AppConfig.appName, systemImage: .iconAirplane)
-                .foregroundColor(.orange)
+                Label(AppConfig.appName, systemImage: .iconAirplane)
+                    .foregroundColor(.orange)
             #else
-            Label(AppConfig.appName, systemImage: "network")
+                Label(AppConfig.appName, systemImage: "network")
             #endif
         })
         .menuBarExtraStyle(.window)
@@ -86,7 +86,8 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
 }
 
 #Preview("APP") {
-    RootView(content: {
-        ContentView()
-    }).frame(width: 700)
+    ContentView()
+        .inRootView()
+        .frame(width: 500)
+        .frame(height: 800)
 }

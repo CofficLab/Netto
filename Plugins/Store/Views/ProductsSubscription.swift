@@ -4,7 +4,7 @@ import OSLog
 import StoreKit
 import SwiftUI
 
-struct ProudctsOfSubscription: View, SuperEvent, SuperLog, SuperThread {
+struct ProductsSubscription: View, SuperEvent, SuperLog, SuperThread {
     @EnvironmentObject var store: StoreProvider
     @EnvironmentObject var app: AppProvider
     @Environment(\.colorScheme) var colorScheme: ColorScheme
@@ -16,26 +16,28 @@ struct ProudctsOfSubscription: View, SuperEvent, SuperLog, SuperThread {
     nonisolated static let emoji = "🖥️"
 
     var body: some View {
-        VStack {
-            ZStack {
-                Text("订阅专业版本").font(.title3)
-                refreshButton
-            }
-
-            Divider()
-
-            if refreshing == false && subscriptions.isEmpty {
-                Text("🏃 暂无")
-            } else {
-                VStack {
-                    ForEach(subscriptions) { product in
-                        ProductCell(product: product)
-                    }
+        ScrollView {
+            VStack {
+                ZStack {
+                    Text("订阅专业版本").font(.title3)
+                    refreshButton
                 }
-                .padding()
-            }
-        }.onAppear(perform: onAppear)
-            .onReceive(NotificationCenter.default.publisher(for: .Restored), perform: onRestore)
+                
+                Divider()
+                
+                if refreshing == false && subscriptions.isEmpty {
+                    Text("🏃 暂无")
+                } else {
+                    VStack {
+                        ForEach(subscriptions) { product in
+                            ProductCell(product: product)
+                        }
+                    }
+                    .padding()
+                }
+            }.onAppear(perform: onAppear)
+                .onReceive(NotificationCenter.default.publisher(for: .Restored), perform: onRestore)
+        }
     }
 
     private var refreshButton: some View {
@@ -82,7 +84,7 @@ struct ProudctsOfSubscription: View, SuperEvent, SuperLog, SuperThread {
 
 // MARK: Event Handler
 
-extension ProudctsOfSubscription {
+extension ProductsSubscription {
     func onAppear() {
         self.bg.async {
             Task {
@@ -111,7 +113,7 @@ extension ProudctsOfSubscription {
 // MARK: - Preview
 
 #Preview("Buy") {
-    PurchaseView()
+    PurchaseView(showCloseButton: false)
         .inRootView()
         .frame(height: 800)
 }

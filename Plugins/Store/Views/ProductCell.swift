@@ -78,8 +78,13 @@ struct ProductCell: View, SuperLog {
                 }
             }
         } else {
-            Text(product.description)
-                .frame(alignment: .leading)
+            VStack(alignment: .leading) {
+                Text(product.description)
+                    .frame(alignment: .leading)
+                Text(product.id)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 
@@ -187,7 +192,7 @@ extension ProductCell {
 // MARK: - Preview
 
 #Preview("Buy") {
-    PurchaseView()
+    PurchaseView(showCloseButton: false)
         .inRootView()
         .frame(height: 800)
 }

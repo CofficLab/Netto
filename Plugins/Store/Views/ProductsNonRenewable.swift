@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct NonRenewableProductsView: View {
+struct ProductsNonRenewable: View {
     @EnvironmentObject private var store: StoreProvider
 
     var body: some View {

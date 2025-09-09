@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CarsProductsView: View {
+struct ProductsOfOneTime: View {
     @EnvironmentObject private var store: StoreProvider
 
     var body: some View {
@@ -22,6 +22,21 @@ struct CarsProductsView: View {
             }
         }
     }
+}
+
+// MARK: - Preview
+
+#Preview("Buy") {
+    PurchaseView()
+        .inRootView()
+        .frame(height: 800)
+}
+
+#Preview("APP") {
+    ContentView()
+        .inRootView()
+        .frame(width: 700)
+        .frame(height: 800)
 }
 
 

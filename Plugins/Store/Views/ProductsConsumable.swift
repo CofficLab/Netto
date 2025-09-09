@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ConsumableProductsView: View {
+struct ProductsConsumable: View {
     @EnvironmentObject private var store: StoreProvider
 
     var body: some View {
