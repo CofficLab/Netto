@@ -6,7 +6,7 @@ actor StorePlugin: SuperPlugin {
     @MainActor
     func addToolBarButtons() -> [(id: String, view: AnyView)] {
         [
-            (id: label, view: AnyView(StoreSettingEntry()
+            (id: label, view: AnyView(StoreBtn()
                 .environmentObject(StoreProvider())))
         ]
     }

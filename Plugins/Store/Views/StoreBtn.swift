@@ -4,7 +4,7 @@ import MagicUI
 import OSLog
 import SwiftUI
 
-struct StoreSettingEntry: View {
+struct StoreBtn: View {
     @State private var showBuySheet = false
 
     var body: some View {
@@ -21,8 +21,17 @@ struct StoreSettingEntry: View {
     }
 }
 
+// MARK: - Preview
+
+#Preview("Buy") {
+    BuySetting()
+        .inRootView()
+        .frame(height: 800)
+}
+
 #Preview("APP") {
     ContentView()
         .inRootView()
-        .frame(height: 600)
+        .frame(width: 700)
+        .frame(height: 800)
 }

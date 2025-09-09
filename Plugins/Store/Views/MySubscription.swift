@@ -113,3 +113,18 @@ struct MySubscription: View {
         }
     }
 }
+
+// MARK: - Preview
+
+#Preview("Buy") {
+    BuySetting()
+        .inRootView()
+        .frame(height: 800)
+}
+
+#Preview("APP") {
+    ContentView()
+        .inRootView()
+        .frame(width: 700)
+        .frame(height: 800)
+}

@@ -60,8 +60,17 @@ extension RestoreView {
     }
 }
 
+// MARK: - Preview
+
 #Preview("Buy") {
     BuySetting()
-        .environmentObject(StoreProvider())
+        .inRootView()
+        .frame(height: 800)
+}
+
+#Preview("APP") {
+    ContentView()
+        .inRootView()
+        .frame(width: 700)
         .frame(height: 800)
 }

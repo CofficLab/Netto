@@ -60,13 +60,13 @@ struct BuySetting: View, SuperLog {
             }
             .padding(.vertical, 2)
 
-            HStack(alignment: .top, spacing: 20) {
-                ForEach(plans) { plan in
-                    PlanView(plan: plan)
-                }
-            }
-            .padding()
-            .background(MagicBackground.aurora.opacity(0.1))
+//            HStack(alignment: .top, spacing: 20) {
+//                ForEach(plans) { plan in
+//                    PlanView(plan: plan)
+//                }
+//            }
+//            .padding()
+//            .background(MagicBackground.aurora.opacity(0.1))
 
             SubscriptionSetting()
                 .padding()
