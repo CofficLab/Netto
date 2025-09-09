@@ -10,6 +10,7 @@ struct BuySetting: View, SuperLog {
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var store: StoreProvider
     @State var closeBtnHovered: Bool = false
 
     let features: [Feature] = [
@@ -68,9 +69,22 @@ struct BuySetting: View, SuperLog {
             .padding()
             .background(MagicBackground.aurora.opacity(0.2))
 
-            SubscriptionSetting()
-                .padding()
-                .background(MagicBackground.aurora.opacity(0.1))
+            // 商品分组 Tab 展示（每类一个定制视图）
+            TabView {
+                CarsProductsView()
+                    .tabItem { Label("一次性购买", systemImage: "car") }
+
+                SubscriptionSetting()
+                    .tabItem { Label("订阅", systemImage: "repeat") }
+
+                NonRenewableProductsView()
+                    .tabItem { Label("非续订", systemImage: "clock") }
+
+                ConsumableProductsView()
+                    .tabItem { Label("消耗品", systemImage: "drop") }
+            }
+            .padding()
+            .background(MagicBackground.aurora.opacity(0.1))
 
             RestoreView()
                 .padding()
