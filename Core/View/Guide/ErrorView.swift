@@ -1,4 +1,6 @@
 import SwiftUI
+import MagicUI
+import MagicBackground
 import MagicCore
 
 /// 错误显示视图

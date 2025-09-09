@@ -1,4 +1,6 @@
 import MagicCore
+import MagicAlert
+import MagicUI
 import SwiftUI
 
 struct BtnToggleSysApp: View, SuperLog {

@@ -1,3 +1,4 @@
+import MagicAlert
 import MagicCore
 import OSLog
 import SwiftData
@@ -7,7 +8,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     nonisolated static var emoji: String { "🌳" }
 
     private var content: Content
-    
+
     // 核心服务 - 改为实例对象
     @StateObject private var app = UIProvider()
     @StateObject private var p = PluginProvider()
@@ -30,15 +31,18 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
             } else if let error = initializationError {
                 error.makeView()
             } else if let eventRepo = eventRepo, let settingRepo = settingRepo, let firewall = self.firewall {
-                content
-                    .withMagicToast()
-                    .environmentObject(app)
-                    .environmentObject(m)
-                    .environmentObject(p)
-                    .environmentObject(eventRepo)
-                    .environmentObject(settingRepo)
-                    .environmentObject(firewall)
-                    .onAppear(perform: onAppear)
+                // 将内容视图包裹在插件的 RootView 中
+                p.wrapContent(
+                    content
+                        .withMagicToast()
+                        .environmentObject(app)
+                        .environmentObject(m)
+                        .environmentObject(p)
+                        .environmentObject(eventRepo)
+                        .environmentObject(settingRepo)
+                        .environmentObject(firewall)
+                        .onAppear(perform: onAppear)
+                )
             }
         }
         .task {
@@ -86,7 +90,7 @@ extension RootView {
         self.app.cleanup()
         self.p.cleanup()
         self.firewall?.removeObserver()
-        
+
         // 清理状态变量，强制释放引用
         self.eventRepo = nil
         self.settingRepo = nil
@@ -124,7 +128,7 @@ struct RootLoadingView: View {
 // MARK: - Preview
 
 #Preview("APP") {
-    RootView(content: {
-        ContentView()
-    }).frame(width: 700)
+    ContentView()
+        .inRootView()
+        .frame(width: 700)
 }

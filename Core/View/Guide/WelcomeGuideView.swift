@@ -63,7 +63,7 @@ struct WelcomeGuideView: View {
                 } else {
                     stepView(
                         title: "工作原理",
-                        description: "了解应用程序与系统扩展的协作机制，系统扩展负责网络过滤，应用程序提供用户界面。",
+                        description: "系统扩展负责网络过滤，应用程序提供用户界面。",
                         icon: "gearshape.2.fill",
                         color: .blue
                     ) {

@@ -98,6 +98,7 @@ extension AppList {
             self.filteredApps = filtered
         }
     }
+
 }
 
 #Preview("APP") {

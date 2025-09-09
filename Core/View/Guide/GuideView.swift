@@ -1,5 +1,6 @@
 import SwiftUI
 import MagicCore
+import MagicBackground
 
 struct GuideView: View {
     @EnvironmentObject private var app: UIProvider

@@ -1,0 +1,15 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+---
+
+globs: .swift alwaysApply: false
+
+---
+
+# 关于这个项目
+
+- 禁止出现 iOS 平台的代码

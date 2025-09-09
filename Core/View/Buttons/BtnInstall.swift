@@ -1,5 +1,6 @@
 import MagicCore
 import SwiftUI
+import MagicUI
 
 struct BtnInstall: View {
     @EnvironmentObject private var service: FirewallService
