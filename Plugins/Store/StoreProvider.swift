@@ -7,14 +7,14 @@ import SwiftUI
 class StoreProvider: ObservableObject, SuperLog {
     static let emoji = "💰"
 
-    @Published private(set) var cars: [Product]
-    @Published private(set) var fuel: [Product]
-    @Published private(set) var subscriptions: [Product]
-    @Published private(set) var nonRenewables: [Product]
+    @Published private(set) var cars: [StoreProductDTO]
+    @Published private(set) var fuel: [StoreProductDTO]
+    @Published private(set) var subscriptions: [StoreProductDTO]
+    @Published private(set) var nonRenewables: [StoreProductDTO]
 
-    @Published private(set) var purchasedCars: [Product] = []
-    @Published private(set) var purchasedNonRenewableSubscriptions: [Product] = []
-    @Published private(set) var purchasedSubscriptions: [Product] = []
+    @Published private(set) var purchasedCars: [StoreProductDTO] = []
+    @Published private(set) var purchasedNonRenewableSubscriptions: [StoreProductDTO] = []
+    @Published private(set) var purchasedSubscriptions: [StoreProductDTO] = []
     @Published private(set) var subscriptionGroupStatus: RenewalState?
 
     @Published var currentSubscription: Product?
@@ -51,31 +51,31 @@ class StoreProvider: ObservableObject, SuperLog {
 
     // MARK: - Setter
 
-    func setCars(_ cars: [Product]) {
+    func setCars(_ cars: [StoreProductDTO]) {
         self.cars = cars
     }
     
-    func setFuel(_ fuel: [Product]) {
+    func setFuel(_ fuel: [StoreProductDTO]) {
         self.fuel = fuel
     }
 
-    func setSubscriptions(_ subscriptions: [Product]) {
+    func setSubscriptions(_ subscriptions: [StoreProductDTO]) {
         self.subscriptions = subscriptions
     }
 
-    func setNonRenewables(_ nonRenewables: [Product]) {
+    func setNonRenewables(_ nonRenewables: [StoreProductDTO]) {
         self.nonRenewables = nonRenewables
     }
 
-    func setPurchasedCars(_ purchasedCars: [Product]) {
+    func setPurchasedCars(_ purchasedCars: [StoreProductDTO]) {
         self.purchasedCars = purchasedCars
     }
 
-    func setPurchasedNonRenewableSubscriptions(_ purchasedNonRenewableSubscriptions: [Product]) {
+    func setPurchasedNonRenewableSubscriptions(_ purchasedNonRenewableSubscriptions: [StoreProductDTO]) {
         self.purchasedNonRenewableSubscriptions = purchasedNonRenewableSubscriptions
     }
 
-    func setPurchasedSubscriptions(_ purchasedSubscriptions: [Product]) {
+    func setPurchasedSubscriptions(_ purchasedSubscriptions: [StoreProductDTO]) {
         self.purchasedSubscriptions = purchasedSubscriptions
     }
 
@@ -83,50 +83,15 @@ class StoreProvider: ObservableObject, SuperLog {
         self.subscriptionGroupStatus = subscriptionGroupStatus
     }
 
-    // MARK: 更新订阅组的状态
-
-    func updateSubscriptionGroupStatus(_ state: RenewalState?, reason: String, verbose: Bool = false) {
+    func setSubscriptionGroupStatus(_ state: RenewalState?, reason: String, verbose: Bool = false) {
         if verbose {
             os_log("\(self.t)更新订阅组的状态，因为 \(reason)")
         }
 
         self.subscriptionGroupStatus = state
-
-        guard let s = self.subscriptionGroupStatus else {
-            return os_log("\(self.t)订阅组状态: Nil")
-        }
-
-        switch s {
-        case .expired:
-            if verbose {
-                os_log("\(self.t)订阅组状态: Expired")
-            }
-        case .inBillingRetryPeriod:
-            if verbose {
-                os_log("\(self.t)订阅组状态: InBillingRetryPeriod")
-            }
-        case .inGracePeriod:
-            if verbose {
-                os_log("\(self.t)订阅组状态: InGracePeriod")
-            }
-        case .revoked:
-            if verbose {
-                os_log("\(self.t)订阅组状态: Revoked")
-            }
-        case .subscribed:
-            if verbose {
-                os_log("\(self.t)订阅组状态: Subscribed")
-            }
-        default:
-            if verbose {
-                os_log(.error, "\(self.t)订阅组状态: 未知")
-            }
-        }
     }
 
-    // MARK: 更新当前订阅的产品
-
-    func updateSubscription(_ sub: Product?, verbose: Bool = false) {
+    func setSubscription(_ sub: Product?, verbose: Bool = false) {
         if verbose {
             os_log("\(self.t)StoreManger 更新订阅计划为 \(sub?.displayName ?? "-")")
         }
@@ -134,9 +99,7 @@ class StoreProvider: ObservableObject, SuperLog {
         self.currentSubscription = sub
     }
 
-    // MARK: 更新当前订阅的产品的状态
-
-    func updateStatus(_ status: Product.SubscriptionInfo.Status?, verbose: Bool = false) {
+    func setStatus(_ status: Product.SubscriptionInfo.Status?, verbose: Bool = false) {
         if verbose {
             os_log("\(self.t)StoreManger 更新订阅状态")
         }
@@ -144,86 +107,28 @@ class StoreProvider: ObservableObject, SuperLog {
         self.status = status
     }
 
-    // MARK: 更新已购列表
-
-    func updatePurchased(_ reason: String, verbose: Bool = false) async {
+    func setPurchased(_ reason: String, verbose: Bool = false) async {
         if verbose {
             os_log("\(self.t)更新已购列表，因为 -> \(reason)")
         }
 
-        var purchasedCars: [Product] = []
-        var purchasedSubscriptions: [Product] = []
-        var purchasedNonRenewableSubscriptions: [Product] = []
+        let lists = await StoreService.fetchPurchasedLists(
+            cars: cars,
+            subscriptions: subscriptions,
+            nonRenewables: nonRenewables
+        )
 
-        // Iterate through all of the user's purchased products.
-        for await result in Transaction.currentEntitlements {
-            do {
-                // Check whether the transaction is verified. If it isn’t, catch `failedVerification` error.
-                let transaction = try checkVerified(result)
+        self.purchasedCars = lists.cars
+        self.purchasedNonRenewableSubscriptions = lists.nonRenewables
+        self.purchasedSubscriptions = lists.subscriptions
 
-                // Check the `productType` of the transaction and get the corresponding product from the store.
-                switch transaction.productType {
-                case .nonConsumable:
-                    os_log("\(self.t) 🚩 💰 更新购买状态 -> nonConsumable")
-                    if let car = cars.first(where: { $0.id == transaction.productID }) {
-                        os_log("\(self.t) 🚩 💰 更新购买状态 -> 已购车: \(car.displayName)")
-                        purchasedCars.append(car)
-                    }
-                case .nonRenewable:
-                    os_log("\(self.t) 🚩 💰 更新购买状态 -> nonRenewable")
-                    if let nonRenewable = nonRenewables.first(where: { $0.id == transaction.productID }),
-                       transaction.productID == "nonRenewing.standard" {
-                        // Non-renewing subscriptions have no inherent expiration date, so they're always
-                        // contained in `Transaction.currentEntitlements` after the user purchases them.
-                        // This app defines this non-renewing subscription's expiration date to be one year after purchase.
-                        // If the current date is within one year of the `purchaseDate`, the user is still entitled to this
-                        // product.
-                        let currentDate = Date()
-                        let expirationDate = Calendar(identifier: .gregorian).date(byAdding: DateComponents(year: 1), to: transaction.purchaseDate)!
-
-                        if currentDate < expirationDate {
-                            os_log("\(self.t) 🚩💰 更新购买状态 -> 已购: \(nonRenewable.displayName)")
-                            purchasedNonRenewableSubscriptions.append(nonRenewable)
-                        }
-                    }
-                case .autoRenewable:
-                    if let subscription = subscriptions.first(where: { $0.id == transaction.productID }) {
-                        os_log("\(self.t)更新已购列表 -> 已购: \(subscription.displayName)")
-
-                        purchasedSubscriptions.append(subscription)
-                    }
-                default:
-                    os_log(.error, "\(self.t) 💰 更新已购列表，产品类型未知")
-                    break
-                }
-            } catch let error {
-                os_log(.error, "\(self.t) 💰 更新已购列表出错 -> \(error.localizedDescription)")
-            }
-        }
-
-        // Update the store information with the purchased products.
-        self.purchasedCars = purchasedCars
-        self.purchasedNonRenewableSubscriptions = purchasedNonRenewableSubscriptions
-
-        // Update the store information with auto-renewable subscription products.
-        self.purchasedSubscriptions = purchasedSubscriptions
-
-        // Check the `subscriptionGroupStatus` to learn the auto-renewable subscription state to determine whether the customer
-        // is new (never subscribed), active, or inactive (expired subscription). This app has only one subscription
-        // group, so products in the subscriptions array all belong to the same group. The statuses that
-        // `product.subscription.status` returns apply to the entire subscription group.
-
-        // MARK: 更新订阅组状态
-
-        let subscriptionGroupStatus = try? await subscriptions.first?.subscription?.status.first?.state
-        updateSubscriptionGroupStatus(subscriptionGroupStatus, reason: "\(reason) -> 🐛 更新已购列表")
+//        let subscriptionGroupStatus = try? await subscriptions.first?.subscription?.status.first?.state
+//        updateSubscriptionGroupStatus(subscriptionGroupStatus, reason: "\(reason)")
     }
 
     deinit {
         updateListenerTask?.cancel()
     }
-
-    // 移至 StoreService
 
     func listenForTransactions(_ reason: String, verbose: Bool = false) -> Task<Void, Error> {
         if verbose {
@@ -257,56 +162,24 @@ class StoreProvider: ObservableObject, SuperLog {
         do {
             let groups = try await StoreService.requestProducts(productIds: productIdToEmoji.keys)
 
-//            cars = groups.cars
-//            subscriptions = groups.subscriptions
-//            nonRenewables = groups.nonRenewables
-//            fuel = groups.fuel
+            self.setCars(groups.cars)
+            self.setSubscriptions(groups.subscriptions)
+            self.setNonRenewables(groups.nonRenewables)
+            self.setFuel(groups.fuel)
         } catch let error {
-            os_log(.error, "\(self.t)❌ 请求 App Store 获取产品列表出错 -> \(error.localizedDescription)")
-
             throw error
         }
     }
 
     // MARK: 购买与支付
 
-    func purchase(_ product: Product) async throws -> Transaction? {
-        os_log("\(self.t)去支付")
-
-        #if os(visionOS)
-            return nil
-        #else
-            // Begin purchasing the `Product` the user selects.
-            let result = try await product.purchase()
-
-            switch result {
-            case let .success(verification):
-                os_log("\(self.t)支付成功，验证")
-                // Check whether the transaction is verified. If it isn't,
-                // this function rethrows the verification error.
-                let transaction = try checkVerified(verification)
-
-                os_log("\(self.t)支付成功，验证成功")
-                // The transaction is verified. Deliver content to the user.
-                await updatePurchased("支付并验证成功")
-
-                // Always finish a transaction.
-                await transaction.finish()
-
-                return transaction
-            case .userCancelled, .pending:
-                os_log("\(self.t)取消或pending")
-                return nil
-            default:
-                os_log("\(self.t)支付结果 \(String(describing: result))")
-                return nil
-            }
-        #endif
+    func purchase(_ product: StoreProductDTO) async throws -> Transaction? {
+        return try await StoreService.purchase(product)
     }
 
-    func isPurchased(_ product: Product) async throws -> Bool {
+    func isPurchased(_ product: StoreProductDTO) async throws -> Bool {
         // Determine whether the user purchases a given product.
-        switch product.type {
+        switch product.kind {
         case .nonRenewable:
             return purchasedNonRenewableSubscriptions.contains(product)
         case .nonConsumable:
@@ -318,7 +191,6 @@ class StoreProvider: ObservableObject, SuperLog {
         }
     }
 
-    // 使用 StoreService.checkVerified
     func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
         try StoreService.checkVerified(result)
     }
@@ -338,90 +210,14 @@ class StoreProvider: ObservableObject, SuperLog {
         if verbose {
             os_log("\(self.t)StoreManger 检查订阅状态，因为 -> \(reason)")
         }
-
-        guard subscriptions.count > 0 else {
-            if let c = completion {
-                c(StoreError.canNotGetProducts)
-            }
-
-            return os_log("\(self.t)StoreManger 检查订阅状态，订阅计划为空，可能之前的步骤获取失败，停止")
-        }
-
-        // 订阅组可以多个，但一般设置一个
-        //  1. 专业版订阅计划
-        //    1.1 按年
-        //    1.2 按月
-        //  2. xxx 订阅计划
-        do {
-            // This app has only one subscription group, so products in the subscriptions
-            // array all belong to the same group. The statuses that
-            // `product.subscription.status` returns apply to the entire subscription group.
-            guard let product = subscriptions.first,
-                  let statuses = try await product.subscription?.status else {
-                return
-            }
-
-            var highestStatus: Product.SubscriptionInfo.Status?
-            var highestProduct: Product?
-
-            if verbose {
-                os_log("\(self.t)StoreManger 检查订阅状态，statuses.count -> \(statuses.count)")
-            }
-
-            // Iterate through `statuses` for this subscription group and find
-            // the `Status` with the highest level of service that isn't
-            // in an expired or revoked state. For example, a customer may be subscribed to the
-            // same product with different levels of service through Family Sharing.
-            for status in statuses {
-                switch status.state {
-                case .expired, .revoked:
-                    if verbose {
-                        os_log("\(self.t)检查订阅状态 -> 超时或被撤销")
-                    }
-
-                    continue
-                default:
-                    let renewalInfo = try checkVerified(status.renewalInfo)
-
-                    // Find the first subscription product that matches the subscription status renewal info by comparing the product IDs.
-                    guard let newSubscription = subscriptions.first(where: { $0.id == renewalInfo.currentProductID }) else {
-                        continue
-                    }
-
-                    guard let currentProduct = highestProduct else {
-                        highestStatus = status
-                        highestProduct = newSubscription
-                        continue
-                    }
-
-                    let highestTier = tier(for: currentProduct.id)
-                    let newTier = tier(for: renewalInfo.currentProductID)
-
-                    if newTier > highestTier {
-                        highestStatus = status
-                        highestProduct = newSubscription
-                    }
-                }
-            }
-
-            updateStatus(highestStatus)
-            updateSubscription(highestProduct)
-
-            if let c = completion {
-                c(nil)
-            }
-        } catch {
-            os_log(.error, "\(self.t) 💰 StoreManger 检查订阅状态，出错 -> \(error.localizedDescription)")
-            if let c = completion {
-                c(error)
-            }
-        }
+        
+        try? await StoreService.updateSubscriptionStatus(reason,verbose: true)
     }
 
     // MARK: 获取Pro版本失效时间
 
     func getExpirationDate() -> Date {
-        os_log("\(self.t) 💰 StoreManger 获取失效时间")
+        os_log("\(self.t)💰 获取失效时间")
         let date = StoreService.computeExpirationDate(from: status)
         return date
     }
@@ -452,6 +248,8 @@ public enum SubscriptionTier: Int, Comparable {
         return lhs.rawValue < rhs.rawValue
     }
 }
+
+// MARK: - Preview
 
 #Preview("BuyView") {
     BuySetting()

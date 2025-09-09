@@ -1,9 +1,11 @@
 import SwiftUI
 import StoreKit
+import MagicCore
+import MagicAlert
 
-struct DebugView: View {
+struct DebugView: View, SuperLog {
+    @EnvironmentObject var m: MagicMessageProvider
     @State private var isLoading: Bool = false
-    @State private var error: Error?
     @State private var productGroups: StoreProductGroupsDTO?
 
     var body: some View {
@@ -13,20 +15,20 @@ struct DebugView: View {
                     Text(isLoading ? "加载中…" : "加载产品")
                 }
                 .disabled(isLoading)
+                
+                Button(action: updateSubscriptionStatus) {
+                    Text(isLoading ? "加载中…" : "更新订阅状态")
+                }
+                .disabled(isLoading)
 
                 Button("清空") { clear() }
 
                 Spacer()
-
-                // 简单展示计算失效时间（无状态函数演示）
-                Text("失效时间演示: \(format(date: StoreService.computeExpirationDate(from: nil)))")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
+            
+            Divider()
 
-            if let error = self.error {
-                error.makeView()
-            }
+            Spacer()
 
             if let groups = productGroups {
                 ScrollView {
@@ -49,24 +51,39 @@ struct DebugView: View {
 // MARK: - Action
 extension DebugView {
     func loadProducts() {
-        error = nil
         isLoading = true
         productGroups = nil
 
         Task {
             do {
                 let dict = StoreService.loadProductIdToEmojiData()
-                let groups = try await StoreService.requestProductGroupsDTO(productIds: dict.keys)
+                let groups = try await StoreService.requestProducts(productIds: dict.keys)
                 setGroups(groups)
             } catch {
-                setError(error)
+                self.m.error(error)
             }
+            
+            self.isLoading = false
+        }
+    }
+    
+    func updateSubscriptionStatus() {
+        isLoading = true
+
+        Task {
+            do {
+                try await StoreService.updateSubscriptionStatus(self.className)
+            } catch {
+                self.m.error(error)
+            }
+            
+            self.isLoading = false
+            self.m.info("检查结束")
         }
     }
 
     func clear() {
         productGroups = nil
-        error = nil
     }
 }
 
@@ -75,13 +92,6 @@ extension DebugView {
     @MainActor
     func setGroups(_ newValue: StoreProductGroupsDTO) {
         productGroups = newValue
-        isLoading = false
-    }
-
-    @MainActor
-    func setError(_ error: Error) {
-        self.error = error
-        isLoading = false
     }
 }
 
@@ -107,24 +117,12 @@ extension DebugView {
             Divider()
         }
     }
-
-    func format(date: Date) -> String {
-        let f = DateFormatter()
-        f.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return f.string(from: date)
-    }
 }
 
 // MARK: - Preview
-#Preview("Store Debug - Large") {
+
+#Preview("Store Debug") {
     DebugView()
         .inRootView()
-        .frame(width: 700, height: 900)
+        .frame(width: 500, height: 700)
 }
-
-#Preview("Store Debug - Small") {
-    DebugView()
-        .inRootView()
-        .frame(width: 600, height: 600)
-}
-

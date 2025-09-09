@@ -8,7 +8,7 @@ struct NonRenewables: View {
     @EnvironmentObject var store: StoreProvider
     @EnvironmentObject var app: AppProvider
 
-    @State private var nonRenewables: [Product] = []
+    @State private var nonRenewables: [StoreProductDTO] = []
     @State private var refreshing = false
     @State private var error: Error? = nil
 

@@ -8,7 +8,7 @@ struct AllSubscriptions: View, SuperLog {
     @EnvironmentObject var store: StoreProvider
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
-    @State private var subscriptions: [Product] = []
+    @State private var subscriptions: [StoreProductDTO] = []
     @State private var refreshing = false
     @State private var error: Error? = nil
     

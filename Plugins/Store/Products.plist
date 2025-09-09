@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>consumable.fuel.octane87</key>
+	<string>⛽️</string>
+	<key>consumable.fuel.octane89</key>
+	<string>⛽️</string>
+	<key>consumable.fuel.octane91</key>
+	<string>⛽️</string>
+	<key>nonconsumable.car</key>
+	<string>🚗</string>
+	<key>nonconsumable.utilityvehicle</key>
+	<string>🚙</string>
+	<key>nonconsumable.racecar</key>
+	<string>🏎</string>
+	<key>com.yueyi.cisum.pro.monthly</key>
+	<string>🎉</string>
+	<key>com.yueyi.cisum.monthly</key>
+	<string>🎉</string>
+	<key>com.yueyi.cisum.pro.annual</key>
+	<string>👑</string>
+	<key>com.yueyi.cisum.annual</key>
+	<string>👑</string>
+	<key>com.yueyi.cisum.pro.yearly</key>
+	<string>👑</string>
+	<key>com.yueyi.cisum.yearly</key>
+	<string>👑</string>
+	<key>com.yueyi.cisum.pro.year.1</key>
+	<string>👑</string>
+	<key>com.yueyi.cisum.pro.month.1</key>
+	<string>🎉</string>
+	<key>com.yueyi.cisum.pro.day.7</key>
+	<string>☕️</string>
+</dict>
+</plist>

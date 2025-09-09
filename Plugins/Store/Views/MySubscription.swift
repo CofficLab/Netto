@@ -111,7 +111,7 @@ struct MySubscription: View {
         let store = self.store
         
         Task {
-            await store.updatePurchased(reason)
+            await store.setPurchased(reason)
             await store.updateSubscriptionStatus(reason)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {

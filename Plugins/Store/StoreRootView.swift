@@ -43,9 +43,9 @@ extension StoreRootView {
                 let groups = try await StoreService.requestProducts(productIds: StoreService.loadProductIdToEmojiData().keys)
 
                 self.storeProvider.setCars(groups.cars)
-                self.storeProvider.setSubscriptions(groups.subscriptions)
-                self.storeProvider.setNonRenewables(groups.nonRenewables)
-                self.storeProvider.setFuel(groups.fuel)
+//                self.storeProvider.setSubscriptions(groups.subscriptions)
+//                self.storeProvider.setNonRenewables(groups.nonRenewables)
+//                self.storeProvider.setFuel(groups.fuel)
             } catch let error {
                 os_log(.error, "\(self.t)❌ 请求 App Store 获取产品列表出错 -> \(error.localizedDescription)")
             }

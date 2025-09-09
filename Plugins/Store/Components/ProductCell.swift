@@ -12,7 +12,7 @@ struct ProductCell: View, SuperLog {
     @State var purchasing = false
     @State var btnHovered: Bool = false
 
-    let product: Product
+    let product: StoreProductDTO
     let purchasingEnabled: Bool
     let showStatus: Bool
 
@@ -38,7 +38,7 @@ struct ProductCell: View, SuperLog {
 
     nonisolated static let emoji = "🖥️"
 
-    init(product: Product, purchasingEnabled: Bool = true, showStatus: Bool = false) {
+    init(product: StoreProductDTO, purchasingEnabled: Bool = true, showStatus: Bool = false) {
         self.product = product
         self.purchasingEnabled = purchasingEnabled
         self.showStatus = showStatus
@@ -71,7 +71,7 @@ struct ProductCell: View, SuperLog {
 
     @ViewBuilder
     var productDetail: some View {
-        if product.type == .autoRenewable {
+        if product.kind == .autoRenewable {
             VStack(alignment: .leading) {
                 Text(product.displayName)
                     .bold()
@@ -94,19 +94,19 @@ struct ProductCell: View, SuperLog {
 
     // MARK: 购买按钮的提示词
 
-    func subscribeButton(_ subscription: Product.SubscriptionInfo) -> some View {
+    func subscribeButton(_ subscription: SubscriptionInfoDTO) -> some View {
         let unit: String
         let plural = 1 < subscription.subscriptionPeriod.value
         switch subscription.subscriptionPeriod.unit {
-        case .day:
+        case "day":
             unit = plural ? "\(subscription.subscriptionPeriod.value) 天" : "天"
-        case .week:
+        case "week":
             unit = plural ? "\(subscription.subscriptionPeriod.value) 周" : "周"
-        case .month:
+        case "month":
             unit = plural ? "\(subscription.subscriptionPeriod.value) 月" : "月"
-        case .year:
+        case "year":
             unit = plural ? "\(subscription.subscriptionPeriod.value) 年" : "年"
-        @unknown default:
+        default:
             unit = "period"
         }
 

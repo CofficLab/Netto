@@ -5,7 +5,7 @@ import OSLog
 struct OneTimeView: View {
     @EnvironmentObject var store: StoreProvider
     
-    private var products: [Product] {
+    private var products: [StoreProductDTO] {
         store.nonRenewables
     }
     
