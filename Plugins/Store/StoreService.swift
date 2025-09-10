@@ -50,6 +50,22 @@ public enum StoreService: SuperLog {
         return try await Self.requestProducts(productIds: ids)
     }
 
+    /// 获取所有订阅组（按订阅组 ID 聚合订阅类商品）。
+    ///
+    /// - Returns: 字典：`[subscriptionGroupID: [StoreProductDTO]]`。
+    /// - Note: 依赖 `fetchAllProducts()`，因此实际结果受产品 ID 清单约束。
+    public static func fetchAllSubscriptionGroups() async throws -> [String: [StoreProductDTO]] {
+        let groups = try await fetchAllProducts()
+        let subscriptions = groups.subscriptions
+
+        var result: [String: [StoreProductDTO]] = [:]
+        for product in subscriptions {
+            let groupId = product.subscription?.subscriptionGroupID ?? "unknown"
+            result[groupId, default: []].append(product)
+        }
+        return result
+    }
+
     // MARK: - Purchased Fetching
 
     /// 根据当前账户的交易凭据（Transaction.currentEntitlements）筛选并归类“已购”产品列表。

@@ -13,6 +13,7 @@ struct DebugView: View, SuperLog {
     @State private var subscriptionStatuses: [StoreSubscriptionStatusDTO] = []
     @State private var highestSubscriptionProduct: StoreProductDTO?
     @State private var highestSubscriptionStatus: StoreSubscriptionStatusDTO?
+    @State private var subscriptionGroups: [String: [StoreProductDTO]] = [:]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -29,6 +30,11 @@ struct DebugView: View, SuperLog {
 
                 Button(action: testFetchPurchased) {
                     Text(isLoading ? "加载中…" : "测试已购")
+                }
+                .disabled(isLoading)
+
+                Button(action: loadSubscriptionGroups) {
+                    Text(isLoading ? "加载中…" : "加载订阅组")
                 }
                 .disabled(isLoading)
 
@@ -54,6 +60,10 @@ struct DebugView: View, SuperLog {
 
                         GroupBox {
                             subscriptionStatusSection(subscriptions: groups.subscriptions)
+                        }
+
+                        GroupBox {
+                            subscriptionGroupsSection()
                         }
                     }
                 }
@@ -108,6 +118,7 @@ extension DebugView {
         subscriptionStatuses.removeAll()
         highestSubscriptionProduct = nil
         highestSubscriptionStatus = nil
+        subscriptionGroups.removeAll()
     }
 
     func testFetchPurchased() {
@@ -132,6 +143,22 @@ extension DebugView {
 
                 setPurchased(result)
                 self.m.info("已更新已购清单")
+            } catch {
+                self.m.error(error)
+            }
+
+            self.isLoading = false
+        }
+    }
+
+    func loadSubscriptionGroups() {
+        isLoading = true
+
+        Task {
+            do {
+                let groups = try await StoreService.fetchAllSubscriptionGroups()
+                setSubscriptionGroups(groups)
+                self.m.info("已加载订阅组")
             } catch {
                 self.m.error(error)
             }
@@ -169,6 +196,11 @@ extension DebugView {
         subscriptionStatuses = result.statuses
         highestSubscriptionProduct = result.highestProduct
         highestSubscriptionStatus = result.highestStatus
+    }
+
+    @MainActor
+    func setSubscriptionGroups(_ newValue: [String: [StoreProductDTO]]) {
+        subscriptionGroups = newValue
     }
 }
 
@@ -296,6 +328,36 @@ extension DebugView {
                         if let pid = s.currentProductID {
                             Text(pid).foregroundStyle(.secondary)
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    func subscriptionGroupsSection() -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Subscription Groups")
+                .font(.title3)
+
+            if subscriptionGroups.isEmpty {
+                Text("空").foregroundStyle(.secondary)
+            } else {
+                ForEach(subscriptionGroups.keys.sorted(), id: \.self) { gid in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Group: \(gid)").font(.headline)
+                        if let items = subscriptionGroups[gid], !items.isEmpty {
+                            ForEach(items, id: \.id) { p in
+                                HStack {
+                                    Text(p.displayName)
+                                    Spacer()
+                                    Text(p.id).foregroundStyle(.secondary)
+                                }
+                            }
+                        } else {
+                            Text("空").foregroundStyle(.secondary)
+                        }
+                        Divider()
                     }
                 }
             }
