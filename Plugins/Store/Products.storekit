@@ -212,7 +212,7 @@
       "localizations" : [
 
       ],
-      "name" : "Software Services",
+      "name" : "Software Services2",
       "subscriptions" : [
         {
           "adHocOffers" : [
@@ -281,6 +281,87 @@
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Pro Annual",
           "subscriptionGroupID" : "3F19ED53",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    },
+    {
+      "id" : "0DA02846",
+      "localizations" : [
+
+      ],
+      "name" : "Software Services copy",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "2",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "DAF36667",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Pro Annual",
+              "displayName" : "Pro Annual",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "专业版按月订阅",
+              "displayName" : "专业版按月订阅",
+              "locale" : "zh_Hans"
+            }
+          ],
+          "productID" : "com.yueyi.netto.ultimate.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Ultimate Monthly",
+          "subscriptionGroupID" : "0DA02846",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "20",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "B26C4772",
+          "introductoryOffer" : {
+            "displayPrice" : "0.99",
+            "internalID" : "34821AC5",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "payAsYouGo",
+            "subscriptionPeriod" : "P1Y"
+          },
+          "localizations" : [
+            {
+              "description" : "",
+              "displayName" : "专业版按年订阅",
+              "locale" : "zh_Hans"
+            },
+            {
+              "description" : "",
+              "displayName" : "Pro",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.yueyi.cisum.pro.yearly.copy",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Pro Annual copy",
+          "subscriptionGroupID" : "0DA02846",
           "type" : "RecurringSubscription",
           "winbackOffers" : [
 

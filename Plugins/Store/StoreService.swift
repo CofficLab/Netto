@@ -55,12 +55,10 @@ public enum StoreService: SuperLog {
     //  联网得到2个产品，断网，依然得到两个产品，再等等，不报错，得到0个产品
     private static func requestProducts(productIds: some Sequence<String>) async throws -> StoreProductGroupsDTO {
         let idsArray = Array(productIds)
-        print(idsArray)
-        print(idsArray.count)
         let storeProducts = try await Product.products(for: idsArray)
-        for s in storeProducts {
-            print(s.id)
-        }
+//        for s in storeProducts {
+//            print(s.id)
+//        }
         return ProductGroups.classify(storeProducts: storeProducts).toDTO()
     }
 
