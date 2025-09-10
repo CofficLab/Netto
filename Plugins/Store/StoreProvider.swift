@@ -152,7 +152,7 @@ class StoreProvider: ObservableObject, SuperLog {
         }
 
         do {
-            let groups = try await StoreService.requestProducts(productIds: productIdToEmoji.keys)
+            let groups = try await StoreService.fetchAllProducts()
 
             self.setCars(groups.cars)
             self.setSubscriptions(groups.subscriptions)

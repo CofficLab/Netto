@@ -40,7 +40,7 @@ extension StoreRootView {
         
 
             do {
-                let groups = try await StoreService.requestProducts(productIds: StoreService.loadProductIdToEmojiData().keys)
+                let groups = try await StoreService.fetchAllProducts()
 
                 self.storeProvider.setCars(groups.cars)
 //                self.storeProvider.setSubscriptions(groups.subscriptions)

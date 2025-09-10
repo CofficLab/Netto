@@ -22,6 +22,11 @@ public enum StoreService: SuperLog {
         return data
     }
 
+    /// 私有：读取配置中的全部商品 ID 列表
+    private static func allProductIds() -> [String] {
+        Array(loadProductIdToEmojiData().keys)
+    }
+
     // MARK: - Product Fetching & Classification
 
     // 获取产品列表有缓存
@@ -30,10 +35,19 @@ public enum StoreService: SuperLog {
     //  断网，报错
     //  联网得到2个产品，断网，依然得到两个产品
     //  联网得到2个产品，断网，依然得到两个产品，再等等，不报错，得到0个产品
-    public static func requestProducts(productIds: some Sequence<String>) async throws -> StoreProductGroupsDTO {
+    private static func requestProducts(productIds: some Sequence<String>) async throws -> StoreProductGroupsDTO {
         let idsArray = Array(productIds)
         let storeProducts = try await Product.products(for: idsArray)
         return ProductGroups.classify(storeProducts: storeProducts).toDTO()
+    }
+
+    /// 获取“全部”商品的封装：先读取产品 ID 清单，再按清单请求详情并分组。
+    ///
+    /// - Note: 本方法并非真正从服务器“枚举全部商品”，而是以本地/远端配置的产品 ID 清单为准。
+    /// - Returns: `StoreProductGroupsDTO`，包含 cars / subscriptions / nonRenewables / fuel 等分组。
+    public static func fetchAllProducts() async throws -> StoreProductGroupsDTO {
+        let ids = Self.allProductIds()
+        return try await Self.requestProducts(productIds: ids)
     }
 
     // MARK: - Purchased Fetching

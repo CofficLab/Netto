@@ -74,8 +74,7 @@ extension DebugView {
 
         Task {
             do {
-                let dict = StoreService.loadProductIdToEmojiData()
-                let groups = try await StoreService.requestProducts(productIds: dict.keys)
+                let groups = try await StoreService.fetchAllProducts()
                 setGroups(groups)
             } catch {
                 self.m.error(error)
@@ -121,8 +120,7 @@ extension DebugView {
                 if let existing = productGroups {
                     groups = existing
                 } else {
-                    let dict = StoreService.loadProductIdToEmojiData()
-                    groups = try await StoreService.requestProducts(productIds: dict.keys)
+                    groups = try await StoreService.fetchAllProducts()
                     setGroups(groups)
                 }
 
