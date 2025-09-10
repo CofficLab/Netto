@@ -4,6 +4,16 @@
     "" : {
       "shouldTranslate" : false
     },
+    "%@  ID: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@  ID: %2$@"
+          }
+        }
+      }
+    },
     "%@ (%lld)" : {
       "localizations" : {
         "zh-Hans" : {
@@ -140,6 +150,9 @@
       },
       "shouldTranslate" : false
     },
+    "All Statuses (%lld)" : {
+
+    },
     "Allowed" : {
       "localizations" : {
         "zh-Hans" : {
@@ -160,6 +173,9 @@
           }
         }
       }
+    },
+    "Cars (%lld)" : {
+
     },
     "Clear" : {
       "extractionState" : "stale",
@@ -251,6 +267,18 @@
     "Help" : {
 
     },
+    "Highest Product:" : {
+
+    },
+    "Highest Product: 无" : {
+
+    },
+    "Highest Status:" : {
+
+    },
+    "Highest Status: 无" : {
+
+    },
     "ID" : {
       "localizations" : {
         "en" : {
@@ -300,6 +328,9 @@
       },
       "shouldTranslate" : false
     },
+    "NonRenewables (%lld)" : {
+
+    },
     "Port" : {
       "localizations" : {
         "zh-Hans" : {
@@ -311,6 +342,12 @@
       },
       "shouldTranslate" : false
     },
+    "Products" : {
+
+    },
+    "Purchased" : {
+
+    },
     "Rejected" : {
       "localizations" : {
         "zh-Hans" : {
@@ -321,6 +358,12 @@
         }
       },
       "shouldTranslate" : false
+    },
+    "state=" : {
+
+    },
+    "state=%lld" : {
+
     },
     "Status" : {
       "localizations" : {
@@ -357,6 +400,15 @@
       "shouldTranslate" : false
     },
     "Store" : {
+
+    },
+    "Subscription Groups" : {
+
+    },
+    "Subscription Status" : {
+
+    },
+    "Subscriptions (%lld)" : {
 
     },
     "Time" : {
@@ -588,6 +640,9 @@
 
     },
     "加载产品" : {
+
+    },
+    "加载订阅组" : {
 
     },
     "合计 %lld" : {
@@ -1075,6 +1130,9 @@
           }
         }
       }
+    },
+    "测试已购" : {
+
     },
     "消耗品" : {
 

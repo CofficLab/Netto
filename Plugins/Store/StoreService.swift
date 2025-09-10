@@ -19,15 +19,17 @@ public enum StoreService: SuperLog {
               let data = try? PropertyListSerialization.propertyList(from: plist, format: nil) as? [String: String] else {
             return [:]
         }
+        
         return data
     }
 
-    /// 私有：读取配置中的全部商品 ID 列表
+    /// 读取配置中的全部商品 ID 列表
     private static func allProductIds() -> [String] {
-        Array(loadProductIdToEmojiData().keys)
+        let keys = Array(loadProductIdToEmojiData().keys)
+        return keys
     }
 
-    /// 私有：读取订阅组 ID 到显示名的映射（若无配置则为空）
+    /// 读取订阅组 ID 到显示名的映射（若无配置则为空）
     private static func loadSubscriptionGroupIdToName() -> [String: String] {
         guard let path = Bundle.main.path(forResource: "SubscriptionGroups", ofType: "plist"),
               let plist = FileManager.default.contents(atPath: path),
@@ -43,7 +45,7 @@ public enum StoreService: SuperLog {
         return map[groupId] ?? groupId
     }
 
-    // MARK: - Product Fetching & Classification
+    // MARK: - Product Fetching
 
     // 获取产品列表有缓存
     // 因为联网获取后，再断网，一段时间内仍然能得到列表
@@ -53,7 +55,12 @@ public enum StoreService: SuperLog {
     //  联网得到2个产品，断网，依然得到两个产品，再等等，不报错，得到0个产品
     private static func requestProducts(productIds: some Sequence<String>) async throws -> StoreProductGroupsDTO {
         let idsArray = Array(productIds)
+        print(idsArray)
+        print(idsArray.count)
         let storeProducts = try await Product.products(for: idsArray)
+        for s in storeProducts {
+            print(s.id)
+        }
         return ProductGroups.classify(storeProducts: storeProducts).toDTO()
     }
 
@@ -68,18 +75,28 @@ public enum StoreService: SuperLog {
 
     /// 获取所有订阅组（按订阅组 ID 聚合订阅类商品）。
     ///
-    /// - Returns: 字典：`[subscriptionGroupID: [StoreProductDTO]]`。
+    /// - Returns: 字典：`[SubscriptionGroupDTO]`。
     /// - Note: 依赖 `fetchAllProducts()`，因此实际结果受产品 ID 清单约束。
-    public static func fetchAllSubscriptionGroups() async throws -> [String: [StoreProductDTO]] {
-        let groups = try await fetchAllProducts()
-        let subscriptions = groups.subscriptions
+    public static func fetchAllSubscriptionGroups() async throws -> [SubscriptionGroupDTO] {
+        let products = try await fetchAllProducts()
+        let subscriptions = products.subscriptions
+        print(subscriptions.count)
 
-        var result: [String: [StoreProductDTO]] = [:]
+        // 按订阅组 ID 聚合，避免为同一组重复创建条目
+        var grouped: [String: [StoreProductDTO]] = [:]
         for product in subscriptions {
-            let groupId = product.subscription?.subscriptionGroupID ?? "unknown"
-            result[groupId, default: []].append(product)
+            let groupId = product.subscription?.groupID ?? "unknown"
+            grouped[groupId, default: []].append(product)
         }
-        return result
+
+        // 组名优先取 StoreKit 的显示名，其次回退到配置映射，最后回退为组 ID
+        let groups: [SubscriptionGroupDTO] = grouped.map { (groupId, items) in
+            let nameFromProduct = items.first?.subscription?.groupDisplayName
+            let displayName = nameFromProduct ?? Self.subscriptionGroupDisplayName(for: groupId)
+            return SubscriptionGroupDTO(name: displayName, id: groupId, subscriptions: items)
+        }
+
+        return groups
     }
 
     // MARK: - Purchased Fetching
@@ -202,6 +219,8 @@ public enum StoreService: SuperLog {
             return Date.distantPast
         }
     }
+    
+    // MARK: - Pay
     
     static private func purchase(_ product: Product) async throws -> Transaction? {
         os_log("\(self.t)去支付")

@@ -1,7 +1,7 @@
-import SwiftUI
-import StoreKit
-import MagicCore
 import MagicAlert
+import MagicCore
+import StoreKit
+import SwiftUI
 
 struct DebugView: View, SuperLog {
     @EnvironmentObject var m: MagicMessageProvider
@@ -13,7 +13,7 @@ struct DebugView: View, SuperLog {
     @State private var subscriptionStatuses: [StoreSubscriptionStatusDTO] = []
     @State private var highestSubscriptionProduct: StoreProductDTO?
     @State private var highestSubscriptionStatus: StoreSubscriptionStatusDTO?
-    @State private var subscriptionGroups: [String: [StoreProductDTO]] = [:]
+    @State private var subscriptionGroups: [SubscriptionGroupDTO] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -22,7 +22,7 @@ struct DebugView: View, SuperLog {
                     Text(isLoading ? "加载中…" : "加载产品")
                 }
                 .disabled(isLoading)
-                
+
                 Button(action: updateSubscriptionStatus) {
                     Text(isLoading ? "加载中…" : "更新订阅状态")
                 }
@@ -42,34 +42,39 @@ struct DebugView: View, SuperLog {
 
                 Spacer()
             }
-            
+
             Divider()
 
             Spacer()
 
-            if let groups = productGroups {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 8) {
-                        GroupBox {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    GroupBox {
+                        if let groups = self.productGroups {
                             productSection(groups: groups)
-                        }
-
-                        GroupBox {
-                            purchasedSection()
-                        }
-
-                        GroupBox {
-                            subscriptionStatusSection(subscriptions: groups.subscriptions)
-                        }
-
-                        GroupBox {
-                            subscriptionGroupsSection()
+                        } else {
+                            Text("尚未加载产品")
+                                .foregroundStyle(.secondary)
                         }
                     }
+
+                    GroupBox {
+                        purchasedSection()
+                    }
+
+                    GroupBox {
+                        if let groups = self.productGroups {
+                            subscriptionStatusSection(subscriptions: groups.subscriptions)
+                        } else {
+                            Text("尚未加载产品")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    GroupBox {
+                        subscriptionGroupsSection()
+                    }
                 }
-            } else {
-                Text("尚未加载产品")
-                    .foregroundStyle(.secondary)
             }
         }
         .padding()
@@ -77,6 +82,7 @@ struct DebugView: View, SuperLog {
 }
 
 // MARK: - Action
+
 extension DebugView {
     func loadProducts() {
         isLoading = true
@@ -89,11 +95,11 @@ extension DebugView {
             } catch {
                 self.m.error(error)
             }
-            
+
             self.isLoading = false
         }
     }
-    
+
     func updateSubscriptionStatus() {
         isLoading = true
 
@@ -104,7 +110,7 @@ extension DebugView {
             } catch {
                 self.m.error(error)
             }
-            
+
             self.isLoading = false
             self.m.info("检查结束")
         }
@@ -169,6 +175,7 @@ extension DebugView {
 }
 
 // MARK: - Setter
+
 extension DebugView {
     @MainActor
     func setGroups(_ newValue: StoreProductGroupsDTO) {
@@ -199,12 +206,13 @@ extension DebugView {
     }
 
     @MainActor
-    func setSubscriptionGroups(_ newValue: [String: [StoreProductDTO]]) {
+    func setSubscriptionGroups(_ newValue: [SubscriptionGroupDTO]) {
         subscriptionGroups = newValue
     }
 }
 
 // MARK: - Private Helpers
+
 extension DebugView {
     func groupSection(title: String, items: [StoreProductDTO]) -> some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -338,6 +346,8 @@ extension DebugView {
         }
     }
 
+    // MARK: - 订阅组视图
+
     @ViewBuilder
     func subscriptionGroupsSection() -> some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -347,19 +357,15 @@ extension DebugView {
             if subscriptionGroups.isEmpty {
                 Text("空").foregroundStyle(.secondary)
             } else {
-                ForEach(subscriptionGroups.keys.sorted(), id: \.self) { gid in
+                ForEach(subscriptionGroups, id: \.id) { group in
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Group: \(StoreService.subscriptionGroupDisplayName(for: gid))  (ID: \(gid))").font(.headline)
-                        if let items = subscriptionGroups[gid], !items.isEmpty {
-                            ForEach(items, id: \.id) { p in
-                                HStack {
-                                    Text(p.displayName)
-                                    Spacer()
-                                    Text(p.id).foregroundStyle(.secondary)
-                                }
+                        Text("\(group.name)  ID: \(group.id)").font(.headline)
+                        ForEach(group.subscriptions, id: \.id) { p in
+                            HStack {
+                                Text(p.displayName)
+                                Spacer()
+                                Text(p.id).foregroundStyle(.secondary)
                             }
-                        } else {
-                            Text("空").foregroundStyle(.secondary)
                         }
                         Divider()
                     }

@@ -5,12 +5,21 @@ import SwiftUI
 // MARK: - Subscription DTOs
 
 public struct SubscriptionInfoDTO: Hashable, Sendable {
-    public let subscriptionGroupID: String
     public let subscriptionPeriod: StoreSubscriptionPeriodDTO
     public let hasIntroductoryOffer: Bool
     public let promotionalOffersCount: Int
     public let status: [StoreSubscriptionStatusDTO] = []
+
+    // 订阅组显示名和 ID
+    // 专业版的使用权限
+    //  按年，ID: com.coffic.pro.year
+    //  按月，ID: com.coffic.pro.month
+    // 旗舰版的使用权限
+    //  按年，ID: com.coffic.ultmate.year
+    //  按月，ID: com.coffic.ultmate.month
+    // 以上例子中，专业版和旗舰版的使用权限就是订阅组
     public let groupDisplayName: String
+    public let groupID: String
 }
 
 public struct StoreSubscriptionPeriodDTO: Hashable, Codable, Sendable {
@@ -40,11 +49,11 @@ public extension Product.SubscriptionInfo {
         )
 
         return SubscriptionInfoDTO(
-            subscriptionGroupID: subscriptionGroupID,
             subscriptionPeriod: periodDTO,
             hasIntroductoryOffer: (introductoryOffer != nil),
             promotionalOffersCount: promotionalOffers.count,
-            groupDisplayName: self.groupDisplayName
+            groupDisplayName: self.groupDisplayName,
+            groupID: self.subscriptionGroupID
         )
     }
 }
