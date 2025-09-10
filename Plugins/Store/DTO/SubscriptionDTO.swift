@@ -10,6 +10,7 @@ public struct SubscriptionInfoDTO: Hashable, Sendable {
     public let hasIntroductoryOffer: Bool
     public let promotionalOffersCount: Int
     public let status: [StoreSubscriptionStatusDTO] = []
+    public let groupDisplayName: String
 }
 
 public struct StoreSubscriptionPeriodDTO: Hashable, Codable, Sendable {
@@ -42,7 +43,8 @@ public extension Product.SubscriptionInfo {
             subscriptionGroupID: subscriptionGroupID,
             subscriptionPeriod: periodDTO,
             hasIntroductoryOffer: (introductoryOffer != nil),
-            promotionalOffersCount: promotionalOffers.count
+            promotionalOffersCount: promotionalOffers.count,
+            groupDisplayName: self.groupDisplayName
         )
     }
 }

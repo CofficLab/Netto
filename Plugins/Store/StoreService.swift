@@ -27,6 +27,22 @@ public enum StoreService: SuperLog {
         Array(loadProductIdToEmojiData().keys)
     }
 
+    /// 私有：读取订阅组 ID 到显示名的映射（若无配置则为空）
+    private static func loadSubscriptionGroupIdToName() -> [String: String] {
+        guard let path = Bundle.main.path(forResource: "SubscriptionGroups", ofType: "plist"),
+              let plist = FileManager.default.contents(atPath: path),
+              let data = try? PropertyListSerialization.propertyList(from: plist, format: nil) as? [String: String] else {
+            return [:]
+        }
+        return data
+    }
+
+    /// 订阅组显示名（若未配置友好名则回退为组 ID）
+    public static func subscriptionGroupDisplayName(for groupId: String) -> String {
+        let map = loadSubscriptionGroupIdToName()
+        return map[groupId] ?? groupId
+    }
+
     // MARK: - Product Fetching & Classification
 
     // 获取产品列表有缓存

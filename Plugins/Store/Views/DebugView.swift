@@ -218,6 +218,10 @@ extension DebugView {
                     HStack {
                         Text(p.displayName)
                         Spacer()
+                        if let s = p.subscription {
+                            Text(s.groupDisplayName)
+                        }
+                        Spacer()
                         Text(p.displayPrice)
                             .foregroundStyle(.secondary)
                     }
@@ -345,7 +349,7 @@ extension DebugView {
             } else {
                 ForEach(subscriptionGroups.keys.sorted(), id: \.self) { gid in
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Group: \(gid)").font(.headline)
+                        Text("Group: \(StoreService.subscriptionGroupDisplayName(for: gid))  (ID: \(gid))").font(.headline)
                         if let items = subscriptionGroups[gid], !items.isEmpty {
                             ForEach(items, id: \.id) { p in
                                 HStack {
