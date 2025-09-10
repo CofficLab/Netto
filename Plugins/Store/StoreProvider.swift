@@ -39,14 +39,6 @@ class StoreProvider: ObservableObject, SuperLog {
 
         // Start a transaction listener as close to app launch as possible so you don't miss any transactions.
         updateListenerTask = listenForTransactions("🐛 Store 初始化")
-
-        Task {
-            // 从 AppStore获取产品列表
-//            try? await requestProducts("🐛 Store 初始化")
-            // 更新用户已购产品列表
-//            await updatePurchased("🐛 Store 初始化")
-//            await updateSubscriptionStatus("🐛 Store 初始化")
-        }
     }
 
     // MARK: - Setter
@@ -211,7 +203,7 @@ class StoreProvider: ObservableObject, SuperLog {
             os_log("\(self.t)StoreManger 检查订阅状态，因为 -> \(reason)")
         }
         
-        try? await StoreService.updateSubscriptionStatus(reason,verbose: true)
+        try? await StoreService.inspectSubscriptionStatus(reason,verbose: true)
     }
 
     // MARK: 获取Pro版本失效时间
@@ -252,7 +244,7 @@ public enum SubscriptionTier: Int, Comparable {
 // MARK: - Preview
 
 #Preview("BuyView") {
-    PurchaseView()
+    PurchaseView(showCloseButton: false)
         .inRootView()
         .frame(height: 800)
 }

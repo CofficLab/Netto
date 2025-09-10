@@ -38,6 +38,23 @@ public enum StoreService: SuperLog {
 
     // MARK: - Purchased Fetching
 
+    /// 根据当前账户的交易凭据（Transaction.currentEntitlements）筛选并归类“已购”产品列表。
+    ///
+    /// - Important: 该方法不会主动拉取产品，请先通过 `requestProducts(productIds:)` 获取到完整的产品分组，
+    ///   再将各分组传入本方法进行过滤与匹配。
+    ///
+    /// - Parameters:
+    ///   - cars: 已获取到的非消耗型（如一次性解锁）产品列表。
+    ///   - subscriptions: 已获取到的自动续订订阅产品列表。
+    ///   - nonRenewables: 已获取到的非续订订阅产品列表。
+    ///
+    /// - Returns: 按交易凭据过滤后的三类“已购清单”元组：
+    ///   `(cars: [StoreProductDTO], nonRenewables: [StoreProductDTO], subscriptions: [StoreProductDTO])`。
+    ///
+    /// - Note:
+    ///   - 未通过验证的交易会被忽略（使用 `checkVerified` 校验）。
+    ///   - 非续订订阅仅在 `productID == "nonRenewing.standard"` 且“购买日起一年内未过期”时计入。
+    ///   - 方法为 `async`，因为 `Transaction.currentEntitlements` 为异步序列。
     public static func fetchPurchasedLists(
         cars: [StoreProductDTO],
         subscriptions: [StoreProductDTO],
@@ -181,7 +198,22 @@ public enum StoreService: SuperLog {
         return try await purchase(storekitProduct)
     }
     
-    static func updateSubscriptionStatus(_ reason: String, verbose: Bool = true) async throws {
+    /// 巡检订阅组状态并返回有价值的数据（订阅产品、状态明细、最高等级条目）。
+    ///
+    /// - Parameters:
+    ///   - reason: 调用原因，便于日志排查。
+    ///   - verbose: 是否输出详细日志。
+    /// - Returns: 三元组 `(subscriptions, statuses, highestProduct, highestStatus)`：
+    ///   - `subscriptions`: 当前可用的订阅类产品（同一组）。
+    ///   - `statuses`: 来自订阅组的状态数组（已映射为 `StoreSubscriptionStatusDTO`）。
+    ///   - `highestProduct`: 当前最高等级对应的产品（若能判定）。
+    ///   - `highestStatus`: 当前最高等级对应的状态（若能判定）。
+    static func inspectSubscriptionStatus(_ reason: String, verbose: Bool = true) async throws -> (
+        subscriptions: [StoreProductDTO],
+        statuses: [StoreSubscriptionStatusDTO],
+        highestProduct: StoreProductDTO?,
+        highestStatus: StoreSubscriptionStatusDTO?
+    ) {
         if verbose {
             print("检查订阅状态")
             os_log("\(self.t)检查订阅状态，因为 -> \(reason)")
@@ -205,7 +237,7 @@ public enum StoreService: SuperLog {
         let subscriptions = products.subscriptions
         
         if subscriptions.isEmpty {
-            return
+            return (subscriptions: [], statuses: [], highestProduct: nil, highestStatus: nil)
         } 
 
         // 输出 subscriptions
@@ -223,12 +255,12 @@ public enum StoreService: SuperLog {
             guard let subscription = subscriptions.first,
                   let statuses = subscription.subscription?.status else {
                 print("products.subscriptions 是空的")
-                return
+                return (subscriptions: subscriptions, statuses: [], highestProduct: nil, highestStatus: nil)
             }
             
             if statuses.isEmpty {
                 print("statuses 是空的，表示对于当前订阅组，没有订阅状态")
-                return
+                return (subscriptions: subscriptions, statuses: [], highestProduct: nil, highestStatus: nil)
             }
 
             var highestStatus: StoreSubscriptionStatusDTO?
@@ -277,8 +309,11 @@ public enum StoreService: SuperLog {
                     }
                 }
             }
+
+            return (subscriptions: subscriptions, statuses: statuses, highestProduct: highestProduct, highestStatus: highestStatus)
         } catch {
             os_log(.error, "\(self.t) 💰 StoreManger 检查订阅状态，出错 -> \(error.localizedDescription)")
+            return (subscriptions: subscriptions, statuses: [], highestProduct: nil, highestStatus: nil)
         }
     }
 }

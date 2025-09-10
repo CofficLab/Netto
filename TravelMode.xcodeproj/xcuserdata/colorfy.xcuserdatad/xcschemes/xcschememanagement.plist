@@ -9,15 +9,10 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>TravelMode-DEBUG.xcscheme</key>
+		<key>TravelMode-DEBUG.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
-		</dict>
-		<key>TravelMode-EN.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>3</integer>
 		</dict>
 		<key>TravelMode.xcscheme_^#shared#^_</key>
 		<dict>
@@ -27,6 +22,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>C4B45DB422739FFF0050C59B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>F55AAB222DEEE763002E3E36</key>
 		<dict>
 			<key>primary</key>
