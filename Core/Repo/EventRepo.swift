@@ -104,27 +104,11 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
 
     // MARK: - CRUD Operations
 
-    /// 创建新的FirewallEvent记录
-    /// - Parameter event: FirewallEvent结构体实例
-    /// - Throws: 保存数据时可能抛出的错误
-    func create(_ event: FirewallEvent) async throws {
-        try await actor.create(event)
-    }
-
     /// 从DTO创建新的FirewallEvent记录
     /// - Parameter dto: FirewallEventDTO实例
     /// - Throws: 保存数据时可能抛出的错误
     func createFromDTO(_ dto: FirewallEventDTO) async throws {
-        let event = FirewallEvent(
-            id: dto.id,
-            time: dto.time,
-            address: dto.address,
-            port: dto.port,
-            sourceAppIdentifier: dto.sourceAppIdentifier,
-            status: dto.status,
-            direction: dto.direction
-        )
-        try await create(event)
+        try await actor.create(dto)
     }
 
     /// 删除指定应用的所有事件记录
@@ -477,8 +461,8 @@ private actor EventQueryActor: ModelActor, SuperLog {
     // MARK: - CRUD Operations
 
     /// 创建新的FirewallEvent记录
-    func create(_ event: FirewallEvent) throws {
-        let eventModel = FirewallEventModel.from(event)
+    func create(_ event: FirewallEventDTO) throws {
+        let eventModel = FirewallEventModel.fromDTO(event)
         modelContext.insert(eventModel)
         try modelContext.save()
     }

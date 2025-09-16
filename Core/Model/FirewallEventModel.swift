@@ -109,6 +109,21 @@ final class FirewallEventModel: SuperLog, SuperEvent {
         )
     }
     
+    /// 从 FirewallEventDTO 创建 FirewallEventModel 实例
+    /// - Parameter dto: FirewallEventDTO 实例
+    /// - Returns: 对应的 FirewallEventModel 实例
+    static func fromDTO(_ dto: FirewallEventDTO) -> FirewallEventModel {
+        return FirewallEventModel(
+            id: dto.id,
+            time: dto.time,
+            address: dto.address,
+            port: dto.port,
+            sourceAppIdentifier: dto.sourceAppIdentifier,
+            status: dto.status,
+            direction: dto.direction
+        )
+    }
+    
     /// 转换为FirewallEvent结构体
     /// - Returns: 对应的FirewallEvent结构体实例
     func toFirewallEvent() -> FirewallEvent {
