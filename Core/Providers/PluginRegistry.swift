@@ -25,6 +25,10 @@ actor PluginRegistry {
             .sorted { $0.order < $1.order }
             .map { $0.factory() }
     }
+    
+    func getPlugin(id: String) -> (any SuperPlugin)? {
+        return factoryItems.first { $0.id == id }?.factory()
+    }
 }
 
 @MainActor

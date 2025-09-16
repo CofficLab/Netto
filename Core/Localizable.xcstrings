@@ -330,6 +330,9 @@
     "NonRenewables (%lld)" : {
 
     },
+    "Plugin Window" : {
+
+    },
     "Port" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1337,6 +1340,9 @@
 
     },
     "请将APP移动到Applications目录后再试" : {
+
+    },
+    "请选择一个插件功能" : {
 
     },
     "辅助功能" : {

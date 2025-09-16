@@ -14,6 +14,7 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @State private var shouldShowLoading = true
     @State private var shouldShowMenuApp = false
     @State private var shouldShowWelcomeWindow = false
+    @StateObject private var pluginWindowManager = PluginWindowManager.shared
 
     nonisolated static let emoji = "🐦"
     static let welcomeWindowTitle = "Welcome to TravelMode"
@@ -53,18 +54,24 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         .defaultPosition(.center)
         .defaultSize(width: 500, height: 600)
 
-        // Store 购买窗口
-        Window(Self.storeWindowTitle, id: AppConfig.storeWindowId) {
-            StoreRootView {
-                PurchaseView(showCloseButton: true)
-            }
-            .onAppear {
-                // 确保窗口显示在最上层
-                NSApplication.shared.activate(ignoringOtherApps: true)
-                // 将窗口置于最前面
-                if let window = NSApplication.shared.windows.first(where: { $0.title == Self.storeWindowTitle }) {
-                    window.level = .floating
-                    window.orderFrontRegardless()
+        // 插件窗口 - 动态显示插件内容
+        Window("Plugin Window", id: "plugin-window") {
+            Group {
+                if let content = pluginWindowManager.currentContent {
+                    content.windowView()
+                        .onAppear {
+                            // 确保窗口显示在最上层
+                            NSApplication.shared.activate(ignoringOtherApps: true)
+                            // 将窗口置于最前面
+                            if let window = NSApplication.shared.windows.first(where: { $0.title == content.windowTitle }) {
+                                window.level = .floating
+                                window.orderFrontRegardless()
+                            }
+                        }
+                } else {
+                    Text("请选择一个插件功能")
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
         }
@@ -96,8 +103,17 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
             }
             .onReceive(nc.publisher(for: .shouldOpenStoreWindow)) { _ in
                 os_log("\(self.t)🛒 打开 Store 窗口")
-                openWindow(id: AppConfig.storeWindowId)
-                shouldShowMenuApp = false
+                // 从 Store 插件获取窗口内容
+                Task {
+                    if let storePlugin = await PluginRegistry.shared.getPlugin(id: "Store") as? StorePlugin,
+                       let windowContent = storePlugin.provideWindowContent() {
+                        await MainActor.run {
+                            pluginWindowManager.showWindow(with: windowContent)
+                            openWindow(id: "plugin-window")
+                            shouldShowMenuApp = false
+                        }
+                    }
+                }
             }
         }, label: {
             #if DEBUG

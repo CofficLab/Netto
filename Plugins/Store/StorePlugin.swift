@@ -20,6 +20,11 @@ actor StorePlugin: SuperPlugin {
         // 示例：Store 插件提供自己的 RootView 来管理 Store 相关的环境变量
         return AnyView(StoreRootView(content: content))
     }
+    
+    @MainActor
+    func provideWindowContent() -> (any PluginWindowContent)? {
+        return StoreWindowContent()
+    }
 }
 
 @objc(StoreRegistrant)
