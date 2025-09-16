@@ -6,7 +6,6 @@ import OSLog
 import SwiftUI
 
 struct StoreBtn: View, SuperLog {
-    @State private var showBuySheet = false
     @EnvironmentObject private var m: MagicMessageProvider
     
     private var asToolbarItem: Bool = false
@@ -39,13 +38,11 @@ struct StoreBtn: View, SuperLog {
                 .frame(height: 50)
             }
         }
-        .sheet(isPresented: $showBuySheet) {
-            PurchaseView()
-        }
     }
     
     private func action() -> Void {
-        showBuySheet = true
+        // 发送通知打开独立窗口
+        NotificationCenter.default.post(name: .shouldOpenStoreWindow, object: nil)
     }
 }
 

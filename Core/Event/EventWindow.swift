@@ -4,6 +4,9 @@ import Foundation
 extension Notification.Name  {
 //    /// 应该打开欢迎窗口的通知
     static let shouldOpenWelcomeWindow = Notification.Name("shouldOpenWelcomeWindow")
+    
+    /// 应该打开 Store 窗口的通知
+    static let shouldOpenStoreWindow = Notification.Name("shouldOpenStoreWindow")
 //
 //    /// 将要打开欢迎窗口的通知
 //    static let willOpenWelcomeWindow = Notification.Name("willOpenWelcomeWindow")

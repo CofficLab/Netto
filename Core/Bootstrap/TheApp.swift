@@ -17,6 +17,7 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
 
     nonisolated static let emoji = "🐦"
     static let welcomeWindowTitle = "Welcome to TravelMode"
+    static let storeWindowTitle = "Store - TravelMode"
     private let versionService = VersionService()
 
     var body: some Scene {
@@ -52,6 +53,26 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         .defaultPosition(.center)
         .defaultSize(width: 500, height: 600)
 
+        // Store 购买窗口
+        Window(Self.storeWindowTitle, id: AppConfig.storeWindowId) {
+            StoreRootView {
+                PurchaseView(showCloseButton: true)
+            }
+            .onAppear {
+                // 确保窗口显示在最上层
+                NSApplication.shared.activate(ignoringOtherApps: true)
+                // 将窗口置于最前面
+                if let window = NSApplication.shared.windows.first(where: { $0.title == Self.storeWindowTitle }) {
+                    window.level = .floating
+                    window.orderFrontRegardless()
+                }
+            }
+        }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
+        .defaultPosition(.center)
+        .defaultSize(width: 600, height: 800)
+
         // 主要的菜单栏应用
         MenuBarExtra(content: {
             RootView {
@@ -71,6 +92,11 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                 os_log("\(self.t)🖥️ 打开欢迎窗口")
                 openWindow(id: AppConfig.welcomeWindowId)
                 shouldShowWelcomeWindow = true
+                shouldShowMenuApp = false
+            }
+            .onReceive(nc.publisher(for: .shouldOpenStoreWindow)) { _ in
+                os_log("\(self.t)🛒 打开 Store 窗口")
+                openWindow(id: AppConfig.storeWindowId)
                 shouldShowMenuApp = false
             }
         }, label: {
