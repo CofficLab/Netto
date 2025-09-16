@@ -72,30 +72,34 @@ extension AppList {
         
         let displayType = self.ui.displayType
         
-        var filtered: [SmartApp] = []
-        
+        // 将应用拆分为“被禁止(denied)”与“允许(allowed)”两组
+        var denied: [SmartApp] = []
+        var allowed: [SmartApp] = []
+
         for app in baseApps {
-            let shouldInclude: Bool
-            switch displayType {
-            case .All:
-                shouldInclude = true
-            case .Allowed:
-                shouldInclude = await Task { @MainActor in
-                    await repo.shouldAllow(app.id)
-                }.value
-            case .Rejected:
-                shouldInclude = !(await Task { @MainActor in
-                    await repo.shouldAllow(app.id)
-                }.value)
-            }
-            
-            if shouldInclude {
-                filtered.append(app)
+            let isAllowed = await Task { @MainActor in
+                await repo.shouldAllow(app.id)
+            }.value
+            if isAllowed {
+                allowed.append(app)
+            } else {
+                denied.append(app)
             }
         }
-        
+
+        // 按显示类型拼装；仅在 All 模式下，将“被禁止”的应用置顶并包含
+        let finalList: [SmartApp]
+        switch displayType {
+        case .All:
+            finalList = denied + allowed
+        case .Allowed:
+            finalList = allowed
+        case .Rejected:
+            finalList = denied
+        }
+
         await MainActor.run {
-            self.filteredApps = filtered
+            self.filteredApps = finalList
         }
     }
 
