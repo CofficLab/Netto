@@ -10,8 +10,8 @@ struct PurchaseView: View, SuperLog {
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @Environment(\.dismiss) private var dismiss
-    @State var closeBtnHovered: Bool = false
-    var showCloseButton: Bool = true
+    @State var closeBtnHovered = false
+    var showCloseButton = false
 
     var body: some View {
         VStack {
