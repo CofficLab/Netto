@@ -105,7 +105,8 @@ extension FirewallDaemon: AppCommunication {
             port: port,
             sourceAppIdentifier: id,
             status: shouldAllow ? .allowed : .rejected,
-            direction: direction
+            direction: direction,
+            appId: id
         )
 
         if shouldAllow {

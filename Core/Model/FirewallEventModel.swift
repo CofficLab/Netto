@@ -114,7 +114,6 @@ final class FirewallEventModel: SuperLog, SuperEvent {
     /// - Returns: 对应的 FirewallEventModel 实例
     static func fromDTO(_ dto: FirewallEventDTO) -> FirewallEventModel {
         return FirewallEventModel(
-            id: dto.id,
             time: dto.time,
             address: dto.address,
             port: dto.port,

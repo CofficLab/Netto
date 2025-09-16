@@ -12,6 +12,7 @@ struct FirewallEventDTO: Sendable, Identifiable, Hashable {
     let sourceAppIdentifier: String
     let status: FirewallEvent.Status
     let direction: NETrafficDirection
+    let appId: String
 
     // MARK: - Computed
 
@@ -42,19 +43,8 @@ struct FirewallEventDTO: Sendable, Identifiable, Hashable {
             port: m.port,
             sourceAppIdentifier: m.sourceAppIdentifier,
             status: m.status,
-            direction: m.direction
-        )
-    }
-
-    static func fromEvent(_ e: FirewallEvent) -> FirewallEventDTO {
-        FirewallEventDTO(
-            id: e.id,
-            time: e.time,
-            address: e.address,
-            port: e.port,
-            sourceAppIdentifier: e.sourceAppIdentifier,
-            status: e.status,
-            direction: e.direction
+            direction: m.direction,
+            appId: m.sourceAppIdentifier
         )
     }
 }
