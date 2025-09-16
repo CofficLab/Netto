@@ -23,7 +23,7 @@ struct Topbar: View {
             // 设置按钮（始终在右侧）
             BtnSettings()
         }
-        .frame(height: 30)
+        .frame(height: 36)
         .background(MagicBackground.colorTeal.opacity(0.2))
     }
 }

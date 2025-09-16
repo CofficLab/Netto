@@ -10,9 +10,13 @@ actor StorePlugin: SuperPlugin {
     
     @MainActor
     func addSettingsButtons() -> [(id: String, view: AnyView)] {
-        return [
-            (id: "store", view: AnyView(StoreBtn()))
-        ]
+        #if DEBUG
+            return [
+                (id: "store", view: AnyView(StoreBtn()))
+            ]
+        #else
+            return []
+        #endif
     }
     
     @MainActor

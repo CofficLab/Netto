@@ -8,13 +8,6 @@ actor StartButtonPlugin: SuperPlugin {
     func addToolBarButtons() -> [(id: String, view: AnyView)] {
         return []
     }
-    
-    @MainActor
-    func addSettingsButtons() -> [(id: String, view: AnyView)] {
-        return [
-            (id: "start", view: AnyView(BtnStart()))
-        ]
-    }
 }
 
 @objc(StartButtonRegistrant)

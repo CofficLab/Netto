@@ -8,13 +8,6 @@ actor StopButtonPlugin: SuperPlugin {
     func addToolBarButtons() -> [(id: String, view: AnyView)] {
         return []
     }
-    
-    @MainActor
-    func addSettingsButtons() -> [(id: String, view: AnyView)] {
-        return [
-            (id: "stop", view: AnyView(BtnStop()))
-        ]
-    }
 }
 
 @objc(StopButtonRegistrant)

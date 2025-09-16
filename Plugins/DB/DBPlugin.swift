@@ -10,9 +10,13 @@ actor DBPlugin: SuperPlugin {
 
     @MainActor
     func addSettingsButtons() -> [(id: String, view: AnyView)] {
+        #if DEBUG
         return [
             (id: "db", view: AnyView(DBSheetButton()))
         ]
+        #else
+        return []
+        #endif
     }
 }
 
