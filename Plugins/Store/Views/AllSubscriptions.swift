@@ -40,7 +40,7 @@ struct AllSubscriptions: View, SuperLog {
         .onAppear {
             refreshing = true
             Task {
-                await getProducts("AllSubscription OnAppear")
+                getProducts("AllSubscription OnAppear")
             }
         }
     }
@@ -54,7 +54,7 @@ struct AllSubscriptions: View, SuperLog {
                 } else {
                     Button(action: {
                         Task {
-                            await getProducts("点击了重试按钮")
+                            getProducts("点击了重试按钮")
                         }
                     }, label: {
                         Label("重试", systemImage: "arrow.clockwise")

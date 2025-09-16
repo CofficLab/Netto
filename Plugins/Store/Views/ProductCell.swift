@@ -108,9 +108,7 @@ struct ProductCell: View, SuperLog {
 
     var buyButton: some View {
         Button(action: {
-            Task {
-                await buy()
-            }
+            buy()
         }) {
             if purchasing {
                 Text("支付中...")
@@ -138,11 +136,10 @@ struct ProductCell: View, SuperLog {
 
     func buy() {
         purchasing = true
-        Task{
-            
+        Task {
             do {
                 os_log("\(self.t)🏬 点击了购买按钮")
-                
+
                 let result = try await StoreService.purchase(product)
                 if result != nil {
                     withAnimation {
@@ -159,7 +156,7 @@ struct ProductCell: View, SuperLog {
                 errorTitle = error.localizedDescription
                 isShowingError = true
             }
-            
+
             purchasing = false
         }
     }
@@ -178,7 +175,7 @@ extension ProductCell {
                 subscriptions: groups?.subscriptions ?? [],
                 nonRenewables: groups?.nonRenewables ?? []
             )
-            
+
             switch product.kind {
             case .nonRenewable:
                 isPurchased = purchasedLists.nonRenewables.contains { $0.id == product.id }
@@ -211,4 +208,3 @@ extension ProductCell {
         .frame(width: 700)
         .frame(height: 800)
 }
-
