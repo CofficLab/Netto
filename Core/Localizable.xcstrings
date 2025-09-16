@@ -4,6 +4,22 @@
     "" : {
       "shouldTranslate" : false
     },
+    "  • %@" : {
+
+    },
+    "(%lld 个订阅)" : {
+
+    },
+    "%@ (%lld)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (%2$lld)"
+          }
+        }
+      }
+    },
     "%lld" : {
       "localizations" : {
         "zh-Hans" : {
@@ -25,6 +41,9 @@
         }
       },
       "shouldTranslate" : false
+    },
+    "%lld 个订阅选项" : {
+
     },
     "☹️ 暂不能从App Store获取产品列表" : {
 
@@ -130,6 +149,9 @@
       },
       "shouldTranslate" : false
     },
+    "All Statuses (%lld)" : {
+
+    },
     "Allowed" : {
       "localizations" : {
         "zh-Hans" : {
@@ -150,6 +172,9 @@
           }
         }
       }
+    },
+    "Cars (%lld)" : {
+
     },
     "Clear" : {
       "extractionState" : "stale",
@@ -225,9 +250,6 @@
       },
       "shouldTranslate" : false
     },
-    "Features" : {
-
-    },
     "File" : {
 
     },
@@ -242,6 +264,18 @@
       }
     },
     "Help" : {
+
+    },
+    "Highest Product:" : {
+
+    },
+    "Highest Product: 无" : {
+
+    },
+    "Highest Status:" : {
+
+    },
+    "Highest Status: 无" : {
 
     },
     "ID" : {
@@ -293,6 +327,12 @@
       },
       "shouldTranslate" : false
     },
+    "NonRenewables (%lld)" : {
+
+    },
+    "Plugin Window" : {
+
+    },
     "Port" : {
       "localizations" : {
         "zh-Hans" : {
@@ -304,6 +344,12 @@
       },
       "shouldTranslate" : false
     },
+    "Products" : {
+
+    },
+    "Purchased" : {
+
+    },
     "Rejected" : {
       "localizations" : {
         "zh-Hans" : {
@@ -314,6 +360,12 @@
         }
       },
       "shouldTranslate" : false
+    },
+    "state=" : {
+
+    },
+    "state=%lld" : {
+
     },
     "Status" : {
       "localizations" : {
@@ -350,6 +402,15 @@
       "shouldTranslate" : false
     },
     "Store" : {
+
+    },
+    "Subscription Groups (%lld)" : {
+
+    },
+    "Subscription Status" : {
+
+    },
+    "Subscriptions (%lld)" : {
 
     },
     "Time" : {
@@ -405,6 +466,9 @@
 
     },
     "一次性订阅" : {
+
+    },
+    "一次性购买" : {
 
     },
     "上一步" : {
@@ -531,6 +595,9 @@
         }
       }
     },
+    "关闭" : {
+
+    },
     "出" : {
       "localizations" : {
         "en" : {
@@ -570,6 +637,12 @@
           }
         }
       }
+    },
+    "加载中…" : {
+
+    },
+    "加载产品" : {
+
     },
     "合计 %lld" : {
 
@@ -638,6 +711,9 @@
           }
         }
       }
+    },
+    "尚未加载产品" : {
+
     },
     "属性信息 (Properties)" : {
       "localizations" : {
@@ -960,6 +1036,9 @@
         }
       }
     },
+    "数据库" : {
+
+    },
     "方向" : {
       "localizations" : {
         "en" : {
@@ -1000,6 +1079,18 @@
         }
       }
     },
+    "暂无一次性购买商品" : {
+
+    },
+    "暂无消耗品" : {
+
+    },
+    "暂无订阅商品" : {
+
+    },
+    "暂无非续订商品" : {
+
+    },
     "更多操作" : {
       "localizations" : {
         "en" : {
@@ -1009,6 +1100,9 @@
           }
         }
       }
+    },
+    "更新订阅状态" : {
+
     },
     "未开启代理" : {
       "localizations" : {
@@ -1035,6 +1129,15 @@
           }
         }
       }
+    },
+    "测试已购" : {
+
+    },
+    "消耗品" : {
+
+    },
+    "清空" : {
+
     },
     "清除筛选" : {
       "localizations" : {
@@ -1088,6 +1191,9 @@
 
     },
     "禁止联网" : {
+
+    },
+    "空" : {
 
     },
     "端口" : {
@@ -1224,7 +1330,7 @@
     "解决方案：" : {
 
     },
-    "订阅专业版本" : {
+    "订阅" : {
 
     },
     "订阅方案" : {
@@ -1234,6 +1340,9 @@
 
     },
     "请将APP移动到Applications目录后再试" : {
+
+    },
+    "请选择一个插件功能" : {
 
     },
     "辅助功能" : {
@@ -1296,6 +1405,9 @@
       }
     },
     "隐私政策" : {
+
+    },
+    "非续订" : {
 
     }
   },

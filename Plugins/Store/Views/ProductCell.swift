@@ -5,28 +5,17 @@ import StoreKit
 import SwiftUI
 
 struct ProductCell: View, SuperLog {
-    @EnvironmentObject var store: StoreProvider
     @State var isPurchased: Bool = false
     @State var errorTitle = ""
     @State var isShowingError: Bool = false
     @State var purchasing = false
     @State var btnHovered: Bool = false
+    @State var status: Product.SubscriptionInfo.Status?
+    @State var current: Product?
 
-    let product: Product
+    let product: ProductDTO
     let purchasingEnabled: Bool
     let showStatus: Bool
-
-    var status: Product.SubscriptionInfo.Status? {
-        store.status
-    }
-
-    var emoji: String {
-        store.emoji(for: product.id)
-    }
-
-    var current: Product? {
-        store.currentSubscription
-    }
 
     var isCurrent: Bool {
         if let current = current {
@@ -38,7 +27,7 @@ struct ProductCell: View, SuperLog {
 
     nonisolated static let emoji = "🖥️"
 
-    init(product: Product, purchasingEnabled: Bool = true, showStatus: Bool = false) {
+    init(product: ProductDTO, purchasingEnabled: Bool = true, showStatus: Bool = false) {
         self.product = product
         self.purchasingEnabled = purchasingEnabled
         self.showStatus = showStatus
@@ -46,14 +35,6 @@ struct ProductCell: View, SuperLog {
 
     var body: some View {
         HStack {
-            // MARK: 图标
-
-            Text(emoji)
-                .font(.system(size: 30))
-                .frame(width: 30, height: 30)
-                .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
-                .padding(.trailing, 15)
-
             if purchasingEnabled {
                 productDetail
                 Spacer()
@@ -71,10 +52,13 @@ struct ProductCell: View, SuperLog {
 
     @ViewBuilder
     var productDetail: some View {
-        if product.type == .autoRenewable {
+        if product.kind == .autoRenewable {
             VStack(alignment: .leading) {
                 Text(product.displayName)
                     .bold()
+                Text(product.id)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
                 if isCurrent {
                     Text("正在使用")
                         .font(.footnote)
@@ -87,26 +71,31 @@ struct ProductCell: View, SuperLog {
                 }
             }
         } else {
-            Text(product.description)
-                .frame(alignment: .leading)
+            VStack(alignment: .leading) {
+                Text(product.description)
+                    .frame(alignment: .leading)
+                Text(product.id)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 
     // MARK: 购买按钮的提示词
 
-    func subscribeButton(_ subscription: Product.SubscriptionInfo) -> some View {
+    func subscribeButton(_ subscription: SubscriptionInfoDTO) -> some View {
         let unit: String
         let plural = 1 < subscription.subscriptionPeriod.value
         switch subscription.subscriptionPeriod.unit {
-        case .day:
+        case "day":
             unit = plural ? "\(subscription.subscriptionPeriod.value) 天" : "天"
-        case .week:
+        case "week":
             unit = plural ? "\(subscription.subscriptionPeriod.value) 周" : "周"
-        case .month:
+        case "month":
             unit = plural ? "\(subscription.subscriptionPeriod.value) 月" : "月"
-        case .year:
+        case "year":
             unit = plural ? "\(subscription.subscriptionPeriod.value) 年" : "年"
-        @unknown default:
+        default:
             unit = "period"
         }
 
@@ -119,9 +108,7 @@ struct ProductCell: View, SuperLog {
 
     var buyButton: some View {
         Button(action: {
-            Task {
-                await buy()
-            }
+            buy()
         }) {
             if purchasing {
                 Text("支付中...")
@@ -147,30 +134,31 @@ struct ProductCell: View, SuperLog {
 
     // MARK: 去购买
 
-    func buy() async {
+    func buy() {
         purchasing = true
+        Task {
+            do {
+                os_log("\(self.t)🏬 点击了购买按钮")
 
-        do {
-            os_log("\(self.t)点击了购买按钮")
-
-            let result = try await store.purchase(product)
-            if result != nil {
-                withAnimation {
-                    os_log("\(self.t)购买回调，更新购买状态为 true")
-                    isPurchased = true
+                let result = try await StoreService.purchase(product)
+                if result != nil {
+                    withAnimation {
+                        os_log("\(self.t)🏬 购买回调，更新购买状态为 true")
+                        isPurchased = true
+                    }
+                } else {
+                    os_log("\(self.t)购买回调，结果为空，表示取消了")
                 }
-            } else {
-                os_log("\(self.t)购买回调，结果为空，表示取消了")
+            } catch StoreError.failedVerification {
+                errorTitle = "App Store 验证失败"
+                isShowingError = true
+            } catch {
+                errorTitle = error.localizedDescription
+                isShowingError = true
             }
-        } catch StoreError.failedVerification {
-            errorTitle = "App Store 验证失败"
-            isShowingError = true
-        } catch {
-            errorTitle = error.localizedDescription
-            isShowingError = true
-        }
 
-        purchasing = false
+            purchasing = false
+        }
     }
 }
 
@@ -180,11 +168,43 @@ extension ProductCell {
     func onAppear() {
         let verbose = false
         Task {
-            isPurchased = (try? await store.isPurchased(product)) ?? false
+            // 检查购买状态
+            let groups = try? await StoreService.fetchAllProducts()
+            let purchasedLists = await StoreService.fetchPurchasedLists(
+                cars: groups?.cars ?? [],
+                subscriptions: groups?.subscriptions ?? [],
+                nonRenewables: groups?.nonRenewables ?? []
+            )
+
+            switch product.kind {
+            case .nonRenewable:
+                isPurchased = purchasedLists.nonRenewables.contains { $0.id == product.id }
+            case .nonConsumable:
+                isPurchased = purchasedLists.cars.contains { $0.id == product.id }
+            case .autoRenewable:
+                isPurchased = purchasedLists.subscriptions.contains { $0.id == product.id }
+            default:
+                isPurchased = false
+            }
 
             if verbose {
                 os_log("\(self.t)OnAppear 检查购买状态 -> \(product.displayName) -> \(isPurchased)")
             }
         }
     }
+}
+
+// MARK: - Preview
+
+#Preview("Buy") {
+    PurchaseView(showCloseButton: false)
+        .inRootView()
+        .frame(height: 800)
+}
+
+#Preview("APP") {
+    ContentView()
+        .inRootView()
+        .frame(width: 700)
+        .frame(height: 800)
 }

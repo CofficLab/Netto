@@ -5,7 +5,6 @@ import StoreKit
 import SwiftUI
 
 struct RestoreView: View, SuperEvent, SuperLog, SuperThread {
-    @EnvironmentObject var store: StoreProvider
     @EnvironmentObject var app: AppProvider
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @EnvironmentObject var m: MagicMessageProvider
@@ -63,7 +62,7 @@ extension RestoreView {
 // MARK: - Preview
 
 #Preview("Buy") {
-    BuySetting()
+    PurchaseView()
         .inRootView()
         .frame(height: 800)
 }

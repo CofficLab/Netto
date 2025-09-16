@@ -90,7 +90,7 @@ extension ChartView {
             if let appId { events = events.filter { $0.sourceAppIdentifier == appId } }
 
             guard events.isNotEmpty else {
-                await setPoints([])
+                setPoints([])
                 return
             }
 
@@ -114,7 +114,7 @@ extension ChartView {
 
             let allBuckets = events.map { bucketStart($0.time) }
             guard let minBucket = allBuckets.min(), let maxBucket = allBuckets.max() else {
-                await setPoints([])
+                setPoints([])
                 return
             }
 
@@ -150,9 +150,9 @@ extension ChartView {
                 DataPoint(index: idx, time: d, count: buckets[d] ?? 0, label: formatter.string(from: d))
             }
 
-            await setPoints(newPoints)
+            setPoints(newPoints)
         } catch {
-            await setPoints([])
+            setPoints([])
         }
     }
 }

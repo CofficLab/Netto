@@ -14,9 +14,16 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @State private var shouldShowLoading = true
     @State private var shouldShowMenuApp = false
     @State private var shouldShowWelcomeWindow = false
+    @StateObject private var pluginWindowManager = PluginWindowManager.shared
+    
+    init() {
+        // 启动 Store 服务（监听 + 校准）
+        StoreService.bootstrap()
+    }
 
     nonisolated static let emoji = "🐦"
     static let welcomeWindowTitle = "Welcome to TravelMode"
+    static let storeWindowTitle = "Store - TravelMode"
     private let versionService = VersionService()
 
     var body: some Scene {
@@ -52,6 +59,32 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         .defaultPosition(.center)
         .defaultSize(width: 500, height: 600)
 
+        // 插件窗口 - 动态显示插件内容
+        Window("Plugin Window", id: "plugin-window") {
+            Group {
+                if let content = pluginWindowManager.currentContent {
+                    content.windowView()
+                        .onAppear {
+                            // 确保窗口显示在最上层
+                            NSApplication.shared.activate(ignoringOtherApps: true)
+                            // 将窗口置于最前面
+                            if let window = NSApplication.shared.windows.first(where: { $0.title == content.windowTitle }) {
+                                window.level = .floating
+                                window.orderFrontRegardless()
+                            }
+                        }
+                } else {
+                    Text("请选择一个插件功能")
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
+        }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
+        .defaultPosition(.center)
+        .defaultSize(width: 600, height: 800)
+
         // 主要的菜单栏应用
         MenuBarExtra(content: {
             RootView {
@@ -73,12 +106,28 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                 shouldShowWelcomeWindow = true
                 shouldShowMenuApp = false
             }
+            .onReceive(nc.publisher(for: .shouldOpenPluginWindow)) { notification in
+                os_log("\(self.t)🔌 打开插件窗口")
+                // 从通知中获取插件 ID
+                if let data = notification.object as? PluginWindowNotificationData {
+                    Task {
+                        if let plugin = await PluginRegistry.shared.getPlugin(id: data.pluginId),
+                           let windowContent = plugin.provideWindowContent() {
+                            await MainActor.run {
+                                pluginWindowManager.showWindow(with: windowContent)
+                                openWindow(id: "plugin-window")
+                                shouldShowMenuApp = false
+                            }
+                        }
+                    }
+                }
+            }
         }, label: {
             #if DEBUG
-            Label(AppConfig.appName, systemImage: .iconAirplane)
-                .foregroundColor(.orange)
+                Label(AppConfig.appName, systemImage: .iconAirplane)
+                    .foregroundColor(.orange)
             #else
-            Label(AppConfig.appName, systemImage: "network")
+                Label(AppConfig.appName, systemImage: "network")
             #endif
         })
         .menuBarExtraStyle(.window)
@@ -86,7 +135,8 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
 }
 
 #Preview("APP") {
-    RootView(content: {
-        ContentView()
-    }).frame(width: 700)
+    ContentView()
+        .inRootView()
+        .frame(width: 500)
+        .frame(height: 800)
 }
