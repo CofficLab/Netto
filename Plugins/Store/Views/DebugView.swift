@@ -6,7 +6,7 @@ import SwiftUI
 struct DebugView: View, SuperLog {
     @EnvironmentObject var m: MagicMessageProvider
     @State private var isLoading: Bool = false
-    @State private var productGroups: StoreProductGroupsDTO?
+    @State private var productGroups: ProductGroupsDTO?
     @State private var purchasedCars: [StoreProductDTO] = []
     @State private var purchasedSubscriptions: [StoreProductDTO] = []
     @State private var purchasedNonRenewables: [StoreProductDTO] = []
@@ -133,7 +133,7 @@ extension DebugView {
         Task {
             do {
                 // 若尚未加载产品，先拉取
-                let groups: StoreProductGroupsDTO
+                let groups: ProductGroupsDTO
                 if let existing = productGroups {
                     groups = existing
                 } else {
@@ -178,7 +178,7 @@ extension DebugView {
 
 extension DebugView {
     @MainActor
-    func setGroups(_ newValue: StoreProductGroupsDTO) {
+    func setGroups(_ newValue: ProductGroupsDTO) {
         productGroups = newValue
     }
 
@@ -284,7 +284,7 @@ extension DebugView {
     }
 
     @ViewBuilder
-    func productSection(groups: StoreProductGroupsDTO) -> some View {
+    func productSection(groups: ProductGroupsDTO) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Products")
                 .font(.title3)

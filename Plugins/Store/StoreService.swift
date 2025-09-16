@@ -63,17 +63,17 @@ public enum StoreService: SuperLog {
     //  断网，报错
     //  联网得到2个产品，断网，依然得到两个产品
     //  联网得到2个产品，断网，依然得到两个产品，再等等，不报错，得到0个产品
-    private static func requestProducts(productIds: some Sequence<String>) async throws -> StoreProductGroupsDTO {
+    private static func requestProducts(productIds: some Sequence<String>) async throws -> ProductGroupsDTO {
         let idsArray = Array(productIds)
         let storeProducts = try await Product.products(for: idsArray)
-        return ProductGroups.classify(storeProducts: storeProducts).toDTO()
+        return ProductGroupsDTO(products: storeProducts)
     }
 
     /// 获取“全部”商品的封装：先读取产品 ID 清单，再按清单请求详情并分组。
     ///
     /// - Note: 本方法并非真正从服务器“枚举全部商品”，而是以本地/远端配置的产品 ID 清单为准。
     /// - Returns: `StoreProductGroupsDTO`，包含 cars / subscriptions / nonRenewables / fuel 等分组。
-    public static func fetchAllProducts() async throws -> StoreProductGroupsDTO {
+    public static func fetchAllProducts() async throws -> ProductGroupsDTO {
         let ids = Self.allProductIds()
         return try await Self.requestProducts(productIds: ids)
     }
@@ -85,7 +85,6 @@ public enum StoreService: SuperLog {
     public static func fetchAllSubscriptionGroups() async throws -> [SubscriptionGroupDTO] {
         let products = try await fetchAllProducts()
         let subscriptions = products.subscriptions
-        print(subscriptions.count)
 
         // 按订阅组 ID 聚合，避免为同一组重复创建条目
         var grouped: [String: [StoreProductDTO]] = [:]
@@ -310,14 +309,6 @@ public enum StoreService: SuperLog {
             return (subscriptions: [], statuses: [], highestProduct: nil, highestStatus: nil)
         }
 
-        // 输出 subscriptions
-        print("当前的可订阅的产品列表：")
-        for subscription in subscriptions {
-            print("\(subscription.id)")
-            print(" - des: \(subscription.description)")
-        }
-
-        // 订阅组可以多个，但这里仅有1个
         do {
             // This app has only one subscription group, so products in the subscriptions
             // array all belong to the same group. The statuses that
