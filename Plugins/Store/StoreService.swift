@@ -347,6 +347,32 @@ public enum StoreService: SuperLog {
     }
 }
 
+// MARK: - Error
+
+public enum StoreError: Error, LocalizedError {
+    case failedVerification
+    case canNotGetProducts
+
+    public var errorDescription: String? {
+        switch self {
+        case .failedVerification:
+            "failedVerification"
+        case .canNotGetProducts:
+            "发生错误：无法获取产品"
+        }
+    }
+}
+
+// Define our app's subscription tiers by level of service, in ascending order.
+public enum SubscriptionTier: Int, Comparable {
+    case none = 0
+    case pro = 1
+
+    public static func < (lhs: Self, rhs: Self) -> Bool {
+        return lhs.rawValue < rhs.rawValue
+    }
+}
+
 // MARK: - Preview
 
 #Preview("Debug") {

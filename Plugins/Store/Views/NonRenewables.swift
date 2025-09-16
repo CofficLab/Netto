@@ -5,7 +5,6 @@ import StoreKit
 import SwiftUI
 
 struct NonRenewables: View {
-    @EnvironmentObject var store: StoreProvider
     @EnvironmentObject var app: AppProvider
 
     @State private var nonRenewables: [StoreProductDTO] = []
@@ -62,12 +61,11 @@ struct NonRenewables: View {
 
     private func getProducts(_ reason: String) {
         refreshing = true
-        let store = self.store
 
         Task {
             do {
-                try await store.requestProducts(reason)
-                self.nonRenewables = store.nonRenewables
+                let groups = try await StoreService.fetchAllProducts()
+                self.nonRenewables = groups.nonRenewables
             } catch {
                 self.error = error
             }

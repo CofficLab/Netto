@@ -7,7 +7,6 @@ import SwiftUI
 struct AppAction: View, SuperLog, SuperEvent {
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var repo: AppSettingRepo
-    @EnvironmentObject var store: StoreProvider
 
     @Binding var shouldAllow: Bool
 
@@ -37,11 +36,6 @@ struct AppAction: View, SuperLog, SuperEvent {
 
 extension AppAction {
     private func deny() {
-        if self.store.currentSubscription == nil {
-            m.error("请订阅后继续")
-            return
-        }
-        
         let repo = self.repo
         Task {
             do {

@@ -1,10 +1,22 @@
 import SwiftUI
 
 struct SubscriptionProductsView: View {
-    @EnvironmentObject private var store: StoreProvider
+    @State private var subscriptions: [StoreProductDTO] = []
 
     var body: some View {
-        productList(items: store.subscriptions)
+        productList(items: subscriptions)
+            .task {
+                await loadProducts()
+            }
+    }
+    
+    private func loadProducts() async {
+        do {
+            let groups = try await StoreService.fetchAllProducts()
+            self.subscriptions = groups.subscriptions
+        } catch {
+            print("Failed to load products: \(error)")
+        }
     }
 
     @ViewBuilder

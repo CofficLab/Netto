@@ -5,7 +5,6 @@ import MagicCore
 
 
 struct AllSubscriptions: View, SuperLog {
-    @EnvironmentObject var store: StoreProvider
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     @State private var subscriptions: [StoreProductDTO] = []
@@ -74,11 +73,10 @@ struct AllSubscriptions: View, SuperLog {
         }
         
         refreshing = true
-        let store = self.store
         Task {
             do {
-                try await store.requestProducts(reason)
-                self.subscriptions = store.subscriptions
+                let groups = try await StoreService.fetchAllProducts()
+                self.subscriptions = groups.subscriptions
             } catch {
                 self.error = error
             }
