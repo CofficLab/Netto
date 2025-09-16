@@ -4,15 +4,11 @@
     "" : {
       "shouldTranslate" : false
     },
-    "%@  ID: %@" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@  ID: %2$@"
-          }
-        }
-      }
+    "  • %@" : {
+
+    },
+    "(%lld 个订阅)" : {
+
     },
     "%@ (%lld)" : {
       "localizations" : {
@@ -45,6 +41,9 @@
         }
       },
       "shouldTranslate" : false
+    },
+    "%lld 个订阅选项" : {
+
     },
     "☹️ 暂不能从App Store获取产品列表" : {
 
@@ -402,7 +401,7 @@
     "Store" : {
 
     },
-    "Subscription Groups" : {
+    "Subscription Groups (%lld)" : {
 
     },
     "Subscription Status" : {
@@ -640,9 +639,6 @@
 
     },
     "加载产品" : {
-
-    },
-    "加载订阅组" : {
 
     },
     "合计 %lld" : {
@@ -1332,9 +1328,6 @@
 
     },
     "订阅" : {
-
-    },
-    "订阅专业版本" : {
 
     },
     "订阅方案" : {
