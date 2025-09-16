@@ -15,6 +15,11 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @State private var shouldShowMenuApp = false
     @State private var shouldShowWelcomeWindow = false
     @StateObject private var pluginWindowManager = PluginWindowManager.shared
+    
+    init() {
+        // 启动时开始监听交易更新
+        StoreService.startTransactionListener()
+    }
 
     nonisolated static let emoji = "🐦"
     static let welcomeWindowTitle = "Welcome to TravelMode"

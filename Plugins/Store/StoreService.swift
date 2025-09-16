@@ -11,6 +11,36 @@ public typealias RenewalInfo = StoreKit.Product.SubscriptionInfo.RenewalInfo
 public typealias RenewalState = StoreKit.Product.SubscriptionInfo.RenewalState
 
 public enum StoreService: SuperLog {
+    // MARK: - Transaction Updates
+    
+    /// 开始监听交易更新，APP启动时应该调用这个方法
+    /// 这是 StoreKit 2 的最佳实践，确保不会错过任何交易
+    public static func startTransactionListener() {
+        Task {
+            for await result in Transaction.updates {
+                do {
+                    let transaction = try checkVerified(result)
+                    os_log("\(self.t)📱 收到交易更新: \(transaction.productID)")
+                    
+                    // 处理交易更新
+                    await handleTransactionUpdate(transaction)
+                    
+                    // 完成交易
+                    await transaction.finish()
+                } catch {
+                    os_log(.error, "\(self.t)❌ 交易更新验证失败: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    /// 处理交易更新
+    private static func handleTransactionUpdate(_ transaction: Transaction) async {
+        // 这里可以添加你的业务逻辑
+        // 比如更新用户权限、发送通知等
+        os_log("\(self.t)✅ 处理交易更新: \(transaction.productID)")
+    }
+    
     // MARK: - Data Sources
 
     /// 全部商品 ID 列表
@@ -203,14 +233,12 @@ public enum StoreService: SuperLog {
 
             switch result {
             case let .success(verification):
-                os_log("\(self.t)支付成功，验证")
+                os_log("\(self.t)🧐 支付成功，验证")
                 // Check whether the transaction is verified. If it isn't,
                 // this function rethrows the verification error.
                 let transaction = try checkVerified(verification)
 
-                os_log("\(self.t)支付成功，验证成功")
-                // The transaction is verified. Deliver content to the user.
-//                await updatePurchased("支付并验证成功")
+                os_log("\(self.t)✅ 支付成功，验证成功")
 
                 // Always finish a transaction.
                 await transaction.finish()

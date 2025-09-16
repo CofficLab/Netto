@@ -146,7 +146,7 @@ struct ProductCell: View, SuperLog {
                 let result = try await StoreService.purchase(product)
                 if result != nil {
                     withAnimation {
-                        os_log("\(self.t)购买回调，更新购买状态为 true")
+                        os_log("\(self.t)🏬 购买回调，更新购买状态为 true")
                         isPurchased = true
                     }
                 } else {
