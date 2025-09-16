@@ -39,21 +39,6 @@ public enum StoreService: SuperLog {
         return keys
     }
 
-    /// 读取订阅组 ID 到显示名的映射（若无配置则为空）
-    private static func loadSubscriptionGroupIdToName() -> [String: String] {
-        guard let path = Bundle.main.path(forResource: "SubscriptionGroups", ofType: "plist"),
-              let plist = FileManager.default.contents(atPath: path),
-              let data = try? PropertyListSerialization.propertyList(from: plist, format: nil) as? [String: String] else {
-            return [:]
-        }
-        return data
-    }
-
-    /// 订阅组显示名（若未配置友好名则回退为组 ID）
-    public static func subscriptionGroupDisplayName(for groupId: String) -> String {
-        let map = loadSubscriptionGroupIdToName()
-        return map[groupId] ?? groupId
-    }
 
     // MARK: - Product Fetching
 
@@ -74,8 +59,7 @@ public enum StoreService: SuperLog {
     /// - Note: 本方法并非真正从服务器“枚举全部商品”，而是以本地/远端配置的产品 ID 清单为准。
     /// - Returns: `StoreProductGroupsDTO`，包含 cars / subscriptions / nonRenewables / fuel 等分组。
     public static func fetchAllProducts() async throws -> ProductGroupsDTO {
-        let ids = Self.allProductIds()
-        return try await Self.requestProducts(productIds: ids)
+        try await Self.requestProducts(productIds: Self.allProductIds())
     }
 
     /// 获取所有订阅组（按订阅组 ID 聚合订阅类商品）。
@@ -84,23 +68,7 @@ public enum StoreService: SuperLog {
     /// - Note: 依赖 `fetchAllProducts()`，因此实际结果受产品 ID 清单约束。
     public static func fetchAllSubscriptionGroups() async throws -> [SubscriptionGroupDTO] {
         let products = try await fetchAllProducts()
-        let subscriptions = products.subscriptions
-
-        // 按订阅组 ID 聚合，避免为同一组重复创建条目
-        var grouped: [String: [StoreProductDTO]] = [:]
-        for product in subscriptions {
-            let groupId = product.subscription?.groupID ?? "unknown"
-            grouped[groupId, default: []].append(product)
-        }
-
-        // 组名优先取 StoreKit 的显示名，其次回退到配置映射，最后回退为组 ID
-        let groups: [SubscriptionGroupDTO] = grouped.map { groupId, items in
-            let nameFromProduct = items.first?.subscription?.groupDisplayName
-            let displayName = nameFromProduct ?? Self.subscriptionGroupDisplayName(for: groupId)
-            return SubscriptionGroupDTO(name: displayName, id: groupId, subscriptions: items)
-        }
-
-        return groups
+        return products.fetchAllSubscriptionGroups()
     }
 
     // MARK: - Purchased Fetching

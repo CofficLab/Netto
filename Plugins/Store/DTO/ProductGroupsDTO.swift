@@ -50,6 +50,30 @@ public struct ProductGroupsDTO: Hashable, Sendable {
     }
 }
 
+// MARK: - Subscription Groups
+extension ProductGroupsDTO {
+    /// 获取所有订阅组（按订阅组 ID 聚合订阅类商品）
+    ///
+    /// - Returns: 字典：`[SubscriptionGroupDTO]`
+    public func fetchAllSubscriptionGroups() -> [SubscriptionGroupDTO] {
+        // 按订阅组 ID 聚合，避免为同一组重复创建条目
+        var grouped: [String: [StoreProductDTO]] = [:]
+        for product in subscriptions {
+            let groupId = product.subscription?.groupID ?? "unknown"
+            grouped[groupId, default: []].append(product)
+        }
+
+        // 组名优先取 StoreKit 的显示名，其次回退到配置映射，最后回退为组 ID
+        let groups: [SubscriptionGroupDTO] = grouped.map { groupId, items in
+            let nameFromProduct = items.first?.subscription?.groupDisplayName
+            let displayName = nameFromProduct ?? groupId
+            return SubscriptionGroupDTO(name: displayName, id: groupId, subscriptions: items)
+        }
+
+        return groups
+    }
+}
+
 // MARK: - Preview
 
 #Preview("Debug") {
