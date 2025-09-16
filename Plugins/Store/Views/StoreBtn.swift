@@ -41,8 +41,9 @@ struct StoreBtn: View, SuperLog {
     }
     
     private func action() -> Void {
-        // 发送通知打开独立窗口
-        NotificationCenter.default.post(name: .shouldOpenStoreWindow, object: nil)
+        // 发送通知打开插件窗口
+        let data = PluginWindowNotificationData(pluginId: "Store")
+        NotificationCenter.default.post(name: .shouldOpenPluginWindow, object: data)
     }
 }
 

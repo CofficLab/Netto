@@ -9,7 +9,7 @@ public struct StoreWindowContent: PluginWindowContent {
     public func windowView() -> AnyView {
         AnyView(
             StoreRootView {
-                PurchaseView(showCloseButton: true)
+                PurchaseView(showCloseButton: false)
             }
         )
     }

@@ -101,16 +101,18 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                 shouldShowWelcomeWindow = true
                 shouldShowMenuApp = false
             }
-            .onReceive(nc.publisher(for: .shouldOpenStoreWindow)) { _ in
-                os_log("\(self.t)🛒 打开 Store 窗口")
-                // 从 Store 插件获取窗口内容
-                Task {
-                    if let storePlugin = await PluginRegistry.shared.getPlugin(id: "Store") as? StorePlugin,
-                       let windowContent = storePlugin.provideWindowContent() {
-                        await MainActor.run {
-                            pluginWindowManager.showWindow(with: windowContent)
-                            openWindow(id: "plugin-window")
-                            shouldShowMenuApp = false
+            .onReceive(nc.publisher(for: .shouldOpenPluginWindow)) { notification in
+                os_log("\(self.t)🔌 打开插件窗口")
+                // 从通知中获取插件 ID
+                if let data = notification.object as? PluginWindowNotificationData {
+                    Task {
+                        if let plugin = await PluginRegistry.shared.getPlugin(id: data.pluginId),
+                           let windowContent = plugin.provideWindowContent() {
+                            await MainActor.run {
+                                pluginWindowManager.showWindow(with: windowContent)
+                                openWindow(id: "plugin-window")
+                                shouldShowMenuApp = false
+                            }
                         }
                     }
                 }
