@@ -7,7 +7,7 @@ import MagicCore
 struct AllSubscriptions: View, SuperLog {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
-    @State private var subscriptions: [StoreProductDTO] = []
+    @State private var subscriptions: [ProductDTO] = []
     @State private var refreshing = false
     @State private var error: Error? = nil
     

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SubscriptionProductsView: View {
-    @State private var subscriptions: [StoreProductDTO] = []
+    @State private var subscriptions: [ProductDTO] = []
 
     var body: some View {
         productList(items: subscriptions)
@@ -20,7 +20,7 @@ struct SubscriptionProductsView: View {
     }
 
     @ViewBuilder
-    private func productList(items: [StoreProductDTO]) -> some View {
+    private func productList(items: [ProductDTO]) -> some View {
         if items.isEmpty {
             Text("暂无订阅商品").foregroundStyle(.secondary)
         } else {

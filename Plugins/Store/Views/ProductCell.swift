@@ -13,7 +13,7 @@ struct ProductCell: View, SuperLog {
     @State var status: Product.SubscriptionInfo.Status?
     @State var current: Product?
 
-    let product: StoreProductDTO
+    let product: ProductDTO
     let purchasingEnabled: Bool
     let showStatus: Bool
 
@@ -27,7 +27,7 @@ struct ProductCell: View, SuperLog {
 
     nonisolated static let emoji = "🖥️"
 
-    init(product: StoreProductDTO, purchasingEnabled: Bool = true, showStatus: Bool = false) {
+    init(product: ProductDTO, purchasingEnabled: Bool = true, showStatus: Bool = false) {
         self.product = product
         self.purchasingEnabled = purchasingEnabled
         self.showStatus = showStatus
@@ -141,7 +141,7 @@ struct ProductCell: View, SuperLog {
         Task{
             
             do {
-                os_log("\(self.t)点击了购买按钮")
+                os_log("\(self.t)🏬 点击了购买按钮")
                 
                 let result = try await StoreService.purchase(product)
                 if result != nil {

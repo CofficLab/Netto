@@ -16,23 +16,21 @@ public enum StoreService: SuperLog {
     /// 全部商品 ID 列表
     private static func allProductIds() -> [String] {
         let keys = [
-            "com.yueyi.netto.ultimate.annual",
             "consumable.fuel.octane87",
             "consumable.fuel.octane89",
             "consumable.fuel.octane91",
             "nonconsumable.car",
             "nonconsumable.utilityvehicle",
             "nonconsumable.racecar",
-            "com.yueyi.cisum.pro.monthly",
             "com.yueyi.cisum.monthly",
-            "com.yueyi.cisum.pro.annual",
             "com.yueyi.cisum.annual",
-            "com.yueyi.cisum.pro.yearly",
             "com.yueyi.cisum.yearly",
             "com.yueyi.cisum.pro.yearly2",
             "com.yueyi.cisum.pro.year.1",
             "com.yueyi.cisum.pro.month.1",
             "com.yueyi.cisum.pro.day.7",
+            "com.yueyi.netto.pro.monthly",
+            "com.yueyi.netto.pro.annual",
             "com.yueyi.netto.ultimate.monthly",
             "com.yueyi.netto.ultimate.annual",
         ]
@@ -91,17 +89,17 @@ public enum StoreService: SuperLog {
     ///   - 非续订订阅仅在 `productID == "nonRenewing.standard"` 且“购买日起一年内未过期”时计入。
     ///   - 方法为 `async`，因为 `Transaction.currentEntitlements` 为异步序列。
     public static func fetchPurchasedLists(
-        cars: [StoreProductDTO],
-        subscriptions: [StoreProductDTO],
-        nonRenewables: [StoreProductDTO]
+        cars: [ProductDTO],
+        subscriptions: [ProductDTO],
+        nonRenewables: [ProductDTO]
     ) async -> (
-        cars: [StoreProductDTO],
-        nonRenewables: [StoreProductDTO],
-        subscriptions: [StoreProductDTO]
+        cars: [ProductDTO],
+        nonRenewables: [ProductDTO],
+        subscriptions: [ProductDTO]
     ) {
-        var purchasedCars: [StoreProductDTO] = []
-        var purchasedSubscriptions: [StoreProductDTO] = []
-        var purchasedNonRenewableSubscriptions: [StoreProductDTO] = []
+        var purchasedCars: [ProductDTO] = []
+        var purchasedSubscriptions: [ProductDTO] = []
+        var purchasedNonRenewableSubscriptions: [ProductDTO] = []
 
         for await result in Transaction.currentEntitlements {
             do {
@@ -195,7 +193,7 @@ public enum StoreService: SuperLog {
     // MARK: - Pay
 
     private static func purchase(_ product: Product) async throws -> Transaction? {
-        os_log("\(self.t)去支付")
+        os_log("\(self.t)🏬 去支付")
 
         #if os(visionOS)
             return nil
@@ -228,8 +226,7 @@ public enum StoreService: SuperLog {
         #endif
     }
 
-    static func purchase(_ product: StoreProductDTO) async throws -> Transaction? {
-        // Resolve StoreKit.Product by id and reuse the existing purchase flow
+    static func purchase(_ product: ProductDTO) async throws -> Transaction? {
         let products = try await Product.products(for: [product.id])
         guard let storekitProduct = products.first else { return nil }
         return try await purchase(storekitProduct)
@@ -246,9 +243,9 @@ public enum StoreService: SuperLog {
     ///   - `highestProduct`: 当前最高等级对应的产品（若能判定）。
     ///   - `highestStatus`: 当前最高等级对应的状态（若能判定）。
     static func inspectSubscriptionStatus(_ reason: String, verbose: Bool = true) async throws -> (
-        subscriptions: [StoreProductDTO],
+        subscriptions: [ProductDTO],
         statuses: [StoreSubscriptionStatusDTO],
-        highestProduct: StoreProductDTO?,
+        highestProduct: ProductDTO?,
         highestStatus: StoreSubscriptionStatusDTO?
     ) {
         if verbose {
@@ -293,7 +290,7 @@ public enum StoreService: SuperLog {
             }
 
             var highestStatus: StoreSubscriptionStatusDTO?
-            var highestProduct: StoreProductDTO?
+            var highestProduct: ProductDTO?
 
             if verbose {
                 os_log("\(self.t)StoreManger 检查订阅状态，statuses.count -> \(statuses.count)")

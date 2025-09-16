@@ -3,8 +3,8 @@ import StoreKit
 import OSLog
 
 struct OneTimeView: View {
-    @State private var products: [StoreProductDTO] = []
-    @State private var purchasedSubscriptions: [StoreProductDTO] = []
+    @State private var products: [ProductDTO] = []
+    @State private var purchasedSubscriptions: [ProductDTO] = []
     
     var body: some View {
         Section("一次性订阅") {

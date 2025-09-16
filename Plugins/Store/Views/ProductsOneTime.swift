@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ProductsOfOneTime: View {
-    @State private var cars: [StoreProductDTO] = []
+    @State private var cars: [ProductDTO] = []
     @State private var isLoading = false
 
     var body: some View {
@@ -12,7 +12,7 @@ struct ProductsOfOneTime: View {
     }
 
     @ViewBuilder
-    private func productList(items: [StoreProductDTO]) -> some View {
+    private func productList(items: [ProductDTO]) -> some View {
         if items.isEmpty {
             Text("暂无一次性购买商品").foregroundStyle(.secondary)
         } else {

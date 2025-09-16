@@ -9,7 +9,7 @@ struct MySubscription: View {
     @State private var refreshing: Bool = false
     @State private var description: String = ""
     @State private var status: RenewalState.RawValue?
-    @State private var product: StoreProductDTO?
+    @State private var product: ProductDTO?
 
     private var statusDescription: String {
         guard let status = status else {

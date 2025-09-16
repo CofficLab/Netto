@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ProductsNonRenewable: View {
-    @State private var nonRenewables: [StoreProductDTO] = []
+    @State private var nonRenewables: [ProductDTO] = []
 
     var body: some View {
         productList(items: nonRenewables)
@@ -11,7 +11,7 @@ struct ProductsNonRenewable: View {
     }
 
     @ViewBuilder
-    private func productList(items: [StoreProductDTO]) -> some View {
+    private func productList(items: [ProductDTO]) -> some View {
         if items.isEmpty {
             Text("暂无非续订商品").foregroundStyle(.secondary)
         } else {

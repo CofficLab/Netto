@@ -7,7 +7,7 @@ import SwiftUI
 struct NonRenewables: View {
     @EnvironmentObject var app: AppProvider
 
-    @State private var nonRenewables: [StoreProductDTO] = []
+    @State private var nonRenewables: [ProductDTO] = []
     @State private var refreshing = false
     @State private var error: Error? = nil
 

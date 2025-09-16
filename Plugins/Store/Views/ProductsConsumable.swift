@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ProductsConsumable: View {
-    @State private var fuel: [StoreProductDTO] = []
+    @State private var fuel: [ProductDTO] = []
 
     var body: some View {
         productList(items: fuel)
@@ -11,7 +11,7 @@ struct ProductsConsumable: View {
     }
 
     @ViewBuilder
-    private func productList(items: [StoreProductDTO]) -> some View {
+    private func productList(items: [ProductDTO]) -> some View {
         if items.isEmpty {
             Text("暂无消耗品").foregroundStyle(.secondary)
         } else {

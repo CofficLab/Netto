@@ -7,11 +7,11 @@ struct DebugView: View, SuperLog {
     @EnvironmentObject var m: MagicMessageProvider
     @State private var isLoading: Bool = false
     @State private var productGroups: ProductGroupsDTO?
-    @State private var purchasedCars: [StoreProductDTO] = []
-    @State private var purchasedSubscriptions: [StoreProductDTO] = []
-    @State private var purchasedNonRenewables: [StoreProductDTO] = []
+    @State private var purchasedCars: [ProductDTO] = []
+    @State private var purchasedSubscriptions: [ProductDTO] = []
+    @State private var purchasedNonRenewables: [ProductDTO] = []
     @State private var subscriptionStatuses: [StoreSubscriptionStatusDTO] = []
-    @State private var highestSubscriptionProduct: StoreProductDTO?
+    @State private var highestSubscriptionProduct: ProductDTO?
     @State private var highestSubscriptionStatus: StoreSubscriptionStatusDTO?
     @State private var subscriptionGroups: [SubscriptionGroupDTO] = []
 
@@ -159,9 +159,9 @@ extension DebugView {
 
     @MainActor
     func setPurchased(_ newValue: (
-        cars: [StoreProductDTO],
-        nonRenewables: [StoreProductDTO],
-        subscriptions: [StoreProductDTO]
+        cars: [ProductDTO],
+        nonRenewables: [ProductDTO],
+        subscriptions: [ProductDTO]
     )) {
         purchasedCars = newValue.cars
         purchasedNonRenewables = newValue.nonRenewables
@@ -170,9 +170,9 @@ extension DebugView {
 
     @MainActor
     func setSubscriptionInspectResult(_ result: (
-        subscriptions: [StoreProductDTO],
+        subscriptions: [ProductDTO],
         statuses: [StoreSubscriptionStatusDTO],
-        highestProduct: StoreProductDTO?,
+        highestProduct: ProductDTO?,
         highestStatus: StoreSubscriptionStatusDTO?
     )) {
         subscriptionStatuses = result.statuses
@@ -189,7 +189,7 @@ extension DebugView {
 // MARK: - Private Helpers
 
 extension DebugView {
-    func groupSection(title: String, items: [StoreProductDTO]) -> some View {
+    func groupSection(title: String, items: [ProductDTO]) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("\(title) (\(items.count))")
                 .font(.headline)
@@ -326,7 +326,7 @@ extension DebugView {
     }
 
     @ViewBuilder
-    func subscriptionStatusSection(subscriptions: [StoreProductDTO]) -> some View {
+    func subscriptionStatusSection(subscriptions: [ProductDTO]) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Subscription Status")
                 .font(.title3)

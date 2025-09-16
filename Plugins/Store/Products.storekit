@@ -207,7 +207,7 @@
       "localizations" : [
 
       ],
-      "name" : "Software Services2",
+      "name" : "Software Services Pro",
       "subscriptions" : [
         {
           "adHocOffers" : [
@@ -233,7 +233,7 @@
               "locale" : "zh_Hans"
             }
           ],
-          "productID" : "com.yueyi.cisum.pro.monthly",
+          "productID" : "com.yueyi.netto.pro.monthly",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Pro Monthly",
           "subscriptionGroupID" : "3F19ED53",
@@ -272,7 +272,7 @@
               "locale" : "en_US"
             }
           ],
-          "productID" : "com.yueyi.cisum.pro.yearly",
+          "productID" : "com.yueyi.netto.pro.annual",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Pro Annual",
           "subscriptionGroupID" : "3F19ED53",
