@@ -57,14 +57,22 @@ extension AppList {
         let repo = self.repo
         let eventRepo = self.eventRepo
         
-        // 使用异步回调方式获取应用ID列表，避免数据竞争
-        let appIds = await withCheckedContinuation { continuation in
+        // 获取“产生过事件的应用ID”
+        let eventAppIds = await withCheckedContinuation { continuation in
             eventRepo.getAllAppIdsAsync { appIds in
                 continuation.resume(returning: appIds)
             }
         }
-        
-        let apps = appIds.map({SmartApp.fromId($0)})
+
+        // 获取“被禁止的应用ID”（即便无日志也应显示）在主线程读取以避免数据竞争
+        let deniedOnlyIds: [String] = await Task { @MainActor in
+            (try? await repo.getDeniedApps()) ?? []
+        }.value
+
+        // 合并并去重
+        let mergedIds: [String] = Array(Set(eventAppIds).union(deniedOnlyIds))
+
+        let apps = mergedIds.map({ SmartApp.fromId($0) })
         
         let baseApps = apps.sorted(by: { $0.name < $1.name })
             .filter { ui.showSystemApps || !$0.isSystemApp }
