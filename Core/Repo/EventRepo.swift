@@ -135,6 +135,13 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
         try await actor.deleteByAppId(appId)
     }
 
+    /// 删除所有事件记录
+    /// - Returns: 删除的记录数量
+    func deleteAll() async throws -> Int {
+        os_log("\(self.t)🗑️ deleteAll events")
+        return try await actor.deleteAll()
+    }
+
     /// 删除指定应用ID超过指定天数的事件记录
     /// - Parameters:
     ///   - appId: 应用程序ID
@@ -474,6 +481,19 @@ private actor EventQueryActor: ModelActor, SuperLog {
         let eventModel = FirewallEventModel.from(event)
         modelContext.insert(eventModel)
         try modelContext.save()
+    }
+
+    /// 删除所有事件记录
+    func deleteAll() throws -> Int {
+        let descriptor = FetchDescriptor<FirewallEventModel>()
+        let events = try modelContext.fetch(descriptor)
+        let count = events.count
+        for event in events {
+            modelContext.delete(event)
+        }
+        if count > 0 { try modelContext.save() }
+        os_log("\(self.t)🗑️ 已删除全部事件: \(count) 条")
+        return count
     }
 
     /// 删除指定应用的所有事件记录
