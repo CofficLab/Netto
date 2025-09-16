@@ -1,10 +1,13 @@
 import SwiftUI
 
 struct ProductsConsumable: View {
-    @EnvironmentObject private var store: StoreProvider
+    @State private var fuel: [StoreProductDTO] = []
 
     var body: some View {
-        productList(items: store.fuel)
+        productList(items: fuel)
+            .task {
+                await loadProducts()
+            }
     }
 
     @ViewBuilder
@@ -20,6 +23,15 @@ struct ProductsConsumable: View {
                     }
                 }
             }
+        }
+    }
+    
+    private func loadProducts() async {
+        do {
+            let groups = try await StoreService.fetchAllProducts()
+            self.fuel = groups.fuel
+        } catch {
+            print("Failed to load products: \(error)")
         }
     }
 }

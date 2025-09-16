@@ -4,14 +4,17 @@ import OSLog
 import StoreKit
 import SwiftUI
 
+/// 简化的 StoreProvider - 仅用于向后兼容
+/// 建议新代码直接使用 StoreService
+@available(*, deprecated, message: "请直接使用 StoreService，StoreProvider 将在未来版本中移除")
 class StoreProvider: ObservableObject, SuperLog {
     static let emoji = "💰"
 
-    @Published private(set) var cars: [StoreProductDTO]
-    @Published private(set) var fuel: [StoreProductDTO]
-    @Published private(set) var subscriptions: [StoreProductDTO]
-    @Published private(set) var subscriptionGroups: [SubscriptionGroupDTO]
-    @Published private(set) var nonRenewables: [StoreProductDTO]
+    @Published private(set) var cars: [StoreProductDTO] = []
+    @Published private(set) var fuel: [StoreProductDTO] = []
+    @Published private(set) var subscriptions: [StoreProductDTO] = []
+    @Published private(set) var subscriptionGroups: [SubscriptionGroupDTO] = []
+    @Published private(set) var nonRenewables: [StoreProductDTO] = []
 
     @Published private(set) var purchasedCars: [StoreProductDTO] = []
     @Published private(set) var purchasedNonRenewableSubscriptions: [StoreProductDTO] = []
@@ -27,13 +30,6 @@ class StoreProvider: ObservableObject, SuperLog {
         if verbose {
             os_log("\(Self.t)初始化")
         }
-
-        // 初始化产品列表，稍后填充
-        cars = []
-        fuel = []
-        subscriptions = []
-        subscriptionGroups = []
-        nonRenewables = []
 
         // Start a transaction listener as close to app launch as possible so you don't miss any transactions.
         updateListenerTask = listenForTransactions("🐛 Store 初始化")
@@ -173,6 +169,7 @@ class StoreProvider: ObservableObject, SuperLog {
     }
 
     // MARK: 购买与支付
+    // 注意：这些方法已被弃用，请直接使用 StoreService
 
     func purchase(_ product: StoreProductDTO) async throws -> Transaction? {
         return try await StoreService.purchase(product)

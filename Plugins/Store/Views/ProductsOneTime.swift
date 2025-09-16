@@ -1,10 +1,14 @@
 import SwiftUI
 
 struct ProductsOfOneTime: View {
-    @EnvironmentObject private var store: StoreProvider
+    @State private var cars: [StoreProductDTO] = []
+    @State private var isLoading = false
 
     var body: some View {
-        productList(items: store.cars)
+        productList(items: cars)
+            .task {
+                await loadProducts()
+            }
     }
 
     @ViewBuilder
@@ -21,6 +25,17 @@ struct ProductsOfOneTime: View {
                 }
             }
         }
+    }
+    
+    private func loadProducts() async {
+        isLoading = true
+        do {
+            let groups = try await StoreService.fetchAllProducts()
+            self.cars = groups.cars
+        } catch {
+            print("Failed to load products: \(error)")
+        }
+        isLoading = false
     }
 }
 

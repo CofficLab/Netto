@@ -5,24 +5,17 @@ import StoreKit
 import SwiftUI
 
 struct ProductCell: View, SuperLog {
-    @EnvironmentObject var store: StoreProvider
     @State var isPurchased: Bool = false
     @State var errorTitle = ""
     @State var isShowingError: Bool = false
     @State var purchasing = false
     @State var btnHovered: Bool = false
+    @State var status: Product.SubscriptionInfo.Status?
+    @State var current: Product?
 
     let product: StoreProductDTO
     let purchasingEnabled: Bool
     let showStatus: Bool
-
-    var status: Product.SubscriptionInfo.Status? {
-        store.status
-    }
-
-    var current: Product? {
-        store.currentSubscription
-    }
 
     var isCurrent: Bool {
         if let current = current {
@@ -145,13 +138,12 @@ struct ProductCell: View, SuperLog {
 
     func buy() {
         purchasing = true
-        let store = self.store
         Task{
             
             do {
                 os_log("\(self.t)点击了购买按钮")
                 
-                let result = try await store.purchase(product)
+                let result = try await StoreService.purchase(product)
                 if result != nil {
                     withAnimation {
                         os_log("\(self.t)购买回调，更新购买状态为 true")
@@ -178,9 +170,25 @@ struct ProductCell: View, SuperLog {
 extension ProductCell {
     func onAppear() {
         let verbose = false
-        let store = self.store
         Task {
-            isPurchased = (try? await store.isPurchased(product)) ?? false
+            // 检查购买状态
+            let groups = try? await StoreService.fetchAllProducts()
+            let purchasedLists = await StoreService.fetchPurchasedLists(
+                cars: groups?.cars ?? [],
+                subscriptions: groups?.subscriptions ?? [],
+                nonRenewables: groups?.nonRenewables ?? []
+            )
+            
+            switch product.kind {
+            case .nonRenewable:
+                isPurchased = purchasedLists.nonRenewables.contains { $0.id == product.id }
+            case .nonConsumable:
+                isPurchased = purchasedLists.cars.contains { $0.id == product.id }
+            case .autoRenewable:
+                isPurchased = purchasedLists.subscriptions.contains { $0.id == product.id }
+            default:
+                isPurchased = false
+            }
 
             if verbose {
                 os_log("\(self.t)OnAppear 检查购买状态 -> \(product.displayName) -> \(isPurchased)")

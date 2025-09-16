@@ -5,7 +5,6 @@ import StoreKit
 import SwiftUI
 
 struct ProductsSubscription: View, SuperEvent, SuperLog, SuperThread {
-    @EnvironmentObject var store: StoreProvider
     @EnvironmentObject var app: AppProvider
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
@@ -42,13 +41,11 @@ struct ProductsSubscription: View, SuperEvent, SuperLog, SuperThread {
         }
 
         refreshing = true
-        let store = self.store
 
         Task {
             do {
-                try await store.requestProducts(reason)
-
-                self.subscriptionGroups = store.subscriptionGroups
+                let groups = try await StoreService.fetchAllProducts()
+                self.subscriptionGroups = groups.subscriptionGroups
             } catch {
                 self.error = error
             }
