@@ -68,7 +68,7 @@ public enum StoreService: SuperLog {
     /// - Note: 依赖 `fetchAllProducts()`，因此实际结果受产品 ID 清单约束。
     public static func fetchAllSubscriptionGroups() async throws -> [SubscriptionGroupDTO] {
         let products = try await fetchAllProducts()
-        return products.fetchAllSubscriptionGroups()
+        return products.subscriptionGroups
     }
 
     // MARK: - Purchased Fetching

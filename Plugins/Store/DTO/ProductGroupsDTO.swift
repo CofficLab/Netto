@@ -4,20 +4,24 @@ import SwiftUI
 
 public struct ProductGroupsDTO: Hashable, Sendable {
     public let cars: [StoreProductDTO]
-    public let subscriptions: [StoreProductDTO]
+    public let subscriptionGroups: [SubscriptionGroupDTO]
     public let nonRenewables: [StoreProductDTO]
     public let fuel: [StoreProductDTO]
 
-    public init(cars: [StoreProductDTO], subscriptions: [StoreProductDTO], nonRenewables: [StoreProductDTO], fuel: [StoreProductDTO]) {
+    public init(cars: [StoreProductDTO], subscriptionGroups: [SubscriptionGroupDTO], nonRenewables: [StoreProductDTO], fuel: [StoreProductDTO]) {
         self.cars = cars
-        self.subscriptions = subscriptions
+        self.subscriptionGroups = subscriptionGroups
         self.nonRenewables = nonRenewables
         self.fuel = fuel
     }
 
     public init(cars: [Product], subscriptions: [Product], nonRenewables: [Product], fuel: [Product]) {
         self.cars = cars.map { StoreProductDTO.toDTO($0, kind: .nonConsumable) }
-        self.subscriptions = subscriptions.map { StoreProductDTO.toDTO($0, kind: .autoRenewable) }
+        
+        // 将订阅产品按组聚合
+        let subscriptionDTOs = subscriptions.map { StoreProductDTO.toDTO($0, kind: .autoRenewable) }
+        self.subscriptionGroups = Self.createSubscriptionGroups(from: subscriptionDTOs)
+        
         self.nonRenewables = nonRenewables.map { StoreProductDTO.toDTO($0, kind: .nonRenewable) }
         self.fuel = fuel.map { StoreProductDTO.toDTO($0, kind: .consumable) }
     }
@@ -44,7 +48,11 @@ public struct ProductGroupsDTO: Hashable, Sendable {
         }
 
         self.cars = newCars.map { StoreProductDTO.toDTO($0, kind: .nonConsumable) }
-        self.subscriptions = newSubscriptions.map { StoreProductDTO.toDTO($0, kind: .autoRenewable) }
+        
+        // 将订阅产品按组聚合
+        let subscriptionDTOs = newSubscriptions.map { StoreProductDTO.toDTO($0, kind: .autoRenewable) }
+        self.subscriptionGroups = Self.createSubscriptionGroups(from: subscriptionDTOs)
+        
         self.nonRenewables = newNonRenewables.map { StoreProductDTO.toDTO($0, kind: .nonRenewable) }
         self.fuel = newFuel.map { StoreProductDTO.toDTO($0, kind: .consumable) }
     }
@@ -52,10 +60,11 @@ public struct ProductGroupsDTO: Hashable, Sendable {
 
 // MARK: - Subscription Groups
 extension ProductGroupsDTO {
-    /// 获取所有订阅组（按订阅组 ID 聚合订阅类商品）
+    /// 创建订阅组（按订阅组 ID 聚合订阅类商品）
     ///
-    /// - Returns: 字典：`[SubscriptionGroupDTO]`
-    public func fetchAllSubscriptionGroups() -> [SubscriptionGroupDTO] {
+    /// - Parameter subscriptions: 订阅产品列表
+    /// - Returns: 订阅组列表：`[SubscriptionGroupDTO]`
+    private static func createSubscriptionGroups(from subscriptions: [StoreProductDTO]) -> [SubscriptionGroupDTO] {
         // 按订阅组 ID 聚合，避免为同一组重复创建条目
         var grouped: [String: [StoreProductDTO]] = [:]
         for product in subscriptions {
@@ -63,7 +72,7 @@ extension ProductGroupsDTO {
             grouped[groupId, default: []].append(product)
         }
 
-        // 组名优先取 StoreKit 的显示名，其次回退到配置映射，最后回退为组 ID
+        // 组名优先取 StoreKit 的显示名，其次回退为组 ID
         let groups: [SubscriptionGroupDTO] = grouped.map { groupId, items in
             let nameFromProduct = items.first?.subscription?.groupDisplayName
             let displayName = nameFromProduct ?? groupId
@@ -72,6 +81,21 @@ extension ProductGroupsDTO {
 
         return groups
     }
+    
+    /// 获取所有订阅产品（扁平化所有订阅组中的订阅）
+    ///
+    /// - Returns: 所有订阅产品的列表
+    public var subscriptions: [StoreProductDTO] {
+        return subscriptionGroups.flatMap { $0.subscriptions }
+    }
+    
+    /// 根据订阅组 ID 查找订阅组
+    ///
+    /// - Parameter groupId: 订阅组 ID
+    /// - Returns: 对应的订阅组，如果不存在则返回 nil
+    public func subscriptionGroup(withId groupId: String) -> SubscriptionGroupDTO? {
+        return subscriptionGroups.first { $0.id == groupId }
+    }
 }
 
 // MARK: - Preview
@@ -79,7 +103,7 @@ extension ProductGroupsDTO {
 #Preview("Debug") {
     DebugView()
         .inRootView()
-        .frame(height: 800)
+        .frame(height: 1000)
 }
 
 #Preview("Buy") {

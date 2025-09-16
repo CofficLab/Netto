@@ -33,11 +33,6 @@ struct DebugView: View, SuperLog {
                 }
                 .disabled(isLoading)
 
-                Button(action: loadSubscriptionGroups) {
-                    Text(isLoading ? "加载中…" : "加载订阅组")
-                }
-                .disabled(isLoading)
-
                 Button("清空") { clear() }
 
                 Spacer()
@@ -69,10 +64,6 @@ struct DebugView: View, SuperLog {
                             Text("尚未加载产品")
                                 .foregroundStyle(.secondary)
                         }
-                    }
-
-                    GroupBox {
-                        subscriptionGroupsSection()
                     }
                 }
             }
@@ -149,22 +140,6 @@ extension DebugView {
 
                 setPurchased(result)
                 self.m.info("已更新已购清单")
-            } catch {
-                self.m.error(error)
-            }
-
-            self.isLoading = false
-        }
-    }
-
-    func loadSubscriptionGroups() {
-        isLoading = true
-
-        Task {
-            do {
-                let groups = try await StoreService.fetchAllSubscriptionGroups()
-                setSubscriptionGroups(groups)
-                self.m.info("已加载订阅组")
             } catch {
                 self.m.error(error)
             }
@@ -340,34 +315,6 @@ extension DebugView {
                         if let pid = s.currentProductID {
                             Text(pid).foregroundStyle(.secondary)
                         }
-                    }
-                }
-            }
-        }
-    }
-
-    // MARK: - 订阅组视图
-
-    @ViewBuilder
-    func subscriptionGroupsSection() -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Subscription Groups")
-                .font(.title3)
-
-            if subscriptionGroups.isEmpty {
-                Text("空").foregroundStyle(.secondary)
-            } else {
-                ForEach(subscriptionGroups, id: \.id) { group in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("\(group.name)  ID: \(group.id)").font(.headline)
-                        ForEach(group.subscriptions, id: \.id) { p in
-                            HStack {
-                                Text(p.displayName)
-                                Spacer()
-                                Text(p.id).foregroundStyle(.secondary)
-                            }
-                        }
-                        Divider()
                     }
                 }
             }
