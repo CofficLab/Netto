@@ -24,6 +24,7 @@ public enum StoreService: SuperLog {
     /// 这是 StoreKit 2 的最佳实践，确保不会错过任何交易
     public static func startTransactionListener() {
         Task {
+            os_log("\(self.t)👀 开始监听交易更新")
             for await result in Transaction.updates {
                 do {
                     let transaction = try checkVerified(result)

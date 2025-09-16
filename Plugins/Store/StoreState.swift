@@ -1,9 +1,11 @@
 import Foundation
 import StoreKit
 import OSLog
+import MagicCore
 
 @MainActor
-final class StoreState: ObservableObject {
+final class StoreState: ObservableObject, SuperLog {
+    nonisolated static let emoji = "💰"
     static let shared = StoreState()
 
     // MARK: - Published State
@@ -46,7 +48,8 @@ final class StoreState: ObservableObject {
         self.isPro = isPro
         self.expiresAt = expiresAt
         saveToDefaults()
-        os_log("[StoreState] Updated isPro=%{public}@, expiresAt=%{public}@", String(isPro), String(describing: expiresAt))
+        let expStr = expiresAt.map { Self.formatDate($0) } ?? "nil"
+        os_log("\(self.t)🍋 Updated isPro=\(isPro), expiresAt=\(expStr)")
     }
 
     func clear() {
@@ -82,6 +85,19 @@ final class StoreState: ObservableObject {
     // 简单的产品ID判断，可按需扩展/改为服务端判定
     nonisolated static func isProProductId(_ id: String) -> Bool {
         return id.contains("netto.pro.") || id.contains("cisum.pro.")
+    }
+
+    // MARK: - Date Formatting (Local Timezone)
+    private static let dateFormatter: DateFormatter = {
+        let df = DateFormatter()
+        df.locale = .current
+        df.timeZone = .current
+        df.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
+        return df
+    }()
+
+    private static func formatDate(_ date: Date) -> String {
+        return dateFormatter.string(from: date)
     }
 }
 
