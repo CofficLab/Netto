@@ -13,6 +13,7 @@ struct AppLine: View {
     @State var popoverHovering: Bool = false
     @State var actionHovering: Bool = false
     @State private var hidePopoverTask: Task<Void, Never>?
+    @State private var showPopoverTask: Task<Void, Never>?
     @State private var isChildrenExpanded: Bool = false
 
     /// 初始化应用信息视图
@@ -136,9 +137,23 @@ extension AppLine {
             hidePopoverTask?.cancel()
             hidePopoverTask = nil
 
-            // 设置当前悬停的应用ID并显示popover
-            self.ui.showPopover(for: self.app.id)
+            // 取消之前的显示任务
+            showPopoverTask?.cancel()
+            showPopoverTask = nil
+
+            // 延迟显示 popover，避免过于敏感
+            showPopoverTask = Task {
+                try? await Task.sleep(nanoseconds: 300_000_000) // 300ms 延迟
+                if !Task.isCancelled {
+                    await MainActor.run {
+                        self.ui.showPopover(for: self.app.id)
+                    }
+                }
+            }
         } else {
+            // 离开时取消显示任务
+            showPopoverTask?.cancel()
+            showPopoverTask = nil
             // 延迟隐藏popover，给用户时间移动到popover上
             // 只有当前显示的是这个应用的popover时才安排隐藏
             if ui.shouldShowPopover(for: self.app.id) {
