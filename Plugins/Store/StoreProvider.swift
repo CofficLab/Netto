@@ -22,14 +22,10 @@ class StoreProvider: ObservableObject, SuperLog {
 
     var updateListenerTask: Task<Void, Error>?
 
-    private let productIdToEmoji: [String: String]
-
     init(verbose: Bool = false) {
         if verbose {
             os_log("\(Self.t)初始化")
         }
-
-        productIdToEmoji = StoreService.loadProductIdToEmojiData()
 
         // 初始化产品列表，稍后填充
         cars = []
@@ -43,18 +39,22 @@ class StoreProvider: ObservableObject, SuperLog {
 
     // MARK: - Setter
 
+    @MainActor
     func setCars(_ cars: [StoreProductDTO]) {
         self.cars = cars
     }
     
+    @MainActor
     func setFuel(_ fuel: [StoreProductDTO]) {
         self.fuel = fuel
     }
 
+    @MainActor
     func setSubscriptions(_ subscriptions: [StoreProductDTO]) {
         self.subscriptions = subscriptions
     }
 
+    @MainActor
     func setNonRenewables(_ nonRenewables: [StoreProductDTO]) {
         self.nonRenewables = nonRenewables
     }
@@ -146,6 +146,7 @@ class StoreProvider: ObservableObject, SuperLog {
         }
     }
 
+    @MainActor
     func requestProducts(_ reason: String, verbose: Bool = true) async throws {
         if verbose {
             os_log("\(self.t)请求 App Store 获取产品列表，因为 -> \(reason)")
@@ -154,10 +155,10 @@ class StoreProvider: ObservableObject, SuperLog {
         do {
             let groups = try await StoreService.fetchAllProducts()
 
-            self.setCars(groups.cars)
-            self.setSubscriptions(groups.subscriptions)
-            self.setNonRenewables(groups.nonRenewables)
-            self.setFuel(groups.fuel)
+            await self.setCars(groups.cars)
+            await self.setSubscriptions(groups.subscriptions)
+            await self.setNonRenewables(groups.nonRenewables)
+            await self.setFuel(groups.fuel)
         } catch let error {
             throw error
         }
@@ -185,10 +186,6 @@ class StoreProvider: ObservableObject, SuperLog {
 
     func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
         try StoreService.checkVerified(result)
-    }
-
-    func emoji(for productId: String) -> String {
-        return productIdToEmoji[productId]!
     }
 
     // Get a subscription's level of service using the product ID.

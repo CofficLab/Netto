@@ -293,7 +293,7 @@
       "localizations" : [
 
       ],
-      "name" : "Software Services copy",
+      "name" : "Software Services Ultimate",
       "subscriptions" : [
         {
           "adHocOffers" : [
@@ -309,13 +309,13 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Pro Annual",
-              "displayName" : "Pro Annual",
+              "description" : "Ultimate Annual",
+              "displayName" : "Ultimate Annual",
               "locale" : "en_US"
             },
             {
-              "description" : "专业版按月订阅",
-              "displayName" : "专业版按月订阅",
+              "description" : "旗舰版按月订阅",
+              "displayName" : "旗舰版按月订阅",
               "locale" : "zh_Hans"
             }
           ],
@@ -348,19 +348,19 @@
           },
           "localizations" : [
             {
-              "description" : "",
-              "displayName" : "专业版按年订阅",
+              "description" : "旗舰版按年订阅",
+              "displayName" : "旗舰版按年订阅",
               "locale" : "zh_Hans"
             },
             {
-              "description" : "",
-              "displayName" : "Pro",
+              "description" : "Ultimate Annual",
+              "displayName" : "Ultimate Annual",
               "locale" : "en_US"
             }
           ],
-          "productID" : "com.yueyi.cisum.pro.yearly.copy",
+          "productID" : "com.yueyi.cisum.ultimate.annual",
           "recurringSubscriptionPeriod" : "P1Y",
-          "referenceName" : "Pro Annual copy",
+          "referenceName" : "Ultimate Annual",
           "subscriptionGroupID" : "0DA02846",
           "type" : "RecurringSubscription",
           "winbackOffers" : [

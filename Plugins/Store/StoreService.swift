@@ -1,8 +1,8 @@
 import Foundation
 import MagicCore
+import OSLog
 import StoreKit
 import SwiftUI
-import OSLog
 
 // MARK: - Typealias
 
@@ -13,19 +13,29 @@ public typealias RenewalState = StoreKit.Product.SubscriptionInfo.RenewalState
 public enum StoreService: SuperLog {
     // MARK: - Data Sources
 
-    public static func loadProductIdToEmojiData() -> [String: String] {
-        guard let path = Bundle.main.path(forResource: "Products", ofType: "plist"),
-              let plist = FileManager.default.contents(atPath: path),
-              let data = try? PropertyListSerialization.propertyList(from: plist, format: nil) as? [String: String] else {
-            return [:]
-        }
-        
-        return data
-    }
-
-    /// 读取配置中的全部商品 ID 列表
+    /// 全部商品 ID 列表
     private static func allProductIds() -> [String] {
-        let keys = Array(loadProductIdToEmojiData().keys)
+        let keys = [
+            "com.yueyi.netto.ultimate.annual",
+            "consumable.fuel.octane87",
+            "consumable.fuel.octane89",
+            "consumable.fuel.octane91",
+            "nonconsumable.car",
+            "nonconsumable.utilityvehicle",
+            "nonconsumable.racecar",
+            "com.yueyi.cisum.pro.monthly",
+            "com.yueyi.cisum.monthly",
+            "com.yueyi.cisum.pro.annual",
+            "com.yueyi.cisum.annual",
+            "com.yueyi.cisum.pro.yearly",
+            "com.yueyi.cisum.yearly",
+            "com.yueyi.cisum.pro.yearly2",
+            "com.yueyi.cisum.pro.year.1",
+            "com.yueyi.cisum.pro.month.1",
+            "com.yueyi.cisum.pro.day.7",
+            "com.yueyi.netto.ultimate.monthly",
+            "com.yueyi.netto.ultimate.annual",
+        ]
         return keys
     }
 
@@ -56,9 +66,6 @@ public enum StoreService: SuperLog {
     private static func requestProducts(productIds: some Sequence<String>) async throws -> StoreProductGroupsDTO {
         let idsArray = Array(productIds)
         let storeProducts = try await Product.products(for: idsArray)
-//        for s in storeProducts {
-//            print(s.id)
-//        }
         return ProductGroups.classify(storeProducts: storeProducts).toDTO()
     }
 
@@ -88,7 +95,7 @@ public enum StoreService: SuperLog {
         }
 
         // 组名优先取 StoreKit 的显示名，其次回退到配置映射，最后回退为组 ID
-        let groups: [SubscriptionGroupDTO] = grouped.map { (groupId, items) in
+        let groups: [SubscriptionGroupDTO] = grouped.map { groupId, items in
             let nameFromProduct = items.first?.subscription?.groupDisplayName
             let displayName = nameFromProduct ?? Self.subscriptionGroupDisplayName(for: groupId)
             return SubscriptionGroupDTO(name: displayName, id: groupId, subscriptions: items)
@@ -217,10 +224,10 @@ public enum StoreService: SuperLog {
             return Date.distantPast
         }
     }
-    
+
     // MARK: - Pay
-    
-    static private func purchase(_ product: Product) async throws -> Transaction? {
+
+    private static func purchase(_ product: Product) async throws -> Transaction? {
         os_log("\(self.t)去支付")
 
         #if os(visionOS)
@@ -260,7 +267,7 @@ public enum StoreService: SuperLog {
         guard let storekitProduct = products.first else { return nil }
         return try await purchase(storekitProduct)
     }
-    
+
     /// 巡检订阅组状态并返回有价值的数据（订阅产品、状态明细、最高等级条目）。
     ///
     /// - Parameters:
@@ -289,19 +296,19 @@ public enum StoreService: SuperLog {
         //  2. 旗舰版订阅计划
         //    2.1 按年，ID: com.coffic.ultmate.year
         //    2.2 按月，ID: com.coffic.ultmate.month
-        
-        let products = try await Self.requestProducts(productIds: StoreService.loadProductIdToEmojiData().keys)
-        
+
+        let products = try await Self.requestProducts(productIds: StoreService.allProductIds())
+
         // 获取当前的可订阅的产品列表，也就是
         /// - com.coffic.pro.year
         /// - com.coffic.pro.month
         /// - com.coffic.ultmate.year
         /// - com.coffic.ultmate.month
         let subscriptions = products.subscriptions
-        
+
         if subscriptions.isEmpty {
             return (subscriptions: [], statuses: [], highestProduct: nil, highestStatus: nil)
-        } 
+        }
 
         // 输出 subscriptions
         print("当前的可订阅的产品列表：")
@@ -309,7 +316,7 @@ public enum StoreService: SuperLog {
             print("\(subscription.id)")
             print(" - des: \(subscription.description)")
         }
-        
+
         // 订阅组可以多个，但这里仅有1个
         do {
             // This app has only one subscription group, so products in the subscriptions
@@ -320,7 +327,7 @@ public enum StoreService: SuperLog {
                 print("products.subscriptions 是空的")
                 return (subscriptions: subscriptions, statuses: [], highestProduct: nil, highestStatus: nil)
             }
-            
+
             if statuses.isEmpty {
                 print("statuses 是空的，表示对于当前订阅组，没有订阅状态")
                 return (subscriptions: subscriptions, statuses: [], highestProduct: nil, highestStatus: nil)
