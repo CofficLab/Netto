@@ -95,7 +95,7 @@ struct PurchaseView: View, SuperLog {
     }
 }
 
-#Preview("BuyView") {
+#Preview("PurchaseView") {
     PurchaseView(showCloseButton: false)
         .inRootView()
         .frame(height: 800)

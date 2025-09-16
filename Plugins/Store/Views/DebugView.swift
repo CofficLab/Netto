@@ -219,6 +219,7 @@ extension DebugView {
         VStack(alignment: .leading, spacing: 8) {
             Text("Purchased")
                 .font(.title3)
+                .foregroundStyle(.brown)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("Cars (\(purchasedCars.count))").font(.headline)
@@ -263,11 +264,64 @@ extension DebugView {
         VStack(alignment: .leading, spacing: 8) {
             Text("Products")
                 .font(.title3)
+                .foregroundStyle(.red)
 
             groupSection(title: "Cars", items: groups.cars)
-            groupSection(title: "Subscriptions", items: groups.subscriptions)
+            subscriptionGroupsSection(subscriptionGroups: groups.subscriptionGroups)
             groupSection(title: "NonRenewables", items: groups.nonRenewables)
             groupSection(title: "Fuel", items: groups.fuel)
+        }
+    }
+
+    @ViewBuilder
+    func subscriptionGroupsSection(subscriptionGroups: [SubscriptionGroupDTO]) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Subscription Groups (\(subscriptionGroups.count))")
+                .font(.headline)
+            
+            if subscriptionGroups.isEmpty {
+                Text("空")
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(subscriptionGroups, id: \.id) { group in
+                    VStack(alignment: .leading, spacing: 4) {
+                        // 订阅组标题
+                        HStack {
+                            Text(group.name)
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            Spacer()
+                            Text("ID: \(group.id)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Text("(\(group.subscriptions.count) 个订阅)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(4)
+                        
+                        // 订阅组下的订阅产品
+                        VStack(alignment: .leading, spacing: 2) {
+                            ForEach(group.subscriptions, id: \.id) { subscription in
+                                HStack {
+                                    Text("  • \(subscription.displayName)")
+                                        .font(.caption)
+                                    Spacer()
+                                    Text(subscription.displayPrice)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                .padding(.leading, 8)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 2)
+                }
+            }
+            Divider()
         }
     }
 
@@ -276,6 +330,7 @@ extension DebugView {
         VStack(alignment: .leading, spacing: 8) {
             Text("Subscription Status")
                 .font(.title3)
+                .foregroundStyle(.cyan)
 
             if let highest = highestSubscriptionProduct {
                 HStack {
@@ -327,5 +382,5 @@ extension DebugView {
 #Preview("Store Debug") {
     DebugView()
         .inRootView()
-        .frame(width: 500, height: 800)
+        .frame(width: 800, height: 1000)
 }

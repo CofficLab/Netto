@@ -9,7 +9,7 @@ struct ProductsSubscription: View, SuperEvent, SuperLog, SuperThread {
     @EnvironmentObject var app: AppProvider
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
-    @State private var subscriptions: [StoreProductDTO] = []
+    @State private var subscriptionGroups: [SubscriptionGroupDTO] = []
     @State private var refreshing = false
     @State private var error: Error? = nil
 
@@ -18,19 +18,12 @@ struct ProductsSubscription: View, SuperEvent, SuperLog, SuperThread {
     var body: some View {
         ScrollView {
             VStack {
-                ZStack {
-                    Text("订阅专业版本").font(.title3)
-                    refreshButton
-                }
-                
-                Divider()
-                
-                if refreshing == false && subscriptions.isEmpty {
+                if refreshing == false && subscriptionGroups.isEmpty {
                     Text("🏃 暂无")
                 } else {
-                    VStack {
-                        ForEach(subscriptions) { product in
-                            ProductCell(product: product)
+                    VStack(spacing: 16) {
+                        ForEach(subscriptionGroups, id: \.id) { group in
+                            subscriptionGroupView(group: group)
                         }
                     }
                     .padding()
@@ -40,21 +33,6 @@ struct ProductsSubscription: View, SuperEvent, SuperLog, SuperThread {
         }
     }
 
-    private var refreshButton: some View {
-        HStack {
-            Spacer()
-            ZStack {
-                if refreshing {
-                    ProgressView().scaleEffect(0.4)
-                } else {
-                    Button(action: onTapRefreshButton, label: {
-                        Label("重试", systemImage: "arrow.clockwise")
-                            .labelStyle(.iconOnly)
-                    }).buttonStyle(.plain)
-                }
-            }.frame(width: 30, height: 10)
-        }
-    }
 
     // MARK: 获取可用的订阅
 
@@ -70,7 +48,7 @@ struct ProductsSubscription: View, SuperEvent, SuperLog, SuperThread {
             do {
                 try await store.requestProducts(reason)
 
-                self.subscriptions = store.subscriptions
+                self.subscriptionGroups = store.subscriptionGroups
             } catch {
                 self.error = error
             }
@@ -78,6 +56,45 @@ struct ProductsSubscription: View, SuperEvent, SuperLog, SuperThread {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
                 self.refreshing = false
             })
+        }
+    }
+    
+    @ViewBuilder
+    private func subscriptionGroupView(group: SubscriptionGroupDTO) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // 订阅组标题
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(group.name)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                    
+                    Text("\(group.subscriptions.count) 个订阅选项")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+                
+                Text("ID: \(group.id)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(4)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color.blue.opacity(0.1))
+            .cornerRadius(8)
+            
+            // 订阅组下的订阅产品
+            VStack(spacing: 8) {
+                ForEach(group.subscriptions, id: \.id) { subscription in
+                    ProductCell(product: subscription)
+                }
+            }
         }
     }
 }
@@ -93,13 +110,6 @@ extension ProductsSubscription {
         }
     }
 
-    func onTapRefreshButton() {
-        self.bg.async {
-            Task {
-                await getProducts("点击了重试按钮")
-            }
-        }
-    }
 
     func onRestore(_ notification: Notification) {
         self.bg.async {

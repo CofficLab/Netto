@@ -10,6 +10,7 @@ class StoreProvider: ObservableObject, SuperLog {
     @Published private(set) var cars: [StoreProductDTO]
     @Published private(set) var fuel: [StoreProductDTO]
     @Published private(set) var subscriptions: [StoreProductDTO]
+    @Published private(set) var subscriptionGroups: [SubscriptionGroupDTO]
     @Published private(set) var nonRenewables: [StoreProductDTO]
 
     @Published private(set) var purchasedCars: [StoreProductDTO] = []
@@ -31,6 +32,7 @@ class StoreProvider: ObservableObject, SuperLog {
         cars = []
         fuel = []
         subscriptions = []
+        subscriptionGroups = []
         nonRenewables = []
 
         // Start a transaction listener as close to app launch as possible so you don't miss any transactions.
@@ -52,6 +54,11 @@ class StoreProvider: ObservableObject, SuperLog {
     @MainActor
     func setSubscriptions(_ subscriptions: [StoreProductDTO]) {
         self.subscriptions = subscriptions
+    }
+    
+    @MainActor
+    func setSubscriptionGroups(_ subscriptionGroups: [SubscriptionGroupDTO]) {
+        self.subscriptionGroups = subscriptionGroups
     }
 
     @MainActor
@@ -157,6 +164,7 @@ class StoreProvider: ObservableObject, SuperLog {
 
             await self.setCars(groups.cars)
             await self.setSubscriptions(groups.subscriptions)
+            await self.setSubscriptionGroups(groups.subscriptionGroups)
             await self.setNonRenewables(groups.nonRenewables)
             await self.setFuel(groups.fuel)
         } catch let error {

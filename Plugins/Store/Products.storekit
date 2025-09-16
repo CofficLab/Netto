@@ -151,55 +151,50 @@
   ],
   "settings" : {
     "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
     "_compatibilityTimeRate" : {
       "3" : 6
     },
+    "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
     "_locale" : "zh_Hans",
+    "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "CHN",
     "_storeKitErrors" : [
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Load Products"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Purchase"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Verification"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "App Store Sync"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Subscription Status"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "App Transaction"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Manage Subscriptions Sheet"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Refund Request Sheet"
       },
       {
-        "current" : null,
         "enabled" : false,
         "name" : "Offer Code Redeem Sheet"
       }
@@ -358,7 +353,7 @@
               "locale" : "en_US"
             }
           ],
-          "productID" : "com.yueyi.cisum.ultimate.annual",
+          "productID" : "com.yueyi.netto.ultimate.annual",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Ultimate Annual",
           "subscriptionGroupID" : "0DA02846",
