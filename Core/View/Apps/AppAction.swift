@@ -22,6 +22,8 @@ struct AppAction: View, SuperLog, SuperEvent {
 
     var body: some View {
         MagicButton.simple(icon: iconName, size: .auto, action: {
+            let isPro = StoreService.isProCached()
+            os_log("\(self.t)🔐 当前是否 Pro -> \(isPro)")
             shouldAllow ? deny() : allow()
         })
         .magicStyle(.primary)
