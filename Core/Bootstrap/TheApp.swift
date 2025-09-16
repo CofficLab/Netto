@@ -17,8 +17,8 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @StateObject private var pluginWindowManager = PluginWindowManager.shared
     
     init() {
-        // 启动时开始监听交易更新
-        StoreService.startTransactionListener()
+        // 启动 Store 服务（监听 + 校准）
+        StoreService.bootstrap()
     }
 
     nonisolated static let emoji = "🐦"

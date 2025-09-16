@@ -11,6 +11,13 @@ public typealias RenewalInfo = StoreKit.Product.SubscriptionInfo.RenewalInfo
 public typealias RenewalState = StoreKit.Product.SubscriptionInfo.RenewalState
 
 public enum StoreService: SuperLog {
+    // MARK: - Bootstrap
+    /// 开始监听交易更新，APP启动时应该调用这个方法
+    public static func bootstrap() {
+        startTransactionListener()
+        Task { await StoreState.shared.calibrateFromCurrentEntitlements() }
+    }
+
     // MARK: - Transaction Updates
     
     /// 开始监听交易更新，APP启动时应该调用这个方法
@@ -36,9 +43,27 @@ public enum StoreService: SuperLog {
     
     /// 处理交易更新
     private static func handleTransactionUpdate(_ transaction: Transaction) async {
-        // 这里可以添加你的业务逻辑
-        // 比如更新用户权限、发送通知等
         os_log("\(self.t)✅ 处理交易更新: \(transaction.productID)")
+        let isPro = StoreState.isProProductId(transaction.productID)
+        let expires: Date? = transaction.expirationDate
+        await MainActor.run {
+            StoreState.shared.update(isPro: isPro, expiresAt: expires)
+            NotificationCenter.default.post(name: .storeTransactionUpdated, object: transaction.productID)
+        }
+    }
+
+    // MARK: - Public State Accessors (UI 只依赖 StoreService)
+    /// 从本地缓存快速判断是否 Pro（UserDefaults 快读）
+    public static func isProCached() -> Bool {
+        UserDefaults.standard.bool(forKey: "store.isPro")
+    }
+
+    /// 从本地缓存读取过期时间
+    public static func expiresAtCached() -> Date? {
+        if let ts = UserDefaults.standard.object(forKey: "store.expiresAt") as? TimeInterval {
+            return Date(timeIntervalSince1970: ts)
+        }
+        return nil
     }
     
     // MARK: - Data Sources
@@ -370,6 +395,11 @@ public enum StoreService: SuperLog {
             return (subscriptions: subscriptions, statuses: [], highestProduct: nil, highestStatus: nil)
         }
     }
+}
+
+// MARK: - Notifications
+extension Notification.Name {
+    static let storeTransactionUpdated = Notification.Name("store.transaction.updated")
 }
 
 // MARK: - Error
