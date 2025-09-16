@@ -2,6 +2,7 @@ import MagicCore
 import NetworkExtension
 import OSLog
 import SwiftUI
+import MagicAlert
 
 /**
  * 事件详情视图
@@ -55,6 +56,19 @@ struct EventDetailView: View, SuperLog {
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .frame(width: 180)
+
+                Button(action: {
+                    Task {
+                        await exportAllLogs()
+                        MagicMessageProvider.shared.success("已导出到下载目录")
+                    }
+                }, label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "tray.and.arrow.down")
+                        Text("导出全部日志")
+                    }
+                })
+                .buttonStyle(.borderedProminent)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -152,6 +166,57 @@ extension EventDetailView {
             self.setTotalEventCount(totalEventCount: totalCount)
             self.setEvents(events: events)
             self.setLoading(false)
+        }
+    }
+}
+
+// MARK: - Export
+
+extension EventDetailView {
+    /// 导出所有日志到下载目录（CSV）
+    private func exportAllLogs() async {
+        do {
+            let status: FirewallEvent.Status? = statusFilter == .all ? nil : (statusFilter == .allowed ? .allowed : .rejected)
+            let direction: NETrafficDirection? = directionFilter == .all ? nil : (directionFilter == .inbound ? .inbound : .outbound)
+
+            var page = 0
+            let size = 200
+            var all: [FirewallEventDTO] = []
+
+            while true {
+                let result = await withCheckedContinuation { continuation in
+                    queryRepo.loadAsync(appId: appId, page: page, pageSize: size, status: status, direction: direction) { total, items in
+                        continuation.resume(returning: (total, items))
+                    }
+                }
+                all.append(contentsOf: result.1)
+                if all.count >= result.0 || result.1.isEmpty { break }
+                page += 1
+            }
+
+            let header = "id,time,address,port,appId,status,direction\n"
+            let rows = all.map { e in
+                let cols: [String] = [
+                    e.id,
+                    e.time.ISO8601Format(),
+                    e.address,
+                    e.port,
+                    e.sourceAppIdentifier,
+                    (e.status == .allowed ? "allowed" : "rejected"),
+                    (e.direction == .inbound ? "inbound" : "outbound"),
+                ]
+                return cols.map { $0.replacingOccurrences(of: ",", with: " ") }.joined(separator: ",")
+            }.joined(separator: "\n")
+            let csv = header + rows + "\n"
+
+            if let downloads = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first {
+                let filename = "logs-\(appId)-\(Int(Date().timeIntervalSince1970)).csv"
+                let url = downloads.appendingPathComponent(filename)
+                try csv.data(using: .utf8)?.write(to: url)
+                os_log("导出成功: \(url.path)")
+            }
+        } catch {
+            os_log("导出失败: \(error.localizedDescription)")
         }
     }
 }
