@@ -98,11 +98,13 @@ extension FirewallDaemon: AppCommunication {
         let printDenied = true
 
         let shouldAllow = self.repo.shouldAllowSync(id)
-        var wrapper = FlowWrapper(
+        let dto = FirewallEventDTO(
             id: id,
-            hostname: hostname,
+            time: .now,
+            address: hostname,
             port: port,
-            allowed: false,
+            sourceAppIdentifier: id,
+            status: shouldAllow ? .allowed : .rejected,
             direction: direction
         )
 
@@ -111,29 +113,19 @@ extension FirewallDaemon: AppCommunication {
                 os_log("\(self.t)✅ \(id)")
             }
             responseHandler(true)
-            wrapper.allowed = true
         } else {
             if verbose && printDenied {
                 os_log("\(self.t)🈲 \(id)")
             }
 
             responseHandler(false)
-            wrapper.allowed = false
         }
 
         // 将事件存储到数据库
         let eventRepo = self.eventRepo
         Task {
             do {
-                try await eventRepo.createFromDTO(FirewallEventDTO(
-                    id: id,
-                    time: .now,
-                    address: wrapper.getAddress(),
-                    port: wrapper.getPort(),
-                    sourceAppIdentifier: wrapper.id,
-                    status: wrapper.allowed ? .allowed : .rejected,
-                    direction: wrapper.direction
-                ))
+                try await eventRepo.createFromDTO(dto)
             } catch {
                 os_log(.error, "\(Self.t)❌ 存储事件到数据库失败: \(error)")
             }
