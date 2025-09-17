@@ -12,33 +12,38 @@ struct GuideView: View {
             MagicBackground.forest.opacity(0.3)
 
             VStack(spacing: 0) {
-                switch firewall.status {
-                case .disabled, .stopped:
-                    StopView()
-                case .indeterminate:
-                    UnknownView()
-                case .running:
-                    RunningView()
-                case .notInstalled:
-                    InstallView()
-                case .needSystemExtensionApproval:
-                    ApprovalView()
-                case .filterNeedApproval:
-                    ApprovalView()
-                case .extensionNotActivated:
-                    ExtensionNotReady()
-                case .notInApplicationsFolder:
-                    NotInApplicationsFolderView()
-                case .waitingForApproval:
-                    Text("Click \"Allow\" to install extension")
-                        .font(.title)
-                    Image("Ask")
-                case let .error(error):
-                    ErrorView(error: error)
-                case .systemExtensionNotInstalled:
-                    SystemExtensionNotInstalledView()
-                case .filterNotInstalled:
-                    FilterNotInstalledView()
+                // 优先显示升级引导界面
+                if app.shouldShowUpgradeGuide {
+                    UpgradeGuideView()
+                } else {
+                    switch firewall.status {
+                    case .disabled, .stopped:
+                        StopView()
+                    case .indeterminate:
+                        UnknownView()
+                    case .running:
+                        RunningView()
+                    case .notInstalled:
+                        InstallView()
+                    case .needSystemExtensionApproval:
+                        ApprovalView()
+                    case .filterNeedApproval:
+                        ApprovalView()
+                    case .extensionNotActivated:
+                        ExtensionNotReady()
+                    case .notInApplicationsFolder:
+                        NotInApplicationsFolderView()
+                    case .waitingForApproval:
+                        Text("Click \"Allow\" to install extension")
+                            .font(.title)
+                        Image("Ask")
+                    case let .error(error):
+                        ErrorView(error: error)
+                    case .systemExtensionNotInstalled:
+                        SystemExtensionNotInstalledView()
+                    case .filterNotInstalled:
+                        FilterNotInstalledView()
+                    }
                 }
             }
             .background(.background)

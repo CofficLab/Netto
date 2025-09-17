@@ -105,6 +105,14 @@ final class AppSettingRepo: ObservableObject, SuperLog, SuperEvent {
         return try await actor.fetchDeniedAppsDTO()
     }
 
+    /// 获取被拒绝访问的应用数量
+    /// - Returns: 被拒绝的应用数量
+    /// - Throws: 查询数据时可能抛出的错误
+    func getDeniedAppsCount() async throws -> Int {
+        let deniedApps = try await fetchDeniedApps()
+        return deniedApps.count
+    }
+
     // MARK: - Permission Management
 
     /// 检查指定ID的应用是否应该被允许访问网络（异步版本）

@@ -2,6 +2,14 @@ import SwiftUI
 
 actor StorePlugin: SuperPlugin {
     nonisolated let label: String = "Store"
+    
+    // MARK: - Static Methods
+    
+    /// 打开 Store 插件窗口
+    nonisolated static func openStoreWindow() {
+        let data = PluginWindowNotificationData(pluginId: "Store")
+        NotificationCenter.default.post(name: .shouldOpenPluginWindow, object: data)
+    }
 
     @MainActor
     func addToolBarButtons() -> [(id: String, view: AnyView)] {

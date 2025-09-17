@@ -7,6 +7,7 @@ import SwiftUI
 struct AppAction: View, SuperLog, SuperEvent {
     @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var repo: AppSettingRepo
+    @EnvironmentObject var ui: UIProvider
 
     @Binding var shouldAllow: Bool
 
@@ -22,8 +23,6 @@ struct AppAction: View, SuperLog, SuperEvent {
 
     var body: some View {
         MagicButton.simple(icon: iconName, size: .auto, action: {
-            let isPro = StoreService.isProCached()
-            os_log("\(self.t)🔐 当前是否 Pro -> \(isPro)")
             shouldAllow ? deny() : allow()
         })
         .magicStyle(.primary)
@@ -41,6 +40,21 @@ extension AppAction {
         let repo = self.repo
         Task {
             do {
+                let isPro = StoreService.isProCached()
+                
+                os_log("\(self.t)🔐 当前是否 Pro -> \(isPro)")
+                
+                // 如果不是 Pro，检查禁止数量限制
+                if !isPro {
+                    let deniedCount = try await repo.getDeniedAppsCount()
+                    if deniedCount >= 5 {
+                        await MainActor.run {
+                            self.showUpgradeGuide()
+                        }
+                        return
+                    }
+                }
+                
                 try await repo.setDeny(appId)
                 self.shouldAllow = false
                 self.m.info("已禁止")
@@ -63,6 +77,11 @@ extension AppAction {
                 m.error(error)
             }
         }
+    }
+    
+    private func showUpgradeGuide() {
+        // 显示升级引导界面
+        ui.showUpgradeGuide()
     }
 }
 

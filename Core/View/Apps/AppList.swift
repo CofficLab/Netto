@@ -27,7 +27,7 @@ struct AppList: View, SuperLog {
                 }
             }
 
-            if firewall.status.isNotRunning() || filteredApps.isEmpty {
+            if firewall.status.isNotRunning() || filteredApps.isEmpty || ui.shouldShowUpgradeGuide {
                 GuideView()
             }
         }
