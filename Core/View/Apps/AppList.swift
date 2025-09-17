@@ -13,18 +13,18 @@ struct AppList: View, SuperLog {
     @State private var deniedIds: [String] = []
     
     var filtedApps: [SmartApp] {
-        switch ui.displayType {
-        case .All:
-            allApps
-        case .Allowed:
-            allApps.filter({
-                self.deniedIds.contains($0.id) == false
-            })
-        case .Rejected:
-            allApps.filter({
-                self.deniedIds.contains($0.id)
-            })
-        }
+        let base: [SmartApp] = {
+            switch ui.displayType {
+            case .All:
+                return allApps
+            case .Allowed:
+                return allApps.filter({ self.deniedIds.contains($0.id) == false })
+            case .Rejected:
+                return allApps.filter({ self.deniedIds.contains($0.id) })
+            }
+        }()
+
+        return base.filter { $0.hidden == false }
     }
 
     nonisolated static let emoji = "🖥️"

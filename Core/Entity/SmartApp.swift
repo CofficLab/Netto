@@ -13,6 +13,9 @@ struct SmartApp: Identifiable, Sendable, Equatable {
     /// 是否是系统应用
     var isSystemApp: Bool = false
 
+    /// 是否隐藏
+    var hidden: Bool = false
+
     /// 是否是示例应用
     var isSample: Bool = false
 
@@ -32,6 +35,7 @@ struct SmartApp: Identifiable, Sendable, Equatable {
         return lhs.id == rhs.id &&
                lhs.name == rhs.name &&
                lhs.isSystemApp == rhs.isSystemApp &&
+               lhs.hidden == rhs.hidden &&
                lhs.isSample == rhs.isSample &&
                lhs.isProxy == rhs.isProxy &&
                lhs.bundleURL == rhs.bundleURL

@@ -18,7 +18,8 @@ extension SmartApp {
             return SmartApp(
                 id: id,
                 name: "未知系统应用",
-                isSystemApp: true
+                isSystemApp: true,
+                hidden: true
             )
         }
         
@@ -31,189 +32,216 @@ extension SmartApp {
         SmartApp(
             id: ".com.apple.mDNSResponder",
             name: "DNS服务",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // 设备发现代理
         SmartApp(
             id: ".com.apple.AMPDeviceDiscoveryAgent",
             name: "设备发现代理",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // AI 代理
         SmartApp(
             id: ".ai-agent",
             name: "AI 代理",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // 地理位置服务
         SmartApp(
             id: ".com.apple.geod",
             name: "地理位置服务",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // AirPlay 助手
         SmartApp(
             id: ".com.apple.AirPlayXPCHelper",
             name: "AirPlay 助手",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // Git 远程助手
         SmartApp(
             id: ".com.apple.git-remote-http",
             name: "Git 远程助手",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // USB多路复用守护进程
         SmartApp(
             id: ".com.apple.usbmuxd",
             name: "USB多路复用守护进程",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // iCloud守护进程
         SmartApp(
             id: ".com.apple.cloudd",
             name: "iCloud守护进程",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: false
         ),
         
         // 快捷指令
         SmartApp(
             id: ".com.apple.shortcuts",
             name: "快捷指令",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // iCloud 数据同步和文件系统管理
         SmartApp(
             id: ".com.apple.bird",
             name: "iCloud 数据同步和文件系统管理",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: false
         ),
         
         // 帮助守护进程
         SmartApp(
             id: ".com.apple.helpd",
             name: "帮助守护进程",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // Git远程HTTP
         SmartApp(
             id: ".git-remote-http",
             name: "Git远程HTTP",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // SSH服务
         SmartApp(
             id: ".com.apple.ssh",
             name: "SSH服务",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // 时间守护进程
         SmartApp(
             id: ".com.apple.timed",
             name: "时间守护进程",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // NetBIOS守护进程
         SmartApp(
             id: ".com.apple.netbiosd",
             name: "NetBIOS守护进程",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // CKG服务器
         SmartApp(
             id: ".ckg_server",
             name: "CKG服务器",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // Apple账户守护进程
         SmartApp(
             id: ".com.apple.appleaccountd",
             name: "Apple账户守护进程",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // Node.js进程
         SmartApp(
             id: ".node",
             name: "Node.js进程",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // 控制中心
         SmartApp(
             id: ".com.apple.controlcenter",
             name: "控制中心",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // 备忘录
         SmartApp(
             id: ".com.apple.Notes",
             name: "备忘录",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: false
         ),
         
         // 远程配对守护进程
         SmartApp(
             id: ".com.apple.CoreDevice.remotepairingd",
             name: "远程配对守护进程",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // AppKit XPC 打开和保存面板服务
         SmartApp(
             id: ".com.apple.appkit.xpc.openAndSavePanelService",
             name: "AppKit XPC 打开和保存面板服务",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // 系统策略守护进程
         SmartApp(
             id: ".com.apple.syspolicyd",
             name: "系统策略守护进程",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // Apple推送服务守护进程
         SmartApp(
             id: ".com.apple.apsd",
             name: "Apple推送服务守护进程",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // 配置守护进程
         SmartApp(
             id: ".com.apple.configd",
             name: "配置守护进程",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         ),
         
         // App Store
         SmartApp(
             id: ".com.apple.AppStore",
             name: "App Store",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: false
         ),
         
         // 屏幕使用时间小组件
         SmartApp(
             id: ".com.apple.ScreenTimeWidgetApplication.ScreenTimeWidgetExtension",
             name: "屏幕使用时间（小组件）",
-            isSystemApp: true
+            isSystemApp: true,
+            hidden: true
         )
     ]
 }
