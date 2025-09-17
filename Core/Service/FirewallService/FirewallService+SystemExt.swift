@@ -16,10 +16,10 @@ extension FirewallService {
             os_log("\(self.t)无法获取APP路径")
             return false
         }
-        
+
         let applicationsPath = "/Applications"
         let isInApplications = appPath.hasPrefix(applicationsPath)
-        
+
         return isInApplications
     }
 
@@ -144,7 +144,7 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
         case .completed:
             os_log("\(self.t)✅ 收到结果：系统扩展已激活")
             self.emit(.extensionDidInstall)
-            
+
             // 更新系统状态
             if self.status.isExtensionNotActivated() {
                 Task {
@@ -269,10 +269,8 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
         os_log("\(self.t)  - 现有扩展: \(existing.bundleIdentifier) v\(existing.bundleVersion)")
         os_log("\(self.t)  - 新扩展: \(newExtension.bundleIdentifier) v\(newExtension.bundleVersion)")
 
-        if #available(macOS 12.0, *) {
-            os_log("\(self.t)  - 现有扩展状态: 启用=\(existing.isEnabled ? "是" : "否"), 等待授权=\(existing.isAwaitingUserApproval ? "是" : "否")")
-            os_log("\(self.t)  - 新扩展状态: 启用=\(newExtension.isEnabled ? "是" : "否"), 等待授权=\(newExtension.isAwaitingUserApproval ? "是" : "否")")
-        }
+        os_log("\(self.t)  - 现有扩展状态: 启用=\(existing.isEnabled ? "是" : "否"), 等待授权=\(existing.isAwaitingUserApproval ? "是" : "否")")
+        os_log("\(self.t)  - 新扩展状态: 启用=\(newExtension.isEnabled ? "是" : "否"), 等待授权=\(newExtension.isAwaitingUserApproval ? "是" : "否")")
 
         os_log("\(self.t)  - 决定: 替换现有扩展")
         return .replace

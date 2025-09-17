@@ -142,7 +142,7 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
     /// - Returns: 删除的总记录数量
     /// - Throws: 删除数据时可能抛出的错误
     func cleanupOldEvents(olderThanDays days: Int) async throws -> Int {
-        os_log("\(self.t) cleanupOldEvents, days: \(days)")
+        os_log("\(self.t)🗑️ cleanupOldEvents, days: \(days)")
         return try await actor.cleanupOldEvents(olderThanDays: days)
     }
 
@@ -524,7 +524,6 @@ private actor EventQueryActor: ModelActor, SuperLog {
 
     /// 批量清理所有应用超过指定天数的事件记录
     func cleanupOldEvents(olderThanDays days: Int) throws -> Int {
-        os_log("\(self.t) cleanupOldEvents, days: \(days)")
         let cutoffDate = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
 
         let predicate = #Predicate<FirewallEventModel> { item in
