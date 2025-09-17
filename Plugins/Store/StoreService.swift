@@ -69,20 +69,14 @@ public enum StoreService: SuperLog {
     }
 
     // MARK: - Public State Accessors
-
+    
     public static func tierCached() -> SubscriptionTier {
-        if let raw = UserDefaults.standard.object(forKey: "store.tier") as? Int, let t = SubscriptionTier(rawValue: raw) {
-            return t
-        }
-        return .none
+        StoreState.cachedTier()
     }
 
     /// 从本地缓存读取过期时间
     public static func expiresAtCached() -> Date? {
-        if let ts = UserDefaults.standard.object(forKey: "store.expiresAt") as? TimeInterval {
-            return Date(timeIntervalSince1970: ts)
-        }
-        return nil
+        StoreState.cachedExpiresAt()
     }
     
     // MARK: - Data Sources
@@ -91,7 +85,6 @@ public enum StoreService: SuperLog {
     private static func allProductIds() -> [String] {
         StoreConfig.allProductIds
     }
-
 
     // MARK: - Product Fetching
 

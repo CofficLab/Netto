@@ -124,6 +124,25 @@ final class StoreState: ObservableObject, SuperLog {
         StoreService.tier(for: id) >= .pro
     }
 
+    // MARK: - Nonisolated Cached Accessors
+    /// 从持久化缓存安全读取（后台线程可用）
+    nonisolated static func cachedTier() -> SubscriptionTier {
+        let defaults = UserDefaults.standard
+        if let raw = defaults.object(forKey: Keys.tier) as? Int, let t = SubscriptionTier(rawValue: raw) {
+            return t
+        }
+        return .none
+    }
+
+    /// 从持久化缓存安全读取（后台线程可用）
+    nonisolated static func cachedExpiresAt() -> Date? {
+        let defaults = UserDefaults.standard
+        if let ts = defaults.object(forKey: Keys.expiresAt) as? TimeInterval {
+            return Date(timeIntervalSince1970: ts)
+        }
+        return nil
+    }
+
     // MARK: - Date Formatting (Local Timezone)
     private static let dateFormatter: DateFormatter = {
         let df = DateFormatter()
