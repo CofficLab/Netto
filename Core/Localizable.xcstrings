@@ -165,6 +165,7 @@
       "shouldTranslate" : false
     },
     "Bundle路径 (Bundle Path)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -703,7 +704,11 @@
     "尚未加载产品" : {
 
     },
+    "属性信息" : {
+
+    },
     "属性信息 (Properties)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1340,6 +1345,9 @@
 
     },
     "请选择一个插件功能" : {
+
+    },
+    "路径" : {
 
     },
     "辅助功能" : {

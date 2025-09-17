@@ -65,7 +65,7 @@ struct AppInfoView: View, SuperLog {
             
             // 应用属性信息
             VStack(alignment: .leading, spacing: 6) {
-                Text("属性信息 (Properties)")
+                Text("属性信息")
                     .font(.subheadline)
                     .fontWeight(.medium)
                 
@@ -127,7 +127,7 @@ struct AppInfoView: View, SuperLog {
                                 .font(.caption)
                                 .frame(width: 12, alignment: .center)
                             
-                            Text("Bundle路径 (Bundle Path)")
+                            Text("路径")
                                 .foregroundColor(.purple)
                                 .font(.caption)
                         }
