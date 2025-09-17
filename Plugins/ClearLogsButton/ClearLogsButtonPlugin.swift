@@ -33,7 +33,11 @@ actor ClearLogsButtonPlugin: SuperPlugin {
 
     @MainActor
     func addSettingsButtons() -> [(id: String, view: AnyView)] {
+        #if DEBUG
         [ (id: "clear-logs", view: AnyView(BtnClearLogs())) ]
+        #else
+        []
+        #endif
     }
 }
 
