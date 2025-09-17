@@ -8,8 +8,24 @@ struct AppList: View, SuperLog {
     @EnvironmentObject private var eventRepo: EventRepo
     @EnvironmentObject private var firewall: FirewallService
     
-    /// 过滤后的应用列表
-    @State private var filteredApps: [SmartApp] = []
+    /// 应用列表
+    @State private var allApps: [SmartApp] = []
+    @State private var deniedIds: [String] = []
+    
+    var filtedApps: [SmartApp] {
+        switch ui.displayType {
+        case .All:
+            allApps
+        case .Allowed:
+            allApps.filter({
+                self.deniedIds.contains($0.id) == false
+            })
+        case .Rejected:
+            allApps.filter({
+                self.deniedIds.contains($0.id)
+            })
+        }
+    }
 
     nonisolated static let emoji = "🖥️"
 
@@ -18,32 +34,22 @@ struct AppList: View, SuperLog {
         ZStack {
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(Array((filteredApps.isNotEmpty ? filteredApps : SmartApp.samples).enumerated()), id: \.element.id) { index, app in
+                    ForEach(Array((filtedApps.isNotEmpty ? filtedApps : SmartApp.samples).enumerated()), id: \.element.id) { index, app in
                         AppLine(app: app)
-                        if index < (filteredApps.isNotEmpty ? filteredApps : SmartApp.samples).count - 1 {
+                        if index < (allApps.isNotEmpty ? allApps : SmartApp.samples).count - 1 {
                             Divider()
                         }
                     }
                 }
             }
 
-            if firewall.status.isNotRunning() || filteredApps.isEmpty || ui.shouldShowUpgradeGuide {
+            if firewall.status.isNotRunning() || filtedApps.isEmpty || ui.shouldShowUpgradeGuide {
                 GuideView()
             }
         }
         .onAppear {
             Task {
-                await loadFilteredApps()
-            }
-        }
-        .onChange(of: ui.showSystemApps) { _, _ in
-            Task {
-                await loadFilteredApps()
-            }
-        }
-        .onChange(of: ui.displayType) { _, _ in
-            Task {
-                await loadFilteredApps()
+                await loadData()
             }
         }
     }
@@ -51,8 +57,7 @@ struct AppList: View, SuperLog {
 
 // MARK: - Action
 extension AppList {
-    /// 异步加载过滤后的应用列表
-    private func loadFilteredApps() async {
+    private func loadData() async {
         // 提取环境对象引用以避免数据竞争
         let repo = self.repo
         let eventRepo = self.eventRepo
@@ -64,13 +69,13 @@ extension AppList {
             }
         }
 
-        // 获取“被禁止的应用ID”（即便无日志也应显示）在主线程读取以避免数据竞争
-        let deniedOnlyIds: [String] = await Task { @MainActor in
+        // 获取“被禁止的应用ID”
+        let deniedIds: [String] = await Task { @MainActor in
             (try? await repo.getDeniedApps()) ?? []
         }.value
 
         // 合并并去重
-        let mergedIds: [String] = Array(Set(eventAppIds).union(deniedOnlyIds))
+        let mergedIds: [String] = Array(Set(eventAppIds).union(deniedIds))
 
         let apps = mergedIds.map({ SmartApp.fromId($0) })
         
@@ -79,35 +84,10 @@ extension AppList {
             .filter { $0.hasId }
         
         let displayType = self.ui.displayType
-        
-        // 将应用拆分为“被禁止(denied)”与“允许(allowed)”两组
-        var denied: [SmartApp] = []
-        var allowed: [SmartApp] = []
-
-        for app in baseApps {
-            let isAllowed = await Task { @MainActor in
-                await repo.shouldAllow(app.id)
-            }.value
-            if isAllowed {
-                allowed.append(app)
-            } else {
-                denied.append(app)
-            }
-        }
-
-        // 按显示类型拼装；仅在 All 模式下，将“被禁止”的应用置顶并包含
-        let finalList: [SmartApp]
-        switch displayType {
-        case .All:
-            finalList = denied + allowed
-        case .Allowed:
-            finalList = allowed
-        case .Rejected:
-            finalList = denied
-        }
 
         await MainActor.run {
-            self.filteredApps = finalList
+            self.allApps = apps
+            self.deniedIds = deniedIds
         }
     }
 
