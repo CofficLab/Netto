@@ -318,14 +318,12 @@ private actor AppSettingQueryActor: ModelActor, SuperLog {
 
     /// 获取所有AppSetting记录（返回DTO）
     func fetchAllDTO() throws -> [AppSettingDTO] {
-        os_log("\(self.t) fetchAllDTO")
         let models = try modelContext.fetch(FetchDescriptor<AppSetting>())
         return models.map(AppSettingDTO.fromModel)
     }
 
     /// 获取所有被拒绝访问的AppSetting记录（返回DTO）
     func fetchDeniedAppsDTO() throws -> [AppSettingDTO] {
-        os_log("\(self.t) fetchDeniedAppsDTO")
         let predicate = #Predicate<AppSetting> { item in
             item.allowed == false
         }

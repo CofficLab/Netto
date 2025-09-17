@@ -46,18 +46,35 @@ public enum StoreService: SuperLog {
     /// 处理交易更新
     private static func handleTransactionUpdate(_ transaction: Transaction) async {
         os_log("\(self.t)✅ 处理交易更新: \(transaction.productID)")
-        let isPro = StoreState.isProProductId(transaction.productID)
+        let tier = tier(for: transaction.productID)
         let expires: Date? = transaction.expirationDate
         await MainActor.run {
-            StoreState.shared.update(isPro: isPro, expiresAt: expires)
+            StoreState.shared.update(tier: tier, expiresAt: expires)
             NotificationCenter.default.post(name: .storeTransactionUpdated, object: transaction.productID)
         }
     }
 
-    // MARK: - Public State Accessors (UI 只依赖 StoreService)
-    /// 从本地缓存快速判断是否 Pro（UserDefaults 快读）
-    public static func isProCached() -> Bool {
-        UserDefaults.standard.bool(forKey: "store.isPro")
+    // MARK: - Store State Updates
+    
+    /// 支付成功后更新 StoreState
+    private static func updateStoreStateAfterPurchase(_ transaction: Transaction) async {
+        let tier = tier(for: transaction.productID)
+        let expiresAt = transaction.expirationDate
+        
+        os_log("\(self.t)🔄 更新 StoreState: productID=\(transaction.productID), tier=\(tier.rawValue), expiresAt=\(expiresAt?.description ?? "nil")")
+        
+        await MainActor.run {
+            StoreState.shared.update(tier: tier, expiresAt: expiresAt)
+        }
+    }
+
+    // MARK: - Public State Accessors
+
+    public static func tierCached() -> SubscriptionTier {
+        if let raw = UserDefaults.standard.object(forKey: "store.tier") as? Int, let t = SubscriptionTier(rawValue: raw) {
+            return t
+        }
+        return .none
     }
 
     /// 从本地缓存读取过期时间
@@ -72,26 +89,7 @@ public enum StoreService: SuperLog {
 
     /// 全部商品 ID 列表
     private static func allProductIds() -> [String] {
-        let keys = [
-            "consumable.fuel.octane87",
-            "consumable.fuel.octane89",
-            "consumable.fuel.octane91",
-            "nonconsumable.car",
-            "nonconsumable.utilityvehicle",
-            "nonconsumable.racecar",
-            "com.yueyi.cisum.monthly",
-            "com.yueyi.cisum.annual",
-            "com.yueyi.cisum.yearly",
-            "com.yueyi.cisum.pro.yearly2",
-            "com.yueyi.cisum.pro.year.1",
-            "com.yueyi.cisum.pro.month.1",
-            "com.yueyi.cisum.pro.day.7",
-            "com.yueyi.netto.pro.monthly",
-            "com.yueyi.netto.pro.annual",
-            "com.yueyi.netto.ultimate.monthly",
-            "com.yueyi.netto.ultimate.annual",
-        ]
-        return keys
+        StoreConfig.allProductIds
     }
 
 
@@ -198,7 +196,7 @@ public enum StoreService: SuperLog {
     }
 
     public static func tier(for productId: String) -> SubscriptionTier {
-        return .pro
+        StoreConfig.tier(for: productId)
     }
 
     public static func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
@@ -266,6 +264,9 @@ public enum StoreService: SuperLog {
                 let transaction = try checkVerified(verification)
 
                 os_log("\(self.t)✅ 支付成功，验证成功")
+
+                // 更新 StoreState
+                await updateStoreStateAfterPurchase(transaction)
 
                 // Always finish a transaction.
                 await transaction.finish()
@@ -417,16 +418,6 @@ public enum StoreError: Error, LocalizedError {
         case .canNotGetProducts:
             "发生错误：无法获取产品"
         }
-    }
-}
-
-// Define our app's subscription tiers by level of service, in ascending order.
-public enum SubscriptionTier: Int, Comparable {
-    case none = 0
-    case pro = 1
-
-    public static func < (lhs: Self, rhs: Self) -> Bool {
-        return lhs.rawValue < rhs.rawValue
     }
 }
 

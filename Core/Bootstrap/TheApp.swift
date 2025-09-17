@@ -117,6 +117,20 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                                 pluginWindowManager.showWindow(with: windowContent)
                                 openWindow(id: "plugin-window")
                                 shouldShowMenuApp = false
+                                
+                                // 确保窗口置顶
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    NSApplication.shared.activate(ignoringOtherApps: true)
+                                    
+                                    // 查找插件窗口并置顶
+                                    if let pluginWindow = NSApplication.shared.windows.first(where: { 
+                                        $0.title == windowContent.windowTitle || $0.title.contains("Plugin Window")
+                                    }) {
+                                        pluginWindow.level = .floating
+                                        pluginWindow.orderFrontRegardless()
+                                        pluginWindow.makeKeyAndOrderFront(nil)
+                                    }
+                                }
                             }
                         }
                     }

@@ -40,12 +40,18 @@ extension AppAction {
         let repo = self.repo
         Task {
             do {
-                let isPro = StoreService.isProCached()
+                let tier = StoreService.tierCached()
+                let expiresAt = StoreService.expiresAtCached()
                 
-                os_log("\(self.t)🔐 当前是否 Pro -> \(isPro)")
+                os_log("\(self.t)🔐 当前权限 tier -> \(tier.rawValue)")
+                if let expiresAt = expiresAt {
+                    os_log("\(self.t)⏰ 过期时间 -> \(expiresAt.fullDateTime)")
+                } else {
+                    os_log("\(self.t)⏰ 过期时间 -> nil")
+                }
                 
                 // 如果不是 Pro，检查禁止数量限制
-                if !isPro {
+                if tier.isFreeVersion {
                     let deniedCount = try await repo.getDeniedAppsCount()
                     if deniedCount >= 5 {
                         await MainActor.run {

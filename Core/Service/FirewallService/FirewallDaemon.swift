@@ -95,7 +95,7 @@ extension FirewallDaemon: AppCommunication {
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
         let verbose = true
         let printAllowed = false
-        let printDenied = true
+        let printDenied = false
 
         let shouldAllow = self.repo.shouldAllowSync(id)
         let dto = FirewallEventDTO(
