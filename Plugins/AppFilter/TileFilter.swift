@@ -8,10 +8,10 @@ struct TileFilter: View, SuperLog, SuperThread {
     @EnvironmentObject var ui: UIProvider
 
     var body: some View {
-        Picker("Type", selection: $ui.displayType) {
-            Text("All").tag(DisplayType.All)
-            Text("Allowed").tag(DisplayType.Allowed)
-            Text("Rejected").tag(DisplayType.Rejected)
+        Picker("", selection: $ui.displayType) {
+            Text("全部").tag(DisplayType.All)
+            Text("允许").tag(DisplayType.Allowed)
+            Text("禁止").tag(DisplayType.Rejected)
         }
         .pickerStyle(SegmentedPickerStyle())
         .frame(width: 150)

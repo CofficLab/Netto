@@ -139,6 +139,7 @@
       "shouldTranslate" : false
     },
     "All" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -304,18 +305,6 @@
         }
       }
     },
-    "Message" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "消息"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "No" : {
       "localizations" : {
         "zh-Hans" : {
@@ -354,6 +343,7 @@
 
     },
     "Rejected" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -376,18 +366,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "状态"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
-    "Status Unknown" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "状态未知"
           }
         }
       },
@@ -428,6 +406,7 @@
       "shouldTranslate" : false
     },
     "Type" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -577,6 +556,9 @@
           }
         }
       }
+    },
+    "全部" : {
+
     },
     "共 %lld 条事件" : {
       "localizations" : {

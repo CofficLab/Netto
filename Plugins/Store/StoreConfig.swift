@@ -1,6 +1,49 @@
+import MagicCore
 import SwiftUI
 
-public enum SubscriptionTier: Int, Comparable, Sendable {
+struct PurchaseInfo: Codable, Equatable {
+    let tier: SubscriptionTier
+    let expiresAt: Date?
+
+    var isProOrHigher: Bool {
+        guard tier >= .pro else { return false }
+        return self.isExpired == false
+    }
+
+    var isNotProOrHigher: Bool {
+        !isProOrHigher
+    }
+
+    var effectiveTier: SubscriptionTier {
+        isProOrHigher ? tier : .none
+    }
+
+    var expiresAtString: String {
+        guard let expiresAt = self.expiresAt else {
+            return "nil"
+        }
+
+        let timeStr = expiresAt.fullDateTime
+
+        // 延迟1分钟，方便测试
+        let isExpired = self.isExpired ? "[过期了]" : "[没过期]"
+
+        return timeStr + isExpired
+    }
+
+    var isExpired: Bool {
+        guard let expiresAt = self.expiresAt else {
+            return true
+        }
+
+        // 延迟1分钟，方便测试
+        return expiresAt.distance(to: .now) > 60 ? true : false
+    }
+
+    static let none: PurchaseInfo = PurchaseInfo(tier: .none, expiresAt: nil)
+}
+
+public enum SubscriptionTier: Int, Comparable, Sendable, Codable {
     case none = 0
     case pro = 1
     case ultimate = 2
@@ -29,7 +72,7 @@ enum StoreConfig: Sendable {
         "consumable.fuel.octane87": .none,
         "consumable.fuel.octane89": .none,
         "consumable.fuel.octane91": .none,
-        
+
         // Non-consumables
         "nonconsumable.car": .none,
         "nonconsumable.utilityvehicle": .none,

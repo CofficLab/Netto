@@ -16,7 +16,7 @@ public enum StoreService: SuperLog {
     /// 开始监听交易更新，APP启动时应该调用这个方法
     public static func bootstrap() {
         startTransactionListener()
-        Task { await StoreState.shared.calibrateFromCurrentEntitlements() }
+        Task { await StoreState.calibrateFromCurrentEntitlements() }
     }
 
     // MARK: - Transaction Updates
@@ -49,7 +49,7 @@ public enum StoreService: SuperLog {
         let tier = tier(for: transaction.productID)
         let expires: Date? = transaction.expirationDate
         await MainActor.run {
-            StoreState.shared.update(tier: tier, expiresAt: expires)
+            StoreState.update(entitlement: PurchaseInfo(tier: tier, expiresAt: expires))
             NotificationCenter.default.post(name: .storeTransactionUpdated, object: transaction.productID)
         }
     }
@@ -61,22 +61,26 @@ public enum StoreService: SuperLog {
         let tier = tier(for: transaction.productID)
         let expiresAt = transaction.expirationDate
         
-        os_log("\(self.t)🔄 更新 StoreState: productID=\(transaction.productID), tier=\(tier.rawValue), expiresAt=\(expiresAt?.description ?? "nil")")
+        os_log("\(self.t)🔄 更新 StoreState")
         
         await MainActor.run {
-            StoreState.shared.update(tier: tier, expiresAt: expiresAt)
+            StoreState.update(entitlement: PurchaseInfo(tier: tier, expiresAt: expiresAt))
         }
     }
 
     // MARK: - Public State Accessors
     
+    static func cachedPurchaseInfo() -> PurchaseInfo {
+        return StoreState.cachedPurchaseInfo()
+    }
+
     public static func tierCached() -> SubscriptionTier {
-        StoreState.cachedTier()
+        cachedPurchaseInfo().effectiveTier
     }
 
     /// 从本地缓存读取过期时间
     public static func expiresAtCached() -> Date? {
-        StoreState.cachedExpiresAt()
+        cachedPurchaseInfo().expiresAt
     }
     
     // MARK: - Data Sources
