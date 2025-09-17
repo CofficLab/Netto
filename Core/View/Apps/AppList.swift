@@ -62,9 +62,10 @@ extension AppList {
         let repo = self.repo
         let eventRepo = self.eventRepo
         
-        // 获取“产生过事件的应用ID”
+        // 获取“自会话开始以来产生过事件的应用ID”
+        let since = eventRepo.sessionStartDate
         let eventAppIds = await withCheckedContinuation { continuation in
-            eventRepo.getAllAppIdsAsync { appIds in
+            eventRepo.getAppIdsSinceAsync(since) { appIds in
                 continuation.resume(returning: appIds)
             }
         }

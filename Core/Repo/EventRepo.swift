@@ -36,10 +36,14 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
     /// 数据库维护管理器
     private let maintenanceManager: DatabaseMaintenanceManager
 
+    /// 本次应用会话的起始时间（应用启动时刻）
+    let sessionStartDate: Date
+
     /// 使用自定义 ModelContainer 初始化
     private init(container: ModelContainer) {
         self.actor = EventQueryActor(container: container)
         self.maintenanceManager = DatabaseMaintenanceManager()
+        self.sessionStartDate = Date()
 
         // 设置维护管理器的引用
         self.maintenanceManager.setRepo(self)
@@ -200,6 +204,14 @@ final class EventRepo: ObservableObject, SuperLog, Sendable {
     func fetchByAppId(_ appId: String) async throws -> [FirewallEventDTO] {
         os_log("\(self.t) fetchByAppId: \(appId)")
         return try await actor.fetchByAppId(appId)
+    }
+
+    /// 获取自指定时间以来产生事件的应用ID（去重）
+    /// - Parameter since: 起始时间
+    /// - Returns: 去重后的应用ID数组
+    func getAppIdsSince(_ since: Date) async throws -> [String] {
+        os_log("\(self.t) getAppIdsSince: \(since)")
+        return try await actor.getAppIdsSince(since)
     }
 
     /// 根据状态查找FirewallEvent记录
@@ -401,6 +413,26 @@ extension EventRepo {
             }
         }
     }
+
+    /// 后台获取自指定时间以来的应用ID列表，并在主线程回调
+    /// - Parameters:
+    ///   - since: 起始时间
+    ///   - completion: 主线程回调，返回应用ID数组
+    func getAppIdsSinceAsync(_ since: Date, completion: @escaping @MainActor ([String]) -> Void) {
+        let queryActor = self.actor
+        Task.detached(priority: .utility) {
+            let appIds: [String]
+            do {
+                appIds = try await queryActor.getAppIdsSince(since)
+            } catch {
+                appIds = []
+            }
+
+            await MainActor.run {
+                completion(appIds)
+            }
+        }
+    }
 }
 
 /// 串行执行 SwiftData 查询的 actor（对外隐藏实现细节）
@@ -456,6 +488,22 @@ private actor EventQueryActor: ModelActor, SuperLog {
         let models = try modelContext.fetch(listDescriptor)
         let dtos = models.map(FirewallEventDTO.fromModel)
         return EventPageResult(totalCount: totalCount, events: dtos)
+    }
+
+    /// 获取自指定时间以来产生事件的应用ID（去重）
+    func getAppIdsSince(_ since: Date) throws -> [String] {
+        let predicate = #Predicate<FirewallEventModel> { item in
+            item.time >= since
+        }
+
+        let descriptor = FetchDescriptor<FirewallEventModel>(
+            predicate: predicate,
+            sortBy: [SortDescriptor(\.sourceAppIdentifier, order: .forward)]
+        )
+
+        let models = try modelContext.fetch(descriptor)
+        let uniqueAppIds = Set(models.map { $0.sourceAppIdentifier })
+        return Array(uniqueAppIds).sorted()
     }
 
     // MARK: - CRUD Operations
