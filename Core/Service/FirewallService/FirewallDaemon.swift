@@ -110,14 +110,19 @@ extension FirewallDaemon: AppCommunication {
         )
 
         if shouldAllow {
+            #if DEBUG
             if verbose && printAllowed {
                 os_log("\(self.t)✅ \(id)")
             }
+            #endif
+            
             responseHandler(true)
         } else {
+            #if DEBUG
             if verbose && printDenied {
                 os_log("\(self.t)🈲 \(id)")
             }
+            #endif
 
             responseHandler(false)
         }

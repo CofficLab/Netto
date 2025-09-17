@@ -12,6 +12,24 @@ struct PurchaseView: View, SuperLog {
     @Environment(\.dismiss) private var dismiss
     @State var closeBtnHovered = false
     var showCloseButton = false
+    
+    // MARK: - Product Type Configuration
+    var showSubscription: Bool = true
+    var showOneTime: Bool = false
+    var showNonRenewable: Bool = false
+    var showConsumable: Bool = false
+    
+    init(showCloseButton: Bool = false, 
+         showSubscription: Bool = true,
+         showOneTime: Bool = false,
+         showNonRenewable: Bool = false,
+         showConsumable: Bool = false) {
+        self.showCloseButton = showCloseButton
+        self.showSubscription = showSubscription
+        self.showOneTime = showOneTime
+        self.showNonRenewable = showNonRenewable
+        self.showConsumable = showConsumable
+    }
 
     var body: some View {
         VStack {
@@ -50,17 +68,25 @@ struct PurchaseView: View, SuperLog {
 
             // 商品分组
             TabView {
-                ProductsSubscription()
-                    .tabItem { Label("订阅", systemImage: "repeat") }
+                if showSubscription {
+                    ProductsSubscription()
+                        .tabItem { Label("订阅", systemImage: "repeat") }
+                }
                 
-                ProductsOfOneTime()
-                    .tabItem { Label("一次性购买", systemImage: "car") }
+                if showOneTime {
+                    ProductsOfOneTime()
+                        .tabItem { Label("一次性购买", systemImage: "car") }
+                }
 
-                ProductsNonRenewable()
-                    .tabItem { Label("非续订", systemImage: "clock") }
+                if showNonRenewable {
+                    ProductsNonRenewable()
+                        .tabItem { Label("非续订", systemImage: "clock") }
+                }
 
-                ProductsConsumable()
-                    .tabItem { Label("消耗品", systemImage: "drop") }
+                if showConsumable {
+                    ProductsConsumable()
+                        .tabItem { Label("消耗品", systemImage: "drop") }
+                }
             }
             .padding()
             .background(MagicBackground.ocean.opacity(0.1))
@@ -94,8 +120,18 @@ struct PurchaseView: View, SuperLog {
     }
 }
 
-#Preview("PurchaseView") {
+#Preview("PurchaseView - All") {
     PurchaseView(showCloseButton: false)
+        .inRootView()
+        .frame(height: 800)
+}
+
+#Preview("PurchaseView - Subscription Only") {
+    PurchaseView(showCloseButton: false, 
+                 showSubscription: true,
+                 showOneTime: false,
+                 showNonRenewable: false,
+                 showConsumable: false)
         .inRootView()
         .frame(height: 800)
 }

@@ -220,7 +220,11 @@
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "E0316BF9",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "internalID" : "0AE0B2DC",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1M"
+          },
           "localizations" : [
             {
               "description" : "Pro Annual",
@@ -256,9 +260,8 @@
           "introductoryOffer" : {
             "displayPrice" : "0.99",
             "internalID" : "86438374",
-            "numberOfPeriods" : 1,
-            "paymentMode" : "payAsYouGo",
-            "subscriptionPeriod" : "P1Y"
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P3M"
           },
           "localizations" : [
             {
@@ -297,7 +300,7 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "2",
+          "displayPrice" : "3",
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "DAF36667",
@@ -330,7 +333,7 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "20",
+          "displayPrice" : "30",
           "familyShareable" : false,
           "groupNumber" : 2,
           "internalID" : "B26C4772",
