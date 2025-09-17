@@ -207,6 +207,13 @@ extension SmartApp {
             id: ".com.apple.AppStore",
             name: "App Store",
             isSystemApp: true
+        ),
+        
+        // 屏幕使用时间小组件
+        SmartApp(
+            id: ".com.apple.ScreenTimeWidgetApplication.ScreenTimeWidgetExtension",
+            name: "屏幕使用时间（小组件）",
+            isSystemApp: true
         )
     ]
 }
@@ -347,6 +354,11 @@ extension SmartApp {
             return AnyView(IconHelper.createSystemIcon(
                 iconName: "bag",
                 gradientColors: [Color.blue.opacity(0.8), Color.cyan]
+            ))
+        case ".com.apple.ScreenTimeWidgetApplication.ScreenTimeWidgetExtension":
+            return AnyView(IconHelper.createSystemIcon(
+                iconName: "hourglass",
+                gradientColors: [Color.purple.opacity(0.8), Color.indigo]
             ))
         default:
             // 未知系统应用的默认图标
