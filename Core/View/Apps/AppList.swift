@@ -83,14 +83,11 @@ extension AppList {
             .filter { ui.showSystemApps || !$0.isSystemApp }
             .filter { $0.hasId }
         
-        let displayType = self.ui.displayType
-
         await MainActor.run {
-            self.allApps = apps
+            self.allApps = baseApps
             self.deniedIds = deniedIds
         }
     }
-
 }
 
 #Preview("APP") {
