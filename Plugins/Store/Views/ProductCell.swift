@@ -59,6 +59,11 @@ struct ProductCell: View, SuperLog {
                 Text(product.id)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
+                // 试用期信息
+                if let introOffer = product.subscription?.introductoryOffer {
+                    Text(formatIntroductoryOffer(introOffer))
+                        .font(.caption)
+                }
                 if isCurrent {
                     Text("正在使用")
                         .font(.footnote)
@@ -83,25 +88,63 @@ struct ProductCell: View, SuperLog {
 
     // MARK: 购买按钮的提示词
 
+    @ViewBuilder
     func subscribeButton(_ subscription: SubscriptionInfoDTO) -> some View {
-        let unit: String
-        let plural = 1 < subscription.subscriptionPeriod.value
-        switch subscription.subscriptionPeriod.unit {
-        case "day":
-            unit = plural ? "\(subscription.subscriptionPeriod.value) 天" : "天"
-        case "week":
-            unit = plural ? "\(subscription.subscriptionPeriod.value) 周" : "周"
-        case "month":
-            unit = plural ? "\(subscription.subscriptionPeriod.value) 月" : "月"
-        case "year":
-            unit = plural ? "\(subscription.subscriptionPeriod.value) 年" : "年"
-        default:
-            unit = "period"
+        VStack(spacing: 2) {
+            // 主要价格信息
+            Text(product.displayPrice + "/" + formatPeriodUnit(subscription.subscriptionPeriod))
+                .foregroundColor(.white)
+                .bold()
         }
-
-        return Text(product.displayPrice + "/" + unit)
-            .foregroundColor(.white)
-            .bold()
+    }
+    
+    // MARK: 格式化周期单位
+    
+    private func formatPeriodUnit(_ period: StoreSubscriptionPeriodDTO) -> String {
+        let plural = 1 < period.value
+        switch period.unit {
+        case "day":
+            return plural ? "\(period.value) 天" : "天"
+        case "week":
+            return plural ? "\(period.value) 周" : "周"
+        case "month":
+            return plural ? "\(period.value) 月" : "月"
+        case "year":
+            return plural ? "\(period.value) 年" : "年"
+        default:
+            return "period"
+        }
+    }
+    
+    // MARK: 格式化试用期信息
+    
+    private func formatIntroductoryOffer(_ offer: IntroductoryOfferDTO) -> String {
+        let periodText: String
+        let plural = offer.subscriptionPeriod.value > 1
+        
+        switch offer.subscriptionPeriod.unit {
+        case "day":
+            periodText = plural ? "\(offer.subscriptionPeriod.value) 天" : "天"
+        case "week":
+            periodText = plural ? "\(offer.subscriptionPeriod.value) 周" : "周"
+        case "month":
+            periodText = plural ? "\(offer.subscriptionPeriod.value) 月" : "月"
+        case "year":
+            periodText = plural ? "\(offer.subscriptionPeriod.value) 年" : "年"
+        default:
+            periodText = "period"
+        }
+        
+        switch offer.paymentMode {
+        case "FreeTrial":
+            return "首\(periodText)免费"
+        case "PayAsYouGo":
+            return "首\(periodText)仅\(offer.displayPrice)"
+        case "PayUpFront":
+            return "首\(periodText)预付\(offer.displayPrice)"
+        default:
+            return "首\(periodText)优惠"
+        }
     }
 
     // MARK: 购买按钮

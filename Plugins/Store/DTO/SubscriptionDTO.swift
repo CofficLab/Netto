@@ -9,6 +9,7 @@ public struct SubscriptionInfoDTO: Hashable, Sendable {
     public let hasIntroductoryOffer: Bool
     public let promotionalOffersCount: Int
     public let status: [StoreSubscriptionStatusDTO] = []
+    public let introductoryOffer: IntroductoryOfferDTO?
 
     // 订阅组显示名和 ID
     // 专业版的使用权限
@@ -20,6 +21,13 @@ public struct SubscriptionInfoDTO: Hashable, Sendable {
     // 以上例子中，专业版和旗舰版的使用权限就是订阅组
     public let groupDisplayName: String
     public let groupID: String
+}
+
+public struct IntroductoryOfferDTO: Hashable, Sendable {
+    public let displayPrice: String
+    public let numberOfPeriods: Int
+    public let paymentMode: String
+    public let subscriptionPeriod: StoreSubscriptionPeriodDTO
 }
 
 public struct StoreSubscriptionPeriodDTO: Hashable, Codable, Sendable {
@@ -48,10 +56,25 @@ public extension Product.SubscriptionInfo {
             unit: subscriptionPeriod.unit.description
         )
 
+        let introOfferDTO: IntroductoryOfferDTO? = {
+            guard let offer = introductoryOffer else { return nil }
+            let offerPeriod = StoreSubscriptionPeriodDTO(
+                value: offer.period.value,
+                unit: offer.period.unit.description
+            )
+            return IntroductoryOfferDTO(
+                displayPrice: offer.displayPrice,
+                numberOfPeriods: offer.periodCount,
+                paymentMode: offer.paymentMode.rawValue,
+                subscriptionPeriod: offerPeriod
+            )
+        }()
+
         return SubscriptionInfoDTO(
             subscriptionPeriod: periodDTO,
             hasIntroductoryOffer: (introductoryOffer != nil),
             promotionalOffersCount: promotionalOffers.count,
+            introductoryOffer: introOfferDTO,
             groupDisplayName: self.groupDisplayName,
             groupID: self.subscriptionGroupID
         )

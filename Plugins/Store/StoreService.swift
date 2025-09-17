@@ -9,6 +9,7 @@ import SwiftUI
 public typealias Transaction = StoreKit.Transaction
 public typealias RenewalInfo = StoreKit.Product.SubscriptionInfo.RenewalInfo
 public typealias RenewalState = StoreKit.Product.SubscriptionInfo.RenewalState
+public typealias PaymentMode = StoreKit.Product.SubscriptionOffer.PaymentMode
 
 public enum StoreService: SuperLog {
     // MARK: - Bootstrap

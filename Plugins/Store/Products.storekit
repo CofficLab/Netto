@@ -304,7 +304,12 @@
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "DAF36667",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "displayPrice" : "0.99",
+            "internalID" : "F6DCF2A9",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1M"
+          },
           "localizations" : [
             {
               "description" : "Ultimate Annual",
@@ -338,11 +343,9 @@
           "groupNumber" : 2,
           "internalID" : "B26C4772",
           "introductoryOffer" : {
-            "displayPrice" : "0.99",
             "internalID" : "34821AC5",
-            "numberOfPeriods" : 1,
-            "paymentMode" : "payAsYouGo",
-            "subscriptionPeriod" : "P1Y"
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P3M"
           },
           "localizations" : [
             {
