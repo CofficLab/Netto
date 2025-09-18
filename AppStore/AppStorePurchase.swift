@@ -9,12 +9,11 @@ import SwiftUI
  */
 struct AppStorePurchaseView: View {
     var body: some View {
-        AppStoreHeroContainer(
-            title: AppConfig.appName,
-            subtitleTop: "实时监控，简单可靠。",
-            subtitleBottom: "看得见的网络安全，清晰而从容。"
-        ) {
+        AppStoreDesktop {
             PurchaseView()
+                .background(.background)
+                .frame(height: 500)
+                .frame(width: 500)
         }
     }
 }
@@ -23,5 +22,5 @@ struct AppStorePurchaseView: View {
 
 #Preview("App Store PurchaseView") {
     AppStorePurchaseView()
-        .inMagicContainer(CGSizeMake(2560, 1600), scale: 0.3)
+        .inMagicContainer(CGSizeMake(1280, 800), scale:1)
 }

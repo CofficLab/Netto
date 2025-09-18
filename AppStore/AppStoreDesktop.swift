@@ -4,9 +4,10 @@ import MagicUI
 import SwiftUI
 
 /// 模拟 macOS 桌面视图，包含顶部任务栏和底部 Dock
-struct AppStoreDesktop: View {
+struct AppStoreDesktop<Content: View>: View {
     @State private var selectedApp: String? = nil
     @State private var isMenuBarExpanded = false
+    private let content: Content
 
     // 任务栏应用
     private let menuBarApps = [
@@ -27,14 +28,22 @@ struct AppStoreDesktop: View {
         "Safari",
         "Message",
         "Mail",
-        "Note"
+        "Note",
     ]
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
 
     var body: some View {
         GeometryReader { _ in
             ZStack {
                 // 桌面背景
                 MagicBackground.emerald
+
+                // 桌面中心内容
+                content
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
 
                 // 顶部任务栏
                 topMenuBar
@@ -148,11 +157,15 @@ struct AppStoreDesktop: View {
 // MARK: - Preview
 
 #Preview("App Store Desktop - Large") {
-    AppStoreDesktop()
-        .inMagicContainer(CGSizeMake(1280, 800), scale: 0.8)
+    AppStoreDesktop {
+        Text("Hello, World!")
+    }
+    .inMagicContainer(CGSizeMake(1280, 800), scale: 0.8)
 }
 
 #Preview("App Store Desktop - Small") {
-    AppStoreDesktop()
-        .frame(width: 800, height: 600)
+    AppStoreDesktop {
+        Text("Hello, World!")
+    }
+    .frame(width: 800, height: 600)
 }
