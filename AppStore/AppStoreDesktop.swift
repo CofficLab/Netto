@@ -1,13 +1,13 @@
-import SwiftUI
 import MagicBackground
 import MagicCore
 import MagicUI
+import SwiftUI
 
 /// 模拟 macOS 桌面视图，包含顶部任务栏和底部 Dock
 struct AppStoreDesktop: View {
     @State private var selectedApp: String? = nil
     @State private var isMenuBarExpanded = false
-    
+
     // 任务栏应用
     private let menuBarApps = [
         ("apple.logo", "Apple"),
@@ -19,30 +19,28 @@ struct AppStoreDesktop: View {
         ("music.note", "Music"),
         ("tv", "TV"),
         ("gamecontroller", "Game Center"),
-        ("app.badge", "App Store")
+        ("app.badge", "App Store"),
     ]
-    
+
     // Dock 应用
     private let dockApps = [
-        ("safari", "Safari"),
-        ("message", "Messages"),
-        ("mail", "Mail"),
-        ("calendar", "Calendar"),
-        ("folder", "Finder"),
-        ("trash", "Trash")
+        "Safari",
+        "Message",
+        "Mail",
+        "Note"
     ]
-    
+
     var body: some View {
-        GeometryReader { geo in
+        GeometryReader { _ in
             ZStack {
                 // 桌面背景
                 MagicBackground.emerald
-                
+
                 // 顶部任务栏
                 topMenuBar
                     .frame(height: 28)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                
+
                 // 底部 Dock
                 bottomDock
                     .frame(height: 80)
@@ -51,8 +49,9 @@ struct AppStoreDesktop: View {
         }
         .background(Color.black)
     }
-    
+
     // MARK: - Top Menu Bar
+
     private var topMenuBar: some View {
         VStack {
             HStack {
@@ -63,7 +62,7 @@ struct AppStoreDesktop: View {
                         .foregroundColor(.white)
                 }
                 .buttonStyle(PlainButtonStyle())
-                
+
                 // 应用菜单
                 if isMenuBarExpanded {
                     HStack(spacing: 20) {
@@ -74,9 +73,9 @@ struct AppStoreDesktop: View {
                     .padding(.leading, 20)
                     .transition(.opacity.combined(with: .scale))
                 }
-                
+
                 Spacer()
-                
+
                 // 右侧状态信息
                 HStack(spacing: 16) {
                     statusItem(icon: "wifi")
@@ -89,18 +88,22 @@ struct AppStoreDesktop: View {
                 Color.black.opacity(0.4)
                     .background(.ultraThinMaterial)
             )
-            
+
             Spacer()
         }
     }
-    
+
     // MARK: - Bottom Dock
+
     private var bottomDock: some View {
         VStack {
             Spacer()
             HStack(spacing: 8) {
-                ForEach(dockApps, id: \.0) { app in
-                    dockAppIcon(systemName: app.0, name: app.1)
+                ForEach(dockApps, id: \.self) { app in
+                    Image(app)
+                        .resizable()
+                        .frame(width: 50)
+                        .frame(height: 50)
                 }
             }
             .padding(.horizontal, 20)
@@ -114,9 +117,9 @@ struct AppStoreDesktop: View {
             Spacer()
         }
     }
-    
+
     // MARK: - Helper Views
-    
+
     private func menuBarAppIcon(systemName: String, name: String) -> some View {
         Button(action: {}) {
             VStack(spacing: 2) {
@@ -127,28 +130,7 @@ struct AppStoreDesktop: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
-    private func dockAppIcon(systemName: String, name: String) -> some View {
-        Button(action: {}) {
-            VStack(spacing: 4) {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.blue.opacity(0.2))
-                    .frame(width: 50, height: 50)
-                    .overlay(
-                        Image(systemName: systemName)
-                            .font(.system(size: 20))
-                            .foregroundColor(.white)
-                    )
-                    .scaleEffect(selectedApp == name ? 1.2 : 1.0)
-                    .animation(.spring(response: 0.3), value: selectedApp)
-            }
-        }
-        .buttonStyle(PlainButtonStyle())
-        .onTapGesture {
-            selectedApp = selectedApp == name ? nil : name
-        }
-    }
-    
+
     private func statusItem(icon: String, text: String = "") -> some View {
         HStack(spacing: 4) {
             if icon.isNotEmpty {
@@ -164,6 +146,7 @@ struct AppStoreDesktop: View {
 }
 
 // MARK: - Preview
+
 #Preview("App Store Desktop - Large") {
     AppStoreDesktop()
         .inMagicContainer(CGSizeMake(1280, 800), scale: 0.8)
