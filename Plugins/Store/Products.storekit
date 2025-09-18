@@ -237,7 +237,7 @@
               "locale" : "zh_Hans"
             }
           ],
-          "productID" : "com.yueyi.netto.pro.monthly",
+          "productID" : "com.coffic.netto.monthly",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Pro Monthly",
           "subscriptionGroupID" : "3F19ED53",
@@ -275,7 +275,7 @@
               "locale" : "en_US"
             }
           ],
-          "productID" : "com.yueyi.netto.pro.annual",
+          "productID" : "com.coffic.netto.annual",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Pro Annual",
           "subscriptionGroupID" : "3F19ED53",

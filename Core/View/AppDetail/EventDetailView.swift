@@ -1,4 +1,5 @@
 import MagicCore
+import MagicUI
 import NetworkExtension
 import OSLog
 import SwiftUI
@@ -64,8 +65,8 @@ struct EventDetailView: View, SuperLog {
                     }
                 }, label: {
                     HStack(spacing: 6) {
-                        Image(systemName: "tray.and.arrow.down")
-                        Text("导出全部日志")
+                        Image(systemName: .iconDownload)
+                        Text("导出近期日志")
                     }
                 })
                 .buttonStyle(.borderedProminent)
@@ -179,18 +180,27 @@ extension EventDetailView {
             let status: FirewallEvent.Status? = statusFilter == .all ? nil : (statusFilter == .allowed ? .allowed : .rejected)
             let direction: NETrafficDirection? = directionFilter == .all ? nil : (directionFilter == .inbound ? .inbound : .outbound)
 
-            var page = 0
-            let size = 200
+            // 限制最多导出 1000 条记录，优先导出最近的
+            let maxExportCount = 1000
+            let pageSize = 200
             var all: [FirewallEventDTO] = []
+            var page = 0
 
-            while true {
+            while all.count < maxExportCount {
                 let result = await withCheckedContinuation { continuation in
-                    queryRepo.loadAsync(appId: appId, page: page, pageSize: size, status: status, direction: direction) { total, items in
+                    queryRepo.loadAsync(appId: appId, page: page, pageSize: pageSize, status: status, direction: direction) { total, items in
                         continuation.resume(returning: (total, items))
                     }
                 }
-                all.append(contentsOf: result.1)
-                if all.count >= result.0 || result.1.isEmpty { break }
+                
+                if result.1.isEmpty { break }
+                
+                // 如果加上这一页会超过限制，只取需要的部分
+                let remaining = maxExportCount - all.count
+                let itemsToAdd = Array(result.1.prefix(remaining))
+                all.append(contentsOf: itemsToAdd)
+                
+                if itemsToAdd.count < result.1.count { break }
                 page += 1
             }
 
