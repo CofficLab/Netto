@@ -28,9 +28,6 @@ struct AppStoreDesktop: View {
         ("message", "Messages"),
         ("mail", "Mail"),
         ("calendar", "Calendar"),
-        ("tv", "TV"),
-        ("gamecontroller", "Game Center"),
-        ("app.badge", "App Store"),
         ("folder", "Finder"),
         ("trash", "Trash")
     ]
@@ -84,7 +81,7 @@ struct AppStoreDesktop: View {
                 HStack(spacing: 16) {
                     statusItem(icon: "wifi")
                     statusItem(icon: "battery.100")
-                    statusItem(icon: "clock", text: "10:30")
+                    statusItem(icon: "", text: "10:30")
                 }
             }
             .padding(.horizontal, 16)
@@ -154,9 +151,11 @@ struct AppStoreDesktop: View {
     
     private func statusItem(icon: String, text: String = "") -> some View {
         HStack(spacing: 4) {
-            Image(systemName: icon)
-                .font(.system(size: 12))
-                .foregroundColor(.white)
+            if icon.isNotEmpty {
+                Image(systemName: icon)
+                    .font(.system(size: 12))
+                    .foregroundColor(.white)
+            }
             Text(text)
                 .font(.system(size: 12))
                 .foregroundColor(.white)
