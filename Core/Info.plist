@@ -32,5 +32,7 @@
 	<true/>
 	<key>NSSupportsSuddenTermination</key>
 	<true/>
+	<key>NSSystemExtensionUsageDescription</key>
+	<string>安装系统扩展来实现网络监控功能</string>
 </dict>
 </plist>
