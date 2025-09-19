@@ -12,6 +12,7 @@ enum FilterStatus: Equatable {
     case extensionNotActivated
     case notInApplicationsFolder
     case systemExtensionNotInstalled
+    case systemExtensionNeedUpdate
     case filterNotInstalled
     case error(Error)
     
@@ -39,6 +40,8 @@ enum FilterStatus: Equatable {
             "APP未安装在Applications目录"
         case .systemExtensionNotInstalled:
             "系统扩展未安装"
+        case .systemExtensionNeedUpdate:
+            "需要更新系统扩展"
         case .filterNotInstalled:
             "过滤器未安装"
         case .error(let error):
@@ -113,6 +116,15 @@ enum FilterStatus: Equatable {
         }
     }
 
+    func isSystemExtensionNeedUpdate() -> Bool {
+        switch self {
+        case.systemExtensionNeedUpdate:
+            true
+        default:
+            false
+        }
+    }
+
     func isFilterNotInstalled() -> Bool {
         switch self {
         case.filterNotInstalled:
@@ -162,7 +174,7 @@ enum FilterStatus: Equatable {
         switch self {
         case.stopped, .indeterminate,  .disabled:
             true
-        case .error, .notInstalled,.waitingForApproval, .needSystemExtensionApproval, .filterNeedApproval, .extensionNotActivated, .notInApplicationsFolder, .systemExtensionNotInstalled, .filterNotInstalled:
+        case .error, .notInstalled,.waitingForApproval, .needSystemExtensionApproval, .filterNeedApproval, .extensionNotActivated, .notInApplicationsFolder, .systemExtensionNotInstalled, .systemExtensionNeedUpdate, .filterNotInstalled:
             false
         default:
             false
@@ -183,6 +195,7 @@ enum FilterStatus: Equatable {
              (.extensionNotActivated, .extensionNotActivated),
              (.notInApplicationsFolder, .notInApplicationsFolder),
              (.systemExtensionNotInstalled, .systemExtensionNotInstalled),
+             (.systemExtensionNeedUpdate, .systemExtensionNeedUpdate),
              (.filterNotInstalled, .filterNotInstalled):
             return true
         case (.error(let error1), .error(let error2)):

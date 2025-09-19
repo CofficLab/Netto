@@ -41,6 +41,8 @@ struct GuideView: View {
                         ErrorView(error: error)
                     case .systemExtensionNotInstalled:
                         SystemExtensionNotInstalledView()
+                    case .systemExtensionNeedUpdate:
+                        SystemExtensionNeedUpdateView()
                     case .filterNotInstalled:
                         FilterNotInstalledView()
                     }

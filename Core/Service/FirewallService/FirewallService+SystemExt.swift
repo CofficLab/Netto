@@ -247,13 +247,18 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
             if let latest = latestProperty {
                 os_log("\(self.t)  - 已安装版本: \(latest.bundleVersion) (\(latest.bundleShortVersion))")
                 os_log("\(self.t)  - 版本差异: 当前版本未安装，但有其他版本已安装")
+                
+                // 当前版本未安装，但有其他版本已安装，设置为需要更新状态
+                Task {
+                    await self.updateStatus(.systemExtensionNeedUpdate)
+                }
             } else {
                 os_log("\(self.t)  - 版本差异: 当前版本未安装，且无其他版本")
-            }
-
-            // 当前版本未安装，设置为未安装状态
-            Task {
-                await self.updateStatus(.systemExtensionNotInstalled)
+                
+                // 当前版本未安装，且无其他版本，设置为未安装状态
+                Task {
+                    await self.updateStatus(.systemExtensionNotInstalled)
+                }
             }
         }
     }
