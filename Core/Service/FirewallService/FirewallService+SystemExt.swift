@@ -202,7 +202,6 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
             os_log("\(self.t)📦 已安装的系统扩展信息:")
             os_log("\(self.t)  - 包标识符: \(property.bundleIdentifier)")
             os_log("\(self.t)  - 版本号: \(property.bundleVersion)")
-            os_log("\(self.t)  - 短版本: \(property.bundleShortVersion)")
             os_log("\(self.t)  - 文件路径: \(property.url.path)")
             os_log("\(self.t)  - 是否启用: \(property.isEnabled ? "✅" : "❌")")
             os_log("\(self.t)  - 等待用户授权: \(property.isAwaitingUserApproval ? "✅" : "❌")")

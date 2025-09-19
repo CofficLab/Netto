@@ -141,18 +141,6 @@
       },
       "shouldTranslate" : false
     },
-    "All" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "全部"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "All Statuses (%lld)" : {
 
     },
@@ -167,31 +155,8 @@
       },
       "shouldTranslate" : false
     },
-    "Bundle路径 (Bundle Path)" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bundle Path"
-          }
-        }
-      }
-    },
     "Cars (%lld)" : {
 
-    },
-    "Clear" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "清除"
-          }
-        }
-      },
-      "shouldTranslate" : false
     },
     "Click \"Allow\" to install extension" : {
       "localizations" : {
@@ -349,18 +314,6 @@
     "Purchased" : {
 
     },
-    "Rejected" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已拒绝"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "Software Services Pro" : {
 
     },
@@ -410,18 +363,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "时间"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
-    "Type" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "类型"
           }
         }
       },
@@ -495,17 +436,6 @@
     },
     "事件详情" : {
 
-    },
-    "事件详情 (Event Details)" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Event Details"
-          }
-        }
-      }
     },
     "代理应用" : {
       "localizations" : {
@@ -719,17 +649,6 @@
     "属性信息" : {
 
     },
-    "属性信息 (Properties)" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Properties"
-          }
-        }
-      }
-    },
     "已复制" : {
       "localizations" : {
         "en" : {
@@ -811,17 +730,6 @@
     },
     "应用详情" : {
 
-    },
-    "应用详情 (Application Details)" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Application Details"
-          }
-        }
-      }
     },
     "开关" : {
       "localizations" : {
@@ -1053,16 +961,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Direction"
-          }
-        }
-      }
-    },
-    "日志" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Log"
           }
         }
       }
