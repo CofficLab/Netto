@@ -14,17 +14,39 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @State private var shouldShowLoading = true
     @State private var shouldShowMenuApp = false
     @State private var shouldShowWelcomeWindow = false
+    @State private var hasDeniedApps = false
     @StateObject private var pluginWindowManager = PluginWindowManager.shared
-    
+
     init() {
         // 启动 Store 服务（监听 + 校准）
         StoreService.bootstrap()
+    }
+
+    /// 检查是否有被禁止的应用
+    private func checkDeniedApps() async {
+        os_log("\(self.t)检查是否有被禁止的应用")
+        do {
+            let repo = AppSettingRepo()
+            let deniedCount = try await repo.getDeniedAppsCount()
+            await MainActor.run {
+                self.hasDeniedApps = deniedCount > 0
+                os_log("\(self.t)检查是否有被禁止的应用 -> \(self.hasDeniedApps)")
+            }
+        } catch {
+            os_log("\(self.t)检查被禁止应用时出错: \(error.localizedDescription)")
+        }
     }
 
     nonisolated static let emoji = "🐦"
     static let welcomeWindowTitle = "Welcome to TravelMode"
     static let storeWindowTitle = "Store - TravelMode"
     private let versionService = VersionService()
+
+    #if DEBUG
+        private let isDebug = true
+    #else
+        private let isDebug = false
+    #endif
 
     var body: some Scene {
         // 欢迎引导窗口
@@ -99,6 +121,10 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
             .onAppear {
                 // 用户点击了菜单栏图标
                 shouldShowMenuApp = true
+                // 检查被禁止的应用
+                Task {
+                    await checkDeniedApps()
+                }
             }
             .onReceive(nc.publisher(for: .shouldOpenWelcomeWindow)) { _ in
                 os_log("\(self.t)🖥️ 打开欢迎窗口")
@@ -117,13 +143,13 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                                 pluginWindowManager.showWindow(with: windowContent)
                                 openWindow(id: "plugin-window")
                                 shouldShowMenuApp = false
-                                
+
                                 // 确保窗口置顶
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                                     NSApplication.shared.activate(ignoringOtherApps: true)
-                                    
+
                                     // 查找插件窗口并置顶
-                                    if let pluginWindow = NSApplication.shared.windows.first(where: { 
+                                    if let pluginWindow = NSApplication.shared.windows.first(where: {
                                         $0.title == windowContent.windowTitle || $0.title.contains("Plugin Window")
                                     }) {
                                         pluginWindow.level = .floating
@@ -136,13 +162,26 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                     }
                 }
             }
+            .onReceive(nc.publisher(for: .firewallDidSetDeny)) { _ in
+                // 当有应用被禁止时，重新检查状态
+                Task {
+                    await checkDeniedApps()
+                }
+            }
+            .onReceive(nc.publisher(for: .firewallDidSetAllow)) { _ in
+                // 当有应用被允许时，重新检查状态
+                Task {
+                    await checkDeniedApps()
+                }
+            }
         }, label: {
-            #if DEBUG
-                Label(AppConfig.appName, systemImage: .iconAirplane)
-                    .foregroundColor(.orange)
-            #else
-                Label(AppConfig.appName, systemImage: "network")
-            #endif
+            if hasDeniedApps {
+                // 有被禁止应用时显示警告图标
+                Image(systemName: isDebug ? "airplane.departure" : "network.badge.shield.half.filled")
+            } else {
+                // 正常状态显示默认图标
+                Image(systemName: isDebug ? "airplane" : "checkmark.circle.fill")
+            }
         })
         .menuBarExtraStyle(.window)
     }
