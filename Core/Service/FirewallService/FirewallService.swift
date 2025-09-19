@@ -7,16 +7,23 @@ import SystemExtensions
 
 final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread, @unchecked Sendable {
     nonisolated static let emoji = "🛡️"
+    static let shared = FirewallService()
 
     var ipc = IPCConnection.shared
     var extensionManager = OSSystemExtensionManager.shared
     var extensionBundle = ExtensionConfig.extensionBundle
     var error: Error?
     var observer: Any?
+    let settingRepo: AppSettingRepo
+    let eventRepo: EventRepo
+
     @Published var status: FilterStatus = .indeterminate
 
-    init(repo: AppSettingRepo) async {
+    private init(repo: AppSettingRepo = .shared, eventRepo: EventRepo = .shared) {
         os_log("\(Self.onInit)")
+
+        self.settingRepo = repo
+        self.eventRepo = eventRepo
 
         super.init()
 
@@ -26,20 +33,20 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
             await self.refreshStatus()
         }
     }
-    
+
     @MainActor func refreshStatus() async {
+        // 检查系统扩展的状态，系统会异步通知
+        self.requestSystemExtensionStatus()
+
         let isEnabled = await self.isFilterEnabled()
-        
+
         os_log("\(self.t)\(isEnabled ? "✅ 过滤器已启用" : "⚠️ 过滤器未启用")")
-        
+
         if isEnabled {
             self.updateStatus(.running)
             return
         }
-        
-        // 检查系统扩展的状态，系统会异步通知
-        self.requestSystemExtensionStatus()
-        
+
         // 默认处于停止状态
         self.updateStatus(.stopped)
     }
@@ -58,7 +65,7 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
 
         // 发送状态变化事件
         self.emit(.firewallStatusChanged, object: status)
-        
+
         // 根据状态发送特定事件
         switch status {
         case .running:
@@ -102,6 +109,7 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
 }
 
 // MARK: - 基础操作
+
 // 负责 FirewallService 的基础操作，包括：
 // - 错误处理（设置和清除错误）
 // - 观察者管理（添加和移除观察者）

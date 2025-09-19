@@ -5,21 +5,9 @@ import OSLog
 import SwiftUI
 import SystemExtensions
 
-/// 负责决定是否允许网络连接，与视图无关，APP启动就运行
-final class FirewallDaemon: NSObject, SuperLog, @unchecked Sendable {
-    nonisolated static let emoji = "🚪"
-
-    private let repo: AppSettingRepo
-    private let eventRepo: EventRepo
-
-    init(repo: AppSettingRepo, eventRepo: EventRepo, reason: String) async {
-        os_log("\(Self.onInit)(\(reason))")
-
-        self.repo = repo
-        self.eventRepo = eventRepo
-
-        super.init()
-
+extension FirewallService {
+    /// 负责决定是否允许网络连接，与视图无关，APP启动就运行
+    func runDaemon() async {
         if #available(macOS 15.1, *) {
             os_log("\(self.t)🚩 监听系统扩展状态")
             do {
@@ -39,13 +27,13 @@ final class FirewallDaemon: NSObject, SuperLog, @unchecked Sendable {
         }
 
         // 不管系统扩展是否激活，尝试关联，失败了也没关系
-        registerWithProvider(reason: "init")
+        self.registerWithProvider(reason: "init")
     }
 }
 
 // MARK: Content Filter Configuration Management
 
-extension FirewallDaemon {
+extension FirewallService {
     private func loadFilterConfiguration(reason: String) async throws {
         os_log("\(self.t)🚩 读取过滤器配置 🐛 \(reason)")
 
@@ -68,7 +56,7 @@ extension FirewallDaemon {
 
 // MARK: AppCommunication
 
-extension FirewallDaemon: AppCommunication {
+extension FirewallService: AppCommunication {
     nonisolated func extensionLog(_ words: String) {
         let verbose = false
 
@@ -94,10 +82,10 @@ extension FirewallDaemon: AppCommunication {
     ///   - responseHandler: 响应处理回调
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
         let verbose = true
-        let printAllowed = false
-        let printDenied = false
+        let printAllowed = true
+        let printDenied = true
 
-        let shouldAllow = self.repo.shouldAllowSync(id)
+        let shouldAllow = self.settingRepo.shouldAllowSync(id)
         let dto = FirewallEventDTO(
             id: id,
             time: .now,
@@ -141,7 +129,7 @@ extension FirewallDaemon: AppCommunication {
 
 // MARK: - OSSystemExtensionsWorkspaceObserver
 
-extension FirewallDaemon: OSSystemExtensionsWorkspaceObserver {
+extension FirewallService: OSSystemExtensionsWorkspaceObserver {
     @available(macOS 15.1, *)
     func systemExtensionWillBecomeEnabled(_ systemExtensionInfo: OSSystemExtensionInfo) {
         os_log("\(self.t)🍋 systemExtensionWillBecomeEnabled")

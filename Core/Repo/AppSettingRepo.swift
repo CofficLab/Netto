@@ -25,18 +25,20 @@ import SwiftData
 import SwiftUI
 
 /// 基于 actor 的仓库
-final class AppSettingRepo: ObservableObject, SuperLog, SuperEvent {
+final class AppSettingRepo: ObservableObject, SuperLog, SuperEvent, Sendable {
+    static let shared = AppSettingRepo()
+    
     private let actor: AppSettingQueryActor
     private let container: ModelContainer
 
     /// 使用自定义 ModelContainer 初始化
-    init(container: ModelContainer) {
+    private init(container: ModelContainer) {
         self.container = container
         self.actor = AppSettingQueryActor(container: container)
     }
 
     /// 使用默认容器初始化
-    convenience init() {
+    private convenience init() {
         self.init(container: TavelMode.container())
     }
 

@@ -11,18 +11,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, SuperEvent, SuperLog, SuperT
     @Environment(\.openWindow) private var openWindow
     static let emoji = "🍎"
     
-    var gate: FirewallDaemon? = nil
-    
     func applicationDidFinishLaunching(_ notification: Notification) {
         os_log("\(self.t)✅ 应用启动完成")
         // 发送应用启动完成通知
         NotificationCenter.default.post(name: .appDidFinishLaunching, object: nil)
         
         Task {
-            let repo = AppSettingRepo()
-            let eventRepo = EventRepo.shared
-            
-            self.gate = await FirewallDaemon(repo: repo,eventRepo: eventRepo, reason: self.className)
+            await FirewallService.shared.runDaemon()
         }
     }
     

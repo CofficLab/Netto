@@ -24,13 +24,11 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
 
     /// 检查是否有被禁止的应用
     private func checkDeniedApps() async {
-        os_log("\(self.t)检查是否有被禁止的应用")
         do {
-            let repo = AppSettingRepo()
+            let repo = AppSettingRepo.shared
             let deniedCount = try await repo.getDeniedAppsCount()
             await MainActor.run {
                 self.hasDeniedApps = deniedCount > 0
-                os_log("\(self.t)检查是否有被禁止的应用 -> \(self.hasDeniedApps)")
             }
         } catch {
             os_log("\(self.t)检查被禁止应用时出错: \(error.localizedDescription)")

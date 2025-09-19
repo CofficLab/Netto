@@ -61,10 +61,10 @@ extension RootView {
 
         // Repos
         let eventRepo = EventRepo.shared
-        let appSettingRepo = AppSettingRepo()
+        let appSettingRepo = AppSettingRepo.shared
 
         // Services
-        let firewallService = await FirewallService(repo: appSettingRepo)
+        let firewallService = FirewallService.shared
 
         await MainActor.run {
             self.eventRepo = eventRepo
