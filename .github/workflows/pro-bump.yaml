@@ -20,46 +20,39 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: 更新版本号
         run: |
-
           # 读取配置文件路径
           projectFile=$(find $(pwd) ! -path "*Resources*" -type f -name "*.pbxproj" | head -n 1)
+          echo "项目文件: $projectFile"
 
-          # 读取文件中的版本号
-          version=$(grep -o 'MARKETING_VERSION = [^"]*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+          # 显示当前版本号
+          echo "=== 当前版本号 ==="
+          grep -n "MARKETING_VERSION" "$projectFile"
 
-          echo "旧版本号->$version"
+          # 使用perl一次性更新所有MARKETING_VERSION，将patch版本+1
+          perl -i -pe '
+            if (/^(\s*)MARKETING_VERSION = (\d+)\.(\d+)\.(\d+);/) {
+              $indent = $1;
+              $major = $2;
+              $minor = $3; 
+              $patch = $4 + 1;
+              $_ = "${indent}MARKETING_VERSION = $major.$minor.$patch;\n";
+            }
+          ' "$projectFile"
 
-          # 将版本号拆分为数组
-          IFS='.' read -r -a versionArray <<< "$version"
-
-          # 递增最后一位数字
-          ((versionArray[2]++))
-
-          # 重新组合版本号
-          newVersion="${versionArray[0]}.${versionArray[1]}.${versionArray[2]}"
-
-          echo "新版本号->$newVersion"
-
-          # 新版本号写入文件
-          echo "新版本号将要写入文件->$projectFile"
-
-          sed -i '' "s/MARKETING_VERSION = $version/MARKETING_VERSION = $newVersion/" "$projectFile"
-
-          updatedVersion=$(grep -o 'MARKETING_VERSION = [^"]*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-          echo "更新后的版本号->$updatedVersion"
+          # 显示更新后的版本号
+          echo "=== 更新后的版本号 ==="
+          grep -n "MARKETING_VERSION" "$projectFile"
 
           git status
       - name: 生成标签
         run: |
-
           # 读取配置文件路径
           projectFile=$(find $(pwd) ! -path "*Resources*" -type f -name "*.pbxproj" | head -n 1)
 
-          # 读取文件中的版本号
-          version=$(grep -o 'MARKETING_VERSION = [^"]*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+          # 读取主应用版本号（第一个找到的版本号）
+          version=$(grep -o 'MARKETING_VERSION = [0-9]\+\.[0-9]\+\.[0-9]\+' "$projectFile" | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
 
-          echo "版本号->$version"
-
+          echo "主应用版本号: $version"
           echo "tag=v$version" >> $GITHUB_ENV
       - name: 打标签并推送到仓库
         uses: stefanzweifel/git-auto-commit-action@v4
