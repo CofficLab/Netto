@@ -24,6 +24,7 @@
 		0BE0D9ED2E6F164E00B5F80C /* MagicUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0BE0D9EC2E6F164E00B5F80C /* MagicUI */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3ED2DE463A1009CC54C /* MagicCore */; };
+		F50882A02E7BB462004FB427 /* MagicDesktop in Frameworks */ = {isa = PBXBuildFile; productRef = F508829F2E7BB462004FB427 /* MagicDesktop */; };
 		F52D4A1E2E6E8A24007F53A3 /* MagicAlert in Frameworks */ = {isa = PBXBuildFile; productRef = F52D4A1D2E6E8A24007F53A3 /* MagicAlert */; };
 		F52D4A202E6E8A24007F53A3 /* MagicAsset in Frameworks */ = {isa = PBXBuildFile; productRef = F52D4A1F2E6E8A24007F53A3 /* MagicAsset */; };
 		F52D4A222E6E8A24007F53A3 /* MagicBackground in Frameworks */ = {isa = PBXBuildFile; productRef = F52D4A212E6E8A24007F53A3 /* MagicBackground */; };
@@ -132,6 +133,7 @@
 				F5D27E312E6E60F5006B3CB2 /* MagicCore in Frameworks */,
 				0B3485A22E6DDC4400EBD371 /* MagicAsset in Frameworks */,
 				0B3485A62E6DDC4400EBD371 /* MagicCore in Frameworks */,
+				F50882A02E7BB462004FB427 /* MagicDesktop in Frameworks */,
 				F5D27E332E6E60F5006B3CB2 /* MagicDevice in Frameworks */,
 				0B08D5432E6DD82A001902DD /* MagicContainer in Frameworks */,
 				F52D4A202E6E8A24007F53A3 /* MagicAsset in Frameworks */,
@@ -698,6 +700,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicCore;
+		};
+		F508829F2E7BB462004FB427 /* MagicDesktop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F52D4A1C2E6E8A24007F53A3 /* XCRemoteSwiftPackageReference "MagicKit" */;
+			productName = MagicDesktop;
 		};
 		F52D4A1D2E6E8A24007F53A3 /* MagicAlert */ = {
 			isa = XCSwiftPackageProductDependency;

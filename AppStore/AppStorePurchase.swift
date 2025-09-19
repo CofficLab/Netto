@@ -1,5 +1,6 @@
 import MagicBackground
 import MagicContainer
+import MagicDesktop
 import MagicCore
 import MagicUI
 import SwiftUI
@@ -14,7 +15,6 @@ struct AppStorePurchaseView: View {
                 .frame(height: 500)
                 .frame(width: 500)
                 .inDesktop()
-        
     }
 }
 
