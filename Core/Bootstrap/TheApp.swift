@@ -49,6 +49,11 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     #endif
 
     var body: some Scene {
+        // 启动时立即检查被禁止的应用
+        let _ = Task {
+            await checkDeniedApps()
+        }
+
         // 欢迎引导窗口
         Window(Self.welcomeWindowTitle, id: AppConfig.welcomeWindowId) {
             if shouldShowLoading && !shouldShowWelcomeWindow {
