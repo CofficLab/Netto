@@ -33,14 +33,14 @@ class FilterDataProvider: NEFilterDataProvider, SuperLog {
 
         let filterSettings = NEFilterSettings(rules: filterRules, defaultAction: .filterData)
 
-        apply(filterSettings) { [self] error in
+        apply(filterSettings) { error in
             if let applyError = error {
                 os_log("Failed to apply filter settings: %@", applyError.localizedDescription)
 
-                ipc.log("⚠️ Failed to apply filter settings: \(applyError.localizedDescription)")
+                IPCConnection.shared.log("⚠️ Failed to apply filter settings: \(applyError.localizedDescription)")
 
             } else {
-                ipc.log("🎉 Success to apply filter settings")
+                IPCConnection.shared.log("🎉 Success to apply filter settings")
             }
 
             completionHandler(error)
