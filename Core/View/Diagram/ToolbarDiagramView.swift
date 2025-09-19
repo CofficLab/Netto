@@ -50,20 +50,6 @@ struct ToolbarDiagramView: View {
 
                     Spacer()
                     VStack(spacing: 4) {
-                        Text("日志")
-                            .font(.caption)
-                            .foregroundColor(.cyan)
-                            .fontWeight(.bold)
-
-                        // 向下指向的箭头
-                        Image(systemName: "arrow.down")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(.cyan)
-                            .scaleEffect(1.2)
-                    }
-                    .offset(x: -22)
-
-                    VStack(spacing: 4) {
                         Text("更多操作")
                             .font(.caption)
                             .foregroundColor(.orange)
@@ -111,9 +97,6 @@ struct ToolbarDiagramView: View {
             toolbarButton(icon: "power.circle", title: "开关")
 
             Spacer()
-
-            // 事件列表插件
-            toolbarButton(icon: "list.bullet.rectangle", title: "事件")
 
             // 更多菜单按钮（重点突出）
             Button(action: {

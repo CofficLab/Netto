@@ -24,7 +24,6 @@ struct DBEventView: View {
 
     // 刷新控制
     @State private var refreshTrigger = false
-    @State private var refreshTimer: AnyCancellable?
 
     // 计算总页数
     private var totalPages: Int {
@@ -95,19 +94,6 @@ struct DBEventView: View {
         if currentPage > maxPage {
             currentPage = maxPage
         }
-    }
-
-    /// 设置刷新定时器
-    private func setupRefreshTimer() {
-        // 取消现有定时器
-        refreshTimer?.cancel()
-
-        // 创建新定时器，每5秒刷新一次数据
-        refreshTimer = Timer.publish(every: 5, on: .main, in: .common)
-            .autoconnect()
-            .sink { _ in
-                loadEvents()
-            }
     }
 
     /// 清除筛选条件
@@ -306,12 +292,9 @@ struct DBEventView: View {
         .onAppear {
             // 视图出现时加载数据
             loadEvents()
-            // 设置刷新定时器
-            setupRefreshTimer()
         }
-        .onDisappear {
-            // 视图消失时取消定时器
-            refreshTimer?.cancel()
+        .onReceive(Timer.publish(every: 5, on: .main, in: .common).autoconnect()) { _ in
+            loadEvents()
         }
     }
 }
