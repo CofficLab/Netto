@@ -54,7 +54,7 @@ extension FirewallDaemon {
     }
 
     private func registerWithProvider(reason: String) {
-        os_log("\(self.t)🛫 registerWithProvider，让 ChannelProvider 和 Extension 关联起来(\(reason))")
+        os_log("\(self.t)🛫 registerWithProvider，让 ChannelProvider 和 Extension 关联起来 🐛 (\(reason))")
 
         IPCConnection.shared.register(withExtension: ExtensionConfig.extensionBundle, delegate: self) { success in
             if success {
