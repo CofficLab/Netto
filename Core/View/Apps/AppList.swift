@@ -80,9 +80,23 @@ extension AppList {
 
         let apps = mergedIds.map({ SmartApp.fromId($0) })
         
-        let baseApps = apps.sorted(by: { $0.name < $1.name })
+        let baseApps = apps
             .filter { !$0.isSystemApp || ($0.isSystemApp && $0.hidden == false) }
             .filter { $0.hasId }
+            .sorted { app1, app2 in
+                let isApp1Denied = deniedIds.contains(app1.id)
+                let isApp2Denied = deniedIds.contains(app2.id)
+                
+                // 被禁止的应用优先显示
+                if isApp1Denied && !isApp2Denied {
+                    return true
+                } else if !isApp1Denied && isApp2Denied {
+                    return false
+                } else {
+                    // 同类型内按名称排序
+                    return app1.name < app2.name
+                }
+            }
         
         await MainActor.run {
             self.allApps = baseApps
