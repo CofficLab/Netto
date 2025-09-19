@@ -108,12 +108,12 @@ extension FirewallService {
     /// 获取当前app对应的系统扩展版本信息
     func getCurrentExtensionVersion() -> (version: String, shortVersion: String, identifier: String)? {
         guard let extensionIdentifier = extensionBundle.bundleIdentifier else {
-            os_log("\(self.t)extensionBundle.bundleIdentifier 为空")
+            os_log(.error, "\(self.t)extensionBundle.bundleIdentifier 为空")
             return nil
         }
 
         guard let version = extensionBundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String else {
-            os_log("\(self.t)extensionBundle CFBundleVersion 为空")
+            os_log(.error, "\(self.t)extensionBundle CFBundleVersion 为空")
             return nil
         }
 
@@ -132,8 +132,8 @@ extension FirewallService {
 }
 
 // MARK: - 接收系统扩展相关操作的结果
-
 // 系统扩展：指的是系统设置 - 通用 - 登录项与扩展 - 网络扩展
+
 extension FirewallService: OSSystemExtensionRequestDelegate {
     /// 接收系统扩展的激活结果
     func request(
@@ -142,11 +142,11 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
     ) {
         switch result {
         case .completed:
-            os_log("\(self.t)✅ 收到结果：系统扩展已激活")
+            os_log("\(self.t)✅ 收到结果：系统扩展已激活。当前状态：\(self.status.description)")
             self.emit(.extensionDidInstall)
 
             // 更新系统状态
-            if self.status.isExtensionNotActivated() {
+            if self.status.isSystemExtensionNotReady() {
                 Task {
                     await self.updateStatus(.stopped)
                 }
@@ -278,6 +278,27 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
 
         os_log("\(self.t)  - 决定: 替换现有扩展")
         return .replace
+    }
+}
+
+// MARK: - OSSystemExtensionsWorkspaceObserver
+
+extension FirewallService: OSSystemExtensionsWorkspaceObserver {
+    @available(macOS 15.1, *)
+    func systemExtensionWillBecomeEnabled(_ systemExtensionInfo: OSSystemExtensionInfo) {
+        os_log("\(self.t)🍋 systemExtensionWillBecomeEnabled")
+        
+        self.registerWithProvider(reason: "systemExtensionWillBecomeEnabled")
+    }
+
+    @available(macOS 15.1, *)
+    func systemExtensionWillBecomeDisabled(_ systemExtensionInfo: OSSystemExtensionInfo) {
+        os_log("\(self.t)🍋 systemExtensionWillBecomeDisabled")
+    }
+
+    @available(macOS 15.1, *)
+    func systemExtensionWillBecomeInactive(_ systemExtensionInfo: OSSystemExtensionInfo) {
+        os_log("\(self.t)🍋 systemExtensionWillBecomeInactive")
     }
 }
 

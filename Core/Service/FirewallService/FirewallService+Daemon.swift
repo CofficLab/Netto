@@ -41,7 +41,7 @@ extension FirewallService {
         try await NEFilterManager.shared().loadFromPreferences()
     }
 
-    private func registerWithProvider(reason: String) {
+    func registerWithProvider(reason: String) {
         os_log("\(self.t)🛫 registerWithProvider，让 ChannelProvider 和 Extension 关联起来 🐛 (\(reason))")
 
         IPCConnection.shared.register(withExtension: ExtensionConfig.extensionBundle, delegate: self) { success in
@@ -81,7 +81,7 @@ extension FirewallService: AppCommunication {
     ///   - direction: 网络流量方向
     ///   - responseHandler: 响应处理回调
     nonisolated func promptUser(id: String, hostname: String, port: String, direction: NETrafficDirection, responseHandler: @escaping (Bool) -> Void) {
-        let verbose = true
+        let verbose = false
         let printAllowed = true
         let printDenied = true
 
@@ -124,27 +124,6 @@ extension FirewallService: AppCommunication {
                 os_log(.error, "\(Self.t)❌ 存储事件到数据库失败: \(error)")
             }
         }
-    }
-}
-
-// MARK: - OSSystemExtensionsWorkspaceObserver
-
-extension FirewallService: OSSystemExtensionsWorkspaceObserver {
-    @available(macOS 15.1, *)
-    func systemExtensionWillBecomeEnabled(_ systemExtensionInfo: OSSystemExtensionInfo) {
-        os_log("\(self.t)🍋 systemExtensionWillBecomeEnabled")
-        
-        self.registerWithProvider(reason: "systemExtensionWillBecomeEnabled")
-    }
-
-    @available(macOS 15.1, *)
-    func systemExtensionWillBecomeDisabled(_ systemExtensionInfo: OSSystemExtensionInfo) {
-        os_log("\(self.t)🍋 systemExtensionWillBecomeDisabled")
-    }
-
-    @available(macOS 15.1, *)
-    func systemExtensionWillBecomeInactive(_ systemExtensionInfo: OSSystemExtensionInfo) {
-        os_log("\(self.t)🍋 systemExtensionWillBecomeInactive")
     }
 }
 

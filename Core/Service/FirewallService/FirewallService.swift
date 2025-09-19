@@ -7,6 +7,8 @@ import SystemExtensions
 
 final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, SuperThread, @unchecked Sendable {
     nonisolated static let emoji = "🛡️"
+    nonisolated static let verbose = false
+    
     static let shared = FirewallService()
 
     var ipc = IPCConnection.shared
@@ -88,7 +90,10 @@ final class FirewallService: NSObject, ObservableObject, SuperLog, SuperEvent, S
             queue: .main
         ) { _ in
             let enabled = NEFilterManager.shared().isEnabled
-            os_log("\(self.t)\(enabled ? "👀 监听到 Filter 已打开 " : "👀 监听到 Fitler 已关闭")")
+            
+            if Self.verbose {
+                os_log("\(self.t)\(enabled ? "👀 监听到 Filter 已打开 " : "👀 监听到 Fitler 已关闭")")
+            }
 
             Task {
                 await self.updateStatus(enabled ? .running : .stopped)

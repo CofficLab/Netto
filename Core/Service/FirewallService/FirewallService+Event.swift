@@ -17,8 +17,8 @@ extension Notification.Name {
     /// 防火墙即将启动
     static let firewallWillStart = Notification.Name("firewallWillStart")
     
-    /// 防火墙即将停止
-    static let firewallWillStop = Notification.Name("firewallWillStop")
+    /// 过滤器即将停止
+    static let filterWillStop = Notification.Name("firewallWillStop")
     
     /// 防火墙配置变化
     static let firewallConfigurationChanged = Notification.Name("firewallConfigurationChanged")
@@ -101,7 +101,7 @@ extension View {
     /// 监听防火墙停止事件
     /// - Parameter action: 停止时的回调
     func onFirewallWillStop(_ action: @escaping () -> Void) -> some View {
-        self.onReceive(NotificationCenter.default.publisher(for: .firewallWillStop)) { _ in
+        self.onReceive(NotificationCenter.default.publisher(for: .filterWillStop)) { _ in
             action()
         }
     }

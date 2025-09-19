@@ -170,6 +170,16 @@ enum FilterStatus: Equatable {
         }
     }
 
+    /// 系统扩展是否准备好, 包括未安装和需要更新
+    func isSystemExtensionNotReady() -> Bool {
+        switch self {
+        case.systemExtensionNotInstalled, .systemExtensionNeedUpdate, .needSystemExtensionApproval:
+            true
+        default:
+            false
+        }
+    }   
+
     func canStart() -> Bool {
         switch self {
         case.stopped, .indeterminate,  .disabled:
