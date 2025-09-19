@@ -6,7 +6,6 @@ import SwiftUI
 class UIProvider: ObservableObject {
     @Published var dbVisible: Bool = false
     @Published var displayType: DisplayType = .All
-    @Published var showSystemApps: Bool = false
     @Published var activePopoverAppId: String = ""
     @Published var shouldShowUpgradeGuide: Bool = false
     
@@ -42,7 +41,6 @@ class UIProvider: ObservableObject {
     func cleanup() {
         dbVisible = false
         displayType = .All
-        showSystemApps = false
         activePopoverAppId = ""
         shouldShowUpgradeGuide = false
     }

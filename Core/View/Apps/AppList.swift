@@ -81,7 +81,7 @@ extension AppList {
         let apps = mergedIds.map({ SmartApp.fromId($0) })
         
         let baseApps = apps.sorted(by: { $0.name < $1.name })
-            .filter { ui.showSystemApps || !$0.isSystemApp }
+            .filter { !$0.isSystemApp || ($0.isSystemApp && $0.hidden == false) }
             .filter { $0.hasId }
         
         await MainActor.run {
