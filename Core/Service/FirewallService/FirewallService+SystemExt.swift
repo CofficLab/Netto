@@ -248,9 +248,13 @@ extension FirewallService: OSSystemExtensionRequestDelegate {
                 os_log("\(self.t)  - 已安装版本: \(latest.bundleVersion) (\(latest.bundleShortVersion))")
                 os_log("\(self.t)  - 版本差异: 当前版本未安装，但有其他版本已安装")
                 
-                // 当前版本未安装，但有其他版本已安装，设置为需要更新状态
                 Task {
+                    // 当前版本未安装，但有其他版本已安装，设置为需要更新状态
                     await self.updateStatus(.systemExtensionNeedUpdate)
+                    
+                    // 静默安装，也就是升级
+                    os_log("\(self.t)⬆️ 升级系统扩展")
+                    self.installExtension()
                 }
             } else {
                 os_log("\(self.t)  - 版本差异: 当前版本未安装，且无其他版本")
