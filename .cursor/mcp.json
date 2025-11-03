@@ -1,0 +1,10 @@
+{
+    "mcpServers": {
+        "apple-docs": {
+            "command": "npx",
+            "args": [
+                "apple-doc-mcp-server@latest"
+            ]
+        }
+    }
+}

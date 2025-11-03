@@ -2,7 +2,7 @@ import MagicCore
 import SwiftUI
 import MagicBackground
 
-struct Topbar: View {
+struct TopBar: View {
     @EnvironmentObject var p: PluginProvider
 
     var body: some View {

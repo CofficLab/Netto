@@ -12,7 +12,7 @@ class FilterDataProvider: NEFilterDataProvider, SuperLog {
      * 启动网络过滤器
      * 配置过滤规则并启动网络数据过滤功能
      */
-    override func startFilter(completionHandler: @escaping @Sendable (Error?) -> Void) {
+    override func startFilter(completionHandler: @escaping (Error?) -> Void) {
         ipc.log("🚀 startFilter")
 
         // Filter incoming TCP connections on port 8888

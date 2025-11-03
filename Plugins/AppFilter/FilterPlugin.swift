@@ -11,7 +11,7 @@ actor FilterPlugin: SuperPlugin {
     }
     
     @MainActor
-    func getTopbarPosition() -> TopbarPosition {
+    func getTopBarPosition() -> TopBarPosition {
         return .center
     }
 }

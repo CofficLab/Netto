@@ -6,7 +6,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Topbar()
+            TopBar()
 
             AppList()
         }

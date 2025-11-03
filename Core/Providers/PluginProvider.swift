@@ -38,7 +38,7 @@ class PluginProvider: ObservableObject, SuperLog, SuperThread {
                 
                 for plugin in plugins {
                     let buttons = plugin.addToolBarButtons()
-                    let position = plugin.getTopbarPosition()
+                    let position = plugin.getTopBarPosition()
                     
                     switch position {
                     case .left:
