@@ -6,7 +6,8 @@ import SwiftUI
  * 应用列表视图
  * 
  * 显示和管理应用列表，支持根据显示类型过滤应用。
- * 当防火墙未运行或列表为空时显示引导视图。
+ * 当防火墙未运行或需要升级时显示引导视图。
+ * 当列表为空时显示优雅的空视图。
  */
 struct AppList: View, SuperLog {
     /// UI状态提供者
@@ -51,22 +52,34 @@ struct AppList: View, SuperLog {
     /// 构建应用列表视图
     var body: some View {
         ZStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    ForEach(Array((filtedApps.isNotEmpty ? filtedApps : SmartApp.samples).enumerated()), id: \.element.id) { index, app in
-                        AppLine(app: app)
-                        if index < (allApps.isNotEmpty ? allApps : SmartApp.samples).count - 1 {
-                            Divider()
+            if filtedApps.isEmpty && !shouldShowGuide {
+                // 显示空视图：当列表为空且不需要显示引导视图时
+                AppListEmptyView(displayType: ui.displayType)
+            } else {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        ForEach(Array((filtedApps.isNotEmpty ? filtedApps : SmartApp.samples).enumerated()), id: \.element.id) { index, app in
+                            AppLine(app: app)
+                            if index < (allApps.isNotEmpty ? allApps : SmartApp.samples).count - 1 {
+                                Divider()
+                            }
                         }
                     }
                 }
             }
 
-            if firewall.status.isNotRunning() || filtedApps.isEmpty || ui.shouldShowUpgradeGuide {
+            if shouldShowGuide {
                 GuideView()
             }
         }
         .onAppear(perform: handleOnAppear)
+    }
+    
+    /// 是否需要显示引导视图
+    /// 
+    /// 当防火墙未运行或需要升级时显示引导视图。
+    private var shouldShowGuide: Bool {
+        firewall.status.isNotRunning() || ui.shouldShowUpgradeGuide
     }
 }
 
@@ -149,6 +162,12 @@ extension AppList {
 
 // MARK: - Preview
 #Preview("App") {
+    ContentView()
+        .inRootView()
+        .frame(width: 600, height: 600)
+}
+
+#Preview("AppList") {
     AppList()
         .inRootView()
         .frame(width: 600, height: 800)
