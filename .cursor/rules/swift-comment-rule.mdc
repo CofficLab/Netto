@@ -1,0 +1,571 @@
+---
+globs: *.swift
+description: Swift 文件注释规范
+---
+
+# Swift 文件注释规范
+
+本规则约束 Swift 文件的注释规范，确保每个 Swift 文件都有符合最佳实践的注释，提升代码可读性和可维护性。
+
+## 注释类型
+
+### 文档注释（Documentation Comments）
+
+使用 `///` 或 `/** */` 格式编写文档注释，这些注释会被 Xcode 和其他文档工具识别。
+
+#### 单行文档注释
+
+```swift
+/// 根据应用ID创建SmartApp实例
+/// - Parameter id: 应用程序ID
+/// - Returns: 对应的SmartApp实例
+static func fromId(_ id: String) -> Self {
+    // 实现
+}
+```
+
+#### 多行文档注释
+
+```swift
+/**
+ * 用途：详细描述这个结构体的功能和用途
+ * 属性说明：
+ *   - property1: 属性1的用途说明
+ *   - property2: 属性2的用途说明
+ * 使用场景：描述在什么情况下使用这个结构体
+ */
+struct StructName {
+    // 实现
+}
+```
+
+### 行内注释（Inline Comments）
+
+使用 `//` 编写行内注释，用于解释代码逻辑。
+
+```swift
+// 提取环境对象引用以避免数据竞争
+let repo = self.repo
+
+// 获取"自会话开始以来产生过事件的应用ID"
+let since = eventRepo.sessionStartDate
+```
+
+## 文件注释要求
+
+### 类型注释（必需）
+
+每个 `class`、`struct`、`enum`、`protocol` 都必须添加注释说明其用途和职责。
+
+#### 类注释模板
+
+```swift
+/**
+ * 应用提供者类
+ * 
+ * 负责管理和提供应用相关的数据和状态。
+ * 使用 ObservableObject 协议支持 SwiftUI 数据绑定。
+ */
+class AppProvider: ObservableObject {
+    // 实现
+}
+```
+
+#### 结构体注释模板
+
+```swift
+/**
+ * 智能应用结构体
+ * 
+ * 表示一个应用程序的基本信息，包括ID、名称、图标等。
+ * 支持 Identifiable、Sendable、Equatable 协议。
+ */
+struct SmartApp: Identifiable, Sendable {
+    // 实现
+}
+```
+
+#### 枚举注释模板
+
+```swift
+/**
+ * 显示类型枚举
+ * 
+ * 定义应用列表的显示过滤类型：
+ * - All: 显示所有应用
+ * - Allowed: 仅显示允许的应用
+ * - Rejected: 仅显示被拒绝的应用
+ */
+enum DisplayType: String {
+    case All
+    case Allowed
+    case Rejected
+}
+```
+
+#### 协议注释模板
+
+```swift
+/**
+ * 超级插件协议
+ * 
+ * 所有插件必须遵循此协议，提供统一的插件接口。
+ * 包括插件的生命周期管理和配置方法。
+ */
+protocol SuperPlugin {
+    // 协议定义
+}
+```
+
+### 属性注释（必需）
+
+所有存储属性、计算属性、静态属性都应该添加注释说明其用途。
+
+#### 存储属性注释
+
+```swift
+struct AppList: View {
+    /// 应用列表
+    @State private var allApps: [SmartApp] = []
+    
+    /// 被拒绝的应用ID列表
+    @State private var deniedIds: [String] = []
+    
+    /// 是否是系统应用
+    var isSystemApp: Bool = false
+}
+```
+
+#### 计算属性注释
+
+```swift
+struct AppList: View {
+    /// 过滤后的应用列表
+    /// 根据显示类型和隐藏状态进行过滤
+    var filtedApps: [SmartApp] {
+        // 实现
+    }
+    
+    /// 是否有有效的应用ID
+    var hasId: Bool { 
+        id.isNotEmpty 
+    }
+}
+```
+
+#### 环境对象注释
+
+```swift
+struct AppList: View {
+    /// UI状态提供者
+    @EnvironmentObject private var ui: UIProvider
+    
+    /// 应用设置仓库
+    @EnvironmentObject private var repo: AppSettingRepo
+}
+```
+
+### 方法/函数注释（必需）
+
+所有 `public`、`internal` 方法必须添加文档注释。`private` 方法如果逻辑复杂，也应该添加注释。
+
+#### 公共方法注释
+
+```swift
+/**
+ * 获取应用图标
+ * 
+ * 优先返回系统应用图标，其次返回运行中的应用图标，
+ * 最后返回默认图标。
+ * 
+ * - Returns: 应用图标视图
+ */
+func getIcon() -> some View {
+    // 实现
+}
+```
+
+#### 带参数的方法注释
+
+```swift
+/**
+ * 根据应用ID创建SmartApp实例
+ * 
+ * 优先从运行中的应用列表查找，其次从系统应用列表查找，
+ * 如果都找不到则创建未知应用实例。
+ * 
+ * - Parameter id: 应用程序ID（Bundle Identifier）
+ * - Returns: 对应的SmartApp实例，如果找不到则返回未知应用
+ */
+static func fromId(_ id: String) -> Self {
+    // 实现
+}
+```
+
+#### 带多个参数的方法注释
+
+```swift
+/**
+ * 更新应用列表
+ * 
+ * 根据提供的应用列表和被拒绝的应用ID列表更新状态。
+ * 此方法必须在主线程上调用。
+ * 
+ * - Parameters:
+ *   - apps: 应用列表
+ *   - deniedIds: 被拒绝的应用ID列表
+ */
+@MainActor
+func setApps(_ apps: [SmartApp], deniedIds: [String]) {
+    // 实现
+}
+```
+
+#### 抛出错误的方法注释
+
+```swift
+/**
+ * 获取被拒绝的应用列表
+ * 
+ * 从数据库中查询所有被拒绝访问的应用设置记录。
+ * 
+ * - Returns: 被拒绝的应用ID列表
+ * - Throws: 如果数据库查询失败则抛出错误
+ */
+func getDeniedApps() async throws -> [String] {
+    // 实现
+}
+```
+
+#### 私有方法注释
+
+```swift
+// MARK: - Event Handler
+extension AppList {
+    /// 处理视图出现事件
+    /// 
+    /// 当视图出现时，异步加载应用列表数据。
+    private func handleOnAppear() {
+        Task {
+            await loadData()
+        }
+    }
+    
+    /// 加载应用列表数据
+    /// 
+    /// 从事件仓库和应用设置仓库获取数据，合并并去重后更新状态。
+    private func loadData() async {
+        // 实现
+    }
+}
+```
+
+### 复杂逻辑注释（推荐）
+
+对于复杂的业务逻辑、算法、特殊处理等，应该添加行内注释说明"为什么"而不是"是什么"。
+
+```swift
+private func loadData() async {
+    // 提取环境对象引用以避免数据竞争
+    let repo = self.repo
+    let eventRepo = self.eventRepo
+    
+    // 获取"自会话开始以来产生过事件的应用ID"
+    let since = eventRepo.sessionStartDate
+    let eventAppIds = await withCheckedContinuation { continuation in
+        eventRepo.getAppIdsSinceAsync(since) { appIds in
+            continuation.resume(returning: appIds)
+        }
+    }
+    
+    // 合并并去重：将事件应用ID和被拒绝应用ID合并
+    let mergedIds: [String] = Array(Set(eventAppIds).union(deniedIds))
+    
+    // 过滤系统应用：仅保留非系统应用或未隐藏的系统应用
+    let baseApps = apps
+        .filter { !$0.isSystemApp || ($0.isSystemApp && $0.hidden == false) }
+        .filter { $0.hasId }
+        .sorted { app1, app2 in
+            let isApp1Denied = deniedIds.contains(app1.id)
+            let isApp2Denied = deniedIds.contains(app2.id)
+            
+            // 被禁止的应用优先显示
+            if isApp1Denied && !isApp2Denied {
+                return true
+            } else if !isApp1Denied && isApp2Denied {
+                return false
+            } else {
+                // 同类型内按名称排序
+                return app1.name < app2.name
+            }
+        }
+}
+```
+
+### MARK 注释（参考 swift-mark-rule）
+
+使用 `// MARK: -` 进行代码分组，提升代码可读性和导航效率。
+
+```swift
+// MARK: - Action
+extension MyView {
+    func refresh() { }
+}
+
+// MARK: - Setter
+extension MyView {
+    @MainActor
+    func setItems(_ items: [String]) { }
+}
+
+// MARK: - Event Handler
+extension MyView {
+    func handleOnAppear() { }
+}
+```
+
+详细规范请参考：`swift-mark-rule.mdc`
+
+### TODO/FIXME/XXX 注释
+
+使用标准格式标记待办事项和已知问题。
+
+```swift
+// TODO: 优化数据加载性能，考虑使用缓存
+// FIXME: 修复并发访问问题
+// XXX: 这是一个临时解决方案，需要重构
+// NOTE: 这个方法在 iOS 上不可用，仅支持 macOS
+// WARNING: 此方法可能引起内存泄漏，需要进一步测试
+// HACK: 临时解决方案，等待 API 更新后移除
+```
+
+## 注释最佳实践
+
+### 1. 注释应该说明"为什么"而不是"是什么"
+
+```swift
+// ❌ 错误 - 说明"是什么"
+// 循环遍历数组
+for item in items {
+    process(item)
+}
+
+// ✅ 正确 - 说明"为什么"
+// 需要处理所有待处理的项目，因为它们在后台队列中可能已过期
+for item in items {
+    process(item)
+}
+```
+
+### 2. 保持注释与代码同步
+
+- 当代码更改时，及时更新相关注释
+- 删除无用的注释，避免误导
+- 定期审查注释的准确性
+
+### 3. 使用简洁明了的语言
+
+- 使用中文编写注释（项目要求）
+- 避免使用过于技术性的术语
+- 保持注释简洁，避免冗长
+
+### 4. 文档注释格式规范
+
+使用 Swift 标准文档注释格式：
+
+```swift
+/**
+ * 方法描述
+ * 
+ * 详细说明（可选）
+ * 
+ * - Parameter param1: 参数1说明
+ * - Parameter param2: 参数2说明
+ * - Returns: 返回值说明
+ * - Throws: 可能抛出的错误说明
+ * 
+ * 使用示例：
+ * ```swift
+ * let result = method(param1: value1, param2: value2)
+ * ```
+ */
+```
+
+### 5. 避免过度注释
+
+- 代码本身应该清晰易懂
+- 不要为显而易见的代码添加注释
+- 注释应该增加价值，而不是重复代码
+
+```swift
+// ❌ 错误 - 过度注释
+// 设置变量 x 为 10
+var x = 10
+
+// ✅ 正确 - 代码本身已足够清晰
+var maxRetryCount = 10
+
+// ✅ 正确 - 注释解释了为什么是这个值
+// 根据服务器配置，最大重试次数为 10
+var maxRetryCount = 10
+```
+
+## 完整示例
+
+```swift
+import SwiftUI
+
+/**
+ * 应用列表视图
+ * 
+ * 显示和管理应用列表，支持根据显示类型过滤应用。
+ * 当防火墙未运行时显示引导视图。
+ */
+struct AppList: View, SuperLog {
+    /// UI状态提供者
+    @EnvironmentObject private var ui: UIProvider
+    
+    /// 应用设置仓库
+    @EnvironmentObject private var repo: AppSettingRepo
+    
+    /// 事件仓库
+    @EnvironmentObject private var eventRepo: EventRepo
+    
+    /// 防火墙服务
+    @EnvironmentObject private var firewall: FirewallService
+    
+    /// 应用列表
+    @State private var allApps: [SmartApp] = []
+    
+    /// 被拒绝的应用ID列表
+    @State private var deniedIds: [String] = []
+    
+    /// 过滤后的应用列表
+    /// 
+    /// 根据显示类型（全部/允许/拒绝）和隐藏状态进行过滤。
+    var filtedApps: [SmartApp] {
+        let base: [SmartApp] = {
+            switch ui.displayType {
+            case .All:
+                return allApps
+            case .Allowed:
+                return allApps.filter({ self.deniedIds.contains($0.id) == false })
+            case .Rejected:
+                return allApps.filter({ self.deniedIds.contains($0.id) })
+            }
+        }()
+        return base.filter { $0.hidden == false }
+    }
+
+    nonisolated static let emoji = "🖥️"
+
+    /// 构建应用列表视图
+    var body: some View {
+        // 实现
+    }
+}
+
+// MARK: - Setter
+extension AppList {
+    /// 更新应用列表状态
+    /// 
+    /// 在主线程上更新应用列表和被拒绝的应用ID列表。
+    /// 
+    /// - Parameters:
+    ///   - apps: 应用列表
+    ///   - deniedIds: 被拒绝的应用ID列表
+    @MainActor
+    private func setApps(_ apps: [SmartApp], deniedIds: [String]) {
+        self.allApps = apps
+        self.deniedIds = deniedIds
+    }
+}
+
+// MARK: - Event Handler
+extension AppList {
+    /// 处理视图出现事件
+    /// 
+    /// 当视图出现时，异步加载应用列表数据。
+    private func handleOnAppear() {
+        Task {
+            await loadData()
+        }
+    }
+    
+    /// 加载应用列表数据
+    /// 
+    /// 从事件仓库获取产生过事件的应用ID，从应用设置仓库获取被拒绝的应用ID，
+    /// 合并去重后创建应用实例并排序更新状态。
+    private func loadData() async {
+        // 提取环境对象引用以避免数据竞争
+        let repo = self.repo
+        let eventRepo = self.eventRepo
+        
+        // 获取"自会话开始以来产生过事件的应用ID"
+        let since = eventRepo.sessionStartDate
+        let eventAppIds = await withCheckedContinuation { continuation in
+            eventRepo.getAppIdsSinceAsync(since) { appIds in
+                continuation.resume(returning: appIds)
+            }
+        }
+        
+        // 获取"被禁止的应用ID"
+        let deniedIds: [String] = await Task { @MainActor in
+            (try? await repo.getDeniedApps()) ?? []
+        }.value
+        
+        // 合并并去重
+        let mergedIds: [String] = Array(Set(eventAppIds).union(deniedIds))
+        
+        let apps = mergedIds.map({ SmartApp.fromId($0) })
+        
+        // 过滤系统应用：仅保留非系统应用或未隐藏的系统应用
+        let baseApps = apps
+            .filter { !$0.isSystemApp || ($0.isSystemApp && $0.hidden == false) }
+            .filter { $0.hasId }
+            .sorted { app1, app2 in
+                let isApp1Denied = deniedIds.contains(app1.id)
+                let isApp2Denied = deniedIds.contains(app2.id)
+                
+                // 被禁止的应用优先显示
+                if isApp1Denied && !isApp2Denied {
+                    return true
+                } else if !isApp1Denied && isApp2Denied {
+                    return false
+                } else {
+                    // 同类型内按名称排序
+                    return app1.name < app2.name
+                }
+            }
+        
+        setApps(baseApps, deniedIds: deniedIds)
+    }
+}
+
+// MARK: - Preview
+#Preview("App") {
+    AppList()
+        .inRootView()
+        .frame(width: 600, height: 600)
+}
+```
+
+## 检查清单
+
+在提交代码前，确保以下注释都已添加：
+
+- [ ] 所有类型（class、struct、enum、protocol）都有注释
+- [ ] 所有公共属性都有注释
+- [ ] 所有公共方法都有文档注释（包含参数和返回值说明）
+- [ ] 复杂逻辑有行内注释说明
+- [ ] 私有方法如果逻辑复杂，也有注释
+- [ ] 所有 MARK 分组都有注释
+- [ ] 注释使用中文编写
+- [ ] 注释与代码保持同步
+
+## 注意事项
+
+- 注释应该简洁明了，避免冗余
+- 优先让代码本身清晰易懂，而不是依赖注释
+- 及时更新注释，保持与代码同步
+- 参考其他规范文件：`swift-mark-rule.mdc`、`swift-preview-rule.mdc`

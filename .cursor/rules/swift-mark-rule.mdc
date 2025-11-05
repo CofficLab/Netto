@@ -34,19 +34,26 @@ description: 视图文件的 MARK 分组规范
 
 ## 预览（与 swift-preview-rule 协同）
 
-文件末尾必须包含多尺寸预览，使用 `AppPreview()` 作为默认内容，满足不同设备调试需求。若已有其他预览，至少补齐以下四种：
+文件末尾必须包含预览代码，分为两部分：
+
+1. **整个App的预览**：使用 `ContentView().inRootView()`，预览名称为 "App"
+2. **当前文件相关的预览**：使用当前文件中的视图，预览名称为视图名称
+
+预览尺寸默认为 600x600（可根据需要调整）：
 
 ```swift
-#Preview("App - Large") {
-    AppPreview()
-        .frame(width: 600, height: 1000)
-}
-
-#Preview("App - Small") {
-    AppPreview()
+// MARK: - Preview
+#Preview("App") {
+    ContentView()
+        .inRootView()
         .frame(width: 600, height: 600)
 }
-#endif
+
+#Preview("MyView") {
+    MyView()
+        .inRootView()
+        .frame(width: 600, height: 600)
+}
 ```
 
 请同时参照项目内的预览规则文件：`swift-preview-rule`。
@@ -92,14 +99,14 @@ extension MyView {
 }
 
 // MARK: - Preview
-#Preview("App - Large") {
+#Preview("App") {
     ContentView()
         .inRootView()
-        .frame(width: 600, height: 1000)
+        .frame(width: 600, height: 600)
 }
 
-#Preview("App - Small") {
-    ContentView()
+#Preview("MyView") {
+    MyView()
         .inRootView()
         .frame(width: 600, height: 600)
 }

@@ -2,16 +2,34 @@ import MagicCore
 import OSLog
 import SwiftUI
 
+/**
+ * 应用列表视图
+ * 
+ * 显示和管理应用列表，支持根据显示类型过滤应用。
+ * 当防火墙未运行或列表为空时显示引导视图。
+ */
 struct AppList: View, SuperLog {
+    /// UI状态提供者
     @EnvironmentObject private var ui: UIProvider
+    
+    /// 应用设置仓库
     @EnvironmentObject private var repo: AppSettingRepo
+    
+    /// 事件仓库
     @EnvironmentObject private var eventRepo: EventRepo
+    
+    /// 防火墙服务
     @EnvironmentObject private var firewall: FirewallService
     
     /// 应用列表
     @State private var allApps: [SmartApp] = []
+    
+    /// 被拒绝的应用ID列表
     @State private var deniedIds: [String] = []
     
+    /// 过滤后的应用列表
+    /// 
+    /// 根据显示类型（全部/允许/拒绝）和隐藏状态进行过滤。
     var filtedApps: [SmartApp] {
         let base: [SmartApp] = {
             switch ui.displayType {
@@ -27,6 +45,7 @@ struct AppList: View, SuperLog {
         return base.filter { $0.hidden == false }
     }
 
+    /// 日志表情符号
     nonisolated static let emoji = "🖥️"
 
     /// 构建应用列表视图
@@ -47,22 +66,47 @@ struct AppList: View, SuperLog {
                 GuideView()
             }
         }
-        .onAppear {
-            Task {
-                await loadData()
-            }
-        }
+        .onAppear(perform: handleOnAppear)
     }
 }
 
-// MARK: - Action
+// MARK: - Setter
 extension AppList {
+    /// 更新应用列表状态
+    /// 
+    /// 在主线程上更新应用列表和被拒绝的应用ID列表。
+    /// 
+    /// - Parameters:
+    ///   - apps: 应用列表
+    ///   - deniedIds: 被拒绝的应用ID列表
+    @MainActor
+    private func setApps(_ apps: [SmartApp], deniedIds: [String]) {
+        self.allApps = apps
+        self.deniedIds = deniedIds
+    }
+}
+
+// MARK: - Event Handler
+extension AppList {
+    /// 处理视图出现事件
+    /// 
+    /// 当视图出现时，异步加载应用列表数据。
+    private func handleOnAppear() {
+        Task {
+            await loadData()
+        }
+    }
+    
+    /// 加载应用列表数据
+    /// 
+    /// 从事件仓库获取产生过事件的应用ID，从应用设置仓库获取被拒绝的应用ID，
+    /// 合并去重后创建应用实例并排序更新状态。
     private func loadData() async {
         // 提取环境对象引用以避免数据竞争
         let repo = self.repo
         let eventRepo = self.eventRepo
         
-        // 获取“自会话开始以来产生过事件的应用ID”
+        // 获取"自会话开始以来产生过事件的应用ID"
         let since = eventRepo.sessionStartDate
         let eventAppIds = await withCheckedContinuation { continuation in
             eventRepo.getAppIdsSinceAsync(since) { appIds in
@@ -70,16 +114,17 @@ extension AppList {
             }
         }
 
-        // 获取“被禁止的应用ID”
+        // 获取"被禁止的应用ID"
         let deniedIds: [String] = await Task { @MainActor in
             (try? await repo.getDeniedApps()) ?? []
         }.value
 
-        // 合并并去重
+        // 合并并去重：将事件应用ID和被拒绝应用ID合并
         let mergedIds: [String] = Array(Set(eventAppIds).union(deniedIds))
 
         let apps = mergedIds.map({ SmartApp.fromId($0) })
         
+        // 过滤系统应用：仅保留非系统应用或未隐藏的系统应用
         let baseApps = apps
             .filter { !$0.isSystemApp || ($0.isSystemApp && $0.hidden == false) }
             .filter { $0.hasId }
@@ -98,19 +143,13 @@ extension AppList {
                 }
             }
         
-        await MainActor.run {
-            self.allApps = baseApps
-            self.deniedIds = deniedIds
-        }
+        setApps(baseApps, deniedIds: deniedIds)
     }
 }
 
-#Preview("APP") {
-    ContentView().inRootView()
-        .frame(height: 600)
-}
-
-#Preview("AppList") {
+// MARK: - Preview
+#Preview("App") {
     AppList()
         .inRootView()
+        .frame(width: 600, height: 800)
 }
