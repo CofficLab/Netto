@@ -38,6 +38,7 @@
 		A1A0000000000000000214 /* PluginFirewall in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000114 /* PluginFirewall */; };
 		A1A0000000000000000215 /* PluginStore in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000115 /* PluginStore */; };
 		A1A0000000000000000216 /* ProviderSettingView in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000116 /* ProviderSettingView */; };
+		F6A000000000000000000003 /* LumiUI in Frameworks */ = {isa = PBXBuildFile; productRef = F6A000000000000000000002 /* LumiUI */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3ED2DE463A1009CC54C /* MagicCore */; };
 		F50882A02E7BB462004FB427 /* MagicDesktop in Frameworks */ = {isa = PBXBuildFile; productRef = F508829F2E7BB462004FB427 /* MagicDesktop */; };
@@ -177,6 +178,7 @@
 				A1A0000000000000000214 /* PluginFirewall in Frameworks */,
 				A1A0000000000000000215 /* PluginStore in Frameworks */,
 				A1A0000000000000000216 /* ProviderSettingView in Frameworks */,
+				F6A000000000000000000003 /* LumiUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -313,6 +315,7 @@
 				A1A0000000000000000014 /* XCLocalSwiftPackageReference "Packages/PluginFirewall" */,
 				A1A0000000000000000015 /* XCLocalSwiftPackageReference "Packages/PluginStore" */,
 				A1A0000000000000000016 /* XCLocalSwiftPackageReference "Packages/ProviderSettingView" */,
+				F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */,
 			);
 			productRefGroup = C4B45DB622739FFF0050C59B /* Products */;
 			projectDirPath = "";
@@ -745,7 +748,15 @@
 				revision = d04a729;
 			};
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */		F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CofficLab/LumiUI";
+			requirement = {
+				kind = revision;
+				revision = 419c64ec01257f923b4139ede61377566b97b626;
+			};
+		};
+
 
 /* Begin XCSwiftPackageProductDependency section */
 		0B08D53E2E6DD82A001902DD /* MagicAlert */ = {
@@ -890,6 +901,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A1A0000000000000000016 /* XCLocalSwiftPackageReference "Packages/ProviderSettingView" */;
 			productName = ProviderSettingView;
+		};
+		F6A000000000000000000002 /* LumiUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */;
+			productName = LumiUI;
 		};
 		F500B3ED2DE463A1009CC54C /* MagicCore */ = {
 			isa = XCSwiftPackageProductDependency;

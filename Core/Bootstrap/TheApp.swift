@@ -1,3 +1,4 @@
+import LumiUI
 import MagicCore
 import OSLog
 import ProviderSettingView
@@ -24,6 +25,12 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @StateObject private var appEnv: AppEnvironment
 
     init() {
+        // 统一 LumiUI 视觉：注入内置回退 chrome 主题（氛围渐变背景），
+        // UI 主题用 LumiUI 内置 LumiDefaultTheme（森林墨）作为兜底，
+        // 与 Lumi 的启动即渲染一致，避免透明占位主题造成的样式缺失。
+        ChromeThemes.current = LumiFallbackChromeTheme()
+        setTheme(LumiDefaultTheme())
+
         // 通过局部引用启动由 StateObject 持有的同一个环境，不能在 App.init 中
         // 读取 appEnv wrappedValue（此时 SwiftUI 尚未安装 StateObject）。
         let environment = AppEnvironment.make()
@@ -108,6 +115,7 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         Window("设置", id: AppConfig.settingsWindowId) {
             if let settingsWindowView = appEnv.settingsWindowView {
                 settingsWindowView
+                    .appThemedAppearance()
             } else {
                 ProgressView("启动中…")
                     .frame(minWidth: 720, minHeight: 460)

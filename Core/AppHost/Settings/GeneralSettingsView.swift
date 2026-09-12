@@ -1,4 +1,5 @@
 import AppKit
+import LumiUI
 import SwiftUI
 
 /// 「设置」窗口 —— 通用设置面板（HostSettingsPlugin 贡献的 `general` 入口视图）。
@@ -9,9 +10,14 @@ import SwiftUI
 /// 解析 Provider 并渲染「左侧入口列表 + 右侧详情视图」（复刻 Lumi
 /// `ProviderSettingView`），组合根只装配一次并缓存。
 ///
+/// 样式：自 v2 起全部使用 **LumiUI 组件**（`AppCard` + `AppSettingsSection`
+/// + `AppSettingRow`，与 Lumi 插件设置页同构）以统一视觉；主题由 LumiUI 内置
+/// `LumiDefaultTheme`（森林墨）兜底，宿主启动时另设 `ChromeThemes.current`
+/// 为 `LumiFallbackChromeTheme` 供氛围背景使用。
+///
 /// 依赖约束：
-/// - 仅依赖 App target 常量（AppConfig）与系统框架（AppKit），不依赖任何
-///   Provider 契约注入 —— entry 视图由 KernelCore 解析链提供，独立可渲染。
+/// - 仅依赖 App target 常量（AppConfig）、LumiUI 组件与系统框架（AppKit），
+///   不依赖任何 Provider 契约注入 —— entry 视图由 KernelCore 解析链提供。
 /// - 不创建任何核心服务；数据目录口径与 PersistenceConfig/AppConfig 一致
 ///   （Debug `~/Documents/debug`，Release 沙盒容器内 production）。
 ///
@@ -31,64 +37,57 @@ struct GeneralSettingsView: View {
     }
 
     var body: some View {
-        Form {
-            Section("通用") {
-                dataFolderRow
+        VStack(alignment: .leading, spacing: 16) {
+            AppCard {
+                AppSettingsSection(title: "通用", spacing: 12) {
+                    AppSettingRow(
+                        title: "数据目录",
+                        description: dataFolder.path,
+                        icon: "folder"
+                    ) {
+                        Button("在访达中显示") {
+                            NSWorkspace.shared.activateFileViewerSelecting([dataFolder])
+                        }
+                    }
+                }
             }
 
-            Section("系统扩展") {
-                openSystemSettingsRow
+            AppCard {
+                AppSettingsSection(title: "系统扩展", spacing: 12) {
+                    AppSettingRow(
+                        title: "网络扩展",
+                        description: "打开系统设置中的网络扩展页",
+                        icon: "puzzlepiece.extension",
+                        action: openSystemSettings
+                    ) {
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
 
-            Section("关于") {
-                aboutRow
+            AppCard {
+                AppSettingsSection(title: "关于", spacing: 12) {
+                    AppSettingRow(
+                        title: AppConfig.appName,
+                        description: "版本 \(version) (\(build))",
+                        icon: "info.circle"
+                    ) {}
+                }
             }
         }
-        .formStyle(.grouped)
-        .frame(minWidth: 420, minHeight: 360)
-    }
-
-    /// 数据目录行：显示路径 + 在访达中显示。
-    private var dataFolderRow: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("数据目录")
-                Text(dataFolder.path)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .textSelection(.enabled)
-            }
-            Spacer()
-            Button("在访达中显示") {
-                NSWorkspace.shared.activateFileViewerSelecting([dataFolder])
-            }
-        }
-        .padding(.vertical, 2)
+        .padding(16)
+        .frame(minWidth: 420, minHeight: 360, alignment: .topLeading)
     }
 
     /// 打开 macOS 系统设置中的网络扩展页（旧 BtnSetting 行为）。
-    private var openSystemSettingsRow: some View {
-        Button("打开系统设置") {
-            if let url = URL(
-                string: "x-apple.systempreferences:com.apple.ExtensionsPreferences?extensionPointIdentifier=com.apple.system_extension.network_extension.extension-point"
-            ) {
-                NSWorkspace.shared.open(url)
-            }
+    private func openSystemSettings() {
+        if let url = URL(
+            string: "x-apple.systempreferences:com.apple.ExtensionsPreferences?extensionPointIdentifier=com.apple.system_extension.network_extension.extension-point"
+        ) {
+            NSWorkspace.shared.open(url)
         }
-    }
-
-    /// 关于行：应用名 + 版本/构建。
-    private var aboutRow: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(AppConfig.appName)
-                Text("版本 \(version) (\(build))")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
-        }
-        .padding(.vertical, 2)
     }
 }
 
