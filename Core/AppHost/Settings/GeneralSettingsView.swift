@@ -15,6 +15,11 @@ import SwiftUI
 /// `LumiDefaultTheme`（森林墨）兜底，宿主启动时另设 `ChromeThemes.current`
 /// 为 `LumiFallbackChromeTheme` 供氛围背景使用。
 ///
+/// 「使用引导」入口：通用卡片内新增「使用引导」行（复刻 Lumi 设置页
+/// `AppSettingRow` 动作行形态），点击以 sheet 展示 `WelcomeGuideView`
+/// （使用引导步骤，无 Provider 环境依赖、不创建核心服务；与启动欢迎窗
+/// 共用同一视图，`hasShownWelcome` 键与旧实现一致）。
+///
 /// 依赖约束：
 /// - 仅依赖 App target 常量（AppConfig）、LumiUI 组件与系统框架（AppKit），
 ///   不依赖任何 Provider 契约注入 —— entry 视图由 KernelCore 解析链提供。
@@ -23,6 +28,9 @@ import SwiftUI
 ///
 /// 线程/actor：`View`，body 求值无副作用；按钮动作在主线程执行。
 struct GeneralSettingsView: View {
+    /// 是否展示「使用引导」sheet（点击通用卡片「使用引导」行置位）。
+    @State private var showGuide = false
+
     /// 数据目录（与 AppConfig.databaseFolder 一致）。
     private var dataFolder: URL { AppConfig.databaseFolder }
 
@@ -40,6 +48,17 @@ struct GeneralSettingsView: View {
         VStack(alignment: .leading, spacing: 16) {
             AppCard {
                 AppSettingsSection(title: "通用", spacing: 12) {
+                    AppSettingRow(
+                        title: "使用引导",
+                        description: "查看应用使用说明",
+                        icon: "graduationcap.fill",
+                        action: { showGuide = true }
+                    ) {
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
                     AppSettingRow(
                         title: "数据目录",
                         description: dataFolder.path,
@@ -79,6 +98,12 @@ struct GeneralSettingsView: View {
         }
         .padding(16)
         .frame(minWidth: 420, minHeight: 360, alignment: .topLeading)
+        // 「使用引导」sheet：尺寸与启动欢迎窗一致（500x600），
+        // WelcomeGuideView 的「开始使用」按钮经 @Environment(\.dismiss) 关闭 sheet。
+        .sheet(isPresented: $showGuide) {
+            WelcomeGuideView()
+                .frame(width: 500, height: 600)
+        }
     }
 
     /// 打开 macOS 系统设置中的网络扩展页（旧 BtnSetting 行为）。
