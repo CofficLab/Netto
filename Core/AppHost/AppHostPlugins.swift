@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import PluginShell
 import PluginStore
+import ProviderSettingView
 import ProviderShell
 import SwiftUI
 
@@ -188,18 +189,19 @@ final class HostSettingsPlugin: KernelCore.SuperPlugin {
         let shell = try kernel.requireProvider(SettingsProviding.self) as? ShellCenter
         guard let shell else { throw KernelCoreError.providerNotFound(type: "ShellCenter") }
         contribute(into: shell)
+        // 设置窗口入口注入（复刻 Lumi PluginSettingView 模式：插件在 onBoot
+        // 向 SettingViewProviding 注入 SettingEntryItem，Factory 装配的设置
+        // 窗口渲染「左侧入口列表 + 右侧详情视图」）。
+        if let settingsView = kernel.resolveProvider(SettingViewProviding.self) {
+            settingsView.addEntries([
+                SettingEntryItem(id: "general", title: "通用", systemImage: "gearshape", order: 5) {
+                    GeneralSettingsView()
+                },
+            ])
+        }
     }
 
     func contribute(into shell: ShellCenter) {
-        // 「通用」设置入口：设置窗口（`Window("设置")`）启动时经
-        // FactoryNetto.makeSettingsWindowView 只取此 entry 渲染。
-        shell.registerEntry(SettingsEntry(
-            id: "general",
-            order: 5,
-            ownerPluginID: id
-        ) {
-            AnyView(GeneralSettingsView())
-        })
         // 打开 macOS 系统设置（旧 SettingButton 插件行为，设置面板使用）。
         shell.registerEntry(SettingsEntry(
             id: "appsettings",

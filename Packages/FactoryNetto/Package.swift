@@ -23,6 +23,7 @@ let package = Package(
         .package(name: "ProviderFirewall", path: "../ProviderFirewall"),
         .package(name: "ProviderFirewallEvents", path: "../ProviderFirewallEvents"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
+        .package(name: "ProviderSettingView", path: "../ProviderSettingView"),
         .package(name: "ProviderStore", path: "../ProviderStore"),
     ],
     targets: [
@@ -39,6 +40,7 @@ let package = Package(
                 "ProviderFirewall",
                 "ProviderFirewallEvents",
                 "ProviderShell",
+                "ProviderSettingView",
                 "ProviderStore",
             ]
         ),

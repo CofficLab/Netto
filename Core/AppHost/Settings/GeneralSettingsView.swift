@@ -3,10 +3,11 @@ import SwiftUI
 
 /// 「设置」窗口 —— 通用设置面板（HostSettingsPlugin 贡献的 `general` 入口视图）。
 ///
-/// 架构归属：插件贡献视图层。HostSettingsPlugin 在 `onBoot` 通过
-/// `SettingsProviding` 契约注册 `SettingsEntry(id: "general", ...)`，本视图作为
-/// 该 entry 的 makeView 内容；`FactoryNetto.makeSettingsWindowView(kernel:)`
-/// 解析并装配到 App 的 `Window("设置")` Scene（组合根只装配一次并缓存）。
+/// 架构归属：插件贡献视图层。HostSettingsPlugin 在 `onBoot` 向
+/// `SettingViewProviding` 注入 `SettingEntryItem(id: "general", ...)`，本视图
+/// 作为该入口的详情视图（设置窗口右侧内容）；`FactoryNetto.makeSettingsView`
+/// 解析 Provider 并渲染「左侧入口列表 + 右侧详情视图」（复刻 Lumi
+/// `ProviderSettingView`），组合根只装配一次并缓存。
 ///
 /// 依赖约束：
 /// - 仅依赖 App target 常量（AppConfig）与系统框架（AppKit），不依赖任何

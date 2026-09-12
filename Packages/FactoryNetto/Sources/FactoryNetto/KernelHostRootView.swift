@@ -79,34 +79,6 @@ struct KernelHostRootView: View {
 }
 
 /// 设置视图 Host 壳 —— 列出 SettingsProviding 聚合的设置入口。
-struct SettingsHostView: View {
-    let kernel: KernelCoreContainer
-    let settings: ShellCenter?
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("设置")
-                .font(.headline)
-                .padding(.bottom, 4)
-            if let settings {
-                if settings.entries.isEmpty {
-                    Text("暂无设置入口（阶段 3 Host 占位）")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } else {
-                    ForEach(settings.entries) { entry in
-                        entry.makeView()
-                    }
-                }
-            } else {
-                BootstrapFailureView(title: "设置 Provider 未装配", message: "")
-            }
-            Spacer()
-        }
-        .padding(16)
-        .frame(minWidth: 420, minHeight: 320)
-    }
-}
 
 /// 启动失败视图（与 Lumi BootstrapFailureView 语义一致：失败必须显式呈现）。
 struct BootstrapFailureView: View {

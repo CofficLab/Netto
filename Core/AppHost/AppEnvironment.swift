@@ -122,8 +122,9 @@ final class AppEnvironment: ObservableObject {
             self.events = kernel.resolveProvider(FirewallEventsProviding.self)
             self.settings = kernel.resolveProvider(AppSettingsProviding.self)
             self.store = kernel.resolveProvider(StoreProviding.self)
-            // 设置窗口视图装配一次并缓存（组合根路径：Provider 解析 → entry 视图）。
-            self.settingsWindowView = FactoryNetto.makeSettingsWindowView(kernel: kernel)
+            // 设置窗口视图装配一次并缓存（复刻 Lumi：Factory 解析
+            // SettingViewProviding → makeSettingView 双栏设置视图）。
+            self.settingsWindowView = FactoryNetto.makeSettingsView(kernel: kernel)
             self.phase = .running
             os_log("AppEnvironment 内核启动完成")
             return true

@@ -1,5 +1,6 @@
 import MagicCore
 import OSLog
+import ProviderSettingView
 import SwiftUI
 
 /**
@@ -100,22 +101,22 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         .defaultPosition(.center)
         .defaultSize(width: 500, height: 600)
 
-        // 设置窗口（Lumi 式组合根形态）：`Window` Scene 启动时创建并显示，
-        // 内容由 FactoryNetto.makeSettingsWindowView 在 bootstrap 完成时装配
-        // 一次并缓存（AppEnvironment.settingsWindowView），不在 body 中装配。
+        // 设置窗口（复刻 Lumi 形态）：内容由 FactoryNetto.makeSettingsView
+        // 在 bootstrap 完成时装配一次并缓存（AppEnvironment.settingsWindowView），
+        // 渲染「左侧入口列表 + 右侧详情视图」；不在 body 中装配。
         // 未就绪时显示启动态，装配失败由 BootstrapFailureView 显式呈现。
         Window("设置", id: AppConfig.settingsWindowId) {
             if let settingsWindowView = appEnv.settingsWindowView {
                 settingsWindowView
             } else {
                 ProgressView("启动中…")
-                    .frame(minWidth: 420, minHeight: 360)
+                    .frame(minWidth: 720, minHeight: 460)
             }
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
         .defaultPosition(.center)
-        .defaultSize(width: 420, height: 380)
+        .defaultSize(width: 720, height: 480)
 
         // 插件窗口 - 动态显示 WindowProviding 贡献的内容
         Window("Plugin Window", id: "plugin-window") {
@@ -169,6 +170,15 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                 openWindow(id: AppConfig.welcomeWindowId)
                 shouldShowWelcomeWindow = true
                 shouldShowMenuApp = false
+            }
+            .onReceive(NotificationCenter.default.publisher(for: SettingViewNavigation.openSettingsNotification)) { notification in
+                // 深链：选中目标设置入口后打开设置窗口（复刻 Lumi 行为）。
+                if let settingsView = appEnv.kernel?.resolveProvider(SettingViewProviding.self),
+                   let entryID = notification.userInfo?[SettingViewNavigation.entryIDUserInfoKey] as? String,
+                   settingsView.entries.contains(where: { $0.id == entryID }) {
+                    settingsView.selectEntry(id: entryID)
+                }
+                openWindow(id: AppConfig.settingsWindowId)
             }
             .onReceive(nc.publisher(for: .firewallDidSetDeny)) { _ in
                 // 当有应用被禁止时，重新检查状态

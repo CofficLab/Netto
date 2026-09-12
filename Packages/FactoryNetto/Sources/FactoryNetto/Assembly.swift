@@ -4,6 +4,7 @@ import PluginAppSettings
 import PluginEventStore
 import PluginPersistence
 import PluginShell
+import ProviderSettingView
 import ProviderShell
 
 /// Provider 装配协议：把 Factory 拥有的共享 Provider 实现注册进 Kernel。
@@ -14,7 +15,11 @@ public protocol ProviderAssembling {
     func registerProviders(into kernel: KernelCoreContainer) throws
 }
 
-/// 默认 Provider 装配：创建并注册 ShellCenter。
+/// 默认 Provider 装配：创建并注册 ShellCenter 与设置视图 Provider。
+///
+/// 复刻 Lumi `ProviderFactory`：`SettingViewProviding` 由 Factory 的
+/// Provider 装配注册（`DefaultSettingViewProviding`），插件在 onBoot 注入
+/// 侧边栏入口，App 通过 `makeSettingsView` 解析并渲染设置窗口。
 @MainActor
 public struct DefaultProviderAssembly: ProviderAssembling {
     public init() {}
@@ -25,6 +30,7 @@ public struct DefaultProviderAssembly: ProviderAssembling {
         try kernel.registerProvider(shell, for: SettingsProviding.self)
         try kernel.registerProvider(shell, for: WindowProviding.self)
         try kernel.registerProvider(shell, for: ToastProviding.self)
+        try kernel.registerProvider(DefaultSettingViewProviding(), for: SettingViewProviding.self)
     }
 }
 
