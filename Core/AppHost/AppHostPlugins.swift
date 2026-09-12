@@ -45,7 +45,6 @@ enum AppHostPlugins {
         HostFilterPlugin().contribute(into: shell)
         HostSettingsPlugin().contribute(into: shell)
         HostGuidePlugin().contribute(into: shell)
-        PluginStore().contribute(into: shell)
         HostDataFolderPlugin().contribute(into: shell)
         HostInstallExtensionPlugin().contribute(into: shell)
         HostAboutPlugin().contribute(into: shell)

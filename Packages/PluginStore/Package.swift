@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(name: "KernelCore", path: "../KernelCore"),
         .package(name: "ProviderStore", path: "../ProviderStore"),
+        .package(name: "ProviderSettingView", path: "../ProviderSettingView"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
         .package(name: "PluginShell", path: "../PluginShell"),
         .package(url: "https://github.com/CofficLab/MagicKit", revision: "d04a729"),
@@ -26,6 +27,7 @@ let package = Package(
             dependencies: [
                 "KernelCore",
                 "ProviderStore",
+                "ProviderSettingView",
                 "ProviderShell",
                 "PluginShell",
                 .product(name: "MagicCore", package: "MagicKit"),

@@ -1,6 +1,7 @@
 import Foundation
 import KernelCore
 import PluginShell
+import ProviderSettingView
 import ProviderShell
 import ProviderStore
 import Testing
@@ -94,12 +95,15 @@ struct StoreStateTests {
     }
 }
 
-/// PluginStore 插件装配测试（真实 Kernel + 真 ShellCenter，不触碰 StoreKit 沙盒）。
+/// PluginStore 插件装配测试（真实 Kernel + 真 Provider，不触碰 StoreKit 沙盒）。
 @MainActor
 struct PluginStorePluginTests {
-    @Test func registersProviderAndContributions() async throws {
+    @Test func registersProviderAndSettingsEntry() async throws {
         let kernel = KernelCoreContainer()
-        // 先注册 ShellCenter（SettingsProviding 依赖），再启动 PluginStore。
+        // 先注册 SettingViewProviding（DefaultSettingViewProviding）与
+        // ShellCenter，再启动 PluginStore（设置视图契约缺失时优雅降级）。
+        let settingsView = DefaultSettingViewProviding()
+        try kernel.registerProvider(settingsView, for: SettingViewProviding.self)
         try kernel.start(plugins: [MockShellPlugin(), PluginStore()])
 
         // Provider 已注册（owner=store）。
@@ -107,20 +111,15 @@ struct PluginStorePluginTests {
         #expect(store != nil)
         #expect(store is PluginStore)
 
-        // 贡献已注册：设置入口 + 窗口内容。
-        let shell = kernel.resolveProvider(ShellToolbarProviding.self) as? ShellCenter
-        let settingsShell = kernel.resolveProvider(SettingsProviding.self) as? ShellCenter
-        #expect(shell !== nil)
-        #expect(settingsShell !== nil)
-        #expect(settingsShell?.entries.contains { $0.id == "store" } == true)
-        #expect(shell?.currentContent?.id == "store-window")
+        // 商店入口已注入设置视图（替代旧主窗口 StoreBtn / store-window）。
+        let entries = settingsView.entries
+        #expect(entries.contains { $0.id == "store" } == true)
+        #expect(entries.first(where: { $0.id == "store" })?.title == "商店")
 
-        // 停止后：Provider 撤回、贡献移除。
+        // 停止后：Provider 撤回、设置入口移除。
         try await kernel.stopAsync()
         #expect(kernel.resolveProvider(StoreProviding.self) == nil)
-        let stoppedShell = kernel.resolveProvider(SettingsProviding.self) as? ShellCenter
-        #expect(stoppedShell?.entries.contains { $0.id == "store" } != true)
-        #expect(stoppedShell?.currentContent == nil)
+        #expect(settingsView.entries.contains { $0.id == "store" } != true)
     }
 
 }

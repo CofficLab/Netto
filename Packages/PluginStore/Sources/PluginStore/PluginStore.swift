@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import OSLog
 import PluginShell
+import ProviderSettingView
 import ProviderShell
 import ProviderStore
 import StoreKit
@@ -36,37 +37,28 @@ public final class PluginStore: SuperPlugin, StoreProviding {
     // MARK: - SuperPlugin
 
     public func onBoot(kernel: KernelCoreContainer) throws {
-        let shell = try kernel.requireProvider(SettingsProviding.self) as? ShellCenter
-        guard let shell else { throw KernelCoreError.providerNotFound(type: "ShellCenter") }
         try kernel.registerProvider(self, for: StoreProviding.self, owner: id)
-        contribute(into: shell)
+        // 商店迁移到设置窗口：向 SettingViewProviding 注入「商店」入口
+        // （替代旧主窗口 StoreBtn + store-window 插件窗口）。
+        kernel.resolveProvider(SettingViewProviding.self)?
+            .addEntries([
+                SettingEntryItem(id: "store", title: "商店", systemImage: "storefront", order: 30) {
+                    StoreWindowContent.windowView()
+                },
+            ])
         // 启动监听 + 校准（幂等由 kernel 保证只 onBoot 一次）。
         storeTask = Task { [weak self] in
             await self?.runStoreServices()
         }
     }
 
-    public func onShutdown() async {
+    public func onShutdown(kernel: KernelCoreContainer) throws {
+        // 停止交易监听 + 权益校准任务（不留下后台任务）。
         storeTask?.cancel()
         storeTask = nil
-    }
-
-    /// 向给定 ShellCenter 注册设置入口与窗口内容（预览与生产共用）。
-    public func contribute(into shell: ShellCenter) {
-        shell.registerEntry(SettingsEntry(
-            id: "store",
-            order: 40,
-            ownerPluginID: id
-        ) {
-            AnyView(StoreBtn())
-        })
-        shell.registerContent(WindowContentContribution(
-            id: "store-window",
-            title: "Store - TravelMode",
-            ownerPluginID: id
-        ) {
-            StoreWindowContent.windowView()
-        })
+        // 撤回设置入口（Kernel 随后按 owner 撤回 Provider）。
+        kernel.resolveProvider(SettingViewProviding.self)?
+            .removeEntries(ids: ["store"])
     }
 
     // MARK: - StoreProviding
