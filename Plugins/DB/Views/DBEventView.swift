@@ -7,7 +7,17 @@ import SwiftUI
 /// 用于展示数据库中存储的所有防火墙事件记录
 /// 阶段 6 迁移：数据经 `FirewallEventsProviding` 契约读取（替代旧 EventRepo env）。
 struct DBEventView: View {
-    @Environment(\.eventsProvider) private var repo: FirewallEventsProviding?
+    @Environment(\.eventsProvider) private var envRepo: FirewallEventsProviding?
+
+    /// 注入的事件契约（设置入口由插件在 onBoot 解析传入；nil 时回退环境）。
+    private let injectedRepo: FirewallEventsProviding?
+
+    /// 事件契约来源：注入优先，其次环境。
+    private var repo: FirewallEventsProviding? { injectedRepo ?? envRepo }
+
+    init(events: FirewallEventsProviding? = nil) {
+        self.injectedRepo = events
+    }
 
     // 存储加载的事件数据
     @State private var events: [FirewallEventSnapshot] = []

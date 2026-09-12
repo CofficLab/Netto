@@ -2,6 +2,8 @@ import Foundation
 import KernelCore
 import PluginShell
 import PluginStore
+import ProviderAppSettings
+import ProviderFirewallEvents
 import ProviderSettingView
 import ProviderShell
 import SwiftUI
@@ -49,7 +51,6 @@ enum AppHostPlugins {
         HostAboutPlugin().contribute(into: shell)
         HostQuitPlugin().contribute(into: shell)
         #if DEBUG
-        HostDBPlugin().contribute(into: shell)
         HostClearLogsPlugin().contribute(into: shell)
         #endif
     }
@@ -143,7 +144,11 @@ final class HostGuidePlugin: KernelCore.SuperPlugin {
     }
 }
 
-/// 数据库调试按钮（旧 DBPlugin；仅 DEBUG，center 位置，order 20）。
+/// 数据库调试入口（旧 DBPlugin；仅 DEBUG）。
+/// 自 v3 起不再注册主窗口工具栏按钮，改为向 `SettingViewProviding`
+/// 注入「数据库」设置入口（复刻 Lumi 插件向设置注入入口的模式）；
+/// 详情视图 `DBDatabaseDetailView` 通过 onBoot 解析的契约直接注入
+/// `FirewallEventsProviding` / `AppSettingsProviding`，不依赖视图环境。
 @MainActor
 final class HostDBPlugin: KernelCore.SuperPlugin {
     let id = "db"
@@ -154,20 +159,22 @@ final class HostDBPlugin: KernelCore.SuperPlugin {
     init() {}
 
     func onBoot(kernel: KernelCoreContainer) throws {
-        let shell = try kernel.requireProvider(ShellToolbarProviding.self) as? ShellCenter
-        guard let shell else { throw KernelCoreError.providerNotFound(type: "ShellCenter") }
-        contribute(into: shell)
+        // 设置视图未注册时优雅降级（不阻塞内核启动）。
+        guard let settingsView = kernel.resolveProvider(SettingViewProviding.self) else {
+            return
+        }
+        let events = kernel.resolveProvider(FirewallEventsProviding.self)
+        let settings = kernel.resolveProvider(AppSettingsProviding.self)
+        settingsView.addEntries([
+            SettingEntryItem(id: "database", title: "数据库", systemImage: "cylinder.split.1x2", order: 40) {
+                DBDatabaseDetailView(events: events, settings: settings)
+            },
+        ])
     }
 
-    func contribute(into shell: ShellCenter) {
-        shell.registerToolbar(ToolbarContribution(
-            id: "db",
-            position: .center,
-            order: 20,
-            ownerPluginID: id
-        ) {
-            AnyView(DBSheetButton())
-        })
+    func onShutdown(kernel: KernelCoreContainer) throws {
+        kernel.resolveProvider(SettingViewProviding.self)?
+            .removeEntries(ids: ["database"])
     }
 }
 

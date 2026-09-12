@@ -5,7 +5,17 @@ import ProviderAppSettings
 /// 数据库设置视图（DEBUG）
 /// 阶段 6 迁移：经 `AppSettingsProviding` 契约读取规则（替代视图内 @Query）。
 struct DBSettingView: View {
-    @Environment(\.settingsProvider) private var settings: AppSettingsProviding?
+    @Environment(\.settingsProvider) private var envSettings: AppSettingsProviding?
+
+    /// 注入的设置契约（设置入口由插件在 onBoot 解析传入；nil 时回退环境）。
+    private let injectedSettings: AppSettingsProviding?
+
+    /// 设置契约来源：注入优先，其次环境。
+    private var settings: AppSettingsProviding? { injectedSettings ?? envSettings }
+
+    init(settings: AppSettingsProviding? = nil) {
+        self.injectedSettings = settings
+    }
 
     /// 规则快照（契约 DTO）
     @State private var items: [AppSettingSnapshot] = []
