@@ -204,7 +204,7 @@ struct AppInfoView: View, SuperLog {
 }
 
 #Preview("APP") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(height: 600)

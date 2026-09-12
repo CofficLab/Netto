@@ -64,14 +64,14 @@ struct SystemExtensionNotInstalledView: View {
 // MARK: - Preview
 
 #Preview("App - Large") {
-    RootView {
+    RootView(environment: .preview()) {
         SystemExtensionNotInstalledView()
     }
     .frame(width: 600, height: 1000)
 }
 
 #Preview("App - Small") {
-    RootView {
+    RootView(environment: .preview()) {
         SystemExtensionNotInstalledView()
     }
     .frame(width: 600, height: 600)

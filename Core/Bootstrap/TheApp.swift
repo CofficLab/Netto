@@ -5,6 +5,9 @@ import SwiftUI
 /**
  * 应用程序主入口
  * 使用MenuBarExtra作为主要界面，通过AppDelegate处理首次启动的欢迎窗口
+ *
+ * 阶段 6 迁移后：App 启动期通过 `AppEnvironment.bootstrap()` 装配
+ * FactoryNetto 内核（KernelCore + 插件目录），不再在视图 body 中创建服务。
  */
 @main
 struct TheApp: App, SuperEvent, SuperThread, SuperLog {
@@ -15,18 +18,25 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @State private var shouldShowMenuApp = false
     @State private var shouldShowWelcomeWindow = false
     @State private var hasDeniedApps = false
-    @StateObject private var pluginWindowManager = PluginWindowManager.shared
+
+    /// App 装配宿主（唯一实例；Kernel/契约/UI 状态在此缓存）。
+    @StateObject private var appEnv = AppEnvironment.make()
 
     init() {
-        // 启动 Store 服务（监听 + 校准）
-        StoreService.bootstrap()
+        // 阶段 7：Store 交易监听/权益校准由 PluginStore.onBoot 在 AppEnvironment
+        // 内核启动时承担，此处不再直接调用 StoreService。
+        // App 启动期装配内核（幂等；失败进入 .failed 阶段由 Host 呈现）
+        let environment = appEnv
+        Task {
+            await environment.bootstrap()
+        }
     }
 
-    /// 检查是否有被禁止的应用
+    /// 检查是否有被禁止的应用（契约路径，替代 AppSettingRepo.shared）。
     private func checkDeniedApps() async {
+        guard let settings = appEnv.settings else { return }
         do {
-            let repo = AppSettingRepo.shared
-            let deniedCount = try await repo.getDeniedAppsCount()
+            let deniedCount = try await settings.deniedAppsCount()
             await MainActor.run {
                 self.hasDeniedApps = deniedCount > 0
             }
@@ -84,16 +94,16 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         .defaultPosition(.center)
         .defaultSize(width: 500, height: 600)
 
-        // 插件窗口 - 动态显示插件内容
+        // 插件窗口 - 动态显示 WindowProviding 贡献的内容
         Window("Plugin Window", id: "plugin-window") {
             Group {
-                if let content = pluginWindowManager.currentContent {
-                    content.windowView()
+                if let content = appEnv.shell?.currentContent {
+                    content.makeView()
                         .onAppear {
                             // 确保窗口显示在最上层
                             NSApplication.shared.activate(ignoringOtherApps: true)
                             // 将窗口置于最前面
-                            if let window = NSApplication.shared.windows.first(where: { $0.title == content.windowTitle }) {
+                            if let window = NSApplication.shared.windows.first(where: { $0.title == content.title }) {
                                 window.level = .floating
                                 window.orderFrontRegardless()
                             }
@@ -112,7 +122,7 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
 
         // 主要的菜单栏应用
         MenuBarExtra(content: {
-            RootView {
+            RootView(environment: appEnv) {
                 if shouldShowMenuApp == false {
                     Color.red.frame(height: 0)
                 } else {
@@ -124,6 +134,10 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
             .onAppear {
                 // 用户点击了菜单栏图标
                 shouldShowMenuApp = true
+                // 绑定窗口打开回调（WindowProviding → SwiftUI Scene）
+                appEnv.shell?.onRequestOpen = { request in
+                    openWindow(id: request.windowID)
+                }
                 // 检查被禁止的应用
                 Task {
                     await checkDeniedApps()
@@ -134,36 +148,6 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                 openWindow(id: AppConfig.welcomeWindowId)
                 shouldShowWelcomeWindow = true
                 shouldShowMenuApp = false
-            }
-            .onReceive(nc.publisher(for: .shouldOpenPluginWindow)) { notification in
-                os_log("\(self.t)🔌 打开插件窗口")
-                // 从通知中获取插件 ID
-                if let data = notification.object as? PluginWindowNotificationData {
-                    Task {
-                        if let plugin = await PluginRegistry.shared.getPlugin(id: data.pluginId),
-                           let windowContent = plugin.provideWindowContent() {
-                            await MainActor.run {
-                                pluginWindowManager.showWindow(with: windowContent)
-                                openWindow(id: "plugin-window")
-                                shouldShowMenuApp = false
-
-                                // 确保窗口置顶
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    NSApplication.shared.activate(ignoringOtherApps: true)
-
-                                    // 查找插件窗口并置顶
-                                    if let pluginWindow = NSApplication.shared.windows.first(where: {
-                                        $0.title == windowContent.windowTitle || $0.title.contains("Plugin Window")
-                                    }) {
-                                        pluginWindow.level = .floating
-                                        pluginWindow.orderFrontRegardless()
-                                        pluginWindow.makeKeyAndOrderFront(nil)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
             .onReceive(nc.publisher(for: .firewallDidSetDeny)) { _ in
                 // 当有应用被禁止时，重新检查状态

@@ -433,14 +433,14 @@ struct SystemAppGridView: View {
 }
 
 #Preview("ContentView") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(height: 800)
 }
 
 #Preview("系统应用列表") {
-    RootView {
+    RootView(environment: .preview()) {
         SystemAppGridView()
     }
     .frame(width: 600, height: 800)

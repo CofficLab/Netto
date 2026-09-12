@@ -4,106 +4,103 @@ import OSLog
 import SwiftData
 import SwiftUI
 
+/// 主界面 Host 壳 —— 只保留启动态 / 失败态 / 运行态装配。
+///
+/// 阶段 6 迁移后：
+/// - 不再创建 `UIProvider` / `PluginProvider` / `EventRepo.shared` /
+///   `AppSettingRepo.shared` / `FirewallService.shared` / `MagicMessageProvider.shared`；
+/// - 所有核心服务由 `AppEnvironment` 在 App 启动期装配并缓存，
+///   视图只消费注入的契约环境对象；
+/// - 运行态按 `AppEnvironment.phase` 呈现：加载 / 失败 / 内容。
+///
+/// 线程/actor：`@MainActor`（SwiftUI View）。无副作用；`inRootView()` 只用于预览。
 struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     nonisolated static var emoji: String { "🌳" }
 
     private var content: Content
 
-    // 核心服务 - 改为实例对象
-    @StateObject private var app = UIProvider()
-    @StateObject private var p = PluginProvider()
-    @State private var eventRepo: EventRepo?
-    @State private var settingRepo: AppSettingRepo?
-    @State private var firewall: FirewallService?
-    @StateObject private var m = MagicMessageProvider.shared
-    @State private var isLoading = true
-    @State private var initializationError: Error?
+    /// 显式注入的环境（App 启动路径）；预览可传 `AppEnvironment.preview()`。
+    private let providedEnvironment: AppEnvironment?
 
-    init(@ViewBuilder content: () -> Content) {
+    /// 环境对象（场景级注入；App 通过 `environmentObject` 提供）。
+    @EnvironmentObject private var appEnv: AppEnvironment
+
+    init(environment: AppEnvironment? = nil, @ViewBuilder content: () -> Content) {
         os_log("\(Self.onInit)")
+        self.providedEnvironment = environment
         self.content = content()
     }
 
     var body: some View {
+        let env = providedEnvironment ?? appEnv
         Group {
-            if isLoading {
+            switch env.phase {
+            case .booting:
                 RootLoadingView()
-            } else if let error = initializationError {
-                error.makeView()
-            } else if let eventRepo = eventRepo, let settingRepo = settingRepo, let firewall = self.firewall {
-                // 将内容视图包裹在插件的 RootView 中
-                p.wrapContent(
-                    content
-                        .withMagicToast()
-                        .environmentObject(app)
-                        .environmentObject(m)
-                        .environmentObject(p)
-                        .environmentObject(eventRepo)
-                        .environmentObject(settingRepo)
-                        .environmentObject(firewall)
-                        .onAppear(perform: onAppear)
-                )
+            case let .failed(message):
+                // 启动失败必须显式呈现（不可静默降级为内容视图）
+                RootFailureView(message: message)
+            case .running:
+                HostContent(environment: env, content: content)
             }
         }
-        .task {
-            await initializeServices()
-        }
-        .onDisappear(perform: onDisappear)
+        .environmentObject(env)
     }
 }
 
-// MARK: - Action
+/// 运行态内容装配：注入契约环境对象后渲染子内容。
+///
+/// 仅在 `phase == .running` 时渲染；bootstrap 已保证 shell 非空，
+/// 但这里仍用 if-let 兜底，避免强解包（不在此处创建任何对象）。
+private struct HostContent<Content: View>: View {
+    @ObservedObject var environment: AppEnvironment
+    let content: Content
 
-extension RootView {
-    /// 异步初始化所有服务
-    private func initializeServices() async {
-        os_log("\(self.i)初始化服务...")
-
-        // Repos
-        let eventRepo = EventRepo.shared
-        let appSettingRepo = AppSettingRepo.shared
-
-        // Services
-        let firewallService = FirewallService.shared
-
-        await MainActor.run {
-            self.eventRepo = eventRepo
-            self.settingRepo = appSettingRepo
-            self.isLoading = false
-            self.firewall = firewallService
-            self.initializationError = nil
+    var body: some View {
+        if let shell = environment.shell {
+            content
+                .environmentObject(shell)
+                .environmentObject(environment.ui)
+                .environmentObject(environment.appProvider)
+                .environment(\.firewallProvider, environment.firewall)
+                .environment(\.eventsProvider, environment.events)
+                .environment(\.settingsProvider, environment.settings)
+                .environment(\.storeProvider, environment.store)
+                .environment(\.sessionStartDate, environment.sessionStartDate)
+        } else {
+            RootFailureView(message: "Shell 中心未装配")
         }
-
-        os_log("\(self.t)✅ 服务初始化完成")
     }
 }
 
-// MARK: - Event Handler
+/// 启动失败视图：展示内核装配错误（与旧 `error.makeView()` 语义等价）。
+private struct RootFailureView: View {
+    let message: String
 
-extension RootView {
-    func onAppear() {
-    }
-
-    func onDisappear() {
-        os_log("\(self.t)📴 视图消失，清理和释放内存")
-
-        self.app.cleanup()
-        self.p.cleanup()
-        self.firewall?.removeObserver()
-
-        // 清理状态变量，强制释放引用
-        self.eventRepo = nil
-        self.settingRepo = nil
-        self.firewall = nil
-        self.initializationError = nil
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.largeTitle)
+                .foregroundStyle(.orange)
+            Text("初始化失败")
+                .font(.headline)
+            Text(message)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .textSelection(.enabled)
+                .padding(.horizontal, 24)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(NSColor.controlBackgroundColor))
     }
 }
 
 extension View {
-    /// 将当前视图包裹在RootView中
+    /// 将当前视图包裹在 RootView 中（预览用；注入预览环境）。
     /// - Returns: 被RootView包裹的视图
     func inRootView() -> some View {
-        RootView {
+        RootView(environment: .preview()) {
             self
         }
     }
@@ -118,7 +115,7 @@ struct RootLoadingView: View {
                 .scaleEffect(1.5)
             Text("正在初始化服务...")
                 .font(.headline)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(NSColor.controlBackgroundColor))

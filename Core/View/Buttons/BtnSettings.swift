@@ -1,12 +1,13 @@
 import MagicAlert
 import MagicCore
 import OSLog
+import PluginShell
 import SwiftUI
 
 /// 内核内置的设置按钮
-/// 从插件系统获取设置按钮内部的按钮
+/// 通过 `SettingsProviding` 获取设置入口，不再查询旧 PluginRegistry。
 struct BtnSettings: View, SuperLog, SuperThread {
-    @EnvironmentObject private var p: PluginProvider
+    @EnvironmentObject private var shell: ShellCenter
     @State private var hovered = false
     @State private var isPresented = false
 
@@ -27,8 +28,10 @@ struct BtnSettings: View, SuperLog, SuperThread {
         .clipShape(RoundedRectangle(cornerRadius: 0))
         .popover(isPresented: $isPresented, content: {
             VStack(spacing: 8) {
-                // 从插件系统获取设置按钮内部的按钮
-                p.getSettingsButtons()
+                // 设置入口（按 order 升序，由 ShellCenter 聚合）
+                ForEach(shell.entries) { entry in
+                    entry.makeView()
+                }
             }
             .padding()
         })
@@ -38,7 +41,7 @@ struct BtnSettings: View, SuperLog, SuperThread {
 // MARK: - Preview
 
 #Preview("Settings Button") {
-    RootView {
+    RootView(environment: .preview()) {
         VStack {
             Text("设置按钮测试")
             HStack {

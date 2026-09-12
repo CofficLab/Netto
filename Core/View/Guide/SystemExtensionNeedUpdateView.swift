@@ -64,14 +64,14 @@ struct SystemExtensionNeedUpdateView: View {
 // MARK: - Preview
 
 #Preview("App - Large") {
-    RootView {
+    RootView(environment: .preview()) {
         SystemExtensionNeedUpdateView()
     }
     .frame(width: 600, height: 1000)
 }
 
 #Preview("App - Small") {
-    RootView {
+    RootView(environment: .preview()) {
         SystemExtensionNeedUpdateView()
     }
     .frame(width: 600, height: 600)

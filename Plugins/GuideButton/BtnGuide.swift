@@ -54,7 +54,7 @@ struct BtnGuide: View, SuperEvent {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
 }

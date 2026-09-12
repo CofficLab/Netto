@@ -75,14 +75,14 @@ struct Popview<Content: View>: View {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ExtensionNotReady()
     }
     .frame(height: 500)
 }
 
 #Preview("APP") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(height: 800)

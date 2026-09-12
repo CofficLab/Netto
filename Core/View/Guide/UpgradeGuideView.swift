@@ -1,5 +1,7 @@
 import SwiftUI
 import MagicCore
+import PluginShell
+import ProviderShell
 import MagicUI
 
 /**
@@ -8,6 +10,7 @@ import MagicUI
  */
 struct UpgradeGuideView: View {
     @EnvironmentObject var ui: UIProvider
+    @EnvironmentObject private var shell: ShellCenter
     
     var body: some View {
         Popview(
@@ -68,8 +71,8 @@ struct UpgradeGuideView: View {
     // MARK: - Actions
     
     private func openStoreWindow() {
-        // 使用 StorePlugin 的静态方法打开窗口
-        StorePlugin.openStoreWindow()
+        // 通过 WindowProviding 请求打开商店窗口（替代旧通知机制）
+        shell.requestOpen(WindowRequest(windowID: "plugin-window", title: "Store - TravelMode"))
         // 关闭升级引导界面
         ui.hideUpgradeGuide()
     }

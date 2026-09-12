@@ -1,5 +1,5 @@
 {
-  "originHash" : "98946d647760bcd85635d0e2476c1517566165c94d536ccee2476139e685d1c1",
+  "originHash" : "1c962f7c18060497bc1a60097bc96d53b37efafbe1e0bb04bbd3db4ccdf05692",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -15,7 +15,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/MagicKit",
       "state" : {
-        "branch" : "dev",
+        "branch" : "d04a729",
         "revision" : "d04a72908ba3458992272a541236cd162cb5a407"
       }
     },

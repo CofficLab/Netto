@@ -355,14 +355,14 @@ struct ExtGuide: View {
 }
 
 #Preview("App") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(height: 800)
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ExtensionNotReady()
     }
     .frame(height: 800)

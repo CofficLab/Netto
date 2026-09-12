@@ -2,18 +2,28 @@ import SwiftUI
 import OSLog
 import MagicCore
 import MagicUI
-import MagicAlert
+import PluginShell
+import ProviderFirewallEvents
+import ProviderShell
 
-private struct BtnClearLogs: View {
+/// 清空所有日志（DEBUG 设置入口）
+/// 阶段 6 迁移：经 `FirewallEventsProviding` 契约删除（替代 EventRepo.shared），
+/// 结果经 Shell Toast 呈现（替代 MagicMessageProvider.shared）。
+struct BtnClearLogs: View {
+    @Environment(\.eventsProvider) private var events: FirewallEventsProviding?
+    @EnvironmentObject private var shell: ShellCenter
+
     var body: some View {
         MagicButton.simple(action: {
+            guard let events else { return }
             Task {
                 do {
-                    let deleted = try await EventRepo.shared.deleteAll()
+                    let deleted = try await events.deleteAll()
                     os_log("🧹 已清空日志: 删除 \(deleted) 条记录")
-                    MagicMessageProvider.shared.success("已删除 \(deleted) 条记录")
+                    shell.post(ToastMessage(description: "已删除 \(deleted) 条记录"))
                 } catch {
                     os_log("❌ 清空日志失败: \(error.localizedDescription)")
+                    shell.postError(error.localizedDescription)
                 }
             }
         })
@@ -22,29 +32,6 @@ private struct BtnClearLogs: View {
         .magicSize(.auto)
         .frame(width: 180)
         .frame(height: 44)
-    }
-}
-
-actor ClearLogsButtonPlugin: SuperPlugin {
-    nonisolated let label: String = "ClearLogsButton"
-
-    @MainActor
-    func addToolBarButtons() -> [(id: String, view: AnyView)] { [] }
-
-    @MainActor
-    func addSettingsButtons() -> [(id: String, view: AnyView)] {
-        #if DEBUG
-        [ (id: "clear-logs", view: AnyView(BtnClearLogs())) ]
-        #else
-        []
-        #endif
-    }
-}
-
-@objc(ClearLogsButtonRegistrant)
-class ClearLogsButtonRegistrant: NSObject, PluginRegistrant {
-    static func register() {
-        Task { await PluginRegistry.shared.register(id: "ClearLogsButton", order: 35) { ClearLogsButtonPlugin() } }
     }
 }
 

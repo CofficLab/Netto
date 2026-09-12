@@ -1,13 +1,14 @@
 import SwiftUI
 import MagicCore
 import Charts
+import ProviderFirewallEvents
 
 struct ChartView: View {
     /// 可选：指定应用ID时仅统计该应用
     let appId: String?
     /// 可选：自定义标题
     let title: String?
-    @EnvironmentObject private var eventRepo: EventRepo
+    @Environment(\.eventsProvider) private var eventRepo: FirewallEventsProviding?
     @State private var points: [DataPoint] = []
     @State private var smoothed: [DataPoint] = []
     @State private var hoverIndex: Int? = nil
@@ -84,9 +85,10 @@ extension ChartView {
     private func loadData() async {
         let calendar = Calendar.current
         do {
+            guard let eventRepo else { return }
             let now = Date()
             let startDate = range.startDate(from: now, calendar: calendar)
-            var events = try await eventRepo.fetchByTimeRange(from: startDate, to: now)
+            var events = try await eventRepo.fetchByTimeRange(from: startDate, to: now, appIdentifier: nil)
             if let appId { events = events.filter { $0.sourceAppIdentifier == appId } }
 
             guard events.isNotEmpty else {

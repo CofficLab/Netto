@@ -1,10 +1,11 @@
 import MagicCore
+import ProviderAppSettings
 import SwiftUI
 
 /// 通用的应用信息显示组件，用于显示应用图标、名称、ID和事件数量
 struct AppLine: View {
     @EnvironmentObject var ui: UIProvider
-    @EnvironmentObject var repo: AppSettingRepo
+    @Environment(\.settingsProvider) private var repo: AppSettingsProviding?
 
     var app: SmartApp
 
@@ -121,7 +122,7 @@ extension AppLine {
 extension AppLine {
     /// 页面出现时的处理
     func onAppear() {
-        let repo = self.repo
+        guard let repo else { return }
         Task {
             self.shouldAllow = await repo.shouldAllow(app.id)
         }
@@ -197,7 +198,7 @@ extension AppLine {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(width: 500)

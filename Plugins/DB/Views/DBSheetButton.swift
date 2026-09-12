@@ -43,7 +43,7 @@ private struct DBMainSheet: View {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         DBSheetButton()
     }
 }

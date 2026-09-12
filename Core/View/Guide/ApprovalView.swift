@@ -9,14 +9,14 @@ struct ApprovalView: View {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ApprovalView()
     }
     .frame(height: 500)
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(height: 800)

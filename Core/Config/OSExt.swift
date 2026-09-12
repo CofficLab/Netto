@@ -8,7 +8,7 @@ extension AppConfig {
 }
 
 #Preview("APP") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }.frame(width: 700)
 }

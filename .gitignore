@@ -3,3 +3,7 @@
 .DS_Store
 node_modules
 build
+# SwiftPM 构建产物
+.build/
+# SwiftPM 本地用户状态
+.swiftpm/

@@ -1,6 +1,7 @@
 import SwiftUI
 import MagicCore
 import MagicBackground
+import ProviderFirewall
 
 /**
  * 引导视图
@@ -12,8 +13,8 @@ struct GuideView: View {
     /// UI状态提供者
     @EnvironmentObject private var app: UIProvider
     
-    /// 防火墙服务
-    @EnvironmentObject private var firewall: FirewallService
+    /// 防火墙契约（nil = 未装配，按未运行处理）
+    @Environment(\.firewallProvider) private var firewall: FirewallProviding?
 
     /// 构建引导视图
     var body: some View {
@@ -27,36 +28,33 @@ struct GuideView: View {
                     UpgradeGuideView()
                 } else {
                     // 根据防火墙状态显示对应的引导视图
-                    switch firewall.status {
-                    case .disabled, .stopped:
+                    // 状态语义与旧 FilterStatus 一一对应；nil 视为未运行
+                    switch firewall?.snapshot.state {
+                    case .disabled, .stopped, nil:
                         StopView()
-                    case .indeterminate:
+                    case .unknown, .installing:
                         UnknownView()
                     case .running:
                         RunningView()
-                    case .notInstalled:
-                        InstallView()
-                    case .needSystemExtensionApproval:
+                    case .systemExtensionNotInstalled:
+                        SystemExtensionNotInstalledView()
+                    case .systemExtensionNeedsUpdate:
+                        SystemExtensionNeedUpdateView()
+                    case .filterNotInstalled:
+                        FilterNotInstalledView()
+                    case .systemExtensionApprovalNeeded, .filterApprovalNeeded, .permissionDenied:
                         ApprovalView()
-                    case .filterNeedApproval:
-                        ApprovalView()
-                    case .extensionNotActivated:
-                        ExtensionNotReady()
-                    case .notInApplicationsFolder:
-                        NotInApplicationsFolderView()
                     case .waitingForApproval:
                         // 等待用户批准安装扩展
                         Text("Click \"Allow\" to install extension")
                             .font(.title)
                         Image("Ask")
-                    case let .error(error):
-                        ErrorView(error: error)
-                    case .systemExtensionNotInstalled:
-                        SystemExtensionNotInstalledView()
-                    case .systemExtensionNeedUpdate:
-                        SystemExtensionNeedUpdateView()
-                    case .filterNotInstalled:
-                        FilterNotInstalledView()
+                    case .extensionNotActivated:
+                        ExtensionNotReady()
+                    case .notInApplicationsFolder:
+                        NotInApplicationsFolderView()
+                    case let .failed(failure):
+                        ErrorView(error: FirewallFailureError(failure: failure))
                     }
                 }
             }

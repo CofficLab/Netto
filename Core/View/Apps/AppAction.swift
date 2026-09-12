@@ -2,11 +2,16 @@ import MagicCore
 import MagicAlert
 import MagicUI
 import OSLog
+import PluginShell
+import ProviderAppSettings
+import ProviderShell
+import ProviderStore
 import SwiftUI
 
 struct AppAction: View, SuperLog, SuperEvent {
-    @EnvironmentObject var m: MagicMessageProvider
-    @EnvironmentObject var repo: AppSettingRepo
+    @EnvironmentObject private var shell: ShellCenter
+    @Environment(\.settingsProvider) private var repo: AppSettingsProviding?
+    @Environment(\.storeProvider) private var store: StoreProviding?
     @EnvironmentObject var ui: UIProvider
 
     @Binding var shouldAllow: Bool
@@ -37,17 +42,18 @@ struct AppAction: View, SuperLog, SuperEvent {
 
 extension AppAction {
     private func deny() {
-        let repo = self.repo
+        guard let repo else { return }
         Task {
             do {
-                let purchaseInfo = StoreService.cachedPurchaseInfo()
-                
-                os_log("\(self.t)🔐 当前权限 tier -> \(purchaseInfo.tier.rawValue)")
-                os_log("\(self.t)⏰ 过期时间 -> \(purchaseInfo.expiresAtString)")
+                // 阶段 7：经 StoreProviding 契约读取权益快照（替代 StoreService 静态访问）
+                let entitlement = store?.entitlement ?? .none
+
+                os_log("\(self.t)🔐 当前权限 tier -> \(entitlement.tier.rawValue)")
+                os_log("\(self.t)⏰ 过期时间 -> \(String(describing: entitlement.expiresAt))")
 
                 // 如果不是 Pro，检查禁止数量限制
-                if purchaseInfo.isNotProOrHigher {
-                    let deniedCount = try await repo.getDeniedAppsCount()
+                if !entitlement.isProOrHigher {
+                    let deniedCount = try await repo.deniedAppsCount()
                     if deniedCount >= 5 {
                         await MainActor.run {
                             self.showUpgradeGuide()
@@ -58,24 +64,24 @@ extension AppAction {
                 
                 try await repo.setDeny(appId)
                 self.shouldAllow = false
-                self.m.info("已禁止")
+                shell.post(ToastMessage(description: "已禁止"))
             } catch let error {
                 os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
-                m.error(error)
+                shell.postError(error.localizedDescription)
             }
         }
     }
 
     private func allow() {
-        let repo = self.repo
+        guard let repo else { return }
         Task {
             do {
                 try await repo.setAllow(appId)
                 self.shouldAllow = true
-                self.m.info("已允许")
+                shell.post(ToastMessage(description: "已允许"))
             } catch let error {
                 os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
-                m.error(error)
+                shell.postError(error.localizedDescription)
             }
         }
     }

@@ -28,7 +28,7 @@ extension SmartApp {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(height: 800)

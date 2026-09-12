@@ -59,7 +59,7 @@ struct ExtensionNotReady: View {
 }
 
 #Preview("App") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(height: 800)

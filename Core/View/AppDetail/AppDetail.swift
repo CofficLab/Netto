@@ -35,21 +35,21 @@ struct AppDetail: View, SuperLog {
 }
 
 #Preview("APP") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(height: 600)
 }
 
 #Preview("防火墙事件视图") {
-    RootView {
+    RootView(environment: .preview()) {
         DBEventView()
     }
     .frame(width: 600, height: 600)
 }
 
 #Preview("APP配置") {
-    RootView {
+    RootView(environment: .preview()) {
         DBSettingView()
     }
     .frame(width: 600, height: 800)

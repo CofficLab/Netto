@@ -1,21 +1,25 @@
 import SwiftUI
-import SwiftData
 import MagicCore
+import ProviderAppSettings
 
+/// 数据库设置视图（DEBUG）
+/// 阶段 6 迁移：经 `AppSettingsProviding` 契约读取规则（替代视图内 @Query）。
 struct DBSettingView: View {
-    @Query(sort: \AppSetting.appId, order: .forward)
-    var items: [AppSetting]
-    
+    @Environment(\.settingsProvider) private var settings: AppSettingsProviding?
+
+    /// 规则快照（契约 DTO）
+    @State private var items: [AppSettingSnapshot] = []
+
     /// 筛选状态
     @State private var filterStatus: StatusFilter = .all
-    
+
     /// 搜索文本
     @State private var searchText = ""
-    
+
     /// 根据筛选条件过滤后的应用设置列表
-    private var filteredItems: [AppSetting] {
+    private var filteredItems: [AppSettingSnapshot] {
         var filtered = items
-        
+
         // 根据状态筛选
         switch filterStatus {
         case .allowed:
@@ -25,15 +29,21 @@ struct DBSettingView: View {
         case .all:
             break
         }
-        
+
         // 根据搜索文本筛选
         if !searchText.isEmpty {
-            filtered = filtered.filter { 
+            filtered = filtered.filter {
                 $0.appId.localizedCaseInsensitiveContains(searchText)
             }
         }
-        
+
         return filtered
+    }
+
+    /// 加载全部规则（契约路径）
+    private func load() async {
+        guard let settings else { return }
+        items = (try? await settings.fetchAll()) ?? []
     }
     
     var body: some View {
@@ -55,6 +65,9 @@ struct DBSettingView: View {
                     AppAction(shouldAllow: .constant(true), appId: i.appId)
                 }
             })
+        }
+        .task {
+            await load()
         }
     }
     
@@ -140,7 +153,7 @@ struct DBSettingView: View {
 }
 
 #Preview("APP") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(width: 500)
@@ -148,14 +161,14 @@ struct DBSettingView: View {
 }
 
 #Preview("DBSetting") {
-    RootView {
+    RootView(environment: .preview()) {
         DBSettingView()
     }
     .frame(width: 600, height: 800)
 }
 
 #Preview("防火墙事件视图") {
-    RootView {
+    RootView(environment: .preview()) {
         DBEventView()
     }
     .frame(width: 600, height: 800)

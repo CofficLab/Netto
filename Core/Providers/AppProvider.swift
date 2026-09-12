@@ -15,7 +15,7 @@ class AppProvider: NSObject, ObservableObject, SuperLog, SuperThread {
 }
 
 #Preview("Small Screen") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(width: 500)
@@ -23,7 +23,7 @@ class AppProvider: NSObject, ObservableObject, SuperLog, SuperThread {
 }
 
 #Preview("Big Screen") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(width: 800)

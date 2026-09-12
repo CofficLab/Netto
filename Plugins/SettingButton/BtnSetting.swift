@@ -18,13 +18,13 @@ struct BtnSetting: View {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         BtnInstallExtension()
     }
     .frame(height: 800)

@@ -1,12 +1,14 @@
 import MagicAlert
 import MagicCore
 import MagicUI
+import PluginShell
+import ProviderFirewall
 import SwiftUI
 
 struct BtnStop: View, SuperLog {
-    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var app: UIProvider
-    @EnvironmentObject private var firewall: FirewallService
+    @EnvironmentObject private var shell: ShellCenter
+    @Environment(\.firewallProvider) private var firewall: FirewallProviding?
 
     private var asToolbarItem: Bool = false
     private var icon: String = "stop.circle"
@@ -33,25 +35,26 @@ struct BtnStop: View, SuperLog {
             })
             .magicTitle("停止")
             .magicShape(.roundedRectangle)
-            .magicDisabled(firewall.status.isNotRunning() ? "未开启" : nil)
+            .magicDisabled(firewall?.snapshot.state.isNotRunning() == true ? "未开启" : nil)
             .frame(width: 150)
             .frame(height: 50)
         }
     }
 
     private func action() {
+        guard let firewall else { return }
         Task {
             do {
-                try await firewall.stopFilter(reason: self.className)
+                try await firewall.stop()
             } catch {
-                self.m.error(error)
+                shell.postError("停止防火墙失败：\(error.localizedDescription)")
             }
         }
     }
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         VStack {
             BtnStop()
             BtnStop(asToolbarItem: true)

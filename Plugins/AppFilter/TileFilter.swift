@@ -4,7 +4,6 @@ import OSLog
 import SwiftUI
 
 struct TileFilter: View, SuperLog, SuperThread {
-    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var ui: UIProvider
 
     var body: some View {
@@ -24,7 +23,7 @@ struct TileFilter: View, SuperLog, SuperThread {
 }
 
 #Preview("APP") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }.frame(width: 700)
 }

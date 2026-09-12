@@ -1,24 +1,24 @@
 import MagicCore
 import MagicAlert
 import OSLog
+import ProviderFirewall
 import SwiftUI
 
 struct TileSwitcher: View, SuperLog, SuperThread {
-    @EnvironmentObject var m: MagicMessageProvider
     @EnvironmentObject var app: UIProvider
-    @EnvironmentObject private var firewall: FirewallService
+    @Environment(\.firewallProvider) private var firewall: FirewallProviding?
     
     @State var hovered = false
     @State var isPresented = false
 
     var body: some View {
         HStack {
-            if firewall.status.isRunning() {
+            if firewall?.snapshot.state.isRunning() == true {
                 BtnStop(asToolbarItem: true).labelStyle(.iconOnly)
             } else {
                 BtnStart(asToolbarItem: true)
                     .labelStyle(.iconOnly)
-                    .disabled(!firewall.status.canStart())
+                    .disabled(firewall?.snapshot.canStart != true)
             }
         }
         .frame(maxHeight: .infinity)
@@ -36,7 +36,7 @@ struct TileSwitcher: View, SuperLog, SuperThread {
 }
 
 #Preview("APP") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }.frame(width: 700)
 }

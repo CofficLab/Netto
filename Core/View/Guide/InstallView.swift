@@ -14,7 +14,7 @@ struct InstallView: View {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         InstallView()
     }
     .frame(height: 500)
@@ -22,7 +22,7 @@ struct InstallView: View {
 }
 
 #Preview("APP") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(height: 800)

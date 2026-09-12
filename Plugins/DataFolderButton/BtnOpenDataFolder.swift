@@ -17,7 +17,7 @@ struct BtnOpenDataFolder: View {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
 }

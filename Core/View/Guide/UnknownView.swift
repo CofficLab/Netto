@@ -12,14 +12,14 @@ struct UnknownView: View {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         UnknownView()
     }
     .frame(height: 500)
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(height: 800)

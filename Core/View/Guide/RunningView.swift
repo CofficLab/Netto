@@ -89,14 +89,14 @@ struct RunningView: View {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         RunningView()
     }
     .frame(height: 500)
 }
 
 #Preview("APP") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(height: 800)

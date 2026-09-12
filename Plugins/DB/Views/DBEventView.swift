@@ -1,16 +1,16 @@
 import Combine
 import MagicCore
-import NetworkExtension
-import SwiftData
+import ProviderFirewallEvents
 import SwiftUI
 
 /// 数据库防火墙事件展示视图
 /// 用于展示数据库中存储的所有防火墙事件记录
+/// 阶段 6 迁移：数据经 `FirewallEventsProviding` 契约读取（替代旧 EventRepo env）。
 struct DBEventView: View {
-    @EnvironmentObject private var repo: EventRepo
+    @Environment(\.eventsProvider) private var repo: FirewallEventsProviding?
 
     // 存储加载的事件数据
-    @State private var events: [FirewallEventDTO] = []
+    @State private var events: [FirewallEventSnapshot] = []
     @State private var totalCount: Int = 0
 
     // 分页控制状态
@@ -33,6 +33,7 @@ struct DBEventView: View {
     /// 加载当前页的事件数据
     private func loadEvents() {
         guard !isLoading else { return }
+        guard let repo else { return }
 
         isLoading = true
 
@@ -40,35 +41,24 @@ struct DBEventView: View {
         let currentFilterAppId = filterAppId
         let currentPage = currentPage
         let currentItemsPerPage = itemsPerPage
-        let repo = self.repo
 
         Task {
             do {
                 // 使用筛选条件获取事件总数
                 let newTotalCount: Int
                 if !currentFilterAppId.isEmpty {
-                    newTotalCount = try await repo.getEventCountByAppId(currentFilterAppId)
+                    newTotalCount = try await repo.count(FirewallEventCountQuery(appIdentifier: currentFilterAppId))
                 } else {
                     // 获取所有事件总数
-                    newTotalCount = try await repo.getEventCount()
+                    newTotalCount = try await repo.totalCount()
                 }
 
-                // 使用筛选条件获取分页数据
-                let newEvents: [FirewallEventDTO]
-                if !currentFilterAppId.isEmpty {
-                    // 使用应用ID筛选
-                    newEvents = try await repo.fetchByAppIdPaginated(
-                        currentFilterAppId,
-                        page: currentPage,
-                        pageSize: currentItemsPerPage
-                    )
-                } else {
-                    // 获取所有事件（分页）
-                    newEvents = try await repo.fetchAllPaginated(
-                        page: currentPage,
-                        pageSize: currentItemsPerPage
-                    )
-                }
+                // 使用筛选条件获取分页数据（契约统一分页；筛选条件为空传 nil）
+                let newEvents = try await repo.fetchPage(FirewallEventQuery(
+                    appIdentifier: currentFilterAppId.isEmpty ? nil : currentFilterAppId,
+                    page: currentPage,
+                    pageSize: currentItemsPerPage
+                )).events
 
                 await MainActor.run {
                     self.totalCount = newTotalCount

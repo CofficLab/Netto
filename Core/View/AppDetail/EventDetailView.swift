@@ -1,9 +1,10 @@
 import MagicCore
 import MagicUI
-import NetworkExtension
 import OSLog
+import PluginShell
+import ProviderFirewallEvents
+import ProviderShell
 import SwiftUI
-import MagicAlert
 
 /**
  * 事件详情视图
@@ -21,11 +22,15 @@ struct EventDetailView: View, SuperLog {
 
     // MARK: - Environment
 
-    @EnvironmentObject private var queryRepo: EventRepo
+    /// 事件存储契约（替代旧 EventRepo；分页语义一致，0-based）。
+    @Environment(\.eventsProvider) private var queryRepo: FirewallEventsProviding?
+
+    /// Shell（Toast 出口）。
+    @EnvironmentObject private var shell: ShellCenter
 
     // MARK: - State
 
-    @State private var events: [FirewallEventDTO] = []
+    @State private var events: [FirewallEventSnapshot] = []
     @State private var totalEventCount: Int = 0
     @State private var currentPage: Int = 0
     @State private var statusFilter: StatusFilter = .all
@@ -61,7 +66,7 @@ struct EventDetailView: View, SuperLog {
                 Button(action: {
                     Task {
                         await exportAllLogs()
-                        MagicMessageProvider.shared.success("已导出到下载目录")
+                        shell.post(ToastMessage(description: "已导出到下载目录"))
                     }
                 }, label: {
                     HStack(spacing: 6) {
@@ -129,7 +134,7 @@ extension EventDetailView {
         self.isLoading = loading
     }
 
-    private func setEvents(events: [FirewallEventDTO]) {
+    private func setEvents(events: [FirewallEventSnapshot]) {
         self.events = events
     }
 
@@ -146,6 +151,13 @@ extension EventDetailView {
     }
 
     private func updateDataSource() {
+        // 契约缺失时保持空列表（明确 unavailable，不做强制解包）
+        guard let queryRepo else {
+            setEvents(events: [])
+            setTotalEventCount(totalEventCount: 0)
+            setLoading(false)
+            return
+        }
         // 先在主线程标记加载状态
         setLoading(true)
 
@@ -153,20 +165,25 @@ extension EventDetailView {
         let queryAppId = appId
         let queryPage = currentPage
         let queryPerPage = perPage
-        let status: FirewallEvent.Status? = statusFilter == .all ? nil : (statusFilter == .allowed ? .allowed : .rejected)
-        let direction: NETrafficDirection? = directionFilter == .all ? nil : (directionFilter == .inbound ? .inbound : .outbound)
+        let status: FirewallEventDecision? = statusFilter == .all ? nil : (statusFilter == .allowed ? .allowed : .rejected)
+        let direction: FirewallTrafficDirection? = directionFilter == .all ? nil : (directionFilter == .inbound ? .inbound : .outbound)
 
-        // 查询仓库的后台API
-        queryRepo.loadAsync(
-            appId: queryAppId,
-            page: queryPage,
-            pageSize: queryPerPage,
-            status: status,
-            direction: direction
-        ) { totalCount, events in
-            self.setTotalEventCount(totalEventCount: totalCount)
-            self.setEvents(events: events)
-            self.setLoading(false)
+        Task {
+            do {
+                let page = try await queryRepo.fetchPage(FirewallEventQuery(
+                    appIdentifier: queryAppId,
+                    status: status,
+                    direction: direction,
+                    page: queryPage,
+                    pageSize: queryPerPage
+                ))
+                self.setTotalEventCount(totalEventCount: page.totalCount)
+                self.setEvents(events: page.events)
+                self.setLoading(false)
+            } catch {
+                self.setEvents(events: [])
+                self.setLoading(false)
+            }
         }
     }
 }
@@ -176,31 +193,34 @@ extension EventDetailView {
 extension EventDetailView {
     /// 导出所有日志到下载目录（CSV）
     private func exportAllLogs() async {
+        guard let queryRepo else { return }
         do {
-            let status: FirewallEvent.Status? = statusFilter == .all ? nil : (statusFilter == .allowed ? .allowed : .rejected)
-            let direction: NETrafficDirection? = directionFilter == .all ? nil : (directionFilter == .inbound ? .inbound : .outbound)
+            let status: FirewallEventDecision? = statusFilter == .all ? nil : (statusFilter == .allowed ? .allowed : .rejected)
+            let direction: FirewallTrafficDirection? = directionFilter == .all ? nil : (directionFilter == .inbound ? .inbound : .outbound)
 
             // 限制最多导出 1000 条记录，优先导出最近的
             let maxExportCount = 1000
             let pageSize = 200
-            var all: [FirewallEventDTO] = []
+            var all: [FirewallEventSnapshot] = []
             var page = 0
 
             while all.count < maxExportCount {
-                let result = await withCheckedContinuation { continuation in
-                    queryRepo.loadAsync(appId: appId, page: page, pageSize: pageSize, status: status, direction: direction) { total, items in
-                        continuation.resume(returning: (total, items))
-                    }
-                }
-                
-                if result.1.isEmpty { break }
-                
+                let result = try await queryRepo.fetchPage(FirewallEventQuery(
+                    appIdentifier: appId,
+                    status: status,
+                    direction: direction,
+                    page: page,
+                    pageSize: pageSize
+                ))
+
+                if result.events.isEmpty { break }
+
                 // 如果加上这一页会超过限制，只取需要的部分
                 let remaining = maxExportCount - all.count
-                let itemsToAdd = Array(result.1.prefix(remaining))
+                let itemsToAdd = Array(result.events.prefix(remaining))
                 all.append(contentsOf: itemsToAdd)
-                
-                if itemsToAdd.count < result.1.count { break }
+
+                if itemsToAdd.count < result.events.count { break }
                 page += 1
             }
 

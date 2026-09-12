@@ -3,7 +3,6 @@ import MagicCore
 import MagicUI
 
 struct BtnQuit: View {
-    @EnvironmentObject var app: UIProvider
     
     private var asToolbarItem: Bool = false
     private var icon: String = "xmark.circle"
@@ -43,7 +42,7 @@ struct BtnQuit: View {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
 }

@@ -1,9 +1,10 @@
 import MagicCore
 import MagicUI
+import ProviderFirewall
 import SwiftUI
 
 struct BtnInstallFilter: View, SuperLog {
-    @EnvironmentObject private var service: FirewallService
+    @Environment(\.firewallProvider) private var service: FirewallProviding?
 
     private var width: CGFloat = 150
 
@@ -13,8 +14,9 @@ struct BtnInstallFilter: View, SuperLog {
 
     var body: some View {
         MagicButton.simple(icon: "puzzlepiece.extension", size: .auto, action: {
+            guard let service else { return }
             Task {
-                try? await service.installFilter(reason: self.className)
+                try? await service.installFilter()
             }
         })
         .magicTitle("安装过滤器")
@@ -25,7 +27,7 @@ struct BtnInstallFilter: View, SuperLog {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         VStack {
             BtnInstallExtension()
             BtnInstallExtension(width: 50)
@@ -36,7 +38,7 @@ struct BtnInstallFilter: View, SuperLog {
 }
 
 #Preview("APP") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
 }

@@ -199,7 +199,7 @@ struct ProxyExplanationView: View {
 }
 
 #Preview("APP") {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
     .frame(height: 800)

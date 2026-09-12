@@ -7,7 +7,6 @@ import MagicUI
  * 显示应用程序的关于界面（系统自带）
  */
 struct BtnAbout: View {
-    @EnvironmentObject var app: UIProvider
     
     private var asToolbarItem: Bool = false
     private var icon: String = "info.circle"
@@ -55,7 +54,7 @@ struct BtnAbout: View {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
 }

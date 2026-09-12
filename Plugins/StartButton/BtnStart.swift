@@ -2,11 +2,11 @@ import MagicCore
 import MagicAlert
 import MagicUI
 import OSLog
+import ProviderFirewall
 import SwiftUI
 
 struct BtnStart: View, SuperLog {
-    @EnvironmentObject private var m: MagicMessageProvider
-    @EnvironmentObject private var firewall: FirewallService
+    @Environment(\.firewallProvider) private var firewall: FirewallProviding?
 
     private var asToolbarItem: Bool = false
 
@@ -33,15 +33,16 @@ struct BtnStart: View, SuperLog {
             .magicTitle("开启")
             .magicBackgroundColor(.blue)
             .magicShape(.roundedRectangle)
-            .magicDisabled(firewall.status.isRunning() ? "已开启" : nil)
+            .magicDisabled(firewall?.snapshot.state.isRunning() == true ? "已开启" : nil)
             .frame(width: 150)
             .frame(height: 50)
         }
     }
 
     private func action() {
+        guard let firewall else { return }
         Task {
-            await firewall.startFilter(reason: self.className)
+            try? await firewall.start()
         }
     }
 }

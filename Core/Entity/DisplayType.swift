@@ -7,7 +7,7 @@ enum DisplayType: CaseIterable {
 }
 
 #Preview {
-    RootView {
+    RootView(environment: .preview()) {
         ContentView()
     }
 }
