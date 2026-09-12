@@ -17,6 +17,8 @@ public func makeSettingView<Provider: SettingViewProviding>(
 /// 完整复刻 Lumi `ProviderSettingView.SettingView` 的视觉与交互，全部使用
 /// **LumiUI 组件**（统一样式）：
 /// - `AppSettingsSidebarShell` 双栏布局：固定宽侧边栏 + 分隔线 + 详情区
+/// - 侧边栏顶部 Logo Header（`HeaderView`：应用 Logo 64×64 + 名称 + 版本
+///   + Build，复刻 Lumi `PluginSettingView.HeaderView`）+ `AppSettingsDivider`
 /// - 侧边栏 `AppSettingsSidebarContainer`（220pt）+ `AppSettingsSidebarItem`
 ///   （SF Symbol + 标题 + 选中高亮）
 /// - 详情区 `AppSettingsDetailPane`（氛围渐变背景）
@@ -60,12 +62,16 @@ struct SettingView<Provider: SettingViewProviding>: View {
         }
     }
 
-    /// 左侧：入口列表（LumiUI AppSettingsSidebarContainer + AppSettingsSidebarItem）。
+    /// 左侧：顶部 Logo Header（应用 Logo + 名称 + 版本）+ 分隔线 + 入口列表。
     private var sidebar: some View {
         AppSettingsSidebarContainer(width: 220) {
             VStack(alignment: .leading, spacing: 10) {
+                HeaderView()
+
+                AppSettingsDivider()
+
                 ScrollView {
-                    VStack(spacing: 4) {
+                    VStack(spacing: 6) {
                         ForEach(provider.entries) { entry in
                             AppSettingsSidebarItem(
                                 title: entry.title,
@@ -76,8 +82,11 @@ struct SettingView<Provider: SettingViewProviding>: View {
                             }
                         }
                     }
-                    .padding(.vertical, 8)
+                    .padding(.leading)
+                    .padding(.trailing)
                 }
+
+                Spacer()
             }
         }
     }
