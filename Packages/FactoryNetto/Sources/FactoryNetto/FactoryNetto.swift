@@ -8,6 +8,7 @@ import ProviderFirewallEvents
 import ProviderSettingView
 import ProviderShell
 import ProviderStore
+import ProviderTheme
 import SwiftUI
 
 /// FactoryNetto —— Netto 唯一静态装配点。
@@ -104,6 +105,12 @@ public enum FactoryNetto {
         guard let settings = kernel.resolveProvider(SettingViewProviding.self) else {
             return AnyView(BootstrapFailureView(title: "设置 Provider 未装配", message: "SettingViewProviding not registered"))
         }
-        return settings.makeSettingView()
+        let view = settings.makeSettingView()
+        // 复刻 Lumi ViewFactory：解析 ThemeProviding 并以主题感知视图包装
+        // 设置窗口（切换主题即时同步 LumiUI 全局主题状态）。
+        if let theme = kernel.resolveProvider(ThemeProviding.self) {
+            return AnyView(ThemeHostingView(theme: theme, content: view))
+        }
+        return view
     }
 }

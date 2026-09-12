@@ -1,0 +1,14 @@
+{
+  "originHash" : "4f3e1883d677b6ecea44dc945f24d5a92ed49d5543d239dca9a052b82322d145",
+  "pins" : [
+    {
+      "identity" : "lumiui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiUI",
+      "state" : {
+        "revision" : "419c64ec01257f923b4139ede61377566b97b626"
+      }
+    }
+  ],
+  "version" : 3
+}

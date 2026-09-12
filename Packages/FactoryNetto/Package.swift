@@ -25,6 +25,9 @@ let package = Package(
         .package(name: "ProviderShell", path: "../ProviderShell"),
         .package(name: "ProviderSettingView", path: "../ProviderSettingView"),
         .package(name: "ProviderStore", path: "../ProviderStore"),
+        .package(name: "ProviderTheme", path: "../ProviderTheme"),
+        .package(name: "PluginThemePack", path: "../PluginThemePack"),
+        .package(url: "https://github.com/CofficLab/LumiUI", revision: "419c64ec01257f923b4139ede61377566b97b626"),
     ],
     targets: [
         .target(
@@ -42,6 +45,9 @@ let package = Package(
                 "ProviderShell",
                 "ProviderSettingView",
                 "ProviderStore",
+                "ProviderTheme",
+                "PluginThemePack",
+                "LumiUI",
             ]
         ),
         .testTarget(

@@ -4,6 +4,7 @@ import PluginShell
 import ProviderAppSettings
 import ProviderFirewallEvents
 import ProviderSettingView
+import ProviderTheme
 import ProviderShell
 import SwiftUI
 import XCTest
@@ -91,10 +92,11 @@ final class FactoryNettoTests: XCTestCase {
         XCTAssertNotNil(kernel.resolveProvider(WindowProviding.self))
         XCTAssertNotNil(kernel.resolveProvider(ToastProviding.self))
         XCTAssertEqual(kernel.lifecycleState, .running)
-        // 默认目录包含持久化三插件：事件与设置契约可用。
+        // 默认目录包含持久化三插件 + 主题包：事件/设置/主题契约可用。
         XCTAssertNotNil(kernel.resolveProvider(ProviderAppSettings.AppSettingsProviding.self))
         XCTAssertNotNil(kernel.resolveProvider(ProviderFirewallEvents.FirewallEventsProviding.self))
-        XCTAssertEqual(kernel.registeredPluginCount, 3)
+        XCTAssertNotNil(kernel.resolveProvider(ProviderTheme.ThemeProviding.self))
+        XCTAssertEqual(kernel.registeredPluginCount, 4)
     }
 
     func testMakeKernelStartsPluginsInOrder() throws {

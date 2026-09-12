@@ -4,8 +4,10 @@ import PluginAppSettings
 import PluginEventStore
 import PluginPersistence
 import PluginShell
+import PluginThemePack
 import ProviderSettingView
 import ProviderShell
+import ProviderTheme
 
 /// Provider 装配协议：把 Factory 拥有的共享 Provider 实现注册进 Kernel。
 ///
@@ -31,6 +33,7 @@ public struct DefaultProviderAssembly: ProviderAssembling {
         try kernel.registerProvider(shell, for: WindowProviding.self)
         try kernel.registerProvider(shell, for: ToastProviding.self)
         try kernel.registerProvider(DefaultSettingViewProviding(), for: SettingViewProviding.self)
+        try kernel.registerProvider(DefaultThemeProviding(), for: ThemeProviding.self)
     }
 }
 
@@ -53,6 +56,7 @@ public struct DefaultPluginAssembly: PluginAssembling {
             PersistencePlugin(),      // order 1：db.sqlite / ModelContainer 唯一所有者
             PluginAppSettings(),      // order 10：依赖 persistence
             PluginEventStore(),       // order 10：依赖 persistence
+            ThemePackPlugin(),        // order 100：复刻 Lumi 主题包（注册 19 主题 + 外观入口）
         ]
     }
 }
