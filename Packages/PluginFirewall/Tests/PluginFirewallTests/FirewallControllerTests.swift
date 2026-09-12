@@ -389,6 +389,17 @@ final class FirewallControllerTests: XCTestCase {
 
     // MARK: - 插件生命周期
 
+    func testIPCRegistrationCompletionTimesOutAndIgnoresLateCallback() async {
+        let registration = IPCRegistrationCompletion(timeout: .milliseconds(50))
+        let succeeded = await withCheckedContinuation { continuation in
+            registration.install(continuation)
+        }
+
+        XCTAssertFalse(succeeded)
+        // 远端回调可能在超时后迟到；完成门闩必须避免二次恢复 continuation。
+        registration.finish(true)
+    }
+
     func testPluginLifecycleRegistersObservesAndShutsDown() async throws {
         let system = MockSystemAdapter()
         let ipc = MockIPCAdapter()

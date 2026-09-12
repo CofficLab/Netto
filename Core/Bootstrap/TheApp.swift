@@ -20,13 +20,13 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @State private var hasDeniedApps = false
 
     /// App 装配宿主（唯一实例；Kernel/契约/UI 状态在此缓存）。
-    @StateObject private var appEnv = AppEnvironment.make()
+    @StateObject private var appEnv: AppEnvironment
 
     init() {
-        // 阶段 7：Store 交易监听/权益校准由 PluginStore.onBoot 在 AppEnvironment
-        // 内核启动时承担，此处不再直接调用 StoreService。
-        // App 启动期装配内核（幂等；失败进入 .failed 阶段由 Host 呈现）
-        let environment = appEnv
+        // 通过局部引用启动由 StateObject 持有的同一个环境，不能在 App.init 中
+        // 读取 appEnv wrappedValue（此时 SwiftUI 尚未安装 StateObject）。
+        let environment = AppEnvironment.make()
+        _appEnv = StateObject(wrappedValue: environment)
         Task {
             await environment.bootstrap()
         }
@@ -45,6 +45,17 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         }
     }
 
+    /// 等环境启动完成后绑定窗口路由，并刷新菜单栏警告状态。
+    private func connectRunningEnvironment() {
+        guard appEnv.phase == .running else { return }
+        appEnv.shell?.onRequestOpen = { request in
+            openWindow(id: request.windowID)
+        }
+        Task {
+            await checkDeniedApps()
+        }
+    }
+
     nonisolated static let emoji = "🐦"
     static let welcomeWindowTitle = "Welcome to TravelMode"
     static let storeWindowTitle = "Store - TravelMode"
@@ -57,11 +68,6 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     #endif
 
     var body: some Scene {
-        // 启动时立即检查被禁止的应用
-        let _ = Task {
-            await checkDeniedApps()
-        }
-
         // 欢迎引导窗口
         Window(Self.welcomeWindowTitle, id: AppConfig.welcomeWindowId) {
             if shouldShowLoading && !shouldShowWelcomeWindow {
@@ -93,6 +99,23 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         .windowResizability(.contentSize)
         .defaultPosition(.center)
         .defaultSize(width: 500, height: 600)
+
+        // 设置窗口（Lumi 式组合根形态）：`Window` Scene 启动时创建并显示，
+        // 内容由 FactoryNetto.makeSettingsWindowView 在 bootstrap 完成时装配
+        // 一次并缓存（AppEnvironment.settingsWindowView），不在 body 中装配。
+        // 未就绪时显示启动态，装配失败由 BootstrapFailureView 显式呈现。
+        Window("设置", id: AppConfig.settingsWindowId) {
+            if let settingsWindowView = appEnv.settingsWindowView {
+                settingsWindowView
+            } else {
+                ProgressView("启动中…")
+                    .frame(minWidth: 420, minHeight: 360)
+            }
+        }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
+        .defaultPosition(.center)
+        .defaultSize(width: 420, height: 380)
 
         // 插件窗口 - 动态显示 WindowProviding 贡献的内容
         Window("Plugin Window", id: "plugin-window") {
@@ -134,13 +157,11 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
             .onAppear {
                 // 用户点击了菜单栏图标
                 shouldShowMenuApp = true
-                // 绑定窗口打开回调（WindowProviding → SwiftUI Scene）
-                appEnv.shell?.onRequestOpen = { request in
-                    openWindow(id: request.windowID)
-                }
-                // 检查被禁止的应用
-                Task {
-                    await checkDeniedApps()
+                connectRunningEnvironment()
+            }
+            .onChange(of: appEnv.phase) { _, phase in
+                if phase == .running {
+                    connectRunningEnvironment()
                 }
             }
             .onReceive(nc.publisher(for: .shouldOpenWelcomeWindow)) { _ in
@@ -162,12 +183,21 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
                 }
             }
         }, label: {
-            if hasDeniedApps {
-                // 有被禁止应用时显示警告图标
-                Image(systemName: isDebug ? "airplane.departure" : "network.badge.shield.half.filled")
-            } else {
-                // 正常状态显示默认图标
-                Image(systemName: isDebug ? "airplane" : "checkmark.circle.fill")
+            // MenuBarExtra 的 label 在 status item 安装时渲染一次：
+            // 这是 App 启动的可靠 hook，用于显式打开设置窗口
+            // （MenuBarExtra app 中 Window Scene 不会自动创建窗口，
+            // 需 openWindow；内容在 bootstrap 完成前显示启动态）。
+            Group {
+                if hasDeniedApps {
+                    // 有被禁止应用时显示警告图标
+                    Image(systemName: isDebug ? "airplane.departure" : "network.badge.shield.half.filled")
+                } else {
+                    // 正常状态显示默认图标
+                    Image(systemName: isDebug ? "airplane" : "checkmark.circle.fill")
+                }
+            }
+            .onAppear {
+                openWindow(id: AppConfig.settingsWindowId)
             }
         })
         .menuBarExtraStyle(.window)

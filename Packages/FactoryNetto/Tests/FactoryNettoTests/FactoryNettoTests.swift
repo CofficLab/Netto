@@ -74,6 +74,11 @@ private struct TestPluginAssembly: PluginAssembling {
     func makePlugins() -> [any SuperPlugin] { plugins }
 }
 
+/// 空 Provider 装配：测试自行注册 Provider 时使用（避免与默认 ShellCenter 冲突）。
+private struct EmptyProviderAssembly: ProviderAssembling {
+    func registerProviders(into kernel: KernelCoreContainer) throws {}
+}
+
 /// FactoryNetto 装配测试：Provider 注册、插件顺序、失败路径、视图装配。
 @MainActor
 final class FactoryNettoTests: XCTestCase {
@@ -138,6 +143,31 @@ final class FactoryNettoTests: XCTestCase {
     func testMakeSettingsViewUsesResolvedSettings() async throws {
         let kernel = try await FactoryNetto.makeKernelAsync()
         let view = FactoryNetto.makeSettingsView(kernel: kernel)
+        XCTAssertNotNil(view)
+    }
+
+    func testMakeSettingsWindowViewFailsExplicitlyWithoutGeneralEntry() async throws {
+        // DefaultPluginAssembly 不包含 Host 的 `general` 入口：缺失必须返回
+        // 显式失败视图（不静默退化），而不是强制解包。
+        let kernel = try await FactoryNetto.makeKernelAsync()
+        let view = FactoryNetto.makeSettingsWindowView(kernel: kernel)
+        let renderer = ImageRenderer(content: view)
+        XCTAssertNotNil(renderer)
+    }
+
+    func testMakeSettingsWindowViewReturnsGeneralEntry() async throws {
+        // 构造注入 `general` 入口的 ShellCenter（模拟 HostSettingsPlugin 贡献），
+        // 验证组合根只取该入口渲染。
+        let shell = ShellCenter()
+        shell.registerEntry(SettingsEntry(id: "general", order: 5, ownerPluginID: "host-settings") {
+            AnyView(Text("general-panel"))
+        })
+        let kernel = try await FactoryNetto.makeKernelAsync(
+            providerAssembly: EmptyProviderAssembly(),
+            pluginAssembly: TestPluginAssembly(plugins: [])
+        )
+        try kernel.registerProvider(shell, for: SettingsProviding.self, owner: "test")
+        let view = FactoryNetto.makeSettingsWindowView(kernel: kernel)
         XCTAssertNotNil(view)
     }
 

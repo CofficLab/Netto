@@ -33,18 +33,28 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
 
     var body: some View {
         let env = providedEnvironment ?? appEnv
+        RootEnvironmentHost(environment: env, content: content)
+    }
+}
+
+/// 显式观察所选环境对象，保证 bootstrap 更新 phase 后立即切换根视图状态。
+private struct RootEnvironmentHost<Content: View>: View {
+    @ObservedObject var environment: AppEnvironment
+    let content: Content
+
+    var body: some View {
         Group {
-            switch env.phase {
+            switch environment.phase {
             case .booting:
                 RootLoadingView()
             case let .failed(message):
                 // 启动失败必须显式呈现（不可静默降级为内容视图）
                 RootFailureView(message: message)
             case .running:
-                HostContent(environment: env, content: content)
+                HostContent(environment: environment, content: content)
             }
         }
-        .environmentObject(env)
+        .environmentObject(environment)
     }
 }
 

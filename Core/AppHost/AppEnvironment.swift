@@ -44,6 +44,10 @@ final class AppEnvironment: ObservableObject {
     /// Shell 中心（工具栏/设置/窗口/Toast 四契约聚合宿主）。
     @Published private(set) var shell: ShellCenter?
 
+    /// 设置窗口视图（`Window("设置")` 内容，Lumi 式：bootstrap 完成后装配
+    /// 一次并缓存，绝不在 body 求值期间装配；仅渲染「通用」入口）。
+    @Published private(set) var settingsWindowView: AnyView?
+
     /// 防火墙契约（缓存，避免视图反复解析；bootstrap 后填充）。
     private(set) var firewall: FirewallProviding?
     /// 事件存储契约（缓存）。
@@ -118,6 +122,8 @@ final class AppEnvironment: ObservableObject {
             self.events = kernel.resolveProvider(FirewallEventsProviding.self)
             self.settings = kernel.resolveProvider(AppSettingsProviding.self)
             self.store = kernel.resolveProvider(StoreProviding.self)
+            // 设置窗口视图装配一次并缓存（组合根路径：Provider 解析 → entry 视图）。
+            self.settingsWindowView = FactoryNetto.makeSettingsWindowView(kernel: kernel)
             self.phase = .running
             os_log("AppEnvironment 内核启动完成")
             return true

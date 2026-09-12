@@ -98,4 +98,22 @@ public enum FactoryNetto {
         let settings = kernel.resolveProvider(SettingsProviding.self) as? ShellCenter
         return AnyView(SettingsHostView(kernel: kernel, settings: settings))
     }
+
+    // MARK: - Settings Window View
+
+    /// 设置窗口视图（`Window("设置")` Scene 内容）：只取「通用」入口
+    /// （`SettingsEntry.id == "general"`）渲染，聚合一次并缓存，不在 body 中
+    /// 反复装配。
+    ///
+    /// - Parameter kernel: 已装配的 Kernel（App 唯一实例）。
+    /// - Returns: `general` 入口视图；Provider 未装配或入口缺失时返回显式
+    ///   失败视图（失败必须显式呈现，不静默退化）。
+    public static func makeSettingsWindowView(kernel: KernelCoreContainer) -> AnyView {
+        let settings = kernel.resolveProvider(SettingsProviding.self) as? ShellCenter
+        guard let settings,
+              let general = settings.entries.first(where: { $0.id == "general" }) else {
+            return AnyView(BootstrapFailureView(title: "设置窗口未装配", message: "缺少「通用」设置入口（general）"))
+        }
+        return general.makeView()
+    }
 }

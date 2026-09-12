@@ -39,6 +39,7 @@ struct AppConfig {
     // Window IDs
     static let welcomeWindowId = "welcome"
     static let storeWindowId = "store"
+    static let settingsWindowId = "settings-window"
     
     nonisolated static var documentsURL: URL {
         FileManager.default

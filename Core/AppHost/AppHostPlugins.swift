@@ -191,6 +191,16 @@ final class HostSettingsPlugin: KernelCore.SuperPlugin {
     }
 
     func contribute(into shell: ShellCenter) {
+        // 「通用」设置入口：设置窗口（`Window("设置")`）启动时经
+        // FactoryNetto.makeSettingsWindowView 只取此 entry 渲染。
+        shell.registerEntry(SettingsEntry(
+            id: "general",
+            order: 5,
+            ownerPluginID: id
+        ) {
+            AnyView(GeneralSettingsView())
+        })
+        // 打开 macOS 系统设置（旧 SettingButton 插件行为，设置面板使用）。
         shell.registerEntry(SettingsEntry(
             id: "appsettings",
             order: 30,
