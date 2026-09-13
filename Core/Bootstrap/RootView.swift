@@ -1,111 +1,99 @@
-import MagicAlert
 import MagicCore
 import OSLog
-import SwiftData
 import SwiftUI
 
-struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
+/// 主界面 Host 壳 —— 只保留启动态 / 失败态 / 运行态装配。
+///
+/// 阶段 6 迁移后：
+/// - 不再创建 `UIProvider` / `PluginProvider` / `EventRepo.shared` /
+///   `AppSettingRepo.shared` / `FirewallService.shared` / `MagicMessageProvider.shared`；
+/// - 所有核心服务由 `AppEnvironment` 在 App 启动期装配并缓存，
+///   视图只消费注入的契约环境对象；
+/// - 运行态按 `AppEnvironment.phase` 呈现：加载 / 失败 / 内容；
+/// - 内容在 `.running` 时**惰性求值**（`contentBuilder`）：App 传入
+///   `FactoryNetto.makeMainView` 的闭包在 Kernel 就绪后才被调用，
+///   避免 bootstrap 完成前解析 nil Kernel。
+///
+/// 线程/actor：`@MainActor`（SwiftUI View）。无副作用；`inRootView()` 只用于预览。
+struct RootView<Content>: View, SuperLog where Content: View {
     nonisolated static var emoji: String { "🌳" }
 
-    private var content: Content
+    /// 内容构建器（仅在 `phase == .running` 时求值一次/每次重绘时求值）。
+    private let contentBuilder: () -> Content
 
-    // 核心服务 - 改为实例对象
-    @StateObject private var app = UIProvider()
-    @StateObject private var p = PluginProvider()
-    @State private var eventRepo: EventRepo?
-    @State private var settingRepo: AppSettingRepo?
-    @State private var firewall: FirewallService?
-    @StateObject private var m = MagicMessageProvider.shared
-    @State private var isLoading = true
-    @State private var initializationError: Error?
+    /// App 装配环境；状态由组合根持有，Host shell 只负责观察。
+    private let environment: AppEnvironment
+    /// Kernel 就绪后由 App 绑定窗口路由等宿主回调。
+    private let onRunning: () -> Void
 
-    init(@ViewBuilder content: () -> Content) {
+    init(
+        environment: AppEnvironment,
+        onRunning: @escaping () -> Void = {},
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         os_log("\(Self.onInit)")
-        self.content = content()
+        self.environment = environment
+        self.onRunning = onRunning
+        self.contentBuilder = content
     }
 
     var body: some View {
+        RootEnvironmentHost(environment: environment, onRunning: onRunning, contentBuilder: contentBuilder)
+    }
+}
+
+/// 显式观察所选环境对象，保证 bootstrap 更新 phase 后立即切换根视图状态。
+private struct RootEnvironmentHost<Content: View>: View {
+    @ObservedObject var environment: AppEnvironment
+    let onRunning: () -> Void
+    let contentBuilder: () -> Content
+
+    var body: some View {
         Group {
-            if isLoading {
+            switch environment.phase {
+            case .booting:
                 RootLoadingView()
-            } else if let error = initializationError {
-                error.makeView()
-            } else if let eventRepo = eventRepo, let settingRepo = settingRepo, let firewall = self.firewall {
-                // 将内容视图包裹在插件的 RootView 中
-                p.wrapContent(
-                    content
-                        .withMagicToast()
-                        .environmentObject(app)
-                        .environmentObject(m)
-                        .environmentObject(p)
-                        .environmentObject(eventRepo)
-                        .environmentObject(settingRepo)
-                        .environmentObject(firewall)
-                        .onAppear(perform: onAppear)
-                )
+            case let .failed(message):
+                // 启动失败必须显式呈现（不可静默降级为内容视图）
+                RootFailureView(message: message)
+            case .running:
+                // Factory 的视图装配器负责注入共享 Provider 环境。
+                contentBuilder()
             }
         }
-        .task {
-            await initializeServices()
+        .onAppear {
+            if environment.phase == .running {
+                onRunning()
+            }
         }
-        .onDisappear(perform: onDisappear)
+        .onChange(of: environment.phase) { _, phase in
+            if phase == .running {
+                onRunning()
+            }
+        }
     }
 }
 
-// MARK: - Action
+/// 启动失败视图：展示内核装配错误（与旧 `error.makeView()` 语义等价）。
+private struct RootFailureView: View {
+    let message: String
 
-extension RootView {
-    /// 异步初始化所有服务
-    private func initializeServices() async {
-        os_log("\(self.i)初始化服务...")
-
-        // Repos
-        let eventRepo = EventRepo.shared
-        let appSettingRepo = AppSettingRepo.shared
-
-        // Services
-        let firewallService = FirewallService.shared
-
-        await MainActor.run {
-            self.eventRepo = eventRepo
-            self.settingRepo = appSettingRepo
-            self.isLoading = false
-            self.firewall = firewallService
-            self.initializationError = nil
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.largeTitle)
+                .foregroundStyle(.orange)
+            Text("初始化失败")
+                .font(.headline)
+            Text(message)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .textSelection(.enabled)
+                .padding(.horizontal, 24)
         }
-
-        os_log("\(self.t)✅ 服务初始化完成")
-    }
-}
-
-// MARK: - Event Handler
-
-extension RootView {
-    func onAppear() {
-    }
-
-    func onDisappear() {
-        os_log("\(self.t)📴 视图消失，清理和释放内存")
-
-        self.app.cleanup()
-        self.p.cleanup()
-        self.firewall?.removeObserver()
-
-        // 清理状态变量，强制释放引用
-        self.eventRepo = nil
-        self.settingRepo = nil
-        self.firewall = nil
-        self.initializationError = nil
-    }
-}
-
-extension View {
-    /// 将当前视图包裹在RootView中
-    /// - Returns: 被RootView包裹的视图
-    func inRootView() -> some View {
-        RootView {
-            self
-        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(NSColor.controlBackgroundColor))
     }
 }
 
@@ -118,17 +106,9 @@ struct RootLoadingView: View {
                 .scaleEffect(1.5)
             Text("正在初始化服务...")
                 .font(.headline)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(NSColor.controlBackgroundColor))
     }
-}
-
-// MARK: - Preview
-
-#Preview("APP") {
-    ContentView()
-        .inRootView()
-        .frame(width: 700)
 }

@@ -22,6 +22,21 @@
 		0B4D15AF2E6D248200CAB5C7 /* MagicAsset in Frameworks */ = {isa = PBXBuildFile; productRef = 0B4D15AE2E6D248200CAB5C7 /* MagicAsset */; };
 		0B4D15B12E6D248200CAB5C7 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0B4D15B02E6D248200CAB5C7 /* MagicCore */; };
 		0BE0D9ED2E6F164E00B5F80C /* MagicUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0BE0D9EC2E6F164E00B5F80C /* MagicUI */; };
+		A1A0000000000000000201 /* KernelCore in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000101 /* KernelCore */; };
+		A1A0000000000000000202 /* ProviderFirewall in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000102 /* ProviderFirewall */; };
+		A1A0000000000000000203 /* ProviderFirewallEvents in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000103 /* ProviderFirewallEvents */; };
+		A1A0000000000000000204 /* ProviderAppSettings in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000104 /* ProviderAppSettings */; };
+		A1A0000000000000000205 /* ProviderAppCatalog in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000105 /* ProviderAppCatalog */; };
+		A1A0000000000000000206 /* ProviderShell in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000106 /* ProviderShell */; };
+		A1A0000000000000000207 /* ProviderStore in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000107 /* ProviderStore */; };
+		A1A0000000000000000208 /* NettoIPCContracts in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000108 /* NettoIPCContracts */; };
+		A1A0000000000000000210 /* FactoryNetto in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000110 /* FactoryNetto */; };
+		A1A0000000000000000211 /* PluginPersistence in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000111 /* PluginPersistence */; };
+		A1A0000000000000000212 /* PluginAppSettings in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000112 /* PluginAppSettings */; };
+		A1A0000000000000000213 /* PluginEventStore in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000113 /* PluginEventStore */; };
+		A1A0000000000000000214 /* PluginFirewall in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000114 /* PluginFirewall */; };
+		A1A0000000000000000215 /* PluginStore in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000115 /* PluginStore */; };
+		A1A0000000000000000216 /* ProviderSettingView in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000116 /* ProviderSettingView */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3ED2DE463A1009CC54C /* MagicCore */; };
 		F50882A02E7BB462004FB427 /* MagicDesktop in Frameworks */ = {isa = PBXBuildFile; productRef = F508829F2E7BB462004FB427 /* MagicDesktop */; };
@@ -41,6 +56,7 @@
 		F5D27E312E6E60F5006B3CB2 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F5D27E302E6E60F5006B3CB2 /* MagicCore */; };
 		F5D27E332E6E60F5006B3CB2 /* MagicDevice in Frameworks */ = {isa = PBXBuildFile; productRef = F5D27E322E6E60F5006B3CB2 /* MagicDevice */; };
 		F5D27E352E6E60F5006B3CB2 /* MagicError in Frameworks */ = {isa = PBXBuildFile; productRef = F5D27E342E6E60F5006B3CB2 /* MagicError */; };
+		F6A000000000000000000003 /* LumiUI in Frameworks */ = {isa = PBXBuildFile; productRef = F6A000000000000000000002 /* LumiUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,8 +111,6 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		0B1C653D2DE5F6C600F982C0 /* Core */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0B1C665D2DE5FDE700F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Core; sourceTree = "<group>"; };
 		0B1C65BB2DE5F87500F982C0 /* Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0B1C665C2DE5FDB800F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Extension; sourceTree = "<group>"; };
-		0B1C65CD2DE5F90800F982C0 /* Plugins */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Plugins; sourceTree = "<group>"; };
-		0B4D159D2E6D19AA00CAB5C7 /* AppStore */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AppStore; sourceTree = "<group>"; };
 		0B6703FA2DE8928A0078D726 /* Bridge */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Bridge; sourceTree = "<group>"; };
 		0BECFF612DE5FFD6001B7619 /* docs */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = docs; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -145,6 +159,22 @@
 				0B08D5452E6DD82A001902DD /* MagicCore in Frameworks */,
 				F5D27E2F2E6E60F5006B3CB2 /* MagicContainer in Frameworks */,
 				0B3485AA2E6DDC4400EBD371 /* MagicError in Frameworks */,
+				A1A0000000000000000201 /* KernelCore in Frameworks */,
+				A1A0000000000000000202 /* ProviderFirewall in Frameworks */,
+				A1A0000000000000000203 /* ProviderFirewallEvents in Frameworks */,
+				A1A0000000000000000204 /* ProviderAppSettings in Frameworks */,
+				A1A0000000000000000205 /* ProviderAppCatalog in Frameworks */,
+				A1A0000000000000000206 /* ProviderShell in Frameworks */,
+				A1A0000000000000000207 /* ProviderStore in Frameworks */,
+				A1A0000000000000000208 /* NettoIPCContracts in Frameworks */,
+				A1A0000000000000000210 /* FactoryNetto in Frameworks */,
+				A1A0000000000000000211 /* PluginPersistence in Frameworks */,
+				A1A0000000000000000212 /* PluginAppSettings in Frameworks */,
+				A1A0000000000000000213 /* PluginEventStore in Frameworks */,
+				A1A0000000000000000214 /* PluginFirewall in Frameworks */,
+				A1A0000000000000000215 /* PluginStore in Frameworks */,
+				A1A0000000000000000216 /* ProviderSettingView in Frameworks */,
+				F6A000000000000000000003 /* LumiUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,13 +184,11 @@
 		C4B45DAC22739FFF0050C59B = {
 			isa = PBXGroup;
 			children = (
-				0B4D159D2E6D19AA00CAB5C7 /* AppStore */,
 				0B6703FA2DE8928A0078D726 /* Bridge */,
 				0B1C65392DE5F6C600F982C0 /* Assets.xcassets */,
 				0B1C653D2DE5F6C600F982C0 /* Core */,
 				0BECFF612DE5FFD6001B7619 /* docs */,
 				0B1C65BB2DE5F87500F982C0 /* Extension */,
-				0B1C65CD2DE5F90800F982C0 /* Plugins */,
 				C4B45DB622739FFF0050C59B /* Products */,
 				0BECFF622DE5FFD6001B7619 /* README.md */,
 				F5F857DF2DE815C300E03577 /* README-DEV.md */,
@@ -224,11 +252,11 @@
 			);
 			fileSystemSynchronizedGroups = (
 				0B1C653D2DE5F6C600F982C0 /* Core */,
-				0B1C65CD2DE5F90800F982C0 /* Plugins */,
-				0B4D159D2E6D19AA00CAB5C7 /* AppStore */,
 				0B6703FA2DE8928A0078D726 /* Bridge */,
 			);
 			name = TavelMode;
+			packageProductDependencies = (
+			);
 			productName = SimpleFirewall;
 			productReference = C4B45DB522739FFF0050C59B /* TavelMode.app */;
 			productType = "com.apple.product-type.application";
@@ -265,6 +293,22 @@
 			mainGroup = C4B45DAC22739FFF0050C59B;
 			packageReferences = (
 				F52D4A1C2E6E8A24007F53A3 /* XCRemoteSwiftPackageReference "MagicKit" */,
+				A1A0000000000000000001 /* XCLocalSwiftPackageReference "Packages/KernelCore" */,
+				A1A0000000000000000002 /* XCLocalSwiftPackageReference "Packages/ProviderFirewall" */,
+				A1A0000000000000000003 /* XCLocalSwiftPackageReference "Packages/ProviderFirewallEvents" */,
+				A1A0000000000000000004 /* XCLocalSwiftPackageReference "Packages/ProviderAppSettings" */,
+				A1A0000000000000000005 /* XCLocalSwiftPackageReference "Packages/ProviderAppCatalog" */,
+				A1A0000000000000000006 /* XCLocalSwiftPackageReference "Packages/ProviderShell" */,
+				A1A0000000000000000007 /* XCLocalSwiftPackageReference "Packages/ProviderStore" */,
+				A1A0000000000000000008 /* XCLocalSwiftPackageReference "Packages/NettoIPCContracts" */,
+				A1A0000000000000000010 /* XCLocalSwiftPackageReference "Packages/FactoryNetto" */,
+				A1A0000000000000000011 /* XCLocalSwiftPackageReference "Packages/PluginPersistence" */,
+				A1A0000000000000000012 /* XCLocalSwiftPackageReference "Packages/PluginAppSettings" */,
+				A1A0000000000000000013 /* XCLocalSwiftPackageReference "Packages/PluginEventStore" */,
+				A1A0000000000000000014 /* XCLocalSwiftPackageReference "Packages/PluginFirewall" */,
+				A1A0000000000000000015 /* XCLocalSwiftPackageReference "Packages/PluginStore" */,
+				A1A0000000000000000016 /* XCLocalSwiftPackageReference "Packages/ProviderSettingView" */,
+				F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */,
 			);
 			productRefGroup = C4B45DB622739FFF0050C59B /* Products */;
 			projectDirPath = "";
@@ -597,37 +641,108 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		A1A0000000000000000001 /* XCLocalSwiftPackageReference "Packages/KernelCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/KernelCore;
+		};
+		A1A0000000000000000002 /* XCLocalSwiftPackageReference "Packages/ProviderFirewall" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProviderFirewall;
+		};
+		A1A0000000000000000003 /* XCLocalSwiftPackageReference "Packages/ProviderFirewallEvents" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProviderFirewallEvents;
+		};
+		A1A0000000000000000004 /* XCLocalSwiftPackageReference "Packages/ProviderAppSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProviderAppSettings;
+		};
+		A1A0000000000000000005 /* XCLocalSwiftPackageReference "Packages/ProviderAppCatalog" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProviderAppCatalog;
+		};
+		A1A0000000000000000006 /* XCLocalSwiftPackageReference "Packages/ProviderShell" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProviderShell;
+		};
+		A1A0000000000000000007 /* XCLocalSwiftPackageReference "Packages/ProviderStore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProviderStore;
+		};
+		A1A0000000000000000008 /* XCLocalSwiftPackageReference "Packages/NettoIPCContracts" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/NettoIPCContracts;
+		};
+		A1A0000000000000000010 /* XCLocalSwiftPackageReference "Packages/FactoryNetto" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/FactoryNetto;
+		};
+		A1A0000000000000000011 /* XCLocalSwiftPackageReference "Packages/PluginPersistence" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginPersistence;
+		};
+		A1A0000000000000000012 /* XCLocalSwiftPackageReference "Packages/PluginAppSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginAppSettings;
+		};
+		A1A0000000000000000013 /* XCLocalSwiftPackageReference "Packages/PluginEventStore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginEventStore;
+		};
+		A1A0000000000000000014 /* XCLocalSwiftPackageReference "Packages/PluginFirewall" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginFirewall;
+		};
+		A1A0000000000000000015 /* XCLocalSwiftPackageReference "Packages/PluginStore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginStore;
+		};
+		A1A0000000000000000016 /* XCLocalSwiftPackageReference "Packages/ProviderSettingView" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ProviderSettingView;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		0B34859E2E6DDC4400EBD371 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/MagicKit";
 			requirement = {
-				branch = dev;
-				kind = branch;
+				kind = revision;
+				revision = d04a729;
 			};
 		};
 		0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/MagicKit";
 			requirement = {
-				branch = dev;
-				kind = branch;
+				kind = revision;
+				revision = d04a729;
 			};
 		};
 		F52D4A1C2E6E8A24007F53A3 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/MagicKit";
 			requirement = {
-				branch = dev;
-				kind = branch;
+				kind = revision;
+				revision = d04a729;
 			};
 		};
 		F5D27E272E6E60F5006B3CB2 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/MagicKit";
 			requirement = {
-				branch = dev;
-				kind = branch;
+				kind = revision;
+				revision = d04a729;
+			};
+		};
+		F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CofficLab/LumiUI";
+			requirement = {
+				kind = revision;
+				revision = 419c64ec01257f923b4139ede61377566b97b626;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -695,6 +810,81 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F52D4A1C2E6E8A24007F53A3 /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicUI;
+		};
+		A1A0000000000000000101 /* KernelCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000001 /* XCLocalSwiftPackageReference "Packages/KernelCore" */;
+			productName = KernelCore;
+		};
+		A1A0000000000000000102 /* ProviderFirewall */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000002 /* XCLocalSwiftPackageReference "Packages/ProviderFirewall" */;
+			productName = ProviderFirewall;
+		};
+		A1A0000000000000000103 /* ProviderFirewallEvents */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000003 /* XCLocalSwiftPackageReference "Packages/ProviderFirewallEvents" */;
+			productName = ProviderFirewallEvents;
+		};
+		A1A0000000000000000104 /* ProviderAppSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000004 /* XCLocalSwiftPackageReference "Packages/ProviderAppSettings" */;
+			productName = ProviderAppSettings;
+		};
+		A1A0000000000000000105 /* ProviderAppCatalog */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000005 /* XCLocalSwiftPackageReference "Packages/ProviderAppCatalog" */;
+			productName = ProviderAppCatalog;
+		};
+		A1A0000000000000000106 /* ProviderShell */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000006 /* XCLocalSwiftPackageReference "Packages/ProviderShell" */;
+			productName = ProviderShell;
+		};
+		A1A0000000000000000107 /* ProviderStore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000007 /* XCLocalSwiftPackageReference "Packages/ProviderStore" */;
+			productName = ProviderStore;
+		};
+		A1A0000000000000000108 /* NettoIPCContracts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000008 /* XCLocalSwiftPackageReference "Packages/NettoIPCContracts" */;
+			productName = NettoIPCContracts;
+		};
+		A1A0000000000000000110 /* FactoryNetto */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000010 /* XCLocalSwiftPackageReference "Packages/FactoryNetto" */;
+			productName = FactoryNetto;
+		};
+		A1A0000000000000000111 /* PluginPersistence */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000011 /* XCLocalSwiftPackageReference "Packages/PluginPersistence" */;
+			productName = PluginPersistence;
+		};
+		A1A0000000000000000112 /* PluginAppSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000012 /* XCLocalSwiftPackageReference "Packages/PluginAppSettings" */;
+			productName = PluginAppSettings;
+		};
+		A1A0000000000000000113 /* PluginEventStore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000013 /* XCLocalSwiftPackageReference "Packages/PluginEventStore" */;
+			productName = PluginEventStore;
+		};
+		A1A0000000000000000114 /* PluginFirewall */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000014 /* XCLocalSwiftPackageReference "Packages/PluginFirewall" */;
+			productName = PluginFirewall;
+		};
+		A1A0000000000000000115 /* PluginStore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000015 /* XCLocalSwiftPackageReference "Packages/PluginStore" */;
+			productName = PluginStore;
+		};
+		A1A0000000000000000116 /* ProviderSettingView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1A0000000000000000016 /* XCLocalSwiftPackageReference "Packages/ProviderSettingView" */;
+			productName = ProviderSettingView;
 		};
 		F500B3ED2DE463A1009CC54C /* MagicCore */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -785,6 +975,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F5D27E272E6E60F5006B3CB2 /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicError;
+		};
+		F6A000000000000000000002 /* LumiUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */;
+			productName = LumiUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
