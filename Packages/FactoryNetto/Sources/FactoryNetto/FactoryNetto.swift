@@ -3,6 +3,7 @@ import ProviderViewEnvironment
 import KernelCore
 import PluginFirewallDashboard
 import PluginHostActions
+import PluginAgentRules
 import ProviderShell
 import ProviderAppCatalog
 import ProviderAppSettings
@@ -72,6 +73,7 @@ public enum FactoryNetto {
     public static func registerPreviewContributions(into shell: ShellCenter) {
         FirewallDashboardPlugin.registerPreviewContributions(into: shell)
         HostActionPluginAssembly.registerPreviewContributions(into: shell)
+        AgentRulesPlugin.registerPreviewContributions(into: shell)
     }
 
     // MARK: - Main View

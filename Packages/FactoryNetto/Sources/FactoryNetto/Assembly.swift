@@ -5,6 +5,7 @@ import PluginEventStore
 import PluginFirewall
 import PluginFirewallDashboard
 import PluginHostActions
+import PluginAgentRules
 import PluginPersistence
 import ProviderShell
 import PluginStore
@@ -64,6 +65,7 @@ public struct DefaultPluginAssembly: PluginAssembling {
             PluginFirewall(),         // order 30：网络过滤、系统扩展与 IPC
             PluginStore(),            // order 40：StoreKit 服务与权益
             FirewallDashboardPlugin(), // order 60：贡献菜单栏 popover 主面板
+            AgentRulesPlugin(),       // order 70：向工具栏注入规则按钮 + popover
             ThemePackPlugin(),        // order 100：复刻 Lumi 主题包（注册 19 主题 + 外观入口）
         ] + HostActionPluginAssembly.makePlugins()
     }
