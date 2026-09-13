@@ -1,34 +1,5 @@
 import PluginFirewallDashboard
-import CloudKit
-import OSLog
-import SwiftData
 import SwiftUI
-import WebKit
-
-func container() -> ModelContainer  {
-    let schema = Schema([
-        AppSetting.self,
-        FirewallEventModel.self,
-    ])
-
-    let modelConfiguration = ModelConfiguration(
-        schema: schema,
-        url: AppConfig.databaseURL,
-        allowsSave: true,
-        cloudKitDatabase: .none
-    )
-
-    do {
-        let container = try ModelContainer(
-            for: schema,
-            configurations: [modelConfiguration]
-        )
-
-        return container
-    } catch {
-        fatalError("无法创建 primaryContainer: \n\(error)")
-    }
-}
 
 @MainActor
 struct AppConfig {
