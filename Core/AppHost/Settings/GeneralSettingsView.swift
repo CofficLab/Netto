@@ -1,6 +1,7 @@
 import PluginFirewallDashboard
 import AppKit
 import LumiUI
+import PluginFirewallDashboard
 import SwiftUI
 
 /// 「设置」窗口 —— 通用设置面板（HostSettingsPlugin 贡献的 `general` 入口视图）。

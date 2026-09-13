@@ -4,14 +4,19 @@ import SwiftUI
  * 加载视图
  * 用于在应用启动时展示加载状态
  */
-struct LoadingView: View {
-    @Binding var isPresented: Bool
-    let message: String
+public struct LoadingView: View {
+    @Binding public var isPresented: Bool
+    public let message: String
+
+    public init(isPresented: Binding<Bool>, message: String) {
+        self._isPresented = isPresented
+        self.message = message
+    }
     
     @State private var rotation: Double = 0
     @State private var scale: CGFloat = 0.8
     
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 24) {
             // 加载动画
             Image(systemName: "arrow.triangle.2.circlepath")

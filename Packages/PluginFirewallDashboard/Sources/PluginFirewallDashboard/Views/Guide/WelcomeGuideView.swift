@@ -1,25 +1,30 @@
 import PluginFirewallDashboard
 import SwiftUI
 
-/**
- * 欢迎引导视图
- * 用于在应用启动时向用户展示使用指南
- */
-struct WelcomeGuideView: View {
+/// 欢迎引导视图（启动欢迎窗与「设置-通用-使用引导」共用）。
+///
+/// 无 Provider 环境依赖、不创建核心服务；`hasShownWelcome` 键与旧实现一致
+/// （UserDefaults 键名不变）；`dismiss` 在 sheet/窗口场景下关闭自身。
+///
+/// 线程/actor：`View`；body 求值无副作用；按钮动作在主线程执行。
+public struct WelcomeGuideView: View {
     @State private var currentStep = 0
     @AppStorage("hasShownWelcome") private var hasShownWelcome = false
     @Environment(\.dismiss) private var dismiss
+
+    public init() {}
     
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 20) {
             // 头部
             VStack(spacing: 16) {
+                // 无 bundle 参数时从 main bundle 加载（App 运行时的 Assets.xcassets/Logo）
                 Image("Logo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 72, height: 72)
                 
-                Text("欢迎使用 " + AppConfig.appName)
+                Text("欢迎使用 \(DashboardAppName.name)")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                 
@@ -169,9 +174,12 @@ struct WelcomeGuideView: View {
 }
 
 #Preview {
-    RootView(environment: .preview()) {
-        ContentView()
-    }
-    .frame(height: 600)
-    .frame(width: 500)
+    DashboardPreviewHost { WelcomeGuideView() }
+        .frame(width: 500, height: 600)
+}
+
+
+/// 包内应用显示名（与 App target `AppConfig.appName` 同步；避免包依赖 App 常量）。
+public enum DashboardAppName {
+    public static let name = "TravelMode"
 }
