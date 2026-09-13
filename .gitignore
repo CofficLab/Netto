@@ -7,3 +7,5 @@ build
 .build/
 # SwiftPM 本地用户状态
 .swiftpm/
+# SwiftPM Package.resolved in xcodeproj
+Package.resolved

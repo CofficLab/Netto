@@ -1,10 +1,8 @@
 {
   "sourceLanguage" : "zh-Hans",
   "strings" : {
-    "" : {
-      "shouldTranslate" : false
-    },
     "%lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -15,18 +13,8 @@
       },
       "shouldTranslate" : false
     },
-    "%lld / %lld" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld / %2$lld"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "💡 当代理应用运行时，部分应用的网络流量会被代理应用接管，\n这些应用的网络活动将无法被本软件直接监控到。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -36,25 +24,8 @@
         }
       }
     },
-    "1." : {
-
-    },
-    "2." : {
-
-    },
-    "2个订阅选项" : {
-
-    },
-    "3." : {
-
-    },
-    "4." : {
-
-    },
-    "5." : {
-
-    },
     "10" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -65,6 +36,7 @@
       }
     },
     "20" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -75,6 +47,7 @@
       }
     },
     "50" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -85,6 +58,7 @@
       }
     },
     "100" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -95,6 +69,7 @@
       }
     },
     "Action" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -106,6 +81,7 @@
       "shouldTranslate" : false
     },
     "Address" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -117,6 +93,7 @@
       "shouldTranslate" : false
     },
     "Allowed" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -128,6 +105,7 @@
       "shouldTranslate" : false
     },
     "Click \"Allow\" to install extension" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -139,6 +117,7 @@
       "shouldTranslate" : false
     },
     "Coffic" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -149,6 +128,7 @@
       }
     },
     "CofficLab" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -158,13 +138,8 @@
         }
       }
     },
-    "com.example.app%lld" : {
-
-    },
-    "Count" : {
-
-    },
     "Direction" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -175,10 +150,8 @@
       },
       "shouldTranslate" : false
     },
-    "Edit" : {
-
-    },
     "Error: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -189,10 +162,8 @@
       },
       "shouldTranslate" : false
     },
-    "File" : {
-
-    },
     "Finder中显示" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -202,10 +173,8 @@
         }
       }
     },
-    "Help" : {
-
-    },
     "ID" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -222,6 +191,7 @@
       }
     },
     "ID: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -231,10 +201,8 @@
         }
       }
     },
-    "ID: 3F19ED53" : {
-
-    },
     "No" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -249,6 +217,7 @@
 
     },
     "Port" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -259,13 +228,8 @@
       },
       "shouldTranslate" : false
     },
-    "Pro 版本可无限制禁止应用" : {
-
-    },
-    "Software Services Pro" : {
-
-    },
     "Status" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -277,6 +241,7 @@
       "shouldTranslate" : false
     },
     "Stop" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -288,6 +253,7 @@
       "shouldTranslate" : false
     },
     "Time" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -298,10 +264,8 @@
       },
       "shouldTranslate" : false
     },
-    "View" : {
-
-    },
     "Wi-Fi" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -311,10 +275,8 @@
         }
       }
     },
-    "Window" : {
-
-    },
     "Yes" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -326,6 +288,7 @@
       "shouldTranslate" : false
     },
     "上一步" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -336,6 +299,7 @@
       }
     },
     "下一步" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -346,6 +310,7 @@
       }
     },
     "了解代理应用对网络监控的影响" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -355,10 +320,8 @@
         }
       }
     },
-    "事件详情" : {
-
-    },
     "代理应用" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -369,6 +332,7 @@
       }
     },
     "代理应用 (Proxy App)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -379,6 +343,7 @@
       }
     },
     "代理应用对网络监控的影响" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -389,6 +354,7 @@
       }
     },
     "允许" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -399,6 +365,7 @@
       }
     },
     "入" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -409,6 +376,7 @@
       }
     },
     "入站" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -418,10 +386,8 @@
         }
       }
     },
-    "全部" : {
-
-    },
     "共 %lld 条事件" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -432,6 +398,7 @@
       }
     },
     "共 %lld 条记录" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -441,13 +408,8 @@
         }
       }
     },
-    "关于" : {
-
-    },
-    "关闭" : {
-
-    },
     "出" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -458,6 +420,7 @@
       }
     },
     "出站" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -471,6 +434,7 @@
 
     },
     "刷新" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -481,6 +445,7 @@
       }
     },
     "加载中..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -490,13 +455,11 @@
         }
       }
     },
-    "合计 %lld" : {
-
-    },
     "启动中…" : {
 
     },
     "在 Finder 中显示" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -506,13 +469,8 @@
         }
       }
     },
-    "在弹出的对话框中点击\"允许\"" : {
-
-    },
-    "在访达中显示" : {
-
-    },
     "地址" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -523,6 +481,7 @@
       }
     },
     "复制 App ID" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -533,6 +492,7 @@
       }
     },
     "复制错误信息" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -542,19 +502,8 @@
         }
       }
     },
-    "如果您之前在其他设备上购买过订阅,可以通过点击下方的\"恢复购买\"按钮来恢复您的订阅。请确保您使用的是购买时所用的Apple ID 账号。" : {
-
-    },
-    "导出近期日志" : {
-
-    },
-    "将APP拖拽到Applications文件夹" : {
-
-    },
-    "将开关点击到启用状态" : {
-
-    },
     "将鼠标悬停在应用上查看操作按钮" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -564,10 +513,8 @@
         }
       }
     },
-    "属性信息" : {
-
-    },
     "已复制" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -578,6 +525,7 @@
       }
     },
     "已复制!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -588,6 +536,7 @@
       }
     },
     "已禁止" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -597,10 +546,8 @@
         }
       }
     },
-    "已达到免费版限制" : {
-
-    },
     "应用ID筛选:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -611,6 +558,7 @@
       }
     },
     "应用列表" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -621,6 +569,7 @@
       }
     },
     "应用程序" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -631,6 +580,7 @@
       }
     },
     "应用筛选" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -640,10 +590,8 @@
         }
       }
     },
-    "应用详情" : {
-
-    },
     "开关" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -654,6 +602,7 @@
       }
     },
     "开启代理" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -664,6 +613,7 @@
       }
     },
     "开始" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -674,6 +624,7 @@
       }
     },
     "开始使用" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -684,6 +635,7 @@
       }
     },
     "当前没有出现被禁止联网的 APP" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -694,6 +646,7 @@
       }
     },
     "当前网络监控已停止" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -704,6 +657,7 @@
       }
     },
     "当前运行的应用程序" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -714,6 +668,7 @@
       }
     },
     "总计: %lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -723,10 +678,8 @@
         }
       }
     },
-    "恢复购买" : {
-
-    },
     "所有应用可自由联网" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -736,10 +689,8 @@
         }
       }
     },
-    "打开Finder" : {
-
-    },
     "打开数据库文件夹" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -749,10 +700,8 @@
         }
       }
     },
-    "打开系统设置" : {
-
-    },
     "扩展" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -763,6 +712,7 @@
       }
     },
     "扩展可在 Mac 和 App 中添加额外功能..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -772,13 +722,8 @@
         }
       }
     },
-    "找到当前APP的位置" : {
-
-    },
-    "找到本应用的扩展" : {
-
-    },
     "拒绝" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -789,6 +734,7 @@
       }
     },
     "按下方示意图进行设置" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -799,6 +745,7 @@
       }
     },
     "描述" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -809,6 +756,7 @@
       }
     },
     "提示: 应用ID通常是应用的Bundle ID，例如 com.apple.Safari" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -819,6 +767,7 @@
       }
     },
     "搜索应用ID" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -828,10 +777,8 @@
         }
       }
     },
-    "操作步骤：" : {
-
-    },
     "操作系统 (macOS)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -842,6 +789,7 @@
       }
     },
     "收起代理应用说明" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -852,6 +800,7 @@
       }
     },
     "数据交换" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -861,13 +810,8 @@
         }
       }
     },
-    "数据库" : {
-
-    },
-    "数据目录" : {
-
-    },
     "方向" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -878,6 +822,7 @@
       }
     },
     "时间" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -888,6 +833,7 @@
       }
     },
     "显示: %lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -898,6 +844,7 @@
       }
     },
     "更多操作" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -907,10 +854,8 @@
         }
       }
     },
-    "更新步骤：" : {
-
-    },
     "未开启代理" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -920,13 +865,14 @@
         }
       }
     },
-    "检测到已安装旧版本的系统扩展，需要更新到当前版本" : {
-
-    },
     "正在初始化服务..." : {
 
     },
+    "正在检查版本…" : {
+
+    },
     "每页显示:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -937,6 +883,7 @@
       }
     },
     "清除筛选" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -946,16 +893,8 @@
         }
       }
     },
-    "点击下方按钮安装系统扩展" : {
-
-    },
-    "点击下方按钮安装过滤器" : {
-
-    },
-    "点击下方按钮更新系统扩展" : {
-
-    },
     "点击这里访问应用" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -965,17 +904,8 @@
         }
       }
     },
-    "版本 %@ (%@)" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "版本 %1$@ (%2$@)"
-          }
-        }
-      }
-    },
     "状态" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -985,50 +915,8 @@
         }
       }
     },
-    "状态:" : {
-
-    },
-    "登录项与扩展" : {
-
-    },
-    "示例应用 %lld" : {
-
-    },
-    "禁止" : {
-
-    },
-    "禁止联网" : {
-
-    },
-    "稍后再说" : {
-
-    },
-    "立即升级" : {
-
-    },
-    "端口" : {
-
-    },
-    "第 %lld 页，共 %lld 页" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "第 %1$lld 页，共 %2$lld 页"
-          }
-        }
-      }
-    },
-    "等待更新完成，防火墙即可正常使用" : {
-
-    },
-    "等待系统扩展安装完成" : {
-
-    },
-    "等待过滤器安装完成" : {
-
-    },
     "筛选状态" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1039,6 +927,7 @@
       }
     },
     "管理Mac的整体设置和相关设置..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1048,10 +937,8 @@
         }
       }
     },
-    "系统会自动替换旧版本扩展" : {
-
-    },
     "系统应用 (System App)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1062,6 +949,7 @@
       }
     },
     "系统应用列表" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1072,6 +960,7 @@
       }
     },
     "系统扩展" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1081,10 +970,8 @@
         }
       }
     },
-    "系统扩展未安装，无法启动防火墙功能" : {
-
-    },
     "网络" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1095,6 +982,7 @@
       }
     },
     "网络过滤与监控工具" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1104,13 +992,8 @@
         }
       }
     },
-    "网络过滤器未安装，无法启动防火墙功能" : {
-
-    },
-    "联网的 APP 将显示在这里" : {
-
-    },
     "聚焦" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1120,10 +1003,8 @@
         }
       }
     },
-    "范围" : {
-
-    },
     "被允许联网的 APP 将显示在这里" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1134,6 +1015,7 @@
       }
     },
     "被禁止联网的 APP 将显示在这里" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1143,25 +1025,14 @@
         }
       }
     },
-    "解决方案：" : {
-
-    },
-    "许可协议" : {
-
-    },
     "设置" : {
-
-    },
-    "请将APP移动到Applications目录后再试" : {
 
     },
     "请选择一个插件功能" : {
 
     },
-    "路径" : {
-
-    },
     "辅助功能" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1172,6 +1043,7 @@
       }
     },
     "输入应用ID" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1181,10 +1053,8 @@
         }
       }
     },
-    "退出当前软件" : {
-
-    },
     "通用" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1194,10 +1064,8 @@
         }
       }
     },
-    "重新启动APP" : {
-
-    },
     "防火墙事件" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1208,6 +1076,7 @@
       }
     },
     "防火墙事件记录" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1216,9 +1085,6 @@
           }
         }
       }
-    },
-    "隐私政策" : {
-
     }
   },
   "version" : "1.0"
