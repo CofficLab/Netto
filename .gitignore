@@ -9,3 +9,6 @@ build
 .swiftpm/
 # SwiftPM Package.resolved in xcodeproj (Xcode Cloud needs this)
 /Package.resolved
+
+# Python 缓存
+__pycache__/
