@@ -1,3 +1,4 @@
+import PluginFirewallDashboard
 import Foundation
 import KernelCore
 import PluginShell

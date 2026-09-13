@@ -1,3 +1,4 @@
+import PluginFirewallDashboard
 import Foundation
 import SwiftData
 import SwiftUI

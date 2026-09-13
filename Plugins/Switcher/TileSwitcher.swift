@@ -1,3 +1,4 @@
+import PluginFirewallDashboard
 import MagicCore
 import MagicAlert
 import OSLog

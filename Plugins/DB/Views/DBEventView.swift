@@ -1,3 +1,4 @@
+import PluginFirewallDashboard
 import Combine
 import MagicCore
 import ProviderFirewallEvents

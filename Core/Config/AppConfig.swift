@@ -1,3 +1,4 @@
+import PluginFirewallDashboard
 import CloudKit
 import OSLog
 import SwiftData

@@ -1,3 +1,4 @@
+import PluginFirewallDashboard
 import Combine
 import Foundation
 import MagicCore

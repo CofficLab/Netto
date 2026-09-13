@@ -1,3 +1,4 @@
+import PluginFirewallDashboard
 import LumiUI
 import MagicCore
 import OSLog
@@ -21,8 +22,10 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
     @State private var shouldShowWelcomeWindow = false
     @State private var hasDeniedApps = false
 
-    /// App 装配宿主（唯一实例；Kernel/契约/UI 状态在此缓存）。
-    @StateObject private var appEnv: AppEnvironment
+    /// App 装配宿主（唯一实例；具体场景 View 显式观察其状态）。
+    /// 与 LumiApp 持有 Kernel 的方式一致：App 保存稳定引用，不在 App 上安装
+    /// 一个依赖 View 生命周期的 StateObject。
+    private let appEnv: AppEnvironment
 
     init() {
         // 统一 LumiUI 视觉：注入内置回退 chrome 主题（氛围渐变背景），
@@ -31,10 +34,9 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         ChromeThemes.current = LumiFallbackChromeTheme()
         setTheme(LumiDefaultTheme())
 
-        // 通过局部引用启动由 StateObject 持有的同一个环境，不能在 App.init 中
-        // 读取 appEnv wrappedValue（此时 SwiftUI 尚未安装 StateObject）。
+        // App 持有唯一环境对象；RootView / SettingsWindowHost 负责观察其状态。
         let environment = AppEnvironment.make()
-        _appEnv = StateObject(wrappedValue: environment)
+        appEnv = environment
         Task {
             await environment.bootstrap()
         }
@@ -113,13 +115,7 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
         // 渲染「左侧入口列表 + 右侧详情视图」；不在 body 中装配。
         // 未就绪时显示启动态，装配失败由 BootstrapFailureView 显式呈现。
         Window("设置", id: AppConfig.settingsWindowId) {
-            if let settingsWindowView = appEnv.settingsWindowView {
-                settingsWindowView
-                    .appThemedAppearance()
-            } else {
-                ProgressView("启动中…")
-                    .frame(minWidth: 720, minHeight: 460)
-            }
+            SettingsWindowHost(environment: appEnv)
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
@@ -154,7 +150,7 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
 
         // 主要的菜单栏应用
         MenuBarExtra(content: {
-            RootView(environment: appEnv) {
+            RootView(environment: appEnv, onRunning: connectRunningEnvironment) {
                 if shouldShowMenuApp == false {
                     Color.red.frame(height: 0)
                 } else {
@@ -166,12 +162,6 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
             .onAppear {
                 // 用户点击了菜单栏图标
                 shouldShowMenuApp = true
-                connectRunningEnvironment()
-            }
-            .onChange(of: appEnv.phase) { _, phase in
-                if phase == .running {
-                    connectRunningEnvironment()
-                }
             }
             .onReceive(nc.publisher(for: .shouldOpenWelcomeWindow)) { _ in
                 os_log("\(self.t)🖥️ 打开欢迎窗口")
@@ -219,6 +209,24 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
             }
         })
         .menuBarExtraStyle(.window)
+    }
+}
+
+/// App 场景不依赖 App 值类型重新求值来刷新设置内容；此 View 直接观察环境状态。
+@MainActor
+private struct SettingsWindowHost: View {
+    @ObservedObject var environment: AppEnvironment
+
+    var body: some View {
+        Group {
+            if let settingsWindowView = environment.settingsWindowView {
+                settingsWindowView
+                    .appThemedAppearance()
+            } else {
+                ProgressView("启动中…")
+                    .frame(minWidth: 720, minHeight: 460)
+            }
+        }
     }
 }
 

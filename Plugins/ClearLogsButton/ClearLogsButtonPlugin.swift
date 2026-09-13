@@ -1,3 +1,4 @@
+import PluginFirewallDashboard
 import SwiftUI
 import OSLog
 import MagicCore

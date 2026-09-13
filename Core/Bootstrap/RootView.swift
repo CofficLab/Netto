@@ -1,3 +1,4 @@
+import PluginFirewallDashboard
 import MagicAlert
 import MagicCore
 import OSLog
@@ -21,25 +22,33 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
 
     /// 显式注入的环境（App 启动路径）；预览可传 `AppEnvironment.preview()`。
     private let providedEnvironment: AppEnvironment?
+    /// Kernel 就绪后由 App 绑定窗口路由等宿主回调。
+    private let onRunning: () -> Void
 
     /// 环境对象（场景级注入；App 通过 `environmentObject` 提供）。
     @EnvironmentObject private var appEnv: AppEnvironment
 
-    init(environment: AppEnvironment? = nil, @ViewBuilder content: () -> Content) {
+    init(
+        environment: AppEnvironment? = nil,
+        onRunning: @escaping () -> Void = {},
+        @ViewBuilder content: () -> Content
+    ) {
         os_log("\(Self.onInit)")
         self.providedEnvironment = environment
+        self.onRunning = onRunning
         self.content = content()
     }
 
     var body: some View {
         let env = providedEnvironment ?? appEnv
-        RootEnvironmentHost(environment: env, content: content)
+        RootEnvironmentHost(environment: env, onRunning: onRunning, content: content)
     }
 }
 
 /// 显式观察所选环境对象，保证 bootstrap 更新 phase 后立即切换根视图状态。
 private struct RootEnvironmentHost<Content: View>: View {
     @ObservedObject var environment: AppEnvironment
+    let onRunning: () -> Void
     let content: Content
 
     var body: some View {
@@ -55,6 +64,16 @@ private struct RootEnvironmentHost<Content: View>: View {
             }
         }
         .environmentObject(environment)
+        .onAppear {
+            if environment.phase == .running {
+                onRunning()
+            }
+        }
+        .onChange(of: environment.phase) { _, phase in
+            if phase == .running {
+                onRunning()
+            }
+        }
     }
 }
 

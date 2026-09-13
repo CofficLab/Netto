@@ -38,7 +38,7 @@
 		A1A0000000000000000214 /* PluginFirewall in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000114 /* PluginFirewall */; };
 		A1A0000000000000000215 /* PluginStore in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000115 /* PluginStore */; };
 		A1A0000000000000000216 /* ProviderSettingView in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000116 /* ProviderSettingView */; };
-		F6A000000000000000000003 /* LumiUI in Frameworks */ = {isa = PBXBuildFile; productRef = F6A000000000000000000002 /* LumiUI */; };
+		A1A0000000000000000217 /* PluginFirewallDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = A1A0000000000000000117 /* PluginFirewallDashboard */; };
 		C40A5C50229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F500B3EE2DE463A1009CC54C /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F500B3ED2DE463A1009CC54C /* MagicCore */; };
 		F50882A02E7BB462004FB427 /* MagicDesktop in Frameworks */ = {isa = PBXBuildFile; productRef = F508829F2E7BB462004FB427 /* MagicDesktop */; };
@@ -58,6 +58,7 @@
 		F5D27E312E6E60F5006B3CB2 /* MagicCore in Frameworks */ = {isa = PBXBuildFile; productRef = F5D27E302E6E60F5006B3CB2 /* MagicCore */; };
 		F5D27E332E6E60F5006B3CB2 /* MagicDevice in Frameworks */ = {isa = PBXBuildFile; productRef = F5D27E322E6E60F5006B3CB2 /* MagicDevice */; };
 		F5D27E352E6E60F5006B3CB2 /* MagicError in Frameworks */ = {isa = PBXBuildFile; productRef = F5D27E342E6E60F5006B3CB2 /* MagicError */; };
+		F6A000000000000000000003 /* LumiUI in Frameworks */ = {isa = PBXBuildFile; productRef = F6A000000000000000000002 /* LumiUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -178,6 +179,7 @@
 				A1A0000000000000000214 /* PluginFirewall in Frameworks */,
 				A1A0000000000000000215 /* PluginStore in Frameworks */,
 				A1A0000000000000000216 /* ProviderSettingView in Frameworks */,
+				A1A0000000000000000217 /* PluginFirewallDashboard in Frameworks */,
 				F6A000000000000000000003 /* LumiUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -256,6 +258,9 @@
 			dependencies = (
 				C40A5C4F229DD6A500627D50 /* PBXTargetDependency */,
 			);
+			packageProductDependencies = (
+				A1A0000000000000000117 /* PluginFirewallDashboard */,
+			);
 			fileSystemSynchronizedGroups = (
 				0B1C653D2DE5F6C600F982C0 /* Core */,
 				0B1C65CD2DE5F90800F982C0 /* Plugins */,
@@ -315,6 +320,7 @@
 				A1A0000000000000000014 /* XCLocalSwiftPackageReference "Packages/PluginFirewall" */,
 				A1A0000000000000000015 /* XCLocalSwiftPackageReference "Packages/PluginStore" */,
 				A1A0000000000000000016 /* XCLocalSwiftPackageReference "Packages/ProviderSettingView" */,
+				A1A0000000000000000017 /* XCLocalSwiftPackageReference "Packages/PluginFirewallDashboard" */,
 				F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */,
 			);
 			productRefGroup = C4B45DB622739FFF0050C59B /* Products */;
@@ -709,11 +715,15 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/PluginStore;
 		};
-/* End XCLocalSwiftPackageReference section */		A1A0000000000000000016 /* XCLocalSwiftPackageReference "Packages/ProviderSettingView" */ = {
+		A1A0000000000000000016 /* XCLocalSwiftPackageReference "Packages/ProviderSettingView" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/ProviderSettingView;
 		};
-
+		A1A0000000000000000017 /* XCLocalSwiftPackageReference "Packages/PluginFirewallDashboard" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/PluginFirewallDashboard;
+		};
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
 		0B34859E2E6DDC4400EBD371 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
@@ -748,7 +758,7 @@
 				revision = d04a729;
 			};
 		};
-/* End XCRemoteSwiftPackageReference section */		F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */ = {
+		F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/LumiUI";
 			requirement = {
@@ -756,7 +766,7 @@
 				revision = 419c64ec01257f923b4139ede61377566b97b626;
 			};
 		};
-
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		0B08D53E2E6DD82A001902DD /* MagicAlert */ = {
@@ -902,10 +912,10 @@
 			package = A1A0000000000000000016 /* XCLocalSwiftPackageReference "Packages/ProviderSettingView" */;
 			productName = ProviderSettingView;
 		};
-		F6A000000000000000000002 /* LumiUI */ = {
+		A1A0000000000000000117 /* PluginFirewallDashboard */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */;
-			productName = LumiUI;
+			package = A1A0000000000000000017 /* XCLocalSwiftPackageReference "Packages/PluginFirewallDashboard" */;
+			productName = PluginFirewallDashboard;
 		};
 		F500B3ED2DE463A1009CC54C /* MagicCore */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -996,6 +1006,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F5D27E272E6E60F5006B3CB2 /* XCRemoteSwiftPackageReference "MagicKit" */;
 			productName = MagicError;
+		};
+		F6A000000000000000000002 /* LumiUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */;
+			productName = LumiUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

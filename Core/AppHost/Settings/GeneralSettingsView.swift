@@ -1,3 +1,4 @@
+import PluginFirewallDashboard
 import AppKit
 import LumiUI
 import SwiftUI
