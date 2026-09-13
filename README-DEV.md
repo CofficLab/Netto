@@ -19,7 +19,7 @@
 ### 整体架构 Overall Architecture
 
 ```text
-TravelModeApp/  SwiftUI/AppKit 应用宿主与组合根（源码、配置平铺存放）
+App/  SwiftUI/AppKit 应用宿主与组合根（源码、配置平铺存放）
     ↓ 通过
 Packages/FactoryNetto  唯一装配点
     ↓ 创建并启动
@@ -33,7 +33,7 @@ Assets.xcassets/     App 图标与界面资源
 
 ### 层级职责 Layer Responsibilities
 
-- **TravelModeApp**：创建 SwiftUI 场景、处理 AppKit 生命周期与状态栏承载，并调用 FactoryNetto 启动唯一 Kernel。
+- **App**：创建 SwiftUI 场景、处理 AppKit 生命周期与状态栏承载，并调用 FactoryNetto 启动唯一 Kernel。
 - **FactoryNetto**：显式装配 Provider 与 Plugin，控制依赖和启动顺序。
 - **KernelCore**：管理插件生命周期、Provider 注册解析及贡献清理，不依赖具体功能包。
 - **Provider packages**：定义跨插件能力契约和中立数据类型。
