@@ -54,8 +54,8 @@ PRODUCT_BUNDLE_IDENTIFIER  = com.yueyi.TravelMode
 PRODUCT_NAME               = TavelMode
 MACOSX_DEPLOYMENT_TARGET   = 15.0
 SWIFT_VERSION              = 6.0
-INFOPLIST_FILE             = Core/Info.plist
-CODE_SIGN_ENTITLEMENTS     = Core/Signing.entitlements
+INFOPLIST_FILE             = TravelModeApp/Info.plist
+CODE_SIGN_ENTITLEMENTS     = TravelModeApp/Signing.entitlements
 DEVELOPMENT_TEAM           = Y6HZ9JJYV6
 SYSTEM_EXTENSIONS_FOLDER_PATH = TavelMode.app/Contents/Library/SystemExtensions
 REGISTER_APP_GROUPS        = YES
@@ -75,7 +75,7 @@ DEVELOPMENT_TEAM           = Y6HZ9JJYV6
 
 ### 1.6 Entitlements（兼容红线，迁移不得改变）
 
-App `Core/Signing.entitlements`：
+App `TravelModeApp/Signing.entitlements`：
 
 - `com.apple.developer.networking.networkextension` = `[content-filter-provider]`
 - `com.apple.developer.system-extension.install` = true
@@ -167,7 +167,7 @@ UI 读取路径：
 ### 3.3 数据库
 
 - 文件：`db.sqlite`；目录：`~/Documents/<debug|production>/db.sqlite`（`AppConfig.getDatabaseURL()`，`#if DEBUG` 分支）。
-- Schema：`AppSetting` + `FirewallEventModel`（`Core/Config/AppConfig.swift` 顶层 `container()`，fatalError 失败策略）。
+- Schema：`AppSetting` + `FirewallEventModel`（`TravelModeApp/AppConfig.swift` 顶层 `container()`，fatalError 失败策略）。
 - 迁移必须保留：文件名、Debug/production 目录规则、schema/字段语义、`db.sqlite` 不重名不迁移。
 
 ### 3.4 UserDefaults 键（兼容红线）

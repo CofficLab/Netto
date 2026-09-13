@@ -109,7 +109,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		0B1C653D2DE5F6C600F982C0 /* Core */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0B1C665D2DE5FDE700F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Core; sourceTree = "<group>"; };
+		0B1C653D2DE5F6C600F982C0 /* TravelModeApp */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0B1C665D2DE5FDE700F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TravelModeApp; sourceTree = "<group>"; };
 		0B1C65BB2DE5F87500F982C0 /* Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0B1C665C2DE5FDB800F982C0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Extension; sourceTree = "<group>"; };
 		0B6703FA2DE8928A0078D726 /* Bridge */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Bridge; sourceTree = "<group>"; };
 		0BECFF612DE5FFD6001B7619 /* docs */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = docs; sourceTree = "<group>"; };
@@ -186,7 +186,7 @@
 			children = (
 				0B6703FA2DE8928A0078D726 /* Bridge */,
 				0B1C65392DE5F6C600F982C0 /* Assets.xcassets */,
-				0B1C653D2DE5F6C600F982C0 /* Core */,
+				0B1C653D2DE5F6C600F982C0 /* TravelModeApp */,
 				0BECFF612DE5FFD6001B7619 /* docs */,
 				0B1C65BB2DE5F87500F982C0 /* Extension */,
 				C4B45DB622739FFF0050C59B /* Products */,
@@ -251,7 +251,7 @@
 				C40A5C4F229DD6A500627D50 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				0B1C653D2DE5F6C600F982C0 /* Core */,
+				0B1C653D2DE5F6C600F982C0 /* TravelModeApp */,
 				0B6703FA2DE8928A0078D726 /* Bridge */,
 			);
 			name = TavelMode;
@@ -549,7 +549,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
-				CODE_SIGN_ENTITLEMENTS = Core/Signing.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TravelModeApp/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -560,7 +560,7 @@
 				ENABLE_FILE_ACCESS_DOWNLOADS_FOLDER = readwrite;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				INFOPLIST_FILE = Core/Info.plist;
+				INFOPLIST_FILE = TravelModeApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -581,7 +581,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
-				CODE_SIGN_ENTITLEMENTS = Core/Signing.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TravelModeApp/Signing.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -592,7 +592,7 @@
 				ENABLE_FILE_ACCESS_DOWNLOADS_FOLDER = readwrite;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				INFOPLIST_FILE = Core/Info.plist;
+				INFOPLIST_FILE = TravelModeApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TravelMode;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (

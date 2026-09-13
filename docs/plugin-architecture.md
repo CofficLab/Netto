@@ -8,7 +8,7 @@
 ## 架构分层
 
 ```
-App 组合根（Core/Bootstrap、Core/AppHost）
+App 组合根（TravelModeApp；Host 源码与配置平铺存放）
    └─ FactoryNetto（Packages/FactoryNetto）——唯一静态装配点
         └─ KernelCore（Packages/KernelCore）——内核容器
              ├─ Provider 契约包（ProviderFirewall / ProviderFirewallEvents /

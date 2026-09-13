@@ -18,24 +18,27 @@
 
 ### 整体架构 Overall Architecture
 
-```bash
-UI Layer (用户界面)
-    ↓ 调用
-Core/Service/ (业务逻辑层)
-    ↓ 调用
-Core/Repository/ (数据访问层)
-    ↓ 操作
-Model Layer (数据模型)
-    ↓ 存储
-SwiftData/CoreData
+```text
+TravelModeApp/  SwiftUI/AppKit 应用宿主与组合根（源码、配置平铺存放）
+    ↓ 通过
+Packages/FactoryNetto  唯一装配点
+    ↓ 创建并启动
+Packages/KernelCore  插件生命周期与 Provider 注册
+    ├─ Packages/Provider*  能力协议与中立数据类型
+    └─ Packages/Plugin*    功能实现、UI 与系统服务
+
+Extension/ + Bridge/  独立的 Network Extension 进程与 IPC 边界
+Assets.xcassets/     App 图标与界面资源
 ```
 
 ### 层级职责 Layer Responsibilities
 
-- **UI Layer**: 用户界面展示和交互处理
-- **Service Layer**: 业务逻辑封装、事务管理、数据验证
-- **Repository Layer**: 数据访问、CRUD 操作、数据库管理
-- **Model Layer**: 数据模型定义和关系映射
+- **TravelModeApp**：创建 SwiftUI 场景、处理 AppKit 生命周期与状态栏承载，并调用 FactoryNetto 启动唯一 Kernel。
+- **FactoryNetto**：显式装配 Provider 与 Plugin，控制依赖和启动顺序。
+- **KernelCore**：管理插件生命周期、Provider 注册解析及贡献清理，不依赖具体功能包。
+- **Provider packages**：定义跨插件能力契约和中立数据类型。
+- **Plugin packages**：拥有各自的业务逻辑、存储、系统 API 与功能界面。
+- **Extension / Bridge**：保持与 App Kernel 隔离的进程边界，只通过 IPC 契约通信。
 
 ## 参考资料
 

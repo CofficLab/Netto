@@ -14,7 +14,7 @@ Netto 架构依赖扫描脚本（阶段 8）。
   R2  所有本地包禁止 `static let shared` / `static var shared` 单例。
   R3  Plugin 实现包（Packages/Plugin*）禁止 import 同级其他 Plugin 包
       （跨插件只能走 Provider 契约）。
-  R4  App 目标（Core/AppStore）禁止直连 Repo/Service：
+  R4  App 目标（TravelModeApp）禁止直连 Repo/Service：
       旧 singleton 访问、旧构造器、旧注册机制符号。
   R5  全仓库禁止 `@unchecked Sendable`（不得掩盖并发边界）。
   R6  全仓库禁止 Objective-C 运行时自动注册（objc_copyClassList、
@@ -24,7 +24,7 @@ Netto 架构依赖扫描脚本（阶段 8）。
   - App 目标 import ProviderShell / Provider 契约 / FactoryNetto / KernelCore：
     App 组合根负责启动 Factory 创建的唯一 Kernel 并缓存视图所需契约。
   - ProviderShell 暴露 `AnyView` 的 UI 贡献契约（阶段 6 既定设计）。
-  - Core/Config/AppNotifications.swift 的 App 内通知名（无负载壳内信号）。
+  - TravelModeApp/AppNotifications.swift 的 App 内通知名（无负载壳内信号）。
 """
 import pathlib
 import re
@@ -121,7 +121,7 @@ for p in scan_files([ROOT / "Packages"]):
             report(p.relative_to(ROOT), "R3", f"import 同级插件包 {mod}")
 
 # R4：App 目标禁用的旧服务符号
-for p in scan_files([ROOT / "Core", ROOT / "AppStore"]):
+for p in scan_files([ROOT / "TravelModeApp"]):
     text = p.read_text(encoding="utf-8", errors="replace")
     rel = p.relative_to(ROOT)
     for sym in BANNED_SYMBOLS:
@@ -130,7 +130,7 @@ for p in scan_files([ROOT / "Core", ROOT / "AppStore"]):
                 report(rel, "R4", f"命中 {sym} (行 {i})")
 
 # R6：全仓库 ObjC 自动注册
-for p in scan_files([ROOT / "Core", ROOT / "AppStore", ROOT / "Packages", ROOT / "Bridge", ROOT / "Extension"]):
+for p in scan_files([ROOT / "TravelModeApp", ROOT / "Packages", ROOT / "Bridge", ROOT / "Extension"]):
     text = p.read_text(encoding="utf-8", errors="replace")
     rel = p.relative_to(ROOT)
     for pat in R6_PATTERNS:

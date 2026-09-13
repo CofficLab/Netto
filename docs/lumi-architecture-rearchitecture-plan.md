@@ -57,7 +57,7 @@ Network Extension 是独立进程，不能被 App 的 Kernel 直接管理。它�
 
 | 当前位置 | 实际职责 | 主要问题 | 目标归属 |
 |---|---|---|---|
-| `Core/Bootstrap/TheApp.swift` | App 入口、窗口、菜单栏、欢迎页、插件窗口、被禁止应用检查 | 直接访问 Repo、Registry、StoreService；在 Scene 中启动异步任务 | `App/TravelModeApp.swift`，只调用 Factory/Kernel 能力 |
+| `Core/Bootstrap/TheApp.swift` | App 入口、窗口、菜单栏、欢迎页、插件窗口、被禁止应用检查 | 直接访问 Repo、Registry、StoreService；在 Scene 中启动异步任务 | `TravelModeApp/TheApp.swift`，只调用 Factory/Kernel 能力 |
 | `Core/Bootstrap/AppDelegate.swift` | AppKit 生命周期 | 直接调用 `FirewallService.shared.runDaemon()` | App Host，调用 Kernel 中的生命周期或 Firewall Provider |
 | `Core/Bootstrap/RootView.swift` | 加载态、服务装配、环境注入、插件包装 | 在 View 生命周期中装配 singleton；`onDisappear` 可能误清理共享运行时 | Factory 生成的 Bootstrap/Main Host View |
 | `Core/Providers/PluginRegistry.swift` | Objective-C Runtime 扫描、异步注册、构建插件 | 不确定性、重复注册风险、没有生命周期/依赖/回滚 | `Packages/KernelCore` 的静态插件注册与生命周期 |
@@ -212,11 +212,11 @@ Netto/
 │  └─ FactoryNetto/
 ├─ Extension/
 ├─ Assets.xcassets/
-├─ Core/                 # 迁移期兼容区，最终清空或只保留 App-owned UI
+├─ TravelModeApp/        # 平铺的 SwiftUI/AppKit 宿主、配置与本地化资源
 └─ docs/
 ```
 
-当前工程使用 `PBXFileSystemSynchronizedRootGroup`，并没有自动包含未来新增的 `App/` 和 `Packages/`。因此“创建目录”不等于“进入编译”：每次新增 package 或 App Host 目录后，必须在 `TravelMode.xcodeproj` 中建立正确的 local package reference/target dependency 或同步文件组，并通过 `xcodebuild -showBuildSettings`、`xcodebuild -list` 和实际 build 证明文件已经被目标编译。迁移早期也可以暂时把 App Host 放在 `Core/Bootstrap`，待 Factory/package 接通后再移动；禁止留下未被 target 编译的“影子实现”。
+当前工程使用 `PBXFileSystemSynchronizedRootGroup`，并没有自动包含未来新增的 `App/` 和 `Packages/`。因此“创建目录”不等于“进入编译”：每次新增 package 或 App Host 目录后，必须在 `TravelMode.xcodeproj` 中建立正确的 local package reference/target dependency 或同步文件组，并通过 `xcodebuild -showBuildSettings`、`xcodebuild -list` 和实际 build 证明文件已经被目标编译。App Host 文件直接平铺在 `TravelModeApp/`，功能实现归属各 Provider/Plugin package；禁止留下未被 target 编译的“影子实现”。
 
 依赖方向：
 
