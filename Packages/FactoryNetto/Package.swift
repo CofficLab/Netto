@@ -27,6 +27,7 @@ let package = Package(
         .package(name: "ProviderStore", path: "../ProviderStore"),
         .package(name: "ProviderTheme", path: "../ProviderTheme"),
         .package(name: "PluginThemePack", path: "../PluginThemePack"),
+        .package(name: "PluginFirewallDashboard", path: "../PluginFirewallDashboard"),
         .package(url: "https://github.com/CofficLab/LumiUI", revision: "419c64ec01257f923b4139ede61377566b97b626"),
     ],
     targets: [
@@ -47,6 +48,7 @@ let package = Package(
                 "ProviderStore",
                 "ProviderTheme",
                 "PluginThemePack",
+                "PluginFirewallDashboard",
                 "LumiUI",
             ]
         ),

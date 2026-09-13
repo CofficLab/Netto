@@ -1,4 +1,5 @@
 import PluginFirewallDashboard
+import FactoryNetto
 import LumiUI
 import MagicCore
 import OSLog
@@ -150,13 +151,24 @@ struct TheApp: App, SuperEvent, SuperThread, SuperLog {
 
         // 主要的菜单栏应用
         MenuBarExtra(content: {
+            // 内容闭包在 `.running` 时惰性求值（RootView 按 phase 调用）：
+            // 主视图由 FactoryNetto.makeMainView 装配（KernelHostRootView 解析
+            // 契约并注入环境），App 不再直接引用 ContentView 的业务装配。
             RootView(environment: appEnv, onRunning: connectRunningEnvironment) {
                 if shouldShowMenuApp == false {
-                    Color.red.frame(height: 0)
+                    AnyView(Color.red.frame(height: 0))
+                } else if let kernel = appEnv.kernel {
+                    FactoryNetto.makeMainView(
+                        kernel: kernel,
+                        ui: appEnv.ui,
+                        appProvider: appEnv.appProvider,
+                        sessionStartDate: appEnv.sessionStartDate
+                    )
+                    .frame(minHeight: 500)
+                    .frame(minWidth: 400)
                 } else {
-                    ContentView()
-                        .frame(minHeight: 500)
-                        .frame(minWidth: 400)
+                    // 理论不可达（.running 时 kernel 必非 nil）；防御占位。
+                    AnyView(Color.clear.frame(height: 0))
                 }
             }
             .onAppear {

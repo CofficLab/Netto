@@ -87,17 +87,21 @@ final class AppEnvironment: ObservableObject {
         AppEnvironment()
     }
 
-    /// 预览环境：内存 Mock 契约 + 空 Shell，不创建 Kernel、不落库。
+    /// 预览环境：内存 Mock 契约 + 注册预览贡献的 Shell，phase 直接进入
+    /// `.running`（预览不执行 bootstrap；RootView 按 phase 渲染内容）。
     static func preview() -> AppEnvironment {
         let shell = ShellCenter()
         // 注册预览贡献，让预览渲染真实工具栏/设置入口。
         AppHostPlugins.registerPreviewContributions(into: shell)
-        return AppEnvironment(
+        let env = AppEnvironment(
             firewall: PreviewFirewall(),
             events: PreviewEvents(),
             settings: PreviewSettings(),
             store: PreviewStore()
         )
+        env.shell = shell
+        env.phase = .running
+        return env
     }
 
     /// 引导内核（幂等）。失败时进入 `.failed` 阶段并保留错误信息。

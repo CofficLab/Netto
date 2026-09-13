@@ -1,5 +1,6 @@
 import Foundation
 import KernelCore
+import PluginFirewallDashboard
 import PluginShell
 import ProviderAppCatalog
 import ProviderAppSettings
@@ -75,17 +76,43 @@ public enum FactoryNetto {
 
     // MARK: - Main View
 
-    /// 创建内核并返回完整主视图。
+    /// 创建内核并返回完整主视图（默认 UI 状态实例；App 组合根应使用
+    /// 注入自身 `AppEnvironment` 持有的 `ui`/`appProvider`/`sessionStartDate`
+    /// 的重载，保证单一状态来源）。
     public static func makeMainView() throws -> AnyView {
         try makeMainView(kernel: makeKernel())
     }
 
+    /// 使用已装配的内核返回主视图（默认 UI 状态实例）。
+    public static func makeMainView(kernel: KernelCoreContainer) -> AnyView {
+        makeMainView(
+            kernel: kernel,
+            ui: UIProvider(),
+            appProvider: AppProvider(),
+            sessionStartDate: Date()
+        )
+    }
+
     /// 使用已装配的内核返回主视图（主窗口/菜单栏共享同一内核时使用）。
     ///
-    /// Shell 中心在装配时解析一次并传入视图，避免在 body 中解析/创建服务。
-    public static func makeMainView(kernel: KernelCoreContainer) -> AnyView {
+    /// 解析 Shell 与全部 Provider 契约并注入环境后渲染真实 Dashboard
+    /// （`KernelHostRootView` → `ContentView`）；契约缺失时显式失败视图。
+    /// `ui`/`appProvider`/`sessionStartDate` 由调用方持有（App 组合根
+    /// `AppEnvironment` 或本方法默认实例），不在 body 中创建服务。
+    public static func makeMainView(
+        kernel: KernelCoreContainer,
+        ui: UIProvider,
+        appProvider: AppProvider,
+        sessionStartDate: Date
+    ) -> AnyView {
         let shell = kernel.resolveProvider(ShellToolbarProviding.self) as? ShellCenter
-        return AnyView(KernelHostRootView(kernel: kernel, shell: shell))
+        return AnyView(KernelHostRootView(
+            kernel: kernel,
+            shell: shell,
+            ui: ui,
+            appProvider: appProvider,
+            sessionStartDate: sessionStartDate
+        ))
     }
 
     // MARK: - Settings View

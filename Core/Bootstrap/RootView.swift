@@ -12,13 +12,17 @@ import SwiftUI
 ///   `AppSettingRepo.shared` / `FirewallService.shared` / `MagicMessageProvider.shared`；
 /// - 所有核心服务由 `AppEnvironment` 在 App 启动期装配并缓存，
 ///   视图只消费注入的契约环境对象；
-/// - 运行态按 `AppEnvironment.phase` 呈现：加载 / 失败 / 内容。
+/// - 运行态按 `AppEnvironment.phase` 呈现：加载 / 失败 / 内容；
+/// - 内容在 `.running` 时**惰性求值**（`contentBuilder`）：App 传入
+///   `FactoryNetto.makeMainView` 的闭包在 Kernel 就绪后才被调用，
+///   避免 bootstrap 完成前解析 nil Kernel。
 ///
 /// 线程/actor：`@MainActor`（SwiftUI View）。无副作用；`inRootView()` 只用于预览。
 struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     nonisolated static var emoji: String { "🌳" }
 
-    private var content: Content
+    /// 内容构建器（仅在 `phase == .running` 时求值一次/每次重绘时求值）。
+    private let contentBuilder: () -> Content
 
     /// 显式注入的环境（App 启动路径）；预览可传 `AppEnvironment.preview()`。
     private let providedEnvironment: AppEnvironment?
@@ -31,17 +35,17 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
     init(
         environment: AppEnvironment? = nil,
         onRunning: @escaping () -> Void = {},
-        @ViewBuilder content: () -> Content
+        @ViewBuilder content: @escaping () -> Content
     ) {
         os_log("\(Self.onInit)")
         self.providedEnvironment = environment
         self.onRunning = onRunning
-        self.content = content()
+        self.contentBuilder = content
     }
 
     var body: some View {
         let env = providedEnvironment ?? appEnv
-        RootEnvironmentHost(environment: env, onRunning: onRunning, content: content)
+        RootEnvironmentHost(environment: env, onRunning: onRunning, contentBuilder: contentBuilder)
     }
 }
 
@@ -49,7 +53,7 @@ struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
 private struct RootEnvironmentHost<Content: View>: View {
     @ObservedObject var environment: AppEnvironment
     let onRunning: () -> Void
-    let content: Content
+    let contentBuilder: () -> Content
 
     var body: some View {
         Group {
@@ -60,7 +64,22 @@ private struct RootEnvironmentHost<Content: View>: View {
                 // 启动失败必须显式呈现（不可静默降级为内容视图）
                 RootFailureView(message: message)
             case .running:
-                HostContent(environment: environment, content: content)
+                // 惰性求值：Kernel 就绪后才调用 contentBuilder（Factory 装配
+                // 的 KernelHostRootView），并注入 AppEnvironment 持有的契约
+                // 环境（与 KernelHostRootView 内部注入同值、幂等覆盖）。
+                if let shell = environment.shell {
+                    contentBuilder()
+                        .environmentObject(shell)
+                        .environmentObject(environment.ui)
+                        .environmentObject(environment.appProvider)
+                        .environment(\.firewallProvider, environment.firewall)
+                        .environment(\.eventsProvider, environment.events)
+                        .environment(\.settingsProvider, environment.settings)
+                        .environment(\.storeProvider, environment.store)
+                        .environment(\.sessionStartDate, environment.sessionStartDate)
+                } else {
+                    RootFailureView(message: "Shell 中心未装配")
+                }
             }
         }
         .environmentObject(environment)
@@ -73,31 +92,6 @@ private struct RootEnvironmentHost<Content: View>: View {
             if phase == .running {
                 onRunning()
             }
-        }
-    }
-}
-
-/// 运行态内容装配：注入契约环境对象后渲染子内容。
-///
-/// 仅在 `phase == .running` 时渲染；bootstrap 已保证 shell 非空，
-/// 但这里仍用 if-let 兜底，避免强解包（不在此处创建任何对象）。
-private struct HostContent<Content: View>: View {
-    @ObservedObject var environment: AppEnvironment
-    let content: Content
-
-    var body: some View {
-        if let shell = environment.shell {
-            content
-                .environmentObject(shell)
-                .environmentObject(environment.ui)
-                .environmentObject(environment.appProvider)
-                .environment(\.firewallProvider, environment.firewall)
-                .environment(\.eventsProvider, environment.events)
-                .environment(\.settingsProvider, environment.settings)
-                .environment(\.storeProvider, environment.store)
-                .environment(\.sessionStartDate, environment.sessionStartDate)
-        } else {
-            RootFailureView(message: "Shell 中心未装配")
         }
     }
 }
