@@ -1,7 +1,7 @@
 // swift-tools-version: 6.0
 // FactoryNetto：Netto 唯一静态装配点。
 // 依赖约束：Netto 插件目录、Provider 契约与 SwiftUI。
-// 禁止依赖 App target 代码（Core/Plugins/Bridge）。
+// 禁止依赖 App target 代码（Core/Bridge）。
 import PackageDescription
 
 let package = Package(

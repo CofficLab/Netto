@@ -69,7 +69,7 @@ Network Extension 是独立进程，不能被 App 的 Kernel 直接管理。它�
 | `Core/Repo/AppSettingRepo.swift` | AppSetting CRUD、查询和设置通知 | singleton；业务和持久化未分开 | `ProviderAppSettings` 契约 + `PluginAppSettings` 实现 |
 | `Core/Model/*` / `Core/DTO/*` | SwiftData 模型、DTO、领域值 | Model/DTO/展示值边界不清 | Schema 留在存储插件，中立 Snapshot 进入 Provider 契约 |
 | `Core/View/*` | 主界面、应用列表、事件详情、引导、按钮 | View 直接访问具体 Repo/Service | 按功能拆到对应 Plugin；Shell 只组装区域 |
-| `Plugins/*` | 现有按钮、过滤、切换、DB、Store 等 | 插件 actor 只返回 AnyView，实际逻辑在 View/singleton | 真正实现 `SuperPlugin` 生命周期并贡献 Provider/Toolbar/Setting/Window |
+| 旧 `Plugins/*` | 现有按钮、过滤、切换、DB、Store 等 | 插件 actor 只返回 AnyView，实际逻辑在 View/singleton | 真正实现 `SuperPlugin` 生命周期并贡献 Provider/Toolbar/Setting/Window |
 | `Bridge/*` / `Extension/*` | App-Extension IPC 和过滤实现 | 必须保持跨进程边界 | `NettoIPCContracts` + App/Extension 各自适配 |
 
 ### 2.3 当前插件清单
@@ -213,7 +213,6 @@ Netto/
 ├─ Extension/
 ├─ Assets.xcassets/
 ├─ Core/                 # 迁移期兼容区，最终清空或只保留 App-owned UI
-├─ Plugins/              # 迁移期兼容区，逐个删除已迁移实现
 └─ docs/
 ```
 
@@ -545,7 +544,7 @@ Kernel 只记录贡献所有者和撤回 token；SwiftUI View 的聚合由 Shell
 - 让 App 只使用 FactoryNetto + KernelCore。
 - 删除/移出旧 `Core/Providers/PluginRegistry.swift`、`PluginProvider.swift`、直接初始化链和旧插件注册器。
 - 将没有业务所有权的 `Core` 文件归入 App Host，其他文件移动到对应 Provider/Plugin package。
-- 更新 `Plugins/README.md`，删除会误导新开发者的旧自动发现示例。
+- 更新 `docs/plugin-architecture.md`，删除会误导新开发者的旧自动发现示例。
 - 增加依赖规则和 singleton 回归检查脚本。
 
 通过标准：不存在两套生产入口；没有旧 Registry 被调用；没有新代码依赖具体 Repo/Service；Extension 仍可独立构建。
@@ -622,7 +621,7 @@ Kernel 只记录贡献所有者和撤回 token；SwiftUI View 的聚合由 Shell
 
 ```bash
 git diff --check
-rg -n "PluginRegistry\.shared|FirewallService\.shared|EventRepo\.shared|AppSettingRepo\.shared|MagicMessageProvider\.shared" App Packages Plugins Core
+rg -n "PluginRegistry\.shared|FirewallService\.shared|EventRepo\.shared|AppSettingRepo\.shared|MagicMessageProvider\.shared" App Packages Core
 rg -n "import (SwiftUI|AppKit|NetworkExtension|SwiftData|StoreKit|Magic)" Packages/KernelCore
 xcodebuild -project TravelMode.xcodeproj -list
 ```
@@ -643,7 +642,7 @@ xcodebuild -project TravelMode.xcodeproj -scheme Extension -configuration Debug 
 
 ## 10. 不允许的实现捷径
 
-1. 不得一次性删除 `Core`、`Plugins` 后从空壳重新开始。
+1. 不得一次性重建空壳；逐项迁移并验证现有功能。
 2. 不得为了通过编译把所有旧类型塞进一个 `NettoService`、`AppProvider` 或 `Kernel`。
 3. 不得把 `AnyView`、`ObservableObject`、SwiftData Model、AppKit 对象放进 Kernel 契约。
 4. 不得保留 Objective-C Runtime 自动扫描作为生产注册机制。

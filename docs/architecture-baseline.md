@@ -178,11 +178,11 @@ UI 读取路径：
 
 ### 3.5 StoreKit
 
-- Product IDs（`Plugins/Store/StoreConfig.swift` productTier）：
+- Product IDs（`Packages/PluginStore/Sources/PluginStore/StoreConfig.swift` productTier）：
   - consumable: `consumable.fuel.octane87/89/91`
   - non-consumable: `nonconsumable.car/utilityvehicle/racecar`
   - subscription: `com.coffic.netto.monthly`（.pro）、`com.coffic.netto.annual`（.pro）
-- `.storekit` 配置：`Plugins/Store/Products.storekit`；Mock-Store scheme 使用它。
+- `.storekit` 配置：`Packages/PluginStore/Products.storekit`；Mock-Store scheme 使用它。
 
 ## 4. 迁移需要拆解的旧运行时（清单）
 
@@ -256,7 +256,7 @@ RootView 注入：`UIProvider`(app)、`MagicMessageProvider`(m)、`PluginProvide
 1. `MagicHTTP` target 名大小写与 Package.swift 不一致（MagicKit 包）——重构前已存在，记录待复核，不属本迁移。
 2. App 签名被 wildcard Provisioning profile 阻塞（缺 App Groups/Network Extensions/System Extension 能力）——环境问题；最终验证需正确 profile 或记录完整证据。
 3. App 最低部署 15.0 与 `OSSystemExtensionsWorkspaceObserver` 15.1 要求冲突——已在阶段 0 以 availability 门控修复（不改行为）。
-4. 工程使用 `PBXFileSystemSynchronizedRootGroup` 自动包含 `Core`、`Plugins`、`Bridge`、`Extension`、`AppStore`、`docs`。新增 `App/`、`Packages/` 目录**不会自动进入编译**，必须显式加入工程或建立 local package reference（见蓝图 4 节）。
+4. 旧工程基线曾使用 `PBXFileSystemSynchronizedRootGroup` 自动包含 `Core`、`Plugins`、`Bridge`、`Extension`、`AppStore`、`docs`；当前插件实现由 `Packages/` 下的 Swift Package 管理。新增 `App/`、`Packages/` 目录**不会自动进入编译**，必须显式加入工程或建立 local package reference（见蓝图 4 节）。
 5. `EventRepo`/`AppSettingRepo` 的 `@unchecked Sendable`（`DatabaseMaintenanceManager`）与 `FirewallService` 的 `@unchecked Sendable` 为阶段 4/5 待修正项。
 6. `StoreService.bootstrap()` 在 `TheApp.init` 启动；迁移后必须保持"启动即监听交易 + 权益校准"语义。
 

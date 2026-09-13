@@ -139,7 +139,7 @@ Popover 生命周期与根视图托管，不包含业务面板实现。
 | PluginAppSettings | 功能包 | AppSettingsProviding | 10（依赖 persistence） |
 | PluginEventStore | 功能包 | FirewallEventsProviding | 10（依赖 persistence） |
 | PluginFirewall | 功能包 | FirewallProviding（NE / 系统扩展 / IPC / daemon） | 30 |
-| PluginStore | 功能包 | StoreProviding（StoreKit 购买 / 订阅 / 恢复） | 40 |
+| PluginStore | 功能包 | StoreProviding（StoreKit 购买 / 订阅 / 恢复）；StoreKit 模拟配置也由包内 `Products.storekit` 持有 | 40 |
 | FirewallDashboardPlugin | 功能包 | 菜单栏 popover 主面板 + Switcher / Filter 工具栏项 | 60 |
 | ThemePackPlugin | 功能包 | 主题注册与外观设置入口 | 100 |
 | PluginHostActions | 聚合功能包 | About / Quit / DataFolder / Guide / 通用设置 / DB（DEBUG）及对应视图 | 20–80 |

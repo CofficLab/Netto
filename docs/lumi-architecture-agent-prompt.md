@@ -11,7 +11,7 @@
 2. /Users/angel/Code/Coffic/Netto/README.md
 3. /Users/angel/Code/Coffic/Netto/README-DEV.md
 4. /Users/angel/Code/Coffic/Netto/.trae/rules/project_rules.md
-5. /Users/angel/Code/Coffic/Netto/Plugins/README.md
+5. /Users/angel/Code/Coffic/Netto/docs/plugin-architecture.md
 6. /Users/angel/Code/Coffic/Lumi/Packages/KernelCore/Sources/KernelCore/Contracts/SuperPlugin.swift
 7. /Users/angel/Code/Coffic/Lumi/Packages/KernelCore/Sources/KernelCore/KernelCore+Plugin.swift
 8. /Users/angel/Code/Coffic/Lumi/Packages/FactoryLumi/Sources/FactoryLumi/KernelFactory.swift
@@ -113,7 +113,7 @@
 
 - App 只使用 FactoryNetto + KernelCore。
 - 删除或隔离旧 Core/Providers/PluginRegistry.swift、PluginProvider.swift 和 Objective-C 自动注册路径。
-- 更新 Plugins/README.md，不能继续教新开发者使用旧注册机制。
+- 更新 docs/plugin-architecture.md，不能继续教新开发者使用旧注册机制。
 - 增加依赖扫描脚本，阻止 Kernel import UI/业务 SDK、Plugin import 具体 Plugin、App 直连 Repo/Service。
 - 任何暂时保留的 adapter 都要有 owner、删除条件和测试。
 

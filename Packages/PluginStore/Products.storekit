@@ -213,6 +213,15 @@
           "adHocOffers" : [
 
           ],
+          "billingPlans" : [
+            {
+              "billingPlanType" : "BILLED_UPFRONT",
+              "commitmentDisplayPrice" : "2",
+              "displayPrice" : "2",
+              "internalID" : "34F06686",
+              "isEnabled" : true
+            }
+          ],
           "codeOffers" : [
 
           ],
@@ -221,10 +230,21 @@
           "groupNumber" : 1,
           "internalID" : "E0316BF9",
           "introductoryOffer" : {
+            "billingPlanType" : "BILLED_UPFRONT",
             "internalID" : "0AE0B2DC",
+            "numberOfPeriods" : 1,
             "paymentMode" : "free",
             "subscriptionPeriod" : "P1M"
           },
+          "introductoryOffers" : [
+            {
+              "billingPlanType" : "BILLED_UPFRONT",
+              "internalID" : "0AE0B2DC",
+              "numberOfPeriods" : 1,
+              "paymentMode" : "free",
+              "subscriptionPeriod" : "P1M"
+            }
+          ],
           "localizations" : [
             {
               "description" : "Pro Annual",
@@ -250,6 +270,15 @@
           "adHocOffers" : [
 
           ],
+          "billingPlans" : [
+            {
+              "billingPlanType" : "BILLED_UPFRONT",
+              "commitmentDisplayPrice" : "20",
+              "displayPrice" : "20",
+              "internalID" : "FE737CA8",
+              "isEnabled" : true
+            }
+          ],
           "codeOffers" : [
 
           ],
@@ -258,11 +287,23 @@
           "groupNumber" : 2,
           "internalID" : "5B704C5E",
           "introductoryOffer" : {
+            "billingPlanType" : "BILLED_UPFRONT",
             "displayPrice" : "0.99",
             "internalID" : "86438374",
+            "numberOfPeriods" : 1,
             "paymentMode" : "free",
             "subscriptionPeriod" : "P3M"
           },
+          "introductoryOffers" : [
+            {
+              "billingPlanType" : "BILLED_UPFRONT",
+              "displayPrice" : "0.99",
+              "internalID" : "86438374",
+              "numberOfPeriods" : 1,
+              "paymentMode" : "free",
+              "subscriptionPeriod" : "P3M"
+            }
+          ],
           "localizations" : [
             {
               "description" : "",
@@ -297,6 +338,15 @@
           "adHocOffers" : [
 
           ],
+          "billingPlans" : [
+            {
+              "billingPlanType" : "BILLED_UPFRONT",
+              "commitmentDisplayPrice" : "3",
+              "displayPrice" : "3",
+              "internalID" : "1B8DD7B2",
+              "isEnabled" : true
+            }
+          ],
           "codeOffers" : [
 
           ],
@@ -305,11 +355,23 @@
           "groupNumber" : 1,
           "internalID" : "DAF36667",
           "introductoryOffer" : {
+            "billingPlanType" : "BILLED_UPFRONT",
             "displayPrice" : "0.99",
             "internalID" : "F6DCF2A9",
+            "numberOfPeriods" : 1,
             "paymentMode" : "free",
             "subscriptionPeriod" : "P1M"
           },
+          "introductoryOffers" : [
+            {
+              "billingPlanType" : "BILLED_UPFRONT",
+              "displayPrice" : "0.99",
+              "internalID" : "F6DCF2A9",
+              "numberOfPeriods" : 1,
+              "paymentMode" : "free",
+              "subscriptionPeriod" : "P1M"
+            }
+          ],
           "localizations" : [
             {
               "description" : "Ultimate Annual",
@@ -335,6 +397,15 @@
           "adHocOffers" : [
 
           ],
+          "billingPlans" : [
+            {
+              "billingPlanType" : "BILLED_UPFRONT",
+              "commitmentDisplayPrice" : "30",
+              "displayPrice" : "30",
+              "internalID" : "769D75EE",
+              "isEnabled" : true
+            }
+          ],
           "codeOffers" : [
 
           ],
@@ -343,10 +414,21 @@
           "groupNumber" : 2,
           "internalID" : "B26C4772",
           "introductoryOffer" : {
+            "billingPlanType" : "BILLED_UPFRONT",
             "internalID" : "34821AC5",
+            "numberOfPeriods" : 1,
             "paymentMode" : "free",
             "subscriptionPeriod" : "P3M"
           },
+          "introductoryOffers" : [
+            {
+              "billingPlanType" : "BILLED_UPFRONT",
+              "internalID" : "34821AC5",
+              "numberOfPeriods" : 1,
+              "paymentMode" : "free",
+              "subscriptionPeriod" : "P3M"
+            }
+          ],
           "localizations" : [
             {
               "description" : "旗舰版按年订阅",
@@ -372,7 +454,7 @@
     }
   ],
   "version" : {
-    "major" : 4,
+    "major" : 5,
     "minor" : 0
   }
 }
