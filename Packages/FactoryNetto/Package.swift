@@ -62,7 +62,7 @@ let package = Package(
         ),
         .testTarget(
             name: "FactoryNettoTests",
-            dependencies: ["FactoryNetto"]
+            dependencies: ["FactoryNetto", "ProviderFirewall"]
         ),
     ]
 )

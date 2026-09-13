@@ -16,8 +16,7 @@ final class MenuBarController: NSObject {
     func install(kernel: KernelCoreContainer, environment: AppEnvironment) {
         guard statusItem == nil else { return }
 
-        let menuBar = kernel.resolveProvider(MenuBarProviding.self) as? DefaultMenuBarProviding
-            ?? DefaultMenuBarProviding()
+        guard let menuBar = kernel.resolveProvider(MenuBarProviding.self) else { return }
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         guard let button = item.button else { return }
         button.title = ""
@@ -95,9 +94,17 @@ private final class MenuBarHostingView<Content: View>: NSHostingView<Content> {
 
 @MainActor
 private struct MenuBarStatusContent: View {
-    @ObservedObject var provider: DefaultMenuBarProviding
+    let provider: any MenuBarProviding
     @ObservedObject var model: MenuBarStatusModel
     let isDebug: Bool
+    @StateObject private var refreshModel: MenuBarRefreshModel
+
+    init(provider: any MenuBarProviding, model: MenuBarStatusModel, isDebug: Bool) {
+        self.provider = provider
+        self.model = model
+        self.isDebug = isDebug
+        _refreshModel = StateObject(wrappedValue: MenuBarRefreshModel(provider: provider))
+    }
 
     private var symbol: String {
         if model.hasDeniedApps {
@@ -107,6 +114,7 @@ private struct MenuBarStatusContent: View {
     }
 
     var body: some View {
+        let _ = refreshModel.revision
         HStack(spacing: 4) {
             Image(systemName: symbol)
                 .frame(width: 20, height: 20)
@@ -115,5 +123,7 @@ private struct MenuBarStatusContent: View {
         }
         .padding(.horizontal, 2)
         .frame(height: 22)
+        .onAppear { refreshModel.resume() }
+        .onDisappear { refreshModel.cancel() }
     }
 }

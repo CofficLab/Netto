@@ -307,9 +307,19 @@ final class FirewallControllerTests: XCTestCase {
 
     func testObserveYieldsCurrentAndUpdates() async {
         let (controller, _, _, _, _) = makeController()
-        let task = Task {
+        let firstStream = controller.observe()
+        let secondStream = controller.observe()
+        let firstTask = Task {
             var received: [FirewallState] = []
-            for await snapshot in controller.observe() {
+            for await snapshot in firstStream {
+                received.append(snapshot.state)
+                if received.count == 2 { return received }
+            }
+            return received
+        }
+        let secondTask = Task {
+            var received: [FirewallState] = []
+            for await snapshot in secondStream {
                 received.append(snapshot.state)
                 if received.count == 2 { return received }
             }
@@ -317,10 +327,13 @@ final class FirewallControllerTests: XCTestCase {
         }
         try? await Task.sleep(for: .milliseconds(50))
         controller.systemExtensionNeedsUserApproval()
-        let states = await task.value
-        XCTAssertEqual(states.count, 2)
-        XCTAssertEqual(states.first, .unknown)   // 订阅即当前快照
-        XCTAssertEqual(states.last, .systemExtensionApprovalNeeded)
+        let firstStates = await firstTask.value
+        let secondStates = await secondTask.value
+        for states in [firstStates, secondStates] {
+            XCTAssertEqual(states.count, 2)
+            XCTAssertEqual(states.first, .unknown)   // 订阅即当前快照
+            XCTAssertEqual(states.last, .systemExtensionApprovalNeeded)
+        }
     }
 
     // MARK: - 决策路径（IPC promptUser）

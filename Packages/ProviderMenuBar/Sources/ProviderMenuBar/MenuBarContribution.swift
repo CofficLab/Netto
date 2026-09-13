@@ -1,5 +1,18 @@
 import SwiftUI
 
+/// 菜单栏贡献发生的变化。宿主只订阅需要渲染的 Provider，而不依赖 Kernel 广播。
+@MainActor
+public enum MenuBarEvent {
+    case contentItemsChanged
+    case popupItemsChanged
+}
+
+/// 可取消的菜单栏变化观察句柄。
+@MainActor
+public protocol MenuBarObserverHandle: AnyObject {
+    func cancel()
+}
+
 /// 插件可注入的菜单栏常驻内容或 popover 内容。
 @MainActor
 public struct MenuBarContribution: Identifiable {
@@ -31,6 +44,9 @@ public struct MenuBarContribution: Identifiable {
 public protocol MenuBarProviding: AnyObject, Sendable {
     var contentItems: [MenuBarContribution] { get }
     var popupItems: [MenuBarContribution] { get }
+
+    @discardableResult
+    func addMenuBarObserver(_ callback: @escaping (MenuBarEvent) -> Void) -> any MenuBarObserverHandle
 
     func addContent(_ contribution: MenuBarContribution)
     func addPopup(_ contribution: MenuBarContribution)

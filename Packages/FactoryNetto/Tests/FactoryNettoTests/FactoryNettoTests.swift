@@ -3,6 +3,7 @@ import KernelCore
 import PluginFirewallDashboard
 import ProviderShell
 import ProviderAppSettings
+import ProviderFirewall
 import ProviderFirewallEvents
 import ProviderSettingView
 import ProviderTheme
@@ -82,6 +83,32 @@ private struct EmptyProviderAssembly: ProviderAssembling {
     func registerProviders(into kernel: KernelCoreContainer) throws {}
 }
 
+/// 仪表盘贡献测试需要的防火墙契约；真实功能由 PluginFirewall 提供。
+@MainActor
+private struct DashboardTestProviderAssembly: ProviderAssembling {
+    func registerProviders(into kernel: KernelCoreContainer) throws {
+        try DefaultProviderAssembly().registerProviders(into: kernel)
+        try kernel.registerProvider(TestFirewallProvider(), for: FirewallProviding.self)
+    }
+}
+
+@MainActor
+private final class TestFirewallProvider: FirewallProviding {
+    let snapshot = FirewallSnapshot(state: .stopped)
+
+    func refresh() async {}
+    func installSystemExtension() async {}
+    func installFilter() async throws {}
+    func start() async throws {}
+    func stop() async throws {}
+    func observe() -> AsyncStream<FirewallSnapshot> {
+        AsyncStream { continuation in
+            continuation.yield(snapshot)
+            continuation.finish()
+        }
+    }
+}
+
 /// FactoryNetto 装配测试：Provider 注册、插件顺序、失败路径、视图装配。
 @MainActor
 final class FactoryNettoTests: XCTestCase {
@@ -152,19 +179,23 @@ final class FactoryNettoTests: XCTestCase {
         }
         let dashboard = FirewallDashboardPlugin()
         let kernel = try await FactoryNetto.makeKernelAsync(
-            providerAssembly: DefaultProviderAssembly(),
+            providerAssembly: DashboardTestProviderAssembly(),
             pluginAssembly: TestPluginAssembly(plugins: dependencies + [dashboard])
         )
         let menuBar = try XCTUnwrap(kernel.resolveProvider(MenuBarProviding.self))
+        XCTAssertEqual(menuBar.contentItems.map(\.id), ["firewall-dashboard.status"])
         XCTAssertEqual(menuBar.popupItems.map(\.id), ["firewall-dashboard"])
 
         try await kernel.disablePlugin(id: dashboard.id)
+        XCTAssertTrue(menuBar.contentItems.isEmpty)
         XCTAssertTrue(menuBar.popupItems.isEmpty)
 
         try await kernel.enablePlugin(id: dashboard.id)
+        XCTAssertEqual(menuBar.contentItems.map(\.id), ["firewall-dashboard.status"])
         XCTAssertEqual(menuBar.popupItems.map(\.id), ["firewall-dashboard"])
 
         try await kernel.stopAsync()
+        XCTAssertTrue(menuBar.contentItems.isEmpty)
         XCTAssertTrue(menuBar.popupItems.isEmpty)
     }
 

@@ -121,7 +121,7 @@ public enum FactoryNetto {
         kernel: KernelCoreContainer,
         sessionStartDate: Date = Date()
     ) -> AnyView {
-        guard let menuBar = kernel.resolveProvider(MenuBarProviding.self) as? DefaultMenuBarProviding else {
+        guard let menuBar = kernel.resolveProvider(MenuBarProviding.self) else {
             return AnyView(BootstrapFailureView(
                 title: "菜单栏 Provider 未装配",
                 message: "MenuBarProviding not registered"
@@ -183,7 +183,7 @@ public enum FactoryNetto {
 
 @MainActor
 private struct MenuBarPopupHost: View {
-    @ObservedObject var provider: DefaultMenuBarProviding
+    let provider: any MenuBarProviding
     let shell: ShellCenter
     let firewall: FirewallProviding
     let events: FirewallEventsProviding
@@ -193,9 +193,10 @@ private struct MenuBarPopupHost: View {
 
     @StateObject private var ui: UIProvider
     @StateObject private var appProvider: AppProvider
+    @StateObject private var refreshModel: MenuBarRefreshModel
 
     init(
-        provider: DefaultMenuBarProviding,
+        provider: any MenuBarProviding,
         shell: ShellCenter,
         firewall: FirewallProviding,
         events: FirewallEventsProviding,
@@ -212,9 +213,11 @@ private struct MenuBarPopupHost: View {
         self.sessionStartDate = sessionStartDate
         _ui = StateObject(wrappedValue: UIProvider())
         _appProvider = StateObject(wrappedValue: AppProvider())
+        _refreshModel = StateObject(wrappedValue: MenuBarRefreshModel(provider: provider))
     }
 
     var body: some View {
+        let _ = refreshModel.revision
         provider.makePopupView()
             .environmentObject(shell)
             .environmentObject(ui)
@@ -224,5 +227,7 @@ private struct MenuBarPopupHost: View {
             .environment(\.settingsProvider, settings)
             .environment(\.storeProvider, store)
             .environment(\.sessionStartDate, sessionStartDate)
+            .onAppear { refreshModel.resume() }
+            .onDisappear { refreshModel.cancel() }
     }
 }

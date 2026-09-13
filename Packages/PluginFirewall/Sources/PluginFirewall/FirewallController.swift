@@ -26,7 +26,7 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     private let logger = Logger(subsystem: "com.yueyi.TravelMode.PluginFirewall", category: "firewall")
 
     private var filterObserverToken: Any?
-    private var snapshotContinuation: AsyncStream<FirewallSnapshot>.Continuation?
+    private var snapshotContinuations: [UUID: AsyncStream<FirewallSnapshot>.Continuation] = [:]
     private var awaitingApproval = false
 
     private(set) var snapshot: FirewallSnapshot
@@ -55,7 +55,7 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         state = newState
         snapshot = FirewallSnapshot(state: state, lastUpdated: Date())
         logger.info("状态 \(String(describing: oldValue)) -> \(String(describing: newState))")
-        snapshotContinuation?.yield(snapshot)
+        snapshotContinuations.values.forEach { $0.yield(snapshot) }
     }
 
     private func failure(_ error: Error) -> FirewallState {
@@ -150,12 +150,17 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     }
 
     func observe() -> AsyncStream<FirewallSnapshot> {
-        AsyncStream { continuation in
-            snapshotContinuation = continuation
+        let observerID = UUID()
+        return AsyncStream { [weak self] continuation in
+            guard let self else {
+                continuation.finish()
+                return
+            }
+            snapshotContinuations[observerID] = continuation
             continuation.yield(snapshot)
             continuation.onTermination = { [weak self] _ in
-                MainActor.assumeIsolated {
-                    self?.snapshotContinuation = nil
+                Task { @MainActor in
+                    self?.snapshotContinuations.removeValue(forKey: observerID)
                 }
             }
         }
@@ -206,7 +211,8 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         }
         system.unregisterWorkspaceObserver()
         ipc.unregister()
-        snapshotContinuation = nil
+        snapshotContinuations.values.forEach { $0.finish() }
+        snapshotContinuations.removeAll()
     }
 
     // MARK: - SystemExtensionRequestHandling
