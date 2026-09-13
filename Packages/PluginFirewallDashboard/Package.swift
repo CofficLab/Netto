@@ -10,13 +10,16 @@ let package = Package(
         .library(name: "PluginFirewallDashboard", targets: ["PluginFirewallDashboard"])
     ],
     dependencies: [
-        .package(path: "../PluginShell"),
+        .package(name: "KernelCore", path: "../KernelCore"),
+        .package(path: "../ProviderSettingsUI"),
+        .package(path: "../ProviderViewEnvironment"),
         .package(path: "../ProviderAppSettings"),
         .package(path: "../ProviderFirewall"),
         .package(path: "../ProviderFirewallEvents"),
         .package(path: "../ProviderSettingView"),
         .package(path: "../ProviderShell"),
         .package(path: "../ProviderStore"),
+        .package(path: "../ProviderMenuBar"),
         .package(url: "https://github.com/CofficLab/MagicKit", revision: "d04a729"),
     ],
     targets: [
@@ -27,13 +30,16 @@ let package = Package(
                 .product(name: "MagicAlert", package: "MagicKit"),
                 .product(name: "MagicUI", package: "MagicKit"),
                 .product(name: "MagicBackground", package: "MagicKit"),
-                .product(name: "PluginShell", package: "PluginShell"),
+                .product(name: "ProviderSettingsUI", package: "ProviderSettingsUI"),
                 .product(name: "ProviderAppSettings", package: "ProviderAppSettings"),
                 .product(name: "ProviderFirewall", package: "ProviderFirewall"),
                 .product(name: "ProviderFirewallEvents", package: "ProviderFirewallEvents"),
                 .product(name: "ProviderSettingView", package: "ProviderSettingView"),
                 .product(name: "ProviderShell", package: "ProviderShell"),
                 .product(name: "ProviderStore", package: "ProviderStore"),
+                .product(name: "ProviderMenuBar", package: "ProviderMenuBar"),
+                .product(name: "ProviderViewEnvironment", package: "ProviderViewEnvironment"),
+                "KernelCore",
             ]
         )
     ]

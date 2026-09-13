@@ -1,8 +1,5 @@
-import PluginFirewallDashboard
-import MagicAlert
 import MagicCore
 import OSLog
-import SwiftData
 import SwiftUI
 
 /// 主界面 Host 壳 —— 只保留启动态 / 失败态 / 运行态装配。
@@ -18,34 +15,30 @@ import SwiftUI
 ///   避免 bootstrap 完成前解析 nil Kernel。
 ///
 /// 线程/actor：`@MainActor`（SwiftUI View）。无副作用；`inRootView()` 只用于预览。
-struct RootView<Content>: View, SuperLog, SuperEvent where Content: View {
+struct RootView<Content>: View, SuperLog where Content: View {
     nonisolated static var emoji: String { "🌳" }
 
     /// 内容构建器（仅在 `phase == .running` 时求值一次/每次重绘时求值）。
     private let contentBuilder: () -> Content
 
-    /// 显式注入的环境（App 启动路径）；预览可传 `AppEnvironment.preview()`。
-    private let providedEnvironment: AppEnvironment?
+    /// App 装配环境；状态由组合根持有，Host shell 只负责观察。
+    private let environment: AppEnvironment
     /// Kernel 就绪后由 App 绑定窗口路由等宿主回调。
     private let onRunning: () -> Void
 
-    /// 环境对象（场景级注入；App 通过 `environmentObject` 提供）。
-    @EnvironmentObject private var appEnv: AppEnvironment
-
     init(
-        environment: AppEnvironment? = nil,
+        environment: AppEnvironment,
         onRunning: @escaping () -> Void = {},
         @ViewBuilder content: @escaping () -> Content
     ) {
         os_log("\(Self.onInit)")
-        self.providedEnvironment = environment
+        self.environment = environment
         self.onRunning = onRunning
         self.contentBuilder = content
     }
 
     var body: some View {
-        let env = providedEnvironment ?? appEnv
-        RootEnvironmentHost(environment: env, onRunning: onRunning, contentBuilder: contentBuilder)
+        RootEnvironmentHost(environment: environment, onRunning: onRunning, contentBuilder: contentBuilder)
     }
 }
 
@@ -64,25 +57,10 @@ private struct RootEnvironmentHost<Content: View>: View {
                 // 启动失败必须显式呈现（不可静默降级为内容视图）
                 RootFailureView(message: message)
             case .running:
-                // 惰性求值：Kernel 就绪后才调用 contentBuilder（Factory 装配
-                // 的 KernelHostRootView），并注入 AppEnvironment 持有的契约
-                // 环境（与 KernelHostRootView 内部注入同值、幂等覆盖）。
-                if let shell = environment.shell {
-                    contentBuilder()
-                        .environmentObject(shell)
-                        .environmentObject(environment.ui)
-                        .environmentObject(environment.appProvider)
-                        .environment(\.firewallProvider, environment.firewall)
-                        .environment(\.eventsProvider, environment.events)
-                        .environment(\.settingsProvider, environment.settings)
-                        .environment(\.storeProvider, environment.store)
-                        .environment(\.sessionStartDate, environment.sessionStartDate)
-                } else {
-                    RootFailureView(message: "Shell 中心未装配")
-                }
+                // Factory 的视图装配器负责注入共享 Provider 环境。
+                contentBuilder()
             }
         }
-        .environmentObject(environment)
         .onAppear {
             if environment.phase == .running {
                 onRunning()
@@ -119,16 +97,6 @@ private struct RootFailureView: View {
     }
 }
 
-extension View {
-    /// 将当前视图包裹在 RootView 中（预览用；注入预览环境）。
-    /// - Returns: 被RootView包裹的视图
-    func inRootView() -> some View {
-        RootView(environment: .preview()) {
-            self
-        }
-    }
-}
-
 // MARK: - Loading View
 
 struct RootLoadingView: View {
@@ -143,12 +111,4 @@ struct RootLoadingView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(NSColor.controlBackgroundColor))
     }
-}
-
-// MARK: - Preview
-
-#Preview("APP") {
-    ContentView()
-        .inRootView()
-        .frame(width: 700)
 }

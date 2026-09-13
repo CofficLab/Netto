@@ -1,5 +1,5 @@
 import Foundation
-import PluginPersistence
+import ProviderPersistence
 import ProviderAppSettings
 import SwiftData
 

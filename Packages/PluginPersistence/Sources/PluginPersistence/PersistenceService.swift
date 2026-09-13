@@ -1,17 +1,12 @@
 import Foundation
 import KernelCore
+import ProviderPersistence
 import SwiftData
 
 /// 持久化能力（插件内部基础设施，不面向视图）。
 ///
 /// 由 `PersistencePlugin` 创建并注册；EventStore / AppSettings 插件通过它
 /// 获取**同一个** ModelContainer，保证同一 db.sqlite 只有一个容器实例。
-@MainActor
-public protocol PersistenceProviding: AnyObject, Sendable {
-    /// 共享 ModelContainer。
-    var container: ModelContainer { get }
-}
-
 /// 持久化服务 —— 持有 ModelContainer。
 @MainActor
 public final class PersistenceService: PersistenceProviding {

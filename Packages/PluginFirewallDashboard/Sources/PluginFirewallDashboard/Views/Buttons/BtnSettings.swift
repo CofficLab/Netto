@@ -1,7 +1,7 @@
 import MagicAlert
 import MagicCore
 import OSLog
-import PluginShell
+import ProviderShell
 import SwiftUI
 
 /// 内核内置的设置按钮

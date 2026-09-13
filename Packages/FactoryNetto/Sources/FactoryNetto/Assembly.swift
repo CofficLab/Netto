@@ -2,12 +2,16 @@ import Foundation
 import KernelCore
 import PluginAppSettings
 import PluginEventStore
+import PluginFirewall
+import PluginFirewallDashboard
+import PluginHostActions
 import PluginPersistence
-import PluginShell
+import ProviderShell
+import PluginStore
 import PluginThemePack
 import ProviderSettingView
-import ProviderShell
 import ProviderTheme
+import ProviderMenuBar
 
 /// Provider 装配协议：把 Factory 拥有的共享 Provider 实现注册进 Kernel。
 ///
@@ -28,6 +32,7 @@ public struct DefaultProviderAssembly: ProviderAssembling {
 
     public func registerProviders(into kernel: KernelCoreContainer) throws {
         let shell = ShellCenter()
+        try kernel.registerProvider(DefaultMenuBarProviding(), for: MenuBarProviding.self)
         try kernel.registerProvider(shell, for: ShellToolbarProviding.self)
         try kernel.registerProvider(shell, for: SettingsProviding.self)
         try kernel.registerProvider(shell, for: WindowProviding.self)
@@ -43,10 +48,10 @@ public protocol PluginAssembling {
     func makePlugins() -> [any SuperPlugin]
 }
 
-/// 默认插件装配：阶段 4 起加入持久化三个插件；阶段 5-7 逐步加入真实插件。
+/// 默认插件装配：Factory 统一拥有基础设施、业务服务与主面板插件。
 ///
 /// 顺序约定：order 值越小越先启动；`persistence` 是最底层基础设施，
-/// `appsettings` / `eventstore` 依赖它；防火墙等业务插件随后追加。
+/// `appsettings` / `eventstore` 依赖它；Dashboard 依赖防火墙、设置、事件与 Store。
 @MainActor
 public struct DefaultPluginAssembly: PluginAssembling {
     public init() {}
@@ -56,7 +61,10 @@ public struct DefaultPluginAssembly: PluginAssembling {
             PersistencePlugin(),      // order 1：db.sqlite / ModelContainer 唯一所有者
             PluginAppSettings(),      // order 10：依赖 persistence
             PluginEventStore(),       // order 10：依赖 persistence
+            PluginFirewall(),         // order 30：网络过滤、系统扩展与 IPC
+            PluginStore(),            // order 40：StoreKit 服务与权益
+            FirewallDashboardPlugin(), // order 60：贡献菜单栏 popover 主面板
             ThemePackPlugin(),        // order 100：复刻 Lumi 主题包（注册 19 主题 + 外观入口）
-        ]
+        ] + HostActionPluginAssembly.makePlugins()
     }
 }

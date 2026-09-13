@@ -1,15 +1,12 @@
-import PluginFirewallDashboard
 import Combine
 import FactoryNetto
 import Foundation
 import KernelCore
 import OSLog
-import PluginFirewall
-import PluginShell
+import ProviderShell
 import ProviderAppSettings
 import ProviderFirewall
 import ProviderFirewallEvents
-import ProviderShell
 import ProviderStore
 import SwiftUI
 
@@ -20,7 +17,7 @@ import SwiftUI
 ///    （持久化/设置/事件存储 + App Host 的 UI 贡献插件）。
 /// 2. 缓存解析出的契约对象（shell / firewall / events / settings），
 ///    注入给视图，**视图不再在 body/onAppear/.task 创建或首次启动服务**。
-/// 3. 持有纯 UI 状态（`UIProvider` / `AppProvider`），随内核一起注入。
+/// 3. 持有 App 生命周期数据与纯宿主状态。
 ///
 /// 约束：
 /// - 不持有任何 `*.shared` 单例；生产路径只依赖 Kernel 解析出的契约。
@@ -38,6 +35,10 @@ final class AppEnvironment: ObservableObject {
 
     /// 生命周期阶段。
     @Published private(set) var phase: Phase = .booting
+
+    /// AppKit 状态栏 Host。Provider 注册后立即安装，使启动中的 popover
+    /// 能显示明确的加载/失败状态，内核就绪后自动切换为插件贡献内容。
+    let menuBarController = MenuBarController()
 
     /// 已装配的 Kernel（App 唯一实例；由 Factory 创建）。
     @Published private(set) var kernel: KernelCoreContainer?
@@ -57,11 +58,6 @@ final class AppEnvironment: ObservableObject {
     private(set) var settings: AppSettingsProviding?
     /// Store 契约（缓存；PluginStore 在 onBoot 注册）。
     private(set) var store: StoreProviding?
-
-    /// 纯 UI 状态（旧 `UIProvider` 语义，App 启动期创建一次）。
-    let ui = UIProvider()
-    /// 兼容 UI 状态（旧 `AppProvider` 语义；Store 相关视图使用）。
-    let appProvider = AppProvider()
 
     /// 会话起始时间（旧 `EventRepo.sessionStartDate` 语义：App 启动时固定）。
     let sessionStartDate = Date()
@@ -92,7 +88,7 @@ final class AppEnvironment: ObservableObject {
     static func preview() -> AppEnvironment {
         let shell = ShellCenter()
         // 注册预览贡献，让预览渲染真实工具栏/设置入口。
-        AppHostPlugins.registerPreviewContributions(into: shell)
+        FactoryNetto.registerPreviewContributions(into: shell)
         let env = AppEnvironment(
             firewall: PreviewFirewall(),
             events: PreviewEvents(),
@@ -111,12 +107,12 @@ final class AppEnvironment: ObservableObject {
         didStart = true
 
         do {
-            // 生产目录：基础插件（持久化三件套）+ App Host UI 贡献插件 + PluginFirewall。
-            // PluginFirewall 由 App 显式加入（保持 Factory 默认装配可被单元测试
-            // 确定性验证；阶段 8 清理旧层后移入 DefaultPluginAssembly）。
-            let kernel = try await FactoryNetto.makeKernelAsync(
-                additionalPlugins: AppHostPlugins.all(appProvider: appProvider) + [PluginFirewall()]
-            )
+            // Factory 拥有完整插件目录；App 只启动 Kernel 并解析所需 Provider。
+            let kernel = try await FactoryNetto.makeKernelAsync(onProvidersRegistered: { [weak self] kernel in
+                guard let self else { return }
+                self.kernel = kernel
+                self.menuBarController.install(kernel: kernel, environment: self)
+            })
             guard let shell = kernel.resolveProvider(ShellToolbarProviding.self) as? ShellCenter else {
                 self.phase = .failed("Shell 中心未装配")
                 return false

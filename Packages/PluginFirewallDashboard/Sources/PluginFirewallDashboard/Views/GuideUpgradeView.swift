@@ -1,6 +1,5 @@
 import SwiftUI
 import MagicCore
-import PluginShell
 import ProviderShell
 import MagicUI
 

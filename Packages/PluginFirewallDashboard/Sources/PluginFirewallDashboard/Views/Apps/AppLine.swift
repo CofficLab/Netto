@@ -1,4 +1,5 @@
 import MagicCore
+import ProviderViewEnvironment
 import ProviderAppSettings
 import SwiftUI
 

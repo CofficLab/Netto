@@ -1,7 +1,7 @@
 import MagicCore
 import MagicAlert
 import OSLog
-import PluginShell
+import ProviderShell
 import StoreKit
 import SwiftUI
 

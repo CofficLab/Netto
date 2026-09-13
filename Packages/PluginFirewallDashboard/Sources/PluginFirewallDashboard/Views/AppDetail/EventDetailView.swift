@@ -1,9 +1,9 @@
 import MagicCore
+import ProviderViewEnvironment
 import MagicUI
 import OSLog
-import PluginShell
-import ProviderFirewallEvents
 import ProviderShell
+import ProviderFirewallEvents
 import SwiftUI
 
 /**

@@ -12,24 +12,36 @@ App 组合根（Core/Bootstrap、Core/AppHost）
    └─ FactoryNetto（Packages/FactoryNetto）——唯一静态装配点
         └─ KernelCore（Packages/KernelCore）——内核容器
              ├─ Provider 契约包（ProviderFirewall / ProviderFirewallEvents /
-             │  ProviderAppSettings / ProviderAppCatalog / ProviderShell / ProviderStore）
+             │  ProviderAppSettings / ProviderAppCatalog / ProviderShell /
+             │  ProviderStore / ProviderMenuBar / ProviderPersistence /
+             │  ProviderViewEnvironment / ProviderSettingsUI）
              ├─ Plugin 实现包（PluginPersistence / PluginAppSettings /
-             │  PluginEventStore / PluginFirewall / PluginStore / PluginShell）
+             │  PluginEventStore / PluginFirewall / PluginStore /
+             │  PluginFirewallDashboard / PluginHostActions）
              └─ NettoIPCContracts（App / Extension 共享 IPC 契约）
 ```
+
+macOS Host 只保留 SwiftUI App 入口、启动环境、少量系统集成与 AppKit
+状态栏控制器。状态栏由 `NSStatusItem + NSPopover` 承载；插件通过
+`ProviderMenuBar.MenuBarProviding` 注册常驻状态栏项或 popover 区块，Factory
+在 Kernel 启动前注册 Provider，Host 监听 Kernel 启动态并显示插件贡献。
 
 - **KernelCore**：只允许 `Foundation` 与基础运行库；禁止 import SwiftUI、
   AppKit、NetworkExtension、SwiftData、StoreKit、MagicKit 或任何具体插件。
   提供 typed Provider 的 register / resolve / unregister、依赖排序、
   重复 ID / 缺失依赖 / 依赖环错误、启动失败回滚、逆序停止、贡献 owner 跟踪与清理。
-- **Provider 契约包**：中立接口与 Sendable 值类型（Snapshot / 错误 / 分页 / 稳定 ID），
-  不暴露 `ModelContext`、`StoreKit.Product`、`NEFilterManager`、`NSView`、`AnyView`（ProviderShell 的 UI 贡献契约除外）。
+- **Provider 契约包**：中立接口与 Sendable 值类型（Snapshot / 错误 / 分页 / 稳定 ID）。
+  `ProviderPersistence` 持有跨存储插件共享的 SwiftData schema/config 与容器接口；
+  `ProviderViewEnvironment` 持有 SwiftUI Provider 环境键；`ProviderSettingsUI` 提供可复用的设置控件。
+  Provider 不暴露 `StoreKit.Product`、`NEFilterManager`、`NSView`、`ModelContext`；
+  `ProviderShell` 的 UI 贡献契约保留 `AnyView`。
 - **Plugin 实现包**：实现 Provider 契约与生命周期（onBoot / onReady / onShutdown），
   跨插件调用只能走 Provider 契约，禁止 import 同级其他 Plugin 包。
-- **FactoryNetto**：`makeKernel()` / `makePlugins()` / `makeMainView(kernel:)` /
+- **FactoryNetto**：`makeKernelAsync()` / `makePlugins()` /
+  `makeMainView(kernel:)` / `makeMenuBarPopupView(kernel:)` /
   `makeSettingsView(kernel:)`；显式返回稳定顺序的插件数组，App 只通过它装配内核。
 - **App 组合根**：`AppEnvironment.bootstrap()` 调用 FactoryNetto 创建唯一 Kernel 实例，
-  缓存契约到环境键；`RootView` 只保留启动态 / 错误态 / Host shell。
+  Provider 注册后安装状态栏，缓存契约到环境键；`RootView` 只保留启动态 / 错误态 / Host shell。
 
 ## SuperPlugin 生命周期（KernelCore）
 
@@ -81,12 +93,18 @@ let firewall = try kernel.requireProvider(FirewallProviding.self)
    的 `makePlugins()` 显式加入实例，声明 `order` 与 `dependencies`。
 4. 写契约 / 行为测试；`cd Packages/<包名> && swift test`。
 
-### 方式 B：Host 插件（App 壳内贡献，轻量 UI 入口）
+### 方式 B：Host 操作插件（聚合 Package）
 
-App 壳内的小型贡献（About / Quit / DataFolder / InstallExtension / Guide / 设置入口）
-直接在 `Core/AppHost/AppHostPlugins.swift` 中实现 `KernelCore.SuperPlugin`，
-在 `onBoot` 里向 `ShellCenter` 注册 `ToolbarContribution` / `SettingsEntry`，
-并由 `AppHostPlugins.all()` 返回给 `AppEnvironment.bootstrap(additionalPlugins:)`。
+macOS 宿主操作（About / Quit / DataFolder / InstallExtension / Guide / 设置入口）
+和通用设置/调试面板在 `Packages/PluginHostActions` 中实现，视图、插件与贡献
+均由该 Package 持有。它依赖 `ProviderShell`、`ProviderSettingsUI` 和其他中立契约，
+不依赖 Dashboard 插件。
+
+### 菜单栏 popover 贡献
+
+功能插件在 `onBoot` 中解析 `MenuBarProviding` 并调用 `addPopup(_:)`；插件停用、
+卸载或关闭时按 `ownerPluginID` 撤回。AppKit `MenuBarController` 只负责状态栏按钮、
+Popover 生命周期与根视图托管，不包含业务面板实现。
 
 ## 视图访问数据的正确姿势
 
@@ -113,15 +131,18 @@ App 壳内的小型贡献（About / Quit / DataFolder / InstallExtension / Guide
 |------|------|------|-------|
 | KernelCore | 内核包 | 容器 + SuperPlugin | - |
 | FactoryNetto | 装配包 | makeKernel / makePlugins | - |
-| PluginShell（ShellCenter） | 壳 UI 包 | Toolbar / Settings / Window / Toast 聚合 | 0 |
-| PluginPersistence | 功能包 | SwiftData ModelContainer | 1 |
+| ProviderShell（ShellCenter） | Provider/UI 聚合 | Toolbar / Settings / Window / Toast 聚合 | - |
+| ProviderPersistence | Provider 契约 | 共享 SwiftData schema / db URL / 容器协议 | - |
+| ProviderViewEnvironment | Provider/UI 辅助 | SwiftUI 中共享 Provider 环境键 | - |
+| ProviderSettingsUI | Provider/UI 组件 | 系统设置与扩展操作的复用控件 | - |
+| PluginPersistence | 功能包 | SwiftData ModelContainer 的唯一创建者 | 1 |
 | PluginAppSettings | 功能包 | AppSettingsProviding | 10（依赖 persistence） |
 | PluginEventStore | 功能包 | FirewallEventsProviding | 10（依赖 persistence） |
 | PluginFirewall | 功能包 | FirewallProviding（NE / 系统扩展 / IPC / daemon） | 30 |
 | PluginStore | 功能包 | StoreProviding（StoreKit 购买 / 订阅 / 恢复） | 40 |
-| HostSwitcher / HostFilter / HostDB（DEBUG） | Host 插件 | 工具栏贡献 | 10 / 20 / 20 |
-| HostSettings / HostGuide / HostStore入口 | Host 插件 | 设置入口 | 30 / 45 / 40 |
-| HostDataFolder / HostInstallExtension / HostAbout / HostQuit / HostClearLogs（DEBUG） | Host 插件 | 设置入口 | 50–80 |
+| FirewallDashboardPlugin | 功能包 | 菜单栏 popover 主面板 + Switcher / Filter 工具栏项 | 60 |
+| ThemePackPlugin | 功能包 | 主题注册与外观设置入口 | 100 |
+| PluginHostActions | 聚合功能包 | About / Quit / DataFolder / Guide / 通用设置 / DB（DEBUG）及对应视图 | 20–80 |
 
 ## 与 Extension 的关系
 

@@ -3,6 +3,7 @@ import KernelCore
 import NetworkExtension
 import PluginPersistence
 import ProviderFirewallEvents
+import ProviderPersistence
 import SwiftData
 import XCTest
 @testable import PluginEventStore

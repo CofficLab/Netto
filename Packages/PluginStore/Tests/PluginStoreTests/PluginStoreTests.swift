@@ -1,8 +1,7 @@
 import Foundation
 import KernelCore
-import PluginShell
-import ProviderSettingView
 import ProviderShell
+import ProviderSettingView
 import ProviderStore
 import Testing
 @testable import PluginStore

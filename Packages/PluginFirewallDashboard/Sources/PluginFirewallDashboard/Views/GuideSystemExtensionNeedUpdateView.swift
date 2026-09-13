@@ -1,4 +1,5 @@
 import MagicCore
+import ProviderSettingsUI
 import SwiftUI
 
 struct SystemExtensionNeedUpdateView: View {

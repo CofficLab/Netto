@@ -1,5 +1,4 @@
 import MagicAlert
-import PluginShell
 import ProviderShell
 import MagicCore
 import StoreKit

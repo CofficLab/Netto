@@ -1,10 +1,10 @@
 import MagicCore
+import ProviderViewEnvironment
 import MagicAlert
 import MagicUI
 import OSLog
-import PluginShell
-import ProviderAppSettings
 import ProviderShell
+import ProviderAppSettings
 import ProviderStore
 import SwiftUI
 

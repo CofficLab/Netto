@@ -1,6 +1,6 @@
 import Foundation
 import KernelCore
-import PluginPersistence
+import ProviderPersistence
 import ProviderFirewallEvents
 
 /// 事件存储插件。

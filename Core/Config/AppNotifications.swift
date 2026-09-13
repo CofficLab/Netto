@@ -1,4 +1,3 @@
-import PluginFirewallDashboard
 import Foundation
 
 /**

@@ -1,7 +1,8 @@
 import MagicAlert
+import ProviderViewEnvironment
 import MagicCore
 import MagicUI
-import PluginShell
+import ProviderShell
 import ProviderFirewall
 import SwiftUI
 

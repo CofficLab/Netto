@@ -1,4 +1,5 @@
 import MagicCore
+import ProviderViewEnvironment
 import OSLog
 import ProviderAppSettings
 import ProviderFirewall

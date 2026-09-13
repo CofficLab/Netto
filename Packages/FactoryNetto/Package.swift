@@ -1,7 +1,7 @@
 // swift-tools-version: 6.0
 // FactoryNetto：Netto 唯一静态装配点。
-// 依赖约束：KernelCore、全部 Provider 契约、PluginShell、持久化三插件、SwiftUI。
-// 禁止依赖 App target 代码（Core/Plugins/Bridge）与具体业务 Plugin（防火墙等阶段 5+ 追加）。
+// 依赖约束：Netto 插件目录、Provider 契约与 SwiftUI。
+// 禁止依赖 App target 代码（Core/Plugins/Bridge）。
 import PackageDescription
 
 let package = Package(
@@ -14,7 +14,6 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "KernelCore", path: "../KernelCore"),
-        .package(name: "PluginShell", path: "../PluginShell"),
         .package(name: "PluginPersistence", path: "../PluginPersistence"),
         .package(name: "PluginAppSettings", path: "../PluginAppSettings"),
         .package(name: "PluginEventStore", path: "../PluginEventStore"),
@@ -28,6 +27,11 @@ let package = Package(
         .package(name: "ProviderTheme", path: "../ProviderTheme"),
         .package(name: "PluginThemePack", path: "../PluginThemePack"),
         .package(name: "PluginFirewallDashboard", path: "../PluginFirewallDashboard"),
+        .package(name: "PluginFirewall", path: "../PluginFirewall"),
+        .package(name: "PluginStore", path: "../PluginStore"),
+        .package(name: "PluginHostActions", path: "../PluginHostActions"),
+        .package(name: "ProviderMenuBar", path: "../ProviderMenuBar"),
+        .package(name: "ProviderViewEnvironment", path: "../ProviderViewEnvironment"),
         .package(url: "https://github.com/CofficLab/LumiUI", revision: "419c64ec01257f923b4139ede61377566b97b626"),
     ],
     targets: [
@@ -35,7 +39,6 @@ let package = Package(
             name: "FactoryNetto",
             dependencies: [
                 "KernelCore",
-                "PluginShell",
                 "PluginPersistence",
                 "PluginAppSettings",
                 "PluginEventStore",
@@ -49,6 +52,11 @@ let package = Package(
                 "ProviderTheme",
                 "PluginThemePack",
                 "PluginFirewallDashboard",
+                "PluginFirewall",
+                "PluginStore",
+                .product(name: "PluginHostActions", package: "PluginHostActions"),
+                "ProviderMenuBar",
+                "ProviderViewEnvironment",
                 "LumiUI",
             ]
         ),

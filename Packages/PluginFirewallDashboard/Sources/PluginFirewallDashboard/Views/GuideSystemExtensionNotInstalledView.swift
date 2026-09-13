@@ -1,4 +1,5 @@
 import MagicCore
+import ProviderSettingsUI
 import SwiftUI
 
 struct SystemExtensionNotInstalledView: View {

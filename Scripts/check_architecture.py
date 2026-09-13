@@ -21,10 +21,8 @@ Netto 架构依赖扫描脚本（阶段 8）。
       autoRegisterPlugins、@objc(...Registrant)）。
 
 已知豁免（刻意保留，请勿误报）：
-  - App 目标 import PluginShell / 各 Provider 包 / FactoryNetto / KernelCore：
-    组合根显式装配（additionalPlugins 由 AppEnvironment 显式传入）。
-  - AppHostPlugins / AppEnvironment 中 `PluginStore()` / `PluginFirewall()`
-    实例化：App 作为唯一装配点传入 FactoryNetto，属生产唯一入口。
+  - App 目标 import ProviderShell / Provider 契约 / FactoryNetto / KernelCore：
+    App 组合根负责启动 Factory 创建的唯一 Kernel 并缓存视图所需契约。
   - ProviderShell 暴露 `AnyView` 的 UI 贡献契约（阶段 6 既定设计）。
   - Core/Config/AppNotifications.swift 的 App 内通知名（无负载壳内信号）。
 """
@@ -57,7 +55,7 @@ R6_PATTERNS = [
     re.compile(r"@objc\(\w*Registrant"),
 ]
 
-import_re = re.compile(r"^\s*import\s+(\S+)")
+import_re = re.compile(r"^\s*import\s+(\S+)", re.MULTILINE)
 
 violations = []
 
@@ -98,9 +96,15 @@ for p in scan_files([ROOT / "Packages"]):
             report(rel, "R5", f"@unchecked Sendable 不允许 (行 {i})")
 
 # R3：Plugin 实现包不 import 同级 Plugin 包
-plugin_pkgs = {p.name for p in (ROOT / "Packages").glob("Plugin*") if p.is_dir()}
+plugin_pkgs = {
+    p.name for p in (ROOT / "Packages").glob("Plugin*")
+    if p.is_dir() and (p / "Package.swift").is_file()
+}
 for p in scan_files([ROOT / "Packages"]):
     if not any(part.startswith("Plugin") for part in p.parts):
+        continue
+    # Test targets may compose plugins for integration coverage; R3 governs shipped code.
+    if "Tests" in p.parts:
         continue
     # 定位该源文件所属包名
     pkg_name = None

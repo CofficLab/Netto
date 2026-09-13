@@ -1,4 +1,5 @@
 import SwiftUI
+import ProviderViewEnvironment
 import MagicCore
 import Charts
 import ProviderFirewallEvents

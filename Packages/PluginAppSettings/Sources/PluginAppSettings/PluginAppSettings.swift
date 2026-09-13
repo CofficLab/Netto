@@ -1,6 +1,6 @@
 import Foundation
 import KernelCore
-import PluginPersistence
+import ProviderPersistence
 import ProviderAppSettings
 
 /// 应用设置插件。

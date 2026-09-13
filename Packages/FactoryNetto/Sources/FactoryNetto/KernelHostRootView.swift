@@ -1,11 +1,11 @@
 import Foundation
+import ProviderViewEnvironment
 import KernelCore
 import PluginFirewallDashboard
-import PluginShell
+import ProviderShell
 import ProviderAppSettings
 import ProviderFirewall
 import ProviderFirewallEvents
-import ProviderShell
 import ProviderStore
 import SwiftUI
 

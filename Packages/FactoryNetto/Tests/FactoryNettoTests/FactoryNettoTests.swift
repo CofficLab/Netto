@@ -1,11 +1,12 @@
 import Foundation
 import KernelCore
-import PluginShell
+import PluginFirewallDashboard
+import ProviderShell
 import ProviderAppSettings
 import ProviderFirewallEvents
 import ProviderSettingView
 import ProviderTheme
-import ProviderShell
+import ProviderMenuBar
 import SwiftUI
 import XCTest
 @testable import FactoryNetto
@@ -86,17 +87,17 @@ private struct EmptyProviderAssembly: ProviderAssembling {
 final class FactoryNettoTests: XCTestCase {
 
     func testMakeKernelRegistersShellProviders() async throws {
-        let kernel = try await FactoryNetto.makeKernelAsync()
+        let kernel = try await FactoryNetto.makeKernelAsync(
+            providerAssembly: DefaultProviderAssembly(),
+            pluginAssembly: TestPluginAssembly(plugins: [])
+        )
         XCTAssertNotNil(kernel.resolveProvider(ShellToolbarProviding.self))
         XCTAssertNotNil(kernel.resolveProvider(SettingsProviding.self))
         XCTAssertNotNil(kernel.resolveProvider(WindowProviding.self))
         XCTAssertNotNil(kernel.resolveProvider(ToastProviding.self))
+        XCTAssertNotNil(kernel.resolveProvider(MenuBarProviding.self))
         XCTAssertEqual(kernel.lifecycleState, .running)
-        // 默认目录包含持久化三插件 + 主题包：事件/设置/主题契约可用。
-        XCTAssertNotNil(kernel.resolveProvider(ProviderAppSettings.AppSettingsProviding.self))
-        XCTAssertNotNil(kernel.resolveProvider(ProviderFirewallEvents.FirewallEventsProviding.self))
-        XCTAssertNotNil(kernel.resolveProvider(ProviderTheme.ThemeProviding.self))
-        XCTAssertEqual(kernel.registeredPluginCount, 4)
+        XCTAssertEqual(kernel.registeredPluginCount, 0)
     }
 
     func testMakeKernelStartsPluginsInOrder() throws {
@@ -127,17 +128,48 @@ final class FactoryNettoTests: XCTestCase {
 
     func testMakeKernelAsyncStartsAsyncPlugin() async throws {
         let asyncPlugin = AsyncMockPlugin(id: "Async", marker: "async")
+        var providersWereRegisteredBeforePluginBoot = false
         let kernel = try await FactoryNetto.makeKernelAsync(
             providerAssembly: DefaultProviderAssembly(),
-            pluginAssembly: TestPluginAssembly(plugins: [asyncPlugin])
+            pluginAssembly: TestPluginAssembly(plugins: [asyncPlugin]),
+            onProvidersRegistered: { kernel in
+                providersWereRegisteredBeforePluginBoot =
+                    kernel.resolveProvider(MenuBarProviding.self) != nil
+                    && asyncPlugin.events.isEmpty
+            }
         )
         XCTAssertEqual(kernel.lifecycleState, .running)
+        XCTAssertTrue(providersWereRegisteredBeforePluginBoot)
         XCTAssertEqual(asyncPlugin.events, ["bootAsync:Async", "ready:Async"])
         XCTAssertEqual(kernel.resolveProvider(MarkerProviding.self)?.marker, "async")
     }
 
+    func testDashboardPluginAddsAndRemovesItsPopoverContributionWithLifecycle() async throws {
+        let dependencies = ["firewall", "appsettings", "eventstore", "store"].map { id in
+            let plugin = MockPlugin(id: id, marker: id)
+            plugin.registerProvider = false
+            return plugin as any SuperPlugin
+        }
+        let dashboard = FirewallDashboardPlugin()
+        let kernel = try await FactoryNetto.makeKernelAsync(
+            providerAssembly: DefaultProviderAssembly(),
+            pluginAssembly: TestPluginAssembly(plugins: dependencies + [dashboard])
+        )
+        let menuBar = try XCTUnwrap(kernel.resolveProvider(MenuBarProviding.self))
+        XCTAssertEqual(menuBar.popupItems.map(\.id), ["firewall-dashboard"])
+
+        try await kernel.disablePlugin(id: dashboard.id)
+        XCTAssertTrue(menuBar.popupItems.isEmpty)
+
+        try await kernel.enablePlugin(id: dashboard.id)
+        XCTAssertEqual(menuBar.popupItems.map(\.id), ["firewall-dashboard"])
+
+        try await kernel.stopAsync()
+        XCTAssertTrue(menuBar.popupItems.isEmpty)
+    }
+
     func testMakeMainViewUsesResolvedShell() async throws {
-        let kernel = try await FactoryNetto.makeKernelAsync()
+        let kernel = try await makeIsolatedKernel()
         let view = FactoryNetto.makeMainView(kernel: kernel)
         // 编译期验证视图类型；运行时由 App Host 呈现。
         XCTAssertNotNil(view)
@@ -146,7 +178,7 @@ final class FactoryNettoTests: XCTestCase {
     func testMakeSettingsViewUsesResolvedSettings() async throws {
         // DefaultProviderAssembly 注册 DefaultSettingViewProviding：
         // makeSettingsView 解析 SettingViewProviding 并渲染设置视图。
-        let kernel = try await FactoryNetto.makeKernelAsync()
+        let kernel = try await makeIsolatedKernel()
         let settings = kernel.resolveProvider(SettingViewProviding.self)
         XCTAssertNotNil(settings)
         let view = FactoryNetto.makeSettingsView(kernel: kernel)
@@ -192,5 +224,12 @@ final class FactoryNettoTests: XCTestCase {
             }
         )
         XCTAssertEqual(shell.leftContributions.count, 1)
+    }
+
+    private func makeIsolatedKernel() async throws -> KernelCoreContainer {
+        try await FactoryNetto.makeKernelAsync(
+            providerAssembly: DefaultProviderAssembly(),
+            pluginAssembly: TestPluginAssembly(plugins: [])
+        )
     }
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import ProviderSettingsUI
 
 struct InstallView: View {
     var body: some View {

@@ -1,4 +1,4 @@
-import PluginShell
+import ProviderShell
 import SwiftUI
 
 /// Preview-only host for package views. Production environment values are installed by App Host.

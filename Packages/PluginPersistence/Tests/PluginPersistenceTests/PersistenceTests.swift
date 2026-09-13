@@ -1,5 +1,6 @@
 import Foundation
 import KernelCore
+import ProviderPersistence
 import SwiftData
 import XCTest
 @testable import PluginPersistence
