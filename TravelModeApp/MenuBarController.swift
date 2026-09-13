@@ -7,7 +7,7 @@ import SwiftUI
 
 /// AppKit owns the system status item and popover; packages contribute the views.
 @MainActor
-final class MenuBarController: NSObject {
+final class MenuBarController: NSObject, MenuBarHosting {
     private var statusItem: NSStatusItem?
     private var statusHostingView: MenuBarHostingView<MenuBarStatusContent>?
     private var popover: NSPopover?
@@ -46,10 +46,10 @@ final class MenuBarController: NSObject {
         popup.animates = true
         popup.contentSize = NSSize(width: 640, height: 760)
         popup.contentViewController = NSHostingController(
-            rootView: RootView(environment: environment) {
+            rootView: FactoryNetto.makeRootView(environment: environment) {
                 FactoryNetto.makeMenuBarPopupView(
                     kernel: kernel,
-                    sessionStartDate: environment.sessionStartDate
+                    environment: environment
                 )
                 .frame(width: 640, height: 760)
             }

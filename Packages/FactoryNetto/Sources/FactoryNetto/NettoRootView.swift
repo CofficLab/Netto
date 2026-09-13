@@ -1,5 +1,4 @@
-import MagicCore
-import OSLog
+import AppKit
 import SwiftUI
 
 /// 主界面 Host 壳 —— 只保留启动态 / 失败态 / 运行态装配。
@@ -15,9 +14,7 @@ import SwiftUI
 ///   避免 bootstrap 完成前解析 nil Kernel。
 ///
 /// 线程/actor：`@MainActor`（SwiftUI View）。无副作用；`inRootView()` 只用于预览。
-struct RootView<Content>: View, SuperLog where Content: View {
-    nonisolated static var emoji: String { "🌳" }
-
+struct RootView<Content: View>: View {
     /// 内容构建器（仅在 `phase == .running` 时求值一次/每次重绘时求值）。
     private let contentBuilder: () -> Content
 
@@ -31,7 +28,6 @@ struct RootView<Content>: View, SuperLog where Content: View {
         onRunning: @escaping () -> Void = {},
         @ViewBuilder content: @escaping () -> Content
     ) {
-        os_log("\(Self.onInit)")
         self.environment = environment
         self.onRunning = onRunning
         self.contentBuilder = content

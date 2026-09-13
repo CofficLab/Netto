@@ -1,13 +1,12 @@
 import Foundation
-import MagicCore
 import OSLog
 
 /**
  * 版本服务，处理应用版本相关的逻辑
  * 包括版本比较、版本更新检查等功能
  */
-class VersionService: SuperLog, ObservableObject {
-    nonisolated static let emoji = "🏷️"
+final class VersionService {
+    private static let emoji = "🏷️"
     
     // MARK: - Properties
     
@@ -28,12 +27,12 @@ class VersionService: SuperLog, ObservableObject {
         let lastShownVersion = UserDefaults.standard.string(forKey: lastShownVersionKey)
         let currentVersion = getCurrentAppVersion()
 
-        os_log("\(self.t)🆚 last: \(lastShownVersion ?? "nil"), current: \(currentVersion)")
+        os_log("\(Self.emoji)🆚 last: \(lastShownVersion ?? "nil"), current: \(currentVersion)")
 
         // 首次安装或无法获取版本信息
         guard let lastVersion = lastShownVersion, !lastVersion.isEmpty else {
             // 记录当前版本
-            os_log("\(self.t) 首次安装，显示欢迎窗口，并记录当前版本：\(currentVersion)")
+            os_log("\(Self.emoji) 首次安装，显示欢迎窗口，并记录当前版本：\(currentVersion)")
             UserDefaults.standard.set(currentVersion, forKey: lastShownVersionKey)
             return true
         }
@@ -43,7 +42,7 @@ class VersionService: SuperLog, ObservableObject {
 
         // 需要显示welcome
         if shouldShow {
-            os_log("\(self.t) \(VersionService.emoji) 重要版本更新，显示欢迎窗口，并记录当前版本：\(currentVersion)")
+            os_log("\(Self.emoji) 重要版本更新，显示欢迎窗口，并记录当前版本：\(currentVersion)")
             UserDefaults.standard.set(currentVersion, forKey: lastShownVersionKey)
         }
 

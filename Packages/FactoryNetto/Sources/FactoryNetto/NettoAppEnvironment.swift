@@ -1,7 +1,7 @@
 import Combine
-import FactoryNetto
 import Foundation
 import KernelCore
+import LumiUI
 import OSLog
 import ProviderShell
 import ProviderAppSettings
@@ -24,8 +24,16 @@ import SwiftUI
 /// - `preview()` 只用于 Xcode 预览（内存 Mock，不落库、不碰系统扩展）。
 ///
 /// 线程/actor：`@MainActor`；`bootstrap()` 必须由 App 启动期调用一次。
+/// AppKit 菜单栏宿主能力。App Target 实现窗口/状态栏系统接入，Factory 负责
+/// 在正确的 Kernel 生命周期时机调用它。
 @MainActor
-final class AppEnvironment: ObservableObject {
+public protocol MenuBarHosting: AnyObject {
+    func install(kernel: KernelCoreContainer, environment: AppEnvironment)
+    func updateDeniedApps(_ hasDeniedApps: Bool)
+}
+
+@MainActor
+public final class AppEnvironment: ObservableObject {
     /// 生命周期阶段（Host shell 的启动/失败/运行三态来源）。
     enum Phase: Equatable {
         case booting
@@ -36,9 +44,11 @@ final class AppEnvironment: ObservableObject {
     /// 生命周期阶段。
     @Published private(set) var phase: Phase = .booting
 
-    /// AppKit 状态栏 Host。Provider 注册后立即安装，使启动中的 popover
-    /// 能显示明确的加载/失败状态，内核就绪后自动切换为插件贡献内容。
-    let menuBarController = MenuBarController()
+    /// 欢迎窗口是否应显示引导内容（版本升级或插件主动请求）。
+    @Published var shouldShowWelcomeWindow = false
+
+    /// 由 App Target 持有的 AppKit 状态栏 Host。
+    private weak var menuBarHost: (any MenuBarHosting)?
 
     /// 已装配的 Kernel（App 唯一实例；由 Factory 创建）。
     @Published private(set) var kernel: KernelCoreContainer?
@@ -80,7 +90,9 @@ final class AppEnvironment: ObservableObject {
 
     /// 创建生产环境并异步引导内核。
     static func make() -> AppEnvironment {
-        AppEnvironment()
+        ChromeThemes.current = LumiFallbackChromeTheme()
+        setTheme(LumiDefaultTheme())
+        return AppEnvironment()
     }
 
     /// 预览环境：内存 Mock 契约 + 注册预览贡献的 Shell，phase 直接进入
@@ -102,16 +114,17 @@ final class AppEnvironment: ObservableObject {
 
     /// 引导内核（幂等）。失败时进入 `.failed` 阶段并保留错误信息。
     /// - Returns: 是否启动成功。
-    func bootstrap() async -> Bool {
+    public func bootstrap(menuBarHost: any MenuBarHosting) async -> Bool {
         guard !didStart else { return phase == .running }
         didStart = true
+        self.menuBarHost = menuBarHost
 
         do {
             // Factory 拥有完整插件目录；App 只启动 Kernel 并解析所需 Provider。
-            let kernel = try await FactoryNetto.makeKernelAsync(onProvidersRegistered: { [weak self] kernel in
-                guard let self else { return }
+            let kernel = try await FactoryNetto.makeKernelAsync(onProvidersRegistered: { [weak self, weak menuBarHost] kernel in
+                guard let self, let menuBarHost else { return }
                 self.kernel = kernel
-                self.menuBarController.install(kernel: kernel, environment: self)
+                menuBarHost.install(kernel: kernel, environment: self)
             })
             guard let shell = kernel.resolveProvider(ShellToolbarProviding.self) as? ShellCenter else {
                 self.phase = .failed("Shell 中心未装配")
@@ -135,6 +148,16 @@ final class AppEnvironment: ObservableObject {
             os_log(.error, "AppEnvironment 内核启动失败: %{public}@", error.localizedDescription)
             self.phase = .failed(error.localizedDescription)
             return false
+        }
+    }
+
+    /// 刷新菜单栏对被禁止应用的指示状态。
+    func refreshDeniedAppIndicator() async {
+        guard let settings else { return }
+        do {
+            menuBarHost?.updateDeniedApps(try await settings.deniedAppsCount() > 0)
+        } catch {
+            os_log(.error, "检查被禁止应用时出错: %{public}@", error.localizedDescription)
         }
     }
 }

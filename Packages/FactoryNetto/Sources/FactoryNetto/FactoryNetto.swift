@@ -68,6 +68,16 @@ public enum FactoryNetto {
         DefaultPluginAssembly().makePlugins()
     }
 
+    /// 创建由 App Target 持有的运行环境，并应用产品默认主题。
+    public static func makeAppEnvironment() -> AppEnvironment {
+        AppEnvironment.make()
+    }
+
+    /// 装配 TravelMode 的窗口场景；窗口内容和生命周期协调逻辑留在 Factory。
+    public static func makeAppScenes(environment: AppEnvironment) -> NettoAppScenes {
+        NettoAppScenes(environment: environment)
+    }
+
     /// 在没有启动 Kernel 的 SwiftUI 预览中注册 UI 插件贡献。
     public static func registerPreviewContributions(into shell: ShellCenter) {
         FirewallDashboardPlugin.registerPreviewContributions(into: shell)
@@ -75,6 +85,15 @@ public enum FactoryNetto {
     }
 
     // MARK: - Main View
+
+    /// 在 AppKit Host 中托管主视图，并统一启动态、失败态和运行态切换。
+    public static func makeRootView<Content: View>(
+        environment: AppEnvironment,
+        onRunning: @escaping () -> Void = {},
+        @ViewBuilder content: @escaping () -> Content
+    ) -> AnyView {
+        AnyView(RootView(environment: environment, onRunning: onRunning, content: content))
+    }
 
     /// 异步创建生产内核并返回完整主视图（默认 UI 状态实例；App 组合根应使用
     /// 注入自身 `AppEnvironment` 持有的 `ui`/`appProvider`/`sessionStartDate`
@@ -114,6 +133,14 @@ public enum FactoryNetto {
             appProvider: appProvider,
             sessionStartDate: sessionStartDate
         ))
+    }
+
+    /// 返回由插件注入的菜单栏 popover 主面板。
+    public static func makeMenuBarPopupView(
+        kernel: KernelCoreContainer,
+        environment: AppEnvironment
+    ) -> AnyView {
+        makeMenuBarPopupView(kernel: kernel, sessionStartDate: environment.sessionStartDate)
     }
 
     /// 返回由插件注入的菜单栏 popover 主面板。
