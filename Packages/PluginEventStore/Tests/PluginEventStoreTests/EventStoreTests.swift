@@ -251,7 +251,7 @@ private final class PluginAppSettingsPluginForTest: SuperPlugin {
     let id = "appsettings-test"
     var order: Int { 10 }
     var dependencies: [String] { ["persistence"] }
-    let metadata = PluginMetadata(name: "AppSettings-Test", version: "1.0", policy: .required)
+    let metadata = PluginMetadata(id: "appsettings-test", name: "AppSettings-Test", version: "1.0", policy: .required)
 
     func onBoot(kernel: KernelCoreContainer) throws {
         let persistence = try kernel.requireProvider(PersistenceProviding.self)

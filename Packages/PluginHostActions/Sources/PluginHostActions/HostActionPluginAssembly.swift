@@ -20,8 +20,8 @@ import SwiftUI
 @MainActor
 public enum HostActionPluginAssembly {
     /// 生产目录（顺序即贡献稳定性；order 见各插件）。
-    public static func makePlugins() -> [any KernelCore.SuperPlugin] {
-        var plugins: [any KernelCore.SuperPlugin] = [
+    public static func makePlugins() -> [any SuperPlugin] {
+        var plugins: [any SuperPlugin] = [
             HostSettingsPlugin(),
             HostGuidePlugin(),
             HostDataFolderPlugin(),
@@ -53,17 +53,17 @@ public enum HostActionPluginAssembly {
 /// 打开欢迎引导窗口：复用旧 BtnGuide 视图，保留 .shouldOpenWelcomeWindow
 /// App 内信号（TheApp 监听并打开欢迎 Window，行为与旧版一致）。
 @MainActor
-final class HostGuidePlugin: KernelCore.SuperPlugin {
+final class HostGuidePlugin: SuperPlugin {
     let id = "guide"
     var order: Int { 45 }
     var dependencies: [String] { [] }
-    let metadata = KernelCore.PluginMetadata(name: "Guide", version: "1.0", policy: .enabledByDefault)
+    let metadata = PluginMetadata(id: "guide", name: "Guide", version: "1.0", policy: .enabledByDefault)
 
     init() {}
 
     func onBoot(kernel: KernelCoreContainer) throws {
         let shell = try kernel.requireProvider(SettingsProviding.self) as? ShellCenter
-        guard let shell else { throw KernelCoreError.providerNotFound(type: "ShellCenter") }
+        guard let shell else { throw KernelCoreError.providerNotFound(type: SettingsProviding.self) }
         contribute(into: shell)
     }
 
@@ -84,11 +84,11 @@ final class HostGuidePlugin: KernelCore.SuperPlugin {
 /// 详情视图 `DBDatabaseDetailView` 通过 onBoot 解析的契约直接注入
 /// `FirewallEventsProviding` / `AppSettingsProviding`，不依赖视图环境。
 @MainActor
-final class HostDBPlugin: KernelCore.SuperPlugin {
+final class HostDBPlugin: SuperPlugin {
     let id = "db"
     var order: Int { 20 }
     var dependencies: [String] { ["appsettings", "eventstore"] }
-    let metadata = KernelCore.PluginMetadata(name: "DB", version: "1.0", policy: .enabledByDefault)
+    let metadata = PluginMetadata(id: "db", name: "DB", version: "1.0", policy: .enabledByDefault)
 
     init() {}
 
@@ -118,17 +118,17 @@ final class HostDBPlugin: KernelCore.SuperPlugin {
 /// 插件 ID 用 `host-settings`：`appsettings` 已被 DefaultPluginAssembly 中的
 /// PluginAppSettings（Package 插件）占用，重复 ID 会被 KernelCore 拒绝。
 @MainActor
-final class HostSettingsPlugin: KernelCore.SuperPlugin {
+final class HostSettingsPlugin: SuperPlugin {
     let id = "host-settings"
     var order: Int { 30 }
     var dependencies: [String] { [] }
-    let metadata = KernelCore.PluginMetadata(name: "AppSettings", version: "1.0", policy: .enabledByDefault)
+    let metadata = PluginMetadata(id: "host-settings", name: "AppSettings", version: "1.0", policy: .enabledByDefault)
 
     init() {}
 
     func onBoot(kernel: KernelCoreContainer) throws {
         let shell = try kernel.requireProvider(SettingsProviding.self) as? ShellCenter
-        guard let shell else { throw KernelCoreError.providerNotFound(type: "ShellCenter") }
+        guard let shell else { throw KernelCoreError.providerNotFound(type: SettingsProviding.self) }
         contribute(into: shell)
         // 设置窗口入口注入（复刻 Lumi PluginSettingView 模式：插件在 onBoot
         // 向 SettingViewProviding 注入 SettingEntryItem，Factory 装配的设置
@@ -156,17 +156,17 @@ final class HostSettingsPlugin: KernelCore.SuperPlugin {
 
 /// 清空日志（旧 ClearLogsButton 插件；仅 DEBUG，order 40）。
 @MainActor
-final class HostClearLogsPlugin: KernelCore.SuperPlugin {
+final class HostClearLogsPlugin: SuperPlugin {
     let id = "clearlogs"
     var order: Int { 40 }
     var dependencies: [String] { ["eventstore"] }
-    let metadata = KernelCore.PluginMetadata(name: "ClearLogs", version: "1.0", policy: .enabledByDefault)
+    let metadata = PluginMetadata(id: "clearlogs", name: "ClearLogs", version: "1.0", policy: .enabledByDefault)
 
     init() {}
 
     func onBoot(kernel: KernelCoreContainer) throws {
         let shell = try kernel.requireProvider(SettingsProviding.self) as? ShellCenter
-        guard let shell else { throw KernelCoreError.providerNotFound(type: "ShellCenter") }
+        guard let shell else { throw KernelCoreError.providerNotFound(type: SettingsProviding.self) }
         contribute(into: shell)
     }
 
@@ -183,17 +183,17 @@ final class HostClearLogsPlugin: KernelCore.SuperPlugin {
 
 /// 打开数据目录（旧 DataFolderButton 插件；order 50）。
 @MainActor
-final class HostDataFolderPlugin: KernelCore.SuperPlugin {
+final class HostDataFolderPlugin: SuperPlugin {
     let id = "datafolder"
     var order: Int { 50 }
     var dependencies: [String] { ["persistence"] }
-    let metadata = KernelCore.PluginMetadata(name: "DataFolder", version: "1.0", policy: .enabledByDefault)
+    let metadata = PluginMetadata(id: "datafolder", name: "DataFolder", version: "1.0", policy: .enabledByDefault)
 
     init() {}
 
     func onBoot(kernel: KernelCoreContainer) throws {
         let shell = try kernel.requireProvider(SettingsProviding.self) as? ShellCenter
-        guard let shell else { throw KernelCoreError.providerNotFound(type: "ShellCenter") }
+        guard let shell else { throw KernelCoreError.providerNotFound(type: SettingsProviding.self) }
         contribute(into: shell)
     }
 
@@ -210,17 +210,17 @@ final class HostDataFolderPlugin: KernelCore.SuperPlugin {
 
 /// 安装系统扩展（旧 InstallExtensionButton 插件；order 60）。
 @MainActor
-final class HostInstallExtensionPlugin: KernelCore.SuperPlugin {
+final class HostInstallExtensionPlugin: SuperPlugin {
     let id = "installextension"
     var order: Int { 60 }
     var dependencies: [String] { ["firewall"] }
-    let metadata = KernelCore.PluginMetadata(name: "InstallExtension", version: "1.0", policy: .enabledByDefault)
+    let metadata = PluginMetadata(id: "installextension", name: "InstallExtension", version: "1.0", policy: .enabledByDefault)
 
     init() {}
 
     func onBoot(kernel: KernelCoreContainer) throws {
         let shell = try kernel.requireProvider(SettingsProviding.self) as? ShellCenter
-        guard let shell else { throw KernelCoreError.providerNotFound(type: "ShellCenter") }
+        guard let shell else { throw KernelCoreError.providerNotFound(type: SettingsProviding.self) }
         contribute(into: shell)
     }
 
@@ -237,17 +237,17 @@ final class HostInstallExtensionPlugin: KernelCore.SuperPlugin {
 
 /// 关于（旧 AboutButton 插件；order 70）。
 @MainActor
-final class HostAboutPlugin: KernelCore.SuperPlugin {
+final class HostAboutPlugin: SuperPlugin {
     let id = "about"
     var order: Int { 70 }
     var dependencies: [String] { [] }
-    let metadata = KernelCore.PluginMetadata(name: "About", version: "1.0", policy: .enabledByDefault)
+    let metadata = PluginMetadata(id: "about", name: "About", version: "1.0", policy: .enabledByDefault)
 
     init() {}
 
     func onBoot(kernel: KernelCoreContainer) throws {
         let shell = try kernel.requireProvider(SettingsProviding.self) as? ShellCenter
-        guard let shell else { throw KernelCoreError.providerNotFound(type: "ShellCenter") }
+        guard let shell else { throw KernelCoreError.providerNotFound(type: SettingsProviding.self) }
         contribute(into: shell)
     }
 
@@ -264,17 +264,17 @@ final class HostAboutPlugin: KernelCore.SuperPlugin {
 
 /// 退出（旧 QuitButton 插件；order 80）。
 @MainActor
-final class HostQuitPlugin: KernelCore.SuperPlugin {
+final class HostQuitPlugin: SuperPlugin {
     let id = "quit"
     var order: Int { 80 }
     var dependencies: [String] { [] }
-    let metadata = KernelCore.PluginMetadata(name: "Quit", version: "1.0", policy: .enabledByDefault)
+    let metadata = PluginMetadata(id: "quit", name: "Quit", version: "1.0", policy: .enabledByDefault)
 
     init() {}
 
     func onBoot(kernel: KernelCoreContainer) throws {
         let shell = try kernel.requireProvider(SettingsProviding.self) as? ShellCenter
-        guard let shell else { throw KernelCoreError.providerNotFound(type: "ShellCenter") }
+        guard let shell else { throw KernelCoreError.providerNotFound(type: SettingsProviding.self) }
         contribute(into: shell)
     }
 

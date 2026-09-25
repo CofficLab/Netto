@@ -15,10 +15,11 @@ public final class PluginAppSettings: SuperPlugin {
     public var order: Int { 10 }
     public var dependencies: [String] { ["persistence"] }
     public let metadata = PluginMetadata(
+        id: "appsettings",
         name: "AppSettings",
+        description: "应用允许/阻止规则存储（SwiftData）",
         version: "1.0",
-        policy: .required,
-        summary: "应用允许/阻止规则存储（SwiftData）"
+        policy: .required
     )
 
     public init() {}
@@ -26,6 +27,6 @@ public final class PluginAppSettings: SuperPlugin {
     public func onBoot(kernel: KernelCoreContainer) throws {
         let persistence = try kernel.requireProvider(PersistenceProviding.self)
         let store = AppSettingsStore(container: persistence.container)
-        try kernel.registerProvider(store, for: AppSettingsProviding.self, owner: id)
+        try kernel.registerProvider(AppSettingsProviding.self, store)
     }
 }

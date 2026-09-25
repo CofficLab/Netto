@@ -102,7 +102,7 @@ struct PluginStorePluginTests {
         // 先注册 SettingViewProviding（DefaultSettingViewProviding）与
         // ShellCenter，再启动 PluginStore（设置视图契约缺失时优雅降级）。
         let settingsView = DefaultSettingViewProviding()
-        try kernel.registerProvider(settingsView, for: SettingViewProviding.self)
+        try kernel.registerProvider(SettingViewProviding.self, settingsView)
         try kernel.start(plugins: [MockShellPlugin(), PluginStore()])
 
         // Provider 已注册（owner=store）。
@@ -130,12 +130,12 @@ private final class MockShellPlugin: SuperPlugin {
     let id = "mock-shell"
     var order: Int { 1 }
     var dependencies: [String] { [] }
-    let metadata = PluginMetadata(name: "MockShell", version: "1.0", policy: .required)
+    let metadata = PluginMetadata(id: "mock-shell", name: "MockShell", version: "1.0", policy: .required)
     private let shell = ShellCenter()
 
     func onBoot(kernel: KernelCoreContainer) throws {
-        try kernel.registerProvider(shell, for: SettingsProviding.self, owner: id)
-        try kernel.registerProvider(shell, for: ShellToolbarProviding.self, owner: id)
-        try kernel.registerProvider(shell, for: WindowProviding.self, owner: id)
+        try kernel.registerProvider(SettingsProviding.self, shell)
+        try kernel.registerProvider(ShellToolbarProviding.self, shell)
+        try kernel.registerProvider(WindowProviding.self, shell)
     }
 }

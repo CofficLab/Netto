@@ -470,7 +470,7 @@ private final class MockProviderPlugin: SuperPlugin {
     let id: String
     var order: Int
     var dependencies: [String]
-    let metadata = PluginMetadata(name: "Mock", version: "1.0", policy: .enabledByDefault)
+    let metadata = PluginMetadata(id: "mock", name: "Mock", version: "1.0", policy: .enabledByDefault)
     private let settings: MockSettings?
     private let events: MockEvents?
 
@@ -484,10 +484,10 @@ private final class MockProviderPlugin: SuperPlugin {
 
     func onBoot(kernel: KernelCoreContainer) throws {
         if let settings {
-            try kernel.registerProvider(settings, for: AppSettingsProviding.self, owner: id)
+            try kernel.registerProvider(AppSettingsProviding.self, settings)
         }
         if let events {
-            try kernel.registerProvider(events, for: FirewallEventsProviding.self, owner: id)
+            try kernel.registerProvider(FirewallEventsProviding.self, events)
         }
     }
 }

@@ -16,10 +16,11 @@ public final class PluginEventStore: AsyncSuperPlugin {
     public var order: Int { 10 }
     public var dependencies: [String] { ["persistence"] }
     public let metadata = PluginMetadata(
+        id: "eventstore",
         name: "EventStore",
+        description: "防火墙事件存储（SwiftData + 定期维护）",
         version: "1.0",
-        policy: .required,
-        summary: "防火墙事件存储（SwiftData + 定期维护）"
+        policy: .required
     )
 
     public init() {}
@@ -27,12 +28,12 @@ public final class PluginEventStore: AsyncSuperPlugin {
     public func onBoot(kernel: KernelCoreContainer) throws {
         let persistence = try kernel.requireProvider(PersistenceProviding.self)
         let store = EventStore(container: persistence.container)
-        try kernel.registerProvider(store, for: FirewallEventsProviding.self, owner: id)
+        try kernel.registerProvider(FirewallEventsProviding.self, store)
     }
 
     public func onReadyAsync(kernel: KernelCoreContainer) async throws {
         guard let store = kernel.resolveProvider(FirewallEventsProviding.self) as? EventStore else {
-            throw KernelCoreError.providerNotFound(type: String(describing: FirewallEventsProviding.self))
+            throw KernelCoreError.providerNotFound(type: FirewallEventsProviding.self)
         }
         store.startMaintenance()
     }

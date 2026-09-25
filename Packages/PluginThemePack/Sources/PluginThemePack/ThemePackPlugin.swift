@@ -20,16 +20,17 @@ import SwiftUI
 /// 消费方通过 `ThemeProviding` 主题事件感知切换；渲染桥接（`@LumiTheme` /
 /// `ChromeThemes`）由 FactoryNetto 层完成。
 @MainActor
-public final class ThemePackPlugin: KernelCore.SuperPlugin {
+public final class ThemePackPlugin: SuperPlugin {
     nonisolated static let logger = Logger(subsystem: "com.yueyi.TravelMode.plugin.theme-pack", category: "ThemePack")
 
     public let id = "com.yueyi.TravelMode.plugin.theme-pack"
     public let order = 100
-    public let metadata = KernelCore.PluginMetadata(
+    public let metadata = PluginMetadata(
+        id: "com.yueyi.TravelMode.plugin.theme-pack",
         name: "主题包",
+        description: "批量注册 19 个复刻主题，并在设置中提供外观切换入口。",
         version: "1.0",
-        policy: .enabledByDefault,
-        summary: "批量注册 19 个复刻主题，并在设置中提供外观切换入口。"
+        policy: .enabledByDefault
     )
 
     private var themeObservation: ThemeSettingsObservationModel?

@@ -62,16 +62,17 @@ public final class PersistencePlugin: SuperPlugin {
     public var order: Int { 1 }
     public var dependencies: [String] { [] }
     public let metadata = PluginMetadata(
+        id: "persistence",
         name: "Persistence",
+        description: "SwiftData ModelContainer / db.sqlite 单一所有者",
         version: "1.0",
-        policy: .required,
-        summary: "SwiftData ModelContainer / db.sqlite 单一所有者"
+        policy: .required
     )
 
     public init() {}
 
     public func onBoot(kernel: KernelCoreContainer) throws {
         let service = PersistenceService(production: ())
-        try kernel.registerProvider(service, for: PersistenceProviding.self, owner: id)
+        try kernel.registerProvider(PersistenceProviding.self, service)
     }
 }

@@ -14,7 +14,7 @@ let package = Package(
         .library(name: "PluginStore", targets: ["PluginStore"])
     ],
     dependencies: [
-        .package(name: "KernelCore", path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(name: "ProviderStore", path: "../ProviderStore"),
         .package(name: "ProviderSettingView", path: "../ProviderSettingView"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
@@ -24,7 +24,7 @@ let package = Package(
         .target(
             name: "PluginStore",
             dependencies: [
-                "KernelCore",
+                .product(name: "KernelCore", package: "LumiKernel"),
                 "ProviderStore",
                 "ProviderSettingView",
                 "ProviderShell",
@@ -36,7 +36,7 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginStoreTests",
-            dependencies: ["PluginStore", "KernelCore", "ProviderStore"]
+            dependencies: ["PluginStore", .product(name: "KernelCore", package: "LumiKernel"), "ProviderStore"]
         ),
     ]
 )

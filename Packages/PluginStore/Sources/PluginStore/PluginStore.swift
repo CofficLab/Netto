@@ -22,10 +22,11 @@ public final class PluginStore: SuperPlugin, StoreProviding {
     public var order: Int { 40 }
     public var dependencies: [String] { [] }
     public let metadata = PluginMetadata(
+        id: "store",
         name: "Store",
+        description: "StoreKit 商店：购买/恢复/订阅/权益快照",
         version: "1.0",
-        policy: .enabledByDefault,
-        summary: "StoreKit 商店：购买/恢复/订阅/权益快照"
+        policy: .enabledByDefault
     )
 
     /// 交易监听 + 权益校准任务句柄（onShutdown 取消，避免留下后台任务）。
@@ -36,7 +37,7 @@ public final class PluginStore: SuperPlugin, StoreProviding {
     // MARK: - SuperPlugin
 
     public func onBoot(kernel: KernelCoreContainer) throws {
-        try kernel.registerProvider(self, for: StoreProviding.self, owner: id)
+        try kernel.registerProvider(StoreProviding.self, self)
         // 商店迁移到设置窗口：向 SettingViewProviding 注入「商店」入口
         // （替代旧主窗口 StoreBtn + store-window 插件窗口）。
         kernel.resolveProvider(SettingViewProviding.self)?

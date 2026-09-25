@@ -13,7 +13,7 @@ let package = Package(
         .library(name: "PluginEventStore", targets: ["PluginEventStore"])
     ],
     dependencies: [
-        .package(name: "KernelCore", path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(name: "PluginPersistence", path: "../PluginPersistence"),
         .package(name: "ProviderPersistence", path: "../ProviderPersistence"),
         .package(name: "PluginAppSettings", path: "../PluginAppSettings"),
@@ -23,14 +23,14 @@ let package = Package(
         .target(
             name: "PluginEventStore",
             dependencies: [
-                "KernelCore",
+                .product(name: "KernelCore", package: "LumiKernel"),
                 "ProviderPersistence",
                 "ProviderFirewallEvents",
             ]
         ),
         .testTarget(
             name: "PluginEventStoreTests",
-            dependencies: ["PluginEventStore", "PluginPersistence", "PluginAppSettings", "KernelCore", "ProviderFirewallEvents", "ProviderPersistence"]
+            dependencies: ["PluginEventStore", "PluginPersistence", "PluginAppSettings", .product(name: "KernelCore", package: "LumiKernel"), "ProviderFirewallEvents", "ProviderPersistence"]
         ),
     ]
 )

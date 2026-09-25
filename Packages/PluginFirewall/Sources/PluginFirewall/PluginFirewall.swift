@@ -23,10 +23,11 @@ public final class PluginFirewall: AsyncSuperPlugin {
     public var order: Int { 30 }
     public var dependencies: [String] { ["persistence", "appsettings", "eventstore"] }
     public let metadata = PluginMetadata(
+        id: "firewall",
         name: "Firewall",
+        description: "网络过滤器 / 系统扩展 / IPC 生命周期所有者",
         version: "1.0",
-        policy: .enabledByDefault,
-        summary: "网络过滤器 / 系统扩展 / IPC 生命周期所有者"
+        policy: .enabledByDefault
     )
 
     private let system: any FirewallSystemAdapting
@@ -55,7 +56,7 @@ public final class PluginFirewall: AsyncSuperPlugin {
         self.controller = controller
         system.setRequestHandler(controller)
 
-        try kernel.registerProvider(controller, for: FirewallProviding.self, owner: id)
+        try kernel.registerProvider(FirewallProviding.self, controller)
 
         // NSXPC 导出的 AppCommunication 对象：决策请求经桥接跳回主线程。
         let bridge = PromptUserBridge(controller: controller)

@@ -13,14 +13,14 @@ let package = Package(
         .library(name: "PluginPersistence", targets: ["PluginPersistence"])
     ],
     dependencies: [
-        .package(name: "KernelCore", path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(name: "ProviderPersistence", path: "../ProviderPersistence"),
     ],
     targets: [
         .target(
             name: "PluginPersistence",
             dependencies: [
-                "KernelCore",
+                .product(name: "KernelCore", package: "LumiKernel"),
                 "ProviderPersistence",
             ]
         ),

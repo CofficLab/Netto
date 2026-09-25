@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "PluginFirewallDashboard", targets: ["PluginFirewallDashboard"])
     ],
     dependencies: [
-        .package(name: "KernelCore", path: "../KernelCore"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../ProviderSettingsUI"),
         .package(path: "../ProviderViewEnvironment"),
         .package(path: "../ProviderAppSettings"),
@@ -39,7 +39,7 @@ let package = Package(
                 .product(name: "ProviderStore", package: "ProviderStore"),
                 .product(name: "ProviderMenuBar", package: "ProviderMenuBar"),
                 .product(name: "ProviderViewEnvironment", package: "ProviderViewEnvironment"),
-                "KernelCore",
+                .product(name: "KernelCore", package: "LumiKernel"),
             ]
         )
     ]

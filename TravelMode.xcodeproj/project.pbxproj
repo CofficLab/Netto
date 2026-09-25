@@ -290,7 +290,7 @@
 			mainGroup = C4B45DAC22739FFF0050C59B;
 			packageReferences = (
 				F52D4A1C2E6E8A24007F53A3 /* XCRemoteSwiftPackageReference "MagicKit" */,
-				A1A0000000000000000001 /* XCLocalSwiftPackageReference "Packages/KernelCore" */,
+				A1A0000000000000000001 /* XCRemoteSwiftPackageReference "LumiKernel" */,
 				A1A0000000000000000002 /* XCLocalSwiftPackageReference "Packages/ProviderFirewall" */,
 				A1A0000000000000000003 /* XCLocalSwiftPackageReference "Packages/ProviderFirewallEvents" */,
 				A1A0000000000000000004 /* XCLocalSwiftPackageReference "Packages/ProviderAppSettings" */,
@@ -638,9 +638,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		A1A0000000000000000001 /* XCLocalSwiftPackageReference "Packages/KernelCore" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/KernelCore;
+		A1A0000000000000000001 /* XCRemoteSwiftPackageReference "LumiKernel" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CofficLab/LumiKernel.git";
+			requirement = {
+				kind = branch;
+				branch = main;
+			};
 		};
 		A1A0000000000000000002 /* XCLocalSwiftPackageReference "Packages/ProviderFirewall" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -809,7 +813,7 @@
 		};
 		A1A0000000000000000101 /* KernelCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A1A0000000000000000001 /* XCLocalSwiftPackageReference "Packages/KernelCore" */;
+			package = A1A0000000000000000001 /* XCRemoteSwiftPackageReference "LumiKernel" */;
 			productName = KernelCore;
 		};
 		A1A0000000000000000102 /* ProviderFirewall */ = {

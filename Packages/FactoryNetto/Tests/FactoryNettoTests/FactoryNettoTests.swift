@@ -41,14 +41,14 @@ private class MockPlugin: SuperPlugin {
         self.order = order
         self.dependencies = dependencies
         self.marker = marker
-        self.metadata = PluginMetadata(name: id, version: "1.0", policy: .enabledByDefault)
+        self.metadata = PluginMetadata(id: id, name: id, version: "1.0", policy: .enabledByDefault)
     }
 
     func onBoot(kernel: KernelCoreContainer) throws {
         events.append("boot:\(id)")
         if let bootError { throw bootError }
         if registerProvider {
-            try kernel.registerProvider(MarkerProvider(marker: marker), for: MarkerProviding.self, owner: id)
+            try kernel.registerProvider(MarkerProviding.self, MarkerProvider(marker: marker))
         }
     }
 
@@ -67,7 +67,7 @@ private final class AsyncMockPlugin: MockPlugin, AsyncSuperPlugin {
 
     func onBootAsync(kernel: KernelCoreContainer) async throws {
         events.append("bootAsync:\(id)")
-        try kernel.registerProvider(MarkerProvider(marker: marker), for: MarkerProviding.self, owner: id)
+        try kernel.registerProvider(MarkerProviding.self, MarkerProvider(marker: marker))
     }
 }
 
@@ -88,7 +88,7 @@ private struct EmptyProviderAssembly: ProviderAssembling {
 private struct DashboardTestProviderAssembly: ProviderAssembling {
     func registerProviders(into kernel: KernelCoreContainer) throws {
         try DefaultProviderAssembly().registerProviders(into: kernel)
-        try kernel.registerProvider(TestFirewallProvider(), for: FirewallProviding.self)
+        try kernel.registerProvider(FirewallProviding.self, TestFirewallProvider())
     }
 }
 
@@ -239,7 +239,7 @@ final class FactoryNettoTests: XCTestCase {
                 Text("general-panel")
             },
         ])
-        try kernel.registerProvider(provider, for: SettingViewProviding.self, owner: "test")
+        try kernel.registerProvider(SettingViewProviding.self, provider)
 
         XCTAssertEqual(provider.entries.count, 1)
         XCTAssertEqual(provider.selectedEntryID, "general")

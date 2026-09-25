@@ -11,10 +11,11 @@ public final class FirewallDashboardPlugin: SuperPlugin {
     public let order = 60
     public let dependencies = ["firewall", "appsettings", "eventstore", "store"]
     public let metadata = PluginMetadata(
+        id: "firewall-dashboard",
         name: "防火墙面板",
+        description: "向菜单栏 popover 注入防火墙主面板",
         version: "1.0",
-        policy: .enabledByDefault,
-        summary: "向菜单栏 popover 注入防火墙主面板"
+        policy: .enabledByDefault
     )
 
     public init() {}

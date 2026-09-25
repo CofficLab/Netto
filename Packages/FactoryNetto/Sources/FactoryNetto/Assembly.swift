@@ -32,13 +32,13 @@ public struct DefaultProviderAssembly: ProviderAssembling {
 
     public func registerProviders(into kernel: KernelCoreContainer) throws {
         let shell = ShellCenter()
-        try kernel.registerProvider(DefaultMenuBarProviding(), for: MenuBarProviding.self)
-        try kernel.registerProvider(shell, for: ShellToolbarProviding.self)
-        try kernel.registerProvider(shell, for: SettingsProviding.self)
-        try kernel.registerProvider(shell, for: WindowProviding.self)
-        try kernel.registerProvider(shell, for: ToastProviding.self)
-        try kernel.registerProvider(DefaultSettingViewProviding(), for: SettingViewProviding.self)
-        try kernel.registerProvider(DefaultThemeProviding(), for: ThemeProviding.self)
+        try kernel.registerProvider(MenuBarProviding.self, DefaultMenuBarProviding())
+        try kernel.registerProvider(ShellToolbarProviding.self, shell)
+        try kernel.registerProvider(SettingsProviding.self, shell)
+        try kernel.registerProvider(WindowProviding.self, shell)
+        try kernel.registerProvider(ToastProviding.self, shell)
+        try kernel.registerProvider(SettingViewProviding.self, DefaultSettingViewProviding())
+        try kernel.registerProvider(ThemeProviding.self, DefaultThemeProviding())
     }
 }
 
