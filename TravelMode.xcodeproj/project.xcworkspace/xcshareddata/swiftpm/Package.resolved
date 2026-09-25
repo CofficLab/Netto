@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CofficLab/MagicKit",
       "state" : {
-        "branch" : "d04a729",
-        "revision" : "d04a72908ba3458992272a541236cd162cb5a407"
+        "branch" : "fix/swift6-strict-init",
+        "revision" : "395d534070f1c3636ee148ec905d5e59be4cdce7"
       }
     },
     {
