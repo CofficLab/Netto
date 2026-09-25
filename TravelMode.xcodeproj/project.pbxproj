@@ -709,32 +709,32 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/MagicKit";
 			requirement = {
-				kind = revision;
-				revision = d04a729;
+				kind = branch;
+				branch = fix/swift6-strict-init;
 			};
 		};
 		0B737BA82D12EA6700712ABA /* XCRemoteSwiftPackageReference "MagicKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/MagicKit";
 			requirement = {
-				kind = revision;
-				revision = d04a729;
+				kind = branch;
+				branch = fix/swift6-strict-init;
 			};
 		};
 		F52D4A1C2E6E8A24007F53A3 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/MagicKit";
 			requirement = {
-				kind = revision;
-				revision = d04a729;
+				kind = branch;
+				branch = fix/swift6-strict-init;
 			};
 		};
 		F5D27E272E6E60F5006B3CB2 /* XCRemoteSwiftPackageReference "MagicKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/CofficLab/MagicKit";
 			requirement = {
-				kind = revision;
-				revision = d04a729;
+				kind = branch;
+				branch = fix/swift6-strict-init;
 			};
 		};
 		F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */ = {

@@ -17,7 +17,7 @@ let package = Package(
         .package(name: "ProviderSettingView", path: "../ProviderSettingView"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
         .package(name: "ProviderViewEnvironment", path: "../ProviderViewEnvironment"),
-        .package(url: "https://github.com/CofficLab/MagicKit", revision: "d04a729"),
+        .package(url: "https://github.com/CofficLab/MagicKit", branch: "fix/swift6-strict-init"),
         .package(url: "https://github.com/CofficLab/LumiUI", revision: "419c64ec01257f923b4139ede61377566b97b626"),
     ],
     targets: [

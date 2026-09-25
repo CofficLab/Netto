@@ -18,7 +18,7 @@ let package = Package(
         .package(name: "ProviderStore", path: "../ProviderStore"),
         .package(name: "ProviderSettingView", path: "../ProviderSettingView"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
-        .package(url: "https://github.com/CofficLab/MagicKit", revision: "d04a729"),
+        .package(url: "https://github.com/CofficLab/MagicKit", branch: "fix/swift6-strict-init"),
     ],
     targets: [
         .target(

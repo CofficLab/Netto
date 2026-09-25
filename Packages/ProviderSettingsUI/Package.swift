@@ -12,7 +12,7 @@ let package = Package(
         .package(path: "../ProviderFirewall"),
         .package(path: "../ProviderShell"),
         .package(path: "../ProviderViewEnvironment"),
-        .package(url: "https://github.com/CofficLab/MagicKit", revision: "d04a729"),
+        .package(url: "https://github.com/CofficLab/MagicKit", branch: "fix/swift6-strict-init"),
     ],
     targets: [
         .target(
