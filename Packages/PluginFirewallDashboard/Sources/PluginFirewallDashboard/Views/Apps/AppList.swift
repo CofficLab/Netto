@@ -79,6 +79,8 @@ struct AppList: View, SuperLog {
                 GuideView()
             }
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("netto.apps.list")
         .onAppear(perform: handleOnAppear)
     }
 

@@ -1,11 +1,8 @@
-import MagicCore
 import Network
 import NetworkExtension
 import os.log
 
-class FilterDataProvider: NEFilterDataProvider, SuperLog {
-    static let emoji: String = "🎈"
-
+class FilterDataProvider: NEFilterDataProvider {
     private var ipc = IPCConnection.shared
 
     /**
@@ -114,7 +111,7 @@ class FilterDataProvider: NEFilterDataProvider, SuperLog {
      */
     override func handleNewFlow(_ flow: NEFilterFlow) -> NEFilterNewFlowVerdict {
         ipc.log("🍋 handleNewFlow")
-        os_log("\(self.t)handleNewFlow")
+        os_log("🎈 FilterDataProvider | handleNewFlow")
 
         // Ask the app to prompt the user
         let prompted = self.ipc.promptUser(flow: flow) { (allow: Bool) in

@@ -28,6 +28,8 @@ struct AppDetail: View, SuperLog {
             EventDetailView(appId: app.id)
         }
         .padding(12)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("netto.app.detail")
         .onHover { hovering in
             popoverHovering = hovering
         }

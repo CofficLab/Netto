@@ -40,6 +40,7 @@ struct BtnAbout: View {
             .magicShape(.roundedRectangle)
             .frame(width: 150)
             .frame(height: 50)
+            .accessibilityIdentifier("netto.settings.about")
         }
     }
     

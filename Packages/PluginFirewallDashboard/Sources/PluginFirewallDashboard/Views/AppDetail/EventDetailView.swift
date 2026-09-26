@@ -47,21 +47,27 @@ struct EventDetailView: View, SuperLog {
             HStack(spacing: 8) {
                 Picker("状态", selection: $statusFilter) {
                     ForEach(StatusFilter.allCases, id: \.self) { filter in
-                        Text(filter.rawValue).tag(filter)
+                        Text(filter.rawValue)
+                            .tag(filter)
+                            .accessibilityIdentifier("netto.events.status.\(filter.rawValue)")
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .frame(width: 180)
+                .accessibilityIdentifier("netto.events.status-filter")
 
                 Spacer()
 
                 Picker("方向", selection: $directionFilter) {
                     ForEach(DirectionFilter.allCases, id: \.self) { filter in
-                        Text(filter.rawValue).tag(filter)
+                        Text(filter.rawValue)
+                            .tag(filter)
+                            .accessibilityIdentifier("netto.events.direction.\(filter.rawValue)")
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .frame(width: 180)
+                .accessibilityIdentifier("netto.events.direction-filter")
 
                 Button(action: {
                     Task {
@@ -75,6 +81,7 @@ struct EventDetailView: View, SuperLog {
                     }
                 })
                 .buttonStyle(.borderedProminent)
+                .accessibilityIdentifier("netto.events.export")
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -109,6 +116,8 @@ struct EventDetailView: View, SuperLog {
         .padding(12)
         .background(Color(.controlBackgroundColor))
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("netto.events.detail")
         .onAppear {
             updateDataSource()
         }

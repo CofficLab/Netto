@@ -14,10 +14,13 @@ struct TileSwitcher: View, SuperLog, SuperThread {
     var body: some View {
         Group {
             if firewall?.snapshot.state.isRunning() == true {
-                BtnStop(asToolbarItem: true).labelStyle(.iconOnly)
+                BtnStop(asToolbarItem: true)
+                    .labelStyle(.iconOnly)
+                    .accessibilityIdentifier("netto.firewall.stop")
             } else {
                 BtnStart(asToolbarItem: true)
                     .labelStyle(.iconOnly)
+                    .accessibilityIdentifier("netto.firewall.start")
                     .disabled(firewall?.snapshot.canStart != true)
             }
         }

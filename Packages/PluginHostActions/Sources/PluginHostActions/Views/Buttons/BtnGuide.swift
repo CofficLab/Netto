@@ -41,6 +41,7 @@ struct BtnGuide: View, SuperEvent {
             .magicShape(.roundedRectangle)
             .frame(width: 150)
             .frame(height: 50)
+            .accessibilityIdentifier("netto.settings.guide")
         }
     }
     

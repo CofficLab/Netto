@@ -41,6 +41,7 @@ struct TopBar: View {
             BtnSettings()
         }
         .frame(height: 36)
+        .accessibilityIdentifier("netto.dashboard.toolbar")
         .background(MagicBackground.colorTeal.opacity(0.2))
     }
 }

@@ -21,6 +21,8 @@ final class MenuBarController: NSObject, MenuBarHosting {
         guard let button = item.button else { return }
         button.title = ""
         button.image = nil
+        button.setAccessibilityIdentifier("netto.menu-bar")
+        button.setAccessibilityLabel("TravelMode 防火墙状态")
         button.target = self
         button.action = #selector(togglePopover(_:))
 

@@ -57,6 +57,8 @@ struct AppLine: View {
                 }
             }
             .contentShape(Rectangle())
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("netto.app.row.\(app.id)")
             .onHover(perform: onHover)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .popover(isPresented: Binding(

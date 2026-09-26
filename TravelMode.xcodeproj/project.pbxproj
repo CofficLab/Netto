@@ -56,6 +56,7 @@
 		F5D27E332E6E60F5006B3CB2 /* MagicDevice in Frameworks */ = {isa = PBXBuildFile; productRef = F5D27E322E6E60F5006B3CB2 /* MagicDevice */; };
 		F5D27E352E6E60F5006B3CB2 /* MagicError in Frameworks */ = {isa = PBXBuildFile; productRef = F5D27E342E6E60F5006B3CB2 /* MagicError */; };
 		F6A000000000000000000003 /* LumiUI in Frameworks */ = {isa = PBXBuildFile; productRef = F6A000000000000000000002 /* LumiUI */; };
+		D10000000000000000000001 /* NettoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* NettoUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +88,8 @@
 		C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.yueyi.TravelMode.Extension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4B45DB522739FFF0050C59B /* TavelMode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TavelMode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5F857DF2DE815C300E03577 /* README-DEV.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "README-DEV.md"; sourceTree = "<group>"; };
+		D10000000000000000000002 /* NettoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NettoUITests.swift; sourceTree = "<group>"; };
+		D10000000000000000000003 /* NettoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NettoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -118,7 +121,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F5B8C27F2DF14B8300C35A76 /* MagicCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,6 +178,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D10000000000000000000007 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -190,6 +193,7 @@
 				0BECFF622DE5FFD6001B7619 /* README.md */,
 				F5F857DF2DE815C300E03577 /* README-DEV.md */,
 				F5B8C27B2DF14AE400C35A76 /* Frameworks */,
+				D10000000000000000000004 /* NettoUITests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -198,8 +202,17 @@
 			children = (
 				C4B45DB522739FFF0050C59B /* TavelMode.app */,
 				C40A5C45229DD6A500627D50 /* com.yueyi.TravelMode.Extension.systemextension */,
+				D10000000000000000000003 /* NettoUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D10000000000000000000004 /* NettoUITests */ = {
+			isa = PBXGroup;
+			children = (
+				D10000000000000000000002 /* NettoUITests.swift */,
+			);
+			path = NettoUITests;
 			sourceTree = "<group>";
 		};
 		F5B8C27B2DF14AE400C35A76 /* Frameworks */ = {
@@ -258,6 +271,24 @@
 			productReference = C4B45DB522739FFF0050C59B /* TavelMode.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D10000000000000000000005 /* NettoUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D10000000000000000000009 /* Build configuration list for PBXNativeTarget "NettoUITests" */;
+			buildPhases = (
+				D10000000000000000000006 /* Sources */,
+				D10000000000000000000007 /* Frameworks */,
+				D10000000000000000000008 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D1000000000000000000000A /* PBXTargetDependency */,
+			);
+			name = NettoUITests;
+			productName = NettoUITests;
+			productReference = D10000000000000000000003 /* NettoUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -275,6 +306,10 @@
 					};
 					C4B45DB422739FFF0050C59B = {
 						CreatedOnToolsVersion = 11.0;
+					};
+					D10000000000000000000005 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = C4B45DB422739FFF0050C59B;
 					};
 				};
 			};
@@ -313,6 +348,7 @@
 			targets = (
 				C4B45DB422739FFF0050C59B /* TavelMode */,
 				C40A5C44229DD6A500627D50 /* Extension */,
+				D10000000000000000000005 /* NettoUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -332,6 +368,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D10000000000000000000008 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -349,6 +386,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D10000000000000000000006 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (D10000000000000000000001 /* NettoUITests.swift in Sources */,); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -357,6 +395,8 @@
 			target = C40A5C44229DD6A500627D50 /* Extension */;
 			targetProxy = C40A5C4E229DD6A500627D50 /* PBXContainerItemProxy */;
 		};
+		D1000000000000000000000A /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = C4B45DB422739FFF0050C59B /* TavelMode */; targetProxy = D1000000000000000000000B /* PBXContainerItemProxy */; };
+		D1000000000000000000000B /* PBXContainerItemProxy */ = {isa = PBXContainerItemProxy; containerPortal = C4B45DAD22739FFF0050C59B /* Project object */; proxyType = 1; remoteGlobalIDString = C4B45DB422739FFF0050C59B; remoteInfo = TavelMode; };
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -569,6 +609,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
@@ -605,6 +646,8 @@
 			};
 			name = Release;
 		};
+		D1000000000000000000000C /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; MACOSX_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode.UITests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 6.0; TEST_TARGET_NAME = TavelMode; }; name = Debug; };
+		D1000000000000000000000D /* Release */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; MACOSX_DEPLOYMENT_TARGET = 15.0; PRODUCT_BUNDLE_IDENTIFIER = com.yueyi.TravelMode.UITests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 6.0; TEST_TARGET_NAME = TavelMode; }; name = Release; };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -635,6 +678,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		D10000000000000000000009 /* Build configuration list for PBXNativeTarget "NettoUITests" */ = {isa = XCConfigurationList; buildConfigurations = (D1000000000000000000000C /* Debug */, D1000000000000000000000D /* Release */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */

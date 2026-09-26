@@ -12,20 +12,23 @@ struct BtnSettings: View, SuperLog, SuperThread {
     @State private var isPresented = false
 
     var body: some View {
-        HStack {
+        Button {
+            self.isPresented.toggle()
+        } label: {
             Image(systemName: "ellipsis")
+                .frame(maxHeight: .infinity)
+                .padding(.vertical, 6)
+                .padding(.horizontal, 8)
+                .background(hovered ? Color(.controlAccentColor).opacity(0.2) : .clear)
+                .clipShape(RoundedRectangle(cornerRadius: 0))
         }
+        .buttonStyle(.plain)
+        .accessibilityLabel("设置")
+        .accessibilityIdentifier("netto.settings.button")
         .frame(maxHeight: .infinity)
         .onHover(perform: { hovering in
             self.hovered = hovering
         })
-        .onTapGesture {
-            self.isPresented.toggle()
-        }
-        .padding(.vertical, 6)
-        .padding(.horizontal, 8)
-        .background(hovered ? Color(.controlAccentColor).opacity(0.2) : .clear)
-        .clipShape(RoundedRectangle(cornerRadius: 0))
         .popover(isPresented: $isPresented, content: {
             VStack(spacing: 8) {
                 // 设置入口（按 order 升序，由 ShellCenter 聚合）
@@ -34,6 +37,8 @@ struct BtnSettings: View, SuperLog, SuperThread {
                 }
             }
             .padding()
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("netto.settings.menu")
         })
     }
 }

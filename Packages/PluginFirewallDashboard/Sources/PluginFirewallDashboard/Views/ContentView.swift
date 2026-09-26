@@ -13,6 +13,8 @@ public struct ContentView: View {
             AppList()
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("netto.dashboard")
         .navigationTitle("")
     }
 }

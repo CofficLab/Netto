@@ -7,11 +7,10 @@ import Foundation
 import OSLog
 import Network
 import NetworkExtension
-import MagicCore
 
 /// The IPCConnection class is used by both the app and the system extension to communicate with each other
-class IPCConnection: NSObject, SuperLog {
-    nonisolated static let emoji = "🤝"
+class IPCConnection: NSObject {
+    private static let logPrefix = "🤝 IPCConnection | "
     var listener: NSXPCListener?
     var currentConnection: NSXPCConnection?
     weak var delegate: AppCommunication?
@@ -34,7 +33,7 @@ class IPCConnection: NSObject, SuperLog {
 
     func startListener() {
         let machServiceName = extensionMachServiceName(from: Bundle.main)
-        os_log("\(self.t)🚀 Starting XPC listener for mach service \(machServiceName)")
+        os_log("\(Self.logPrefix)🚀 Starting XPC listener for mach service \(machServiceName)")
 
         let newListener = NSXPCListener(machServiceName: machServiceName)
         newListener.delegate = self
@@ -47,12 +46,12 @@ class IPCConnection: NSObject, SuperLog {
         self.delegate = delegate
 
         guard currentConnection == nil else {
-            os_log("\(self.t)⚠️ IPC.register: Already registered with the provider")
+            os_log("\(Self.logPrefix)⚠️ IPC.register: Already registered with the provider")
             completionHandler(true)
             return
         }
         
-        os_log("\(self.t)🛫 IPC.register")
+        os_log("\(Self.logPrefix)🛫 IPC.register")
 
         let machServiceName = extensionMachServiceName(from: bundle)
         let newConnection = NSXPCConnection(machServiceName: machServiceName, options: [])
@@ -68,7 +67,7 @@ class IPCConnection: NSObject, SuperLog {
         newConnection.resume()
 
         guard let providerProxy = newConnection.remoteObjectProxyWithErrorHandler({ registerError in
-            os_log(.error, "\(self.t)Failed to register with the provider: \(registerError)")
+            os_log(.error, "\(Self.logPrefix)Failed to register with the provider: \(registerError)")
             self.currentConnection?.invalidate()
             self.currentConnection = nil
             completionHandler(false)
@@ -76,7 +75,7 @@ class IPCConnection: NSObject, SuperLog {
             fatalError("Failed to create a remote object proxy for the provider")
         }
 
-        os_log("\(self.t)🛫 providerProxy.register")
+        os_log("\(Self.logPrefix)🛫 providerProxy.register")
         providerProxy.register(completionHandler)
     }
 
@@ -85,7 +84,7 @@ class IPCConnection: NSObject, SuperLog {
         for a decision about a connection.
     */
     func promptUser(flow: NEFilterFlow, responseHandler:@escaping (Bool) -> Void) -> Bool {
-        os_log("\(self.t)🍋 promptUser")
+        os_log("\(Self.logPrefix)🍋 promptUser")
         
         guard let connection = currentConnection else {
             os_log("Cannot prompt user because the app isn't registered")
