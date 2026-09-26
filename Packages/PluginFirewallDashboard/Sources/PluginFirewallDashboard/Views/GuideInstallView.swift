@@ -1,5 +1,7 @@
+import LumiUI
+import ProviderFirewall
+import ProviderViewEnvironment
 import SwiftUI
-import ProviderSettingsUI
 
 struct InstallView: View {
     var body: some View {
@@ -8,7 +10,7 @@ struct InstallView: View {
             title: "需要安装系统扩展",
             iconColor: .blue
         ) {
-            BtnInstallExtension()
+            DashboardInstallExtensionButton()
                 .controlSize(.extraLarge)
         }
     }

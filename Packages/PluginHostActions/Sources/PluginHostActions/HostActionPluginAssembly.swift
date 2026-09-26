@@ -4,7 +4,7 @@ import ProviderShell
 import ProviderAppSettings
 import ProviderFirewallEvents
 import ProviderSettingView
-import ProviderSettingsUI
+import LumiUI
 import SwiftUI
 
 /// macOS Host 操作与设置入口插件目录（依赖 Provider 契约，不访问旧单例）。
@@ -149,7 +149,7 @@ final class HostSettingsPlugin: SuperPlugin {
             order: 30,
             ownerPluginID: id
         ) {
-            AnyView(BtnSetting())
+            AnyView(HostOpenSystemSettingsButton())
         })
     }
 }
@@ -230,7 +230,7 @@ final class HostInstallExtensionPlugin: SuperPlugin {
             order: 60,
             ownerPluginID: id
         ) {
-            AnyView(BtnInstallExtension())
+            AnyView(HostInstallExtensionButton())
         })
     }
 }

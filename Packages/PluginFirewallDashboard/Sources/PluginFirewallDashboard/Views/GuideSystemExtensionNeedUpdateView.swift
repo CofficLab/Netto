@@ -1,5 +1,7 @@
 import MagicCore
-import ProviderSettingsUI
+import LumiUI
+import ProviderFirewall
+import ProviderViewEnvironment
 import SwiftUI
 
 struct SystemExtensionNeedUpdateView: View {
@@ -55,7 +57,7 @@ struct SystemExtensionNeedUpdateView: View {
                 .background(Color.orange.opacity(0.1))
                 .cornerRadius(8)
 
-                BtnInstallExtension()
+                DashboardInstallExtensionButton()
                     .controlSize(.extraLarge)
             }
         }

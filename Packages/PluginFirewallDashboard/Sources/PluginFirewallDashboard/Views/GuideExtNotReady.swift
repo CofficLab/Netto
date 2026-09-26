@@ -1,5 +1,7 @@
 import MagicCore
-import ProviderSettingsUI
+import LumiUI
+import ProviderFirewall
+import ProviderViewEnvironment
 import SwiftUI
 
 public struct ExtensionNotReady: View {
@@ -48,7 +50,7 @@ public struct ExtensionNotReady: View {
                 .cornerRadius(8)
 
                 // 系统设置按钮
-                BtnSetting()
+                DashboardOpenSystemSettingsButton()
                     .controlSize(.extraLarge)
             }
         }

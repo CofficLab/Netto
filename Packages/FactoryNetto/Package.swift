@@ -32,7 +32,7 @@ let package = Package(
         .package(name: "PluginHostActions", path: "../PluginHostActions"),
         .package(name: "ProviderMenuBar", path: "../ProviderMenuBar"),
         .package(name: "ProviderViewEnvironment", path: "../ProviderViewEnvironment"),
-        .package(url: "https://github.com/CofficLab/LumiUI", revision: "419c64ec01257f923b4139ede61377566b97b626"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
     ],
     targets: [
         .target(

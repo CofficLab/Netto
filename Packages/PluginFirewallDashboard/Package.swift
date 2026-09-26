@@ -11,7 +11,6 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
-        .package(path: "../ProviderSettingsUI"),
         .package(path: "../ProviderViewEnvironment"),
         .package(path: "../ProviderAppSettings"),
         .package(path: "../ProviderFirewall"),
@@ -21,6 +20,7 @@ let package = Package(
         .package(path: "../ProviderStore"),
         .package(path: "../ProviderMenuBar"),
         .package(url: "https://github.com/CofficLab/MagicKit", branch: "fix/swift6-strict-init"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
     ],
     targets: [
         .target(
@@ -30,7 +30,6 @@ let package = Package(
                 .product(name: "MagicAlert", package: "MagicKit"),
                 .product(name: "MagicUI", package: "MagicKit"),
                 .product(name: "MagicBackground", package: "MagicKit"),
-                .product(name: "ProviderSettingsUI", package: "ProviderSettingsUI"),
                 .product(name: "ProviderAppSettings", package: "ProviderAppSettings"),
                 .product(name: "ProviderFirewall", package: "ProviderFirewall"),
                 .product(name: "ProviderFirewallEvents", package: "ProviderFirewallEvents"),
@@ -40,6 +39,7 @@ let package = Package(
                 .product(name: "ProviderMenuBar", package: "ProviderMenuBar"),
                 .product(name: "ProviderViewEnvironment", package: "ProviderViewEnvironment"),
                 .product(name: "KernelCore", package: "LumiKernel"),
+                .product(name: "LumiUI", package: "LumiUI"),
             ]
         )
     ]

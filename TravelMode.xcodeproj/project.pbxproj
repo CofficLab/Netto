@@ -739,10 +739,10 @@
 		};
 		F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/CofficLab/LumiUI";
+			repositoryURL = "https://github.com/CofficLab/LumiUI.git";
 			requirement = {
-				kind = revision;
-				revision = 419c64ec01257f923b4139ede61377566b97b626;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.7.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
