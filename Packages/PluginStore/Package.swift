@@ -16,7 +16,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(name: "ProviderStore", path: "../ProviderStore"),
-        .package(name: "ProviderSettingView", path: "../ProviderSettingView"),
+        .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.0.1"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
         .package(url: "https://github.com/CofficLab/MagicKit", branch: "fix/swift6-strict-init"),
     ],
@@ -26,7 +26,7 @@ let package = Package(
             dependencies: [
                 .product(name: "KernelCore", package: "LumiKernel"),
                 "ProviderStore",
-                "ProviderSettingView",
+                .product(name: "ProviderSettingView", package: "LumiSettings"),
                 "ProviderShell",
                 .product(name: "MagicCore", package: "MagicKit"),
                 .product(name: "MagicUI", package: "MagicKit"),

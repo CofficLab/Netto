@@ -1,5 +1,5 @@
 {
-  "originHash" : "59b8d5e1548fee82d1eb6375ad16d142356fd2af2739130d806f98c2bdb8561a",
+  "originHash" : "712d4683729ac5a116645c170930dd7c5aacc1e36543bf44802c2e77d1683257",
   "pins" : [
     {
       "identity" : "id3tageditor",
@@ -26,6 +26,24 @@
       "state" : {
         "revision" : "80b33857dd75b33c1d587796edfc592f179ee320",
         "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "lumisettings",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiSettings.git",
+      "state" : {
+        "revision" : "59af093194b98154bba8e9ac61669b253d66e2ba",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "lumithemepack",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CofficLab/LumiThemePack.git",
+      "state" : {
+        "revision" : "819dee712a1a61f7a10335ee9e127c47ab2b399c",
+        "version" : "1.0.1"
       }
     },
     {

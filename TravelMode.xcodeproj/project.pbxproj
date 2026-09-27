@@ -339,7 +339,7 @@
 				A1A0000000000000000013 /* XCLocalSwiftPackageReference "Packages/PluginEventStore" */,
 				A1A0000000000000000014 /* XCLocalSwiftPackageReference "Packages/PluginFirewall" */,
 				A1A0000000000000000015 /* XCLocalSwiftPackageReference "Packages/PluginStore" */,
-				A1A0000000000000000016 /* XCLocalSwiftPackageReference "Packages/ProviderSettingView" */,
+				A1A0000000000000000016 /* XCRemoteSwiftPackageReference "LumiSettings" */,
 				F6A000000000000000000001 /* XCRemoteSwiftPackageReference "LumiUI" */,
 			);
 			productRefGroup = C4B45DB622739FFF0050C59B /* Products */;
@@ -742,9 +742,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/PluginStore;
 		};
-		A1A0000000000000000016 /* XCLocalSwiftPackageReference "Packages/ProviderSettingView" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/ProviderSettingView;
+		A1A0000000000000000016 /* XCRemoteSwiftPackageReference "LumiSettings" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CofficLab/LumiSettings.git";
+			requirement = {kind = upToNextMajorVersion; minimumVersion = 1.0.1;};
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -927,7 +928,7 @@
 		};
 		A1A0000000000000000116 /* ProviderSettingView */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A1A0000000000000000016 /* XCLocalSwiftPackageReference "Packages/ProviderSettingView" */;
+			package = A1A0000000000000000016 /* XCRemoteSwiftPackageReference "LumiSettings" */;
 			productName = ProviderSettingView;
 		};
 		F500B3ED2DE463A1009CC54C /* MagicCore */ = {
