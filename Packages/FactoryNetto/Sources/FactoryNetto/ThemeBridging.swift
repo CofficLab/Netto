@@ -1,3 +1,4 @@
+import LumiThemePack
 import LumiUI
 import ProviderTheme
 import SwiftUI
@@ -39,7 +40,7 @@ enum ThemeBridging {
 
         ResolvedSystemColorScheme.current = colorScheme
 
-        let chrome = PaletteChromeTheme(theme: selected, colorScheme: colorScheme)
+        let chrome = LumiPaletteChromeTheme(theme: selected, colorScheme: colorScheme)
         ActiveChromeTheme.current = chrome
         LumiUIThemeStore.shared.setTheme(ChromeToUIThemeAdapter(chrome: chrome))
         ThemeWindowAppearanceSync.syncAllWindows()
