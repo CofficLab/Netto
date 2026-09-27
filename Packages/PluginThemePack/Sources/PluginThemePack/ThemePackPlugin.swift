@@ -1,4 +1,5 @@
 import KernelCore
+import LumiThemePack
 import OSLog
 import ProviderSettingView
 import ProviderTheme
@@ -12,7 +13,7 @@ import SwiftUI
 /// - 本地化直接内联中文/英文（无 LumiPluginLocalization）
 ///
 /// 生命周期：`onBoot(kernel:)` 解析 `ThemeProviding` 与 `SettingViewProviding`：
-/// - 批量注册 `LegacyThemeCatalog.all`（19 个 `LumiTheme`，id 与旧版 Lumi 一致）
+/// - 批量注册 `LumiThemeCatalog.all`（19 个 `LumiTheme`，id 与旧版 Lumi 一致）
 /// - 注册「外观」设置入口（order 2，位于「通用」之前），详情视图列出全部
 ///   主题供搜索/筛选/切换/预览
 /// - `onShutdown` 注销入口并撤销全部主题贡献（当前选中回退由 Provider 处理）
@@ -33,8 +34,6 @@ public final class ThemePackPlugin: SuperPlugin {
         policy: .enabledByDefault
     )
 
-    private var themeObservation: ThemeSettingsObservationModel?
-
     public init() {}
 
     public func onBoot(kernel: KernelCoreContainer) throws {
@@ -42,13 +41,7 @@ public final class ThemePackPlugin: SuperPlugin {
             Self.logger.error("ThemeProviding 未注册，主题包跳过")
             return
         }
-        for legacy in LegacyThemeCatalog.all {
-            theme.registerTheme(legacy)
-        }
-        themeObservation?.cancel()
-        let themeObservation = ThemeSettingsObservationModel(theme: theme)
-        self.themeObservation = themeObservation
-
+        LumiThemeRegistration.register(in: theme)
         // 设置入口：外观 / 主题选择（设置视图未注册时优雅降级）。
         if let settings = kernel.resolveProvider((any SettingViewProviding).self) {
             settings.addEntries([
@@ -58,19 +51,15 @@ public final class ThemePackPlugin: SuperPlugin {
                     systemImage: "paintpalette",
                     order: 2
                 ) {
-                    ThemeSettingsDetailView(theme: theme, observation: themeObservation)
+                    ThemeSettingsDetailView(theme: theme)
                 },
             ])
         }
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
-        themeObservation?.cancel()
-        themeObservation = nil
         if let theme = kernel.resolveProvider((any ThemeProviding).self) {
-            for legacy in LegacyThemeCatalog.all {
-                theme.unregisterTheme(id: legacy.id)
-            }
+            LumiThemeRegistration.unregister(from: theme)
         }
         kernel.resolveProvider((any SettingViewProviding).self)?
             .removeEntries(ids: ["appearance"])

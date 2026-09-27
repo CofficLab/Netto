@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "PluginThemePack", targets: ["PluginThemePack"])
     ],
     dependencies: [
+        .package(url: "https://github.com/CofficLab/LumiThemePack.git", from: "1.0.0"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(path: "../ProviderSettingView"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.0.2"),
@@ -17,12 +18,13 @@ let package = Package(
         .target(
             name: "PluginThemePack",
             dependencies: [
+                .product(name: "LumiThemePack", package: "LumiThemePack"),
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "ProviderSettingView", package: "ProviderSettingView"),
                 .product(name: "ProviderTheme", package: "LumiProviders"),
                 .product(name: "LumiUI", package: "LumiUI"),
             ]
         ),
-        .testTarget(name: "PluginThemePackTests", dependencies: ["PluginThemePack"]),
+        .testTarget(name: "PluginThemePackTests", dependencies: ["PluginThemePack", .product(name: "LumiThemePack", package: "LumiThemePack")]),
     ]
 )
