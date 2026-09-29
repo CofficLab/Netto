@@ -1,6 +1,5 @@
 import AppKit
 import Foundation
-import MagicCore
 import SwiftUI
 
 public struct SmartApp: Identifiable, Sendable, Equatable {
@@ -27,7 +26,7 @@ public struct SmartApp: Identifiable, Sendable, Equatable {
     var bundleURL: URL?
 
     var isNotSample: Bool { !isSample }
-    var hasId: Bool { id.isNotEmpty }
+    var hasId: Bool { !id.isEmpty }
     var hasNoId: Bool { id.isEmpty }
     
     // MARK: - Equatable

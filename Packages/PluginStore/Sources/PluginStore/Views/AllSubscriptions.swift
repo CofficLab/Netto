@@ -1,10 +1,9 @@
 import OSLog
 import StoreKit
 import SwiftUI
-import MagicCore
 
 
-struct AllSubscriptions: View, SuperLog {
+struct AllSubscriptions: View, LogPrefixed {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     @State private var subscriptions: [ProductDTO] = []

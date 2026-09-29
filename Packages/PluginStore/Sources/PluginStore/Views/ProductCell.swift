@@ -1,10 +1,9 @@
-import MagicCore
 
 import OSLog
 import StoreKit
 import SwiftUI
 
-struct ProductCell: View, SuperLog {
+struct ProductCell: View, LogPrefixed {
     @State var isPurchased: Bool = false
     @State var errorTitle = ""
     @State var isShowingError: Bool = false

@@ -1,10 +1,9 @@
-import MagicCore
 import OSLog
 import SwiftUI
 
 /// Store 插件的 RootView
 /// 用于执行 Store 相关的初始化操作
-struct StoreRootView<Content: View>: View, SuperLog {
+struct StoreRootView<Content: View>: View, LogPrefixed {
     nonisolated static var emoji: String { "🏪" }
     nonisolated static var verbose: Bool { false }
 

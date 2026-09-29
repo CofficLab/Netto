@@ -1,12 +1,10 @@
-import MagicAlert
-import MagicCore
 import OSLog
 import ProviderShell
 import SwiftUI
 
 /// 内核内置的设置按钮
 /// 通过 `SettingsProviding` 获取设置入口，不再查询旧 PluginRegistry。
-struct BtnSettings: View, SuperLog, SuperThread {
+struct BtnSettings: View {
     @EnvironmentObject private var shell: ShellCenter
     @State private var hovered = false
     @State private var isPresented = false

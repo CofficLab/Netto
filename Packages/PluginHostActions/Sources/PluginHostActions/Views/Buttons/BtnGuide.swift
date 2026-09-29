@@ -1,12 +1,11 @@
+import LumiUI
 import SwiftUI
-import MagicCore
-import MagicUI
 
 /**
  * 引导按钮组件
  * 显示应用程序的引导界面
  */
-struct BtnGuide: View, SuperEvent {
+struct BtnGuide: View {
     @Environment(\.openWindow) private var openWindow
     
     private var asToolbarItem: Bool = false
@@ -34,11 +33,9 @@ struct BtnGuide: View, SuperEvent {
             }
             .buttonStyle(.plain)
         } else {
-            MagicButton.simple(icon: icon, size: .auto, action: {
+            AppButton(title, systemImage: icon, style: .primary, fillsWidth: true, action: {
                 action()
             })
-            .magicTitle(title)
-            .magicShape(.roundedRectangle)
             .frame(width: 150)
             .frame(height: 50)
             .accessibilityIdentifier("netto.settings.guide")
@@ -50,7 +47,7 @@ struct BtnGuide: View, SuperEvent {
      * 打开欢迎引导窗口并隐藏菜单栏窗口
      */
     private func action() -> Void {
-        nc.post(name: Notification.Name("shouldOpenWelcomeWindow"), object: nil)
+        NotificationCenter.default.post(name: Notification.Name("shouldOpenWelcomeWindow"), object: nil)
     }
 }
 

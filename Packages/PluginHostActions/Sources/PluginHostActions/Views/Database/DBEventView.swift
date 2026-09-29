@@ -1,6 +1,5 @@
 import Combine
 import AppKit
-import MagicCore
 import ProviderFirewallEvents
 import ProviderPersistence
 import ProviderViewEnvironment

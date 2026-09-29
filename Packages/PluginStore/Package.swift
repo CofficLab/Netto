@@ -1,7 +1,6 @@
 // swift-tools-version: 6.0
 // PluginStore：StoreKit 商店插件（旧 StoreService/StoreState/DTO/购买恢复订阅 UI 的唯一拥有者）。
-// 依赖约束：KernelCore、ProviderStore、ProviderShell（ShellCenter）、
-// MagicKit（视图层 MagicCore/MagicUI/MagicAlert/MagicBackground）。
+// 依赖约束：KernelCore、ProviderStore、ProviderShell（ShellCenter）、LumiUI。
 // 通过 StoreProviding 向其他插件/App 暴露中立 Snapshot；Kernel 不允许 import StoreKit。
 import PackageDescription
 
@@ -18,7 +17,7 @@ let package = Package(
         .package(name: "ProviderStore", path: "../ProviderStore"),
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.0.1"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
-        .package(url: "https://github.com/CofficLab/MagicKit", branch: "fix/swift6-strict-init"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
     ],
     targets: [
         .target(
@@ -28,10 +27,7 @@ let package = Package(
                 "ProviderStore",
                 .product(name: "ProviderSettingView", package: "LumiSettings"),
                 "ProviderShell",
-                .product(name: "MagicCore", package: "MagicKit"),
-                .product(name: "MagicUI", package: "MagicKit"),
-                .product(name: "MagicAlert", package: "MagicKit"),
-                .product(name: "MagicBackground", package: "MagicKit"),
+                "LumiUI",
             ]
         ),
         .testTarget(

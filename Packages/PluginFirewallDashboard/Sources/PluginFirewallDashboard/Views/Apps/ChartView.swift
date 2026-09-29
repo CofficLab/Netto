@@ -1,6 +1,5 @@
 import SwiftUI
 import ProviderViewEnvironment
-import MagicCore
 import Charts
 import ProviderFirewallEvents
 
@@ -92,7 +91,7 @@ extension ChartView {
             var events = try await eventRepo.fetchByTimeRange(from: startDate, to: now, appIdentifier: nil)
             if let appId { events = events.filter { $0.sourceAppIdentifier == appId } }
 
-            guard events.isNotEmpty else {
+            guard !events.isEmpty else {
                 setPoints([])
                 return
             }
@@ -183,7 +182,7 @@ extension ChartView {
     }
 
     private func nearestIndex(to date: Date) -> Int? {
-        guard smoothed.isNotEmpty else { return nil }
+        guard !smoothed.isEmpty else { return nil }
         var bestIdx = 0
         var bestDist = abs(smoothed[0].time.timeIntervalSince(date))
         for i in 1..<smoothed.count {
@@ -194,7 +193,7 @@ extension ChartView {
     }
 
     private func movingAverage(_ input: [DataPoint], window: Int) -> [DataPoint] {
-        guard window > 1, input.isNotEmpty else { return input }
+        guard window > 1, !input.isEmpty else { return input }
         var result: [DataPoint] = []
         var sum = 0
         var queue: [Int] = []

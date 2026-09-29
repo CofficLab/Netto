@@ -1,11 +1,9 @@
-import MagicAlert
 import ProviderViewEnvironment
-import MagicCore
 import OSLog
 import ProviderFirewall
 import SwiftUI
 
-struct TileSwitcher: View, SuperLog, SuperThread {
+struct TileSwitcher: View {
     @EnvironmentObject var app: UIProvider
     @Environment(\.firewallProvider) private var firewall: FirewallProviding?
 

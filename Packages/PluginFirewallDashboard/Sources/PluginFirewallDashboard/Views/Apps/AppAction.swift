@@ -1,14 +1,11 @@
-import MagicCore
 import ProviderViewEnvironment
-import MagicAlert
-import MagicUI
 import OSLog
 import ProviderShell
 import ProviderAppSettings
 import ProviderStore
 import SwiftUI
 
-private struct AppActionContent: View, SuperLog, SuperEvent {
+private struct AppActionContent: View, LogPrefixed {
     @EnvironmentObject private var shell: ShellCenter
     @Environment(\.settingsProvider) private var repo: AppSettingsProviding?
     @Environment(\.storeProvider) private var store: StoreProviding?
@@ -27,14 +24,19 @@ private struct AppActionContent: View, SuperLog, SuperEvent {
     }
 
     var body: some View {
-        MagicButton.simple(icon: iconName, size: .auto, action: {
+        Button {
             shouldAllow ? deny() : allow()
-        })
-        .magicStyle(.primary)
-        .magicShape(.roundedRectangle)
-        .magicBackgroundColor(shouldAllow ? .red : .green)
-        .frame(width: 30)
-        .frame(height: 30)
+        } label: {
+            Image(systemName: iconName)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 30, height: 30)
+                .background(
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(shouldAllow ? Color.red : Color.green)
+                )
+        }
+        .buttonStyle(.plain)
     }
 }
 

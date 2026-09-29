@@ -1,7 +1,7 @@
 // swift-tools-version: 6.0
 // PluginPersistence：SwiftData ModelContainer 的唯一创建者；共享 schema/config 位于 ProviderPersistence。
 // EventStore / AppSettings 插件都依赖本包，保证同一 db.sqlite 只有一个容器实例。
-// 依赖约束：Foundation、SwiftData、OSLog、KernelCore。禁止 SwiftUI/NetworkExtension/StoreKit/MagicKit。
+// 依赖约束：Foundation、SwiftData、OSLog、KernelCore。禁止 SwiftUI/NetworkExtension/StoreKit。
 import PackageDescription
 
 let package = Package(

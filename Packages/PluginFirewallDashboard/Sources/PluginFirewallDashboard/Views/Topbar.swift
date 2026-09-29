@@ -1,7 +1,5 @@
-import MagicCore
 import ProviderShell
 import SwiftUI
-import MagicBackground
 
 /// 顶部工具栏 —— 通过 `ShellToolbarProviding` 聚合稳定 ID/位置/排序的贡献。
 ///
@@ -42,7 +40,7 @@ struct TopBar: View {
         }
         .frame(height: 36)
         .accessibilityIdentifier("netto.dashboard.toolbar")
-        .background(MagicBackground.colorTeal.opacity(0.2))
+        .background(AppBackground.colorTeal.opacity(0.2))
     }
 }
 

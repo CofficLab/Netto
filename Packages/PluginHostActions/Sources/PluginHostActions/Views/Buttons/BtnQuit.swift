@@ -1,6 +1,5 @@
+import LumiUI
 import SwiftUI
-import MagicCore
-import MagicUI
 
 struct BtnQuit: View {
     
@@ -25,11 +24,9 @@ struct BtnQuit: View {
             }
             .buttonStyle(.plain)
         } else {
-            MagicButton.simple(icon: icon, size: .auto, action: {
+            AppButton(title, systemImage: icon, style: .primary, fillsWidth: true, action: {
                 action()
             })
-            .magicTitle(title)
-            .magicShape(.roundedRectangle)
             .frame(width: 150)
             .frame(height: 50)
             .accessibilityIdentifier("netto.settings.quit")

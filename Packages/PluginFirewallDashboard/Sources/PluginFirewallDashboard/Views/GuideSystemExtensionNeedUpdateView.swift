@@ -1,4 +1,3 @@
-import MagicCore
 import LumiUI
 import ProviderFirewall
 import ProviderViewEnvironment

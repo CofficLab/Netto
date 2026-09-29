@@ -26,7 +26,7 @@ struct RunningView: View {
     }
     
     private var allTip: some View = HStack(spacing: 8) {
-        Image(systemName: .iconStop)
+        Image(systemName: "stop.circle")
             .foregroundStyle(.blue)
             .font(.system(size: 14, weight: .medium))
             .frame(width: 20, alignment: .center)
@@ -41,7 +41,7 @@ struct RunningView: View {
     .cornerRadius(8)
     
     private var allowTip: some View = HStack(spacing: 8) {
-        Image(systemName: .iconStop)
+        Image(systemName: "stop.circle")
             .foregroundStyle(.green)
             .font(.system(size: 14, weight: .medium))
             .frame(width: 20, alignment: .center)
@@ -57,7 +57,7 @@ struct RunningView: View {
     
     private var denyTip: some View = VStack {
         HStack(spacing: 8) {
-            Image(systemName: .iconStop)
+            Image(systemName: "stop.circle")
                 .foregroundStyle(.orange)
                 .font(.system(size: 14, weight: .medium))
                 .frame(width: 20, alignment: .center)
@@ -72,7 +72,7 @@ struct RunningView: View {
         .cornerRadius(8)
         
         HStack(spacing: 8) {
-            Image(systemName: .iconInfo)
+            Image(systemName: "info.circle")
                 .foregroundStyle(.orange)
                 .font(.system(size: 14, weight: .medium))
                 .frame(width: 20, alignment: .center)

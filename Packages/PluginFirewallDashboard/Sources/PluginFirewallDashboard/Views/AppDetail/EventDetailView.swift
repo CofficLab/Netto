@@ -1,6 +1,4 @@
-import MagicCore
 import ProviderViewEnvironment
-import MagicUI
 import OSLog
 import ProviderShell
 import ProviderFirewallEvents
@@ -12,7 +10,7 @@ import SwiftUI
  * 展示应用的网络事件详情，包括事件列表、筛选工具栏和分页控制
  * 使用 @Query 自动获取和更新数据，支持筛选和分页
  */
-struct EventDetailView: View, SuperLog {
+struct EventDetailView: View {
     nonisolated static let emoji = "📋"
 
     // MARK: - Dependencies & Configuration
@@ -76,7 +74,7 @@ struct EventDetailView: View, SuperLog {
                     }
                 }, label: {
                     HStack(spacing: 6) {
-                        Image(systemName: .iconDownload)
+                        Image(systemName: "arrow.down.circle")
                         Text("导出近期日志")
                     }
                 })

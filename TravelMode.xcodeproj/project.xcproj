@@ -15,12 +15,6 @@
   "packages": [
     {
       "kind": "remote",
-      "repository": "https://github.com/CofficLab/MagicKit",
-      "version": {
-        "branch": "fix/swift6-strict-init",
-      },
-    }, {
-      "kind": "remote",
       "repository": "https://github.com/CofficLab/LumiKernel.git",
       "version": {
         "branch": "main",
@@ -151,29 +145,7 @@
         },
       ],
       "package-product-members": [
-        {
-          "product-name": "MagicAlert",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "product-name": "MagicAsset",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "product-name": "MagicAsset",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "product-name": "MagicContainer",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "product-name": "MagicCore",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "product-name": "MagicCore",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "product-name": "MagicDevice",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "FactoryNetto",
+        {"package": "FactoryNetto",
           "product-name": "FactoryNetto",
           "build-phase": { "build-phase": "frameworks" },
         }, {
@@ -188,104 +160,7 @@
           "package": "LumiUI",
           "product-name": "LumiUI",
           "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicAlert",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicAlert",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicAlert",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicAsset",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicAsset",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicAsset",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicBackground",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicBackground",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicContainer",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicContainer",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicContainer",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicCore",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicCore",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicCore",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicCore",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicDesktop",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicDevice",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicDevice",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicDevice",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicError",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicError",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicError",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicUI",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "MagicKit",
-          "product-name": "MagicUI",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "NettoIPCContracts",
+        }, {"package": "NettoIPCContracts",
           "product-name": "NettoIPCContracts",
           "build-phase": { "build-phase": "frameworks" },
         }, {

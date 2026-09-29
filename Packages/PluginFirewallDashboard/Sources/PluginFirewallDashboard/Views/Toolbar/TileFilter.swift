@@ -1,8 +1,7 @@
-import MagicCore
 import OSLog
 import SwiftUI
 
-struct TileFilter: View, SuperLog, SuperThread {
+struct TileFilter: View {
     @EnvironmentObject var ui: UIProvider
 
     var body: some View {

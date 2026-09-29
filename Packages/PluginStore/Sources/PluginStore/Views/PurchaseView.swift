@@ -1,11 +1,9 @@
-import MagicBackground
-import MagicCore
-import MagicUI
+import LumiUI
 import OSLog
 import StoreKit
 import SwiftUI
 
-struct PurchaseView: View, SuperLog {
+struct PurchaseView: View {
     nonisolated static let emoji = "🛒"
 
     @Environment(\.colorScheme) var colorScheme: ColorScheme
@@ -37,13 +35,9 @@ struct PurchaseView: View, SuperLog {
             if showCloseButton {
                 HStack {
                     Spacer()
-                    MagicButton.simple(action: {
+                    AppButton(systemImage: "xmark.circle.fill", style: .destructive, action: {
                         dismiss()
                     })
-                    .magicIcon(.iconClose)
-                    .magicShape(.circle)
-                    .magicStyle(.danger)
-                    .magicShapeVisibility(.always)
 
                     #if os(macOS)
                         .onHover { hovering in
@@ -89,11 +83,11 @@ struct PurchaseView: View, SuperLog {
                 }
             }
             .padding()
-            .background(MagicBackground.ocean.opacity(0.1))
+            .background(AppBackground.ocean.opacity(0.1))
 
             RestoreView()
                 .padding()
-                .background(MagicBackground.aurora.opacity(0.1))
+                .background(AppBackground.aurora.opacity(0.1))
 
             footerView
         }
@@ -116,7 +110,7 @@ struct PurchaseView: View, SuperLog {
         .padding(.vertical, 12)
 
         .font(.footnote)
-        .background(MagicBackground.aurora.opacity(0.1))
+        .background(AppBackground.aurora.opacity(0.1))
     }
 }
 

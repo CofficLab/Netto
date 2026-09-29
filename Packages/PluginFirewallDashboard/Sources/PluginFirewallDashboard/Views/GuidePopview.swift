@@ -1,4 +1,3 @@
-import MagicCore
 import SwiftUI
 
 struct Popview<Content: View>: View {

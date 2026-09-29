@@ -1,11 +1,9 @@
-import MagicCore
-import MagicAlert
 import OSLog
 import ProviderShell
 import StoreKit
 import SwiftUI
 
-struct RestoreView: View, SuperEvent, SuperLog, SuperThread {
+struct RestoreView: View, LogPrefixed {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
     @EnvironmentObject private var shell: ShellCenter
 

@@ -1,5 +1,4 @@
 import SwiftUI
-import MagicCore
 
 /**
  * 应用列表空视图

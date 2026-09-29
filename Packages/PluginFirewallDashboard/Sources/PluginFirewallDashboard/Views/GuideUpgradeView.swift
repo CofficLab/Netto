@@ -1,7 +1,5 @@
 import SwiftUI
-import MagicCore
 import ProviderShell
-import MagicUI
 
 /**
  * 升级引导视图

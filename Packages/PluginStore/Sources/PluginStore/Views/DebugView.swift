@@ -1,10 +1,8 @@
-import MagicAlert
 import ProviderShell
-import MagicCore
 import StoreKit
 import SwiftUI
 
-struct DebugView: View, SuperLog {
+struct DebugView: View {
     @EnvironmentObject private var shell: ShellCenter
     @State private var isLoading: Bool = false
     @State private var productGroups: ProductGroupsDTO?
@@ -97,7 +95,7 @@ extension DebugView {
 
         Task {
             do {
-                let result = try await StoreService.inspectSubscriptionStatus(self.className)
+                let result = try await StoreService.inspectSubscriptionStatus(String(describing: Self.self))
                 setSubscriptionInspectResult(result)
             } catch {
                 self.shell.postError(error.localizedDescription)

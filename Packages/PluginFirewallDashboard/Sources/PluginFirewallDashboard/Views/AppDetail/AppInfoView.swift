@@ -1,5 +1,5 @@
+import AppKit
 import SwiftUI
-import MagicCore
 import OSLog
 
 /**
@@ -8,7 +8,7 @@ import OSLog
  * 展示应用的基本信息，包括图标、名称、ID、属性信息和Bundle路径
  * 支持复制App ID和显示代理应用解释
  */
-struct AppInfoView: View, SuperLog {
+struct AppInfoView: View {
     nonisolated static let emoji = "📱"
     
     /// 应用对象
@@ -145,7 +145,7 @@ struct AppInfoView: View, SuperLog {
                             .truncationMode(.middle)
                         
                         Button(action: {
-                            bundleURL.openInFinder()
+                            NSWorkspace.shared.activateFileViewerSelecting([bundleURL])
                         }) {
                             Image(systemName: "doc.viewfinder")
                                 .foregroundColor(.secondary)

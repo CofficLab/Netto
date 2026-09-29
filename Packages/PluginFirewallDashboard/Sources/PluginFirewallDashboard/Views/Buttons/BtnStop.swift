@@ -1,12 +1,10 @@
-import MagicAlert
+import LumiUI
 import ProviderViewEnvironment
-import MagicCore
-import MagicUI
 import ProviderShell
 import ProviderFirewall
 import SwiftUI
 
-public struct BtnStop: View, SuperLog {
+public struct BtnStop: View {
     @EnvironmentObject var app: UIProvider
     @EnvironmentObject private var shell: ShellCenter
     @Environment(\.firewallProvider) private var firewall: FirewallProviding?
@@ -31,12 +29,11 @@ public struct BtnStop: View, SuperLog {
             }
             .buttonStyle(.plain)
         } else {
-            MagicButton.simple(icon: icon, size: .auto, action: {
+            AppButton("停止", systemImage: icon, style: .primary, fillsWidth: true, action: {
                 action()
             })
-            .magicTitle("停止")
-            .magicShape(.roundedRectangle)
-            .magicDisabled(firewall?.snapshot.state.isNotRunning() == true ? "未开启" : nil)
+            .disabled(firewall?.snapshot.state.isNotRunning() == true)
+            .help(firewall?.snapshot.state.isNotRunning() == true ? "未开启" : "")
             .frame(width: 150)
             .frame(height: 50)
         }

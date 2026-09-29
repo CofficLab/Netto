@@ -1,5 +1,3 @@
-import MagicCore
-import MagicBackground
 import OSLog
 import StoreKit
 import SwiftUI
@@ -32,7 +30,7 @@ struct NonRenewables: View {
                 }
             }
         }
-        .background(MagicBackground.aurora.opacity(0.1))
+        .background(AppBackground.aurora.opacity(0.1))
         .onAppear {
             getProducts("AllSubscription OnAppear")
         }

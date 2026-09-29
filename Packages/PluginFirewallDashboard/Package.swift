@@ -19,17 +19,12 @@ let package = Package(
         .package(path: "../ProviderShell"),
         .package(path: "../ProviderStore"),
         .package(path: "../ProviderMenuBar"),
-        .package(url: "https://github.com/CofficLab/MagicKit", branch: "fix/swift6-strict-init"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
     ],
     targets: [
         .target(
             name: "PluginFirewallDashboard",
             dependencies: [
-                .product(name: "MagicCore", package: "MagicKit"),
-                .product(name: "MagicAlert", package: "MagicKit"),
-                .product(name: "MagicUI", package: "MagicKit"),
-                .product(name: "MagicBackground", package: "MagicKit"),
                 .product(name: "ProviderAppSettings", package: "ProviderAppSettings"),
                 .product(name: "ProviderFirewall", package: "ProviderFirewall"),
                 .product(name: "ProviderFirewallEvents", package: "ProviderFirewallEvents"),

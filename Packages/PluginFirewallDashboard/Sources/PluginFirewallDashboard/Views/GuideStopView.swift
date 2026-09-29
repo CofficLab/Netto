@@ -15,7 +15,7 @@ struct StopView: View {
                 // 状态信息区域
                 VStack(alignment: .leading, spacing: 12) {
                     HStack(spacing: 8) {
-                        Image(systemName: .iconStop)
+                        Image(systemName: "stop.circle")
                             .foregroundStyle(.orange)
                             .font(.system(size: 14, weight: .medium))
                             .frame(width: 20, alignment: .center)

@@ -1,4 +1,3 @@
-import MagicCore
 import ProviderViewEnvironment
 import OSLog
 import ProviderAppSettings
@@ -13,7 +12,7 @@ import SwiftUI
  * 当防火墙未运行或需要升级时显示引导视图。
  * 当列表为空时显示优雅的空视图。
  */
-struct AppList: View, SuperLog {
+struct AppList: View {
     /// UI状态提供者
     @EnvironmentObject private var ui: UIProvider
 
@@ -65,9 +64,9 @@ struct AppList: View, SuperLog {
             } else {
                 ScrollView {
                     VStack(spacing: 0) {
-                        ForEach(Array((filtedApps.isNotEmpty ? filtedApps : SmartApp.samples).enumerated()), id: \.element.id) { index, app in
+                        ForEach(Array((!filtedApps.isEmpty ? filtedApps : SmartApp.samples).enumerated()), id: \.element.id) { index, app in
                             AppLine(app: app)
-                            if index < (allApps.isNotEmpty ? allApps : SmartApp.samples).count - 1 {
+                            if index < (!allApps.isEmpty ? allApps : SmartApp.samples).count - 1 {
                                 Divider()
                             }
                         }

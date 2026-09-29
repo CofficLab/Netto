@@ -1,12 +1,10 @@
-import MagicCore
-import ProviderViewEnvironment
-import MagicAlert
-import MagicUI
+import LumiUI
 import OSLog
+import ProviderViewEnvironment
 import ProviderFirewall
 import SwiftUI
 
-public struct BtnStart: View, SuperLog {
+public struct BtnStart: View {
     @Environment(\.firewallProvider) private var firewall: FirewallProviding?
 
     private var asToolbarItem: Bool = false
@@ -28,13 +26,11 @@ public struct BtnStart: View, SuperLog {
             }
             .buttonStyle(.plain)
         } else {
-            MagicButton.simple(icon: "restart.circle", size: .auto, action: {
+            AppButton("开启", systemImage: "restart.circle", style: .primary, fillsWidth: true, action: {
                 action()
             })
-            .magicTitle("开启")
-            .magicBackgroundColor(.blue)
-            .magicShape(.roundedRectangle)
-            .magicDisabled(firewall?.snapshot.state.isRunning() == true ? "已开启" : nil)
+            .disabled(firewall?.snapshot.state.isRunning() == true)
+            .help(firewall?.snapshot.state.isRunning() == true ? "已开启" : "")
             .frame(width: 150)
             .frame(height: 50)
         }

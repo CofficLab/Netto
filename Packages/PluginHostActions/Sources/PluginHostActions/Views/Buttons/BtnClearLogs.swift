@@ -1,7 +1,6 @@
 import SwiftUI
 import OSLog
-import MagicCore
-import MagicUI
+import LumiUI
 import ProviderShell
 import ProviderFirewallEvents
 import ProviderViewEnvironment
@@ -14,7 +13,7 @@ struct BtnClearLogs: View {
     @EnvironmentObject private var shell: ShellCenter
 
     var body: some View {
-        MagicButton.simple(action: {
+        AppButton("清空所有日志", systemImage: "trash", style: .primary, fillsWidth: true, action: {
             guard let events else { return }
             Task {
                 do {
@@ -27,9 +26,6 @@ struct BtnClearLogs: View {
                 }
             }
         })
-        .magicIcon(.iconTrash)
-        .magicTitle("清空所有日志")
-        .magicSize(.auto)
         .frame(width: 180)
         .frame(height: 44)
     }

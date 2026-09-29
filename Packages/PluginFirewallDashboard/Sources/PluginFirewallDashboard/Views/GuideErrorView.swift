@@ -1,7 +1,4 @@
 import SwiftUI
-import MagicUI
-import MagicBackground
-import MagicCore
 
 /// 错误显示视图
 /// 显示错误信息并提供复制到剪贴板的功能
@@ -51,7 +48,7 @@ struct ErrorView: View {
                 }
             }
             .padding(20)
-            .background(MagicBackground.cherry)
+            .background(AppBackground.cherry)
             .cornerRadius(12)
         }
 

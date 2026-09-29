@@ -1,5 +1,4 @@
 import SwiftUI
-import MagicCore
 
 struct NotInApplicationsFolderView: View {
     var body: some View {

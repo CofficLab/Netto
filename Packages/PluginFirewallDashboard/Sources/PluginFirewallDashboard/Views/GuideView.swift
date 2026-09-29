@@ -1,7 +1,5 @@
 import SwiftUI
 import ProviderViewEnvironment
-import MagicCore
-import MagicBackground
 import ProviderFirewall
 
 /**
@@ -21,7 +19,7 @@ struct GuideView: View {
     var body: some View {
         ZStack {
             Color.black.opacity(0.3)
-            MagicBackground.forest.opacity(0.3)
+            AppBackground.forest.opacity(0.3)
 
             VStack(spacing: 0) {
                 // 优先显示升级引导界面：如果用户需要升级，优先显示升级引导

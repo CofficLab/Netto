@@ -1,10 +1,9 @@
 import AppKit
 import Foundation
-import MagicCore
 import OSLog
 import SwiftUI
 
-extension SmartApp: SuperLog {
+extension SmartApp: LogPrefixed {
     /// 获取当前系统中所有正在运行的应用程序列表
     ///
     /// - Returns: 包含所有正在运行的应用程序的数组

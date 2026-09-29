@@ -1,9 +1,8 @@
 import Foundation
-import MagicCore
 import OSLog
 import StoreKit
 
-final class StoreState: ObservableObject, SuperLog {
+final class StoreState: ObservableObject, LogPrefixed {
     nonisolated static let emoji = "💰"
 
     // MARK: - Keys

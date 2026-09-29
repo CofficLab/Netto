@@ -1,10 +1,9 @@
-import MagicCore
 
 import OSLog
 import StoreKit
 import SwiftUI
 
-struct ProductsSubscription: View, SuperEvent, SuperLog, SuperThread {
+struct ProductsSubscription: View, LogPrefixed {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     @State private var subscriptionGroups: [SubscriptionGroupDTO] = []
@@ -99,7 +98,7 @@ struct ProductsSubscription: View, SuperEvent, SuperLog, SuperThread {
 
 extension ProductsSubscription {
     func onAppear() {
-        self.bg.async {
+        DispatchQueue.global().async {
             Task {
                 await getProducts("AllSubscription OnAppear")
             }
@@ -108,7 +107,7 @@ extension ProductsSubscription {
 
 
     func onRestore(_ notification: Notification) {
-        self.bg.async {
+        DispatchQueue.global().async {
             Task {
                 await getProducts("恢复购买")
             }

@@ -1,5 +1,4 @@
 import SwiftUI
-import MagicCore
 
 struct FilterNotInstalledView: View {
     var body: some View {

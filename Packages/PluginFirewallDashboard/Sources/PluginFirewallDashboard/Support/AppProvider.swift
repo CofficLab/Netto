@@ -1,6 +1,5 @@
 import Combine
 import Foundation
-import MagicCore
 import MediaPlayer
 import OSLog
 import SwiftUI
@@ -11,7 +10,7 @@ import SwiftUI
 /// isDropping / rightAlbumVisible 四项与旧实现完全一致（Store 视图消费）。
 ///
 /// 线程/actor：`ObservableObject`；@Published 变更在主线程发布（视图层消费）。
-public final class AppProvider: NSObject, ObservableObject, SuperLog, SuperThread {
+public final class AppProvider: NSObject, ObservableObject {
     public nonisolated static let emoji = "🐮"
 
     @Published public var showSheet: Bool = true

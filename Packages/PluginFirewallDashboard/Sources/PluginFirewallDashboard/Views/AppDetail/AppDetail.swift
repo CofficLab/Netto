@@ -1,9 +1,8 @@
 import SwiftUI
-import MagicCore
 import OSLog
 import NetworkExtension
 
-struct AppDetail: View, SuperLog {
+struct AppDetail: View {
     nonisolated static let emoji = "🖥️"
     
     let showChart = false

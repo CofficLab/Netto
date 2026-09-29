@@ -1,5 +1,4 @@
 import Foundation
-import MagicCore
 import OSLog
 import StoreKit
 import SwiftUI
@@ -11,7 +10,7 @@ public typealias RenewalInfo = StoreKit.Product.SubscriptionInfo.RenewalInfo
 public typealias RenewalState = StoreKit.Product.SubscriptionInfo.RenewalState
 public typealias PaymentMode = StoreKit.Product.SubscriptionOffer.PaymentMode
 
-public enum StoreService: SuperLog {
+public enum StoreService: LogPrefixed {
     // MARK: - Transaction Updates
 
     /// 持续监听交易更新直到取消（StoreKit 2 最佳实践；由 PluginStore.onBoot 启动、
