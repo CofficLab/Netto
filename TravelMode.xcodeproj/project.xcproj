@@ -1,0 +1,494 @@
+{
+  "organization": "Apple",
+  "default-configuration": "Release",
+  "configurations": [
+    "Debug",
+    "Release",
+  ],
+  "localizations": {
+    "development": "zh-Hans",
+    "supported": [
+      "Base",
+      "en",
+    ],
+  },
+  "packages": [
+    {
+      "kind": "remote",
+      "repository": "https://github.com/CofficLab/MagicKit",
+      "version": {
+        "branch": "fix/swift6-strict-init",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/CofficLab/LumiKernel.git",
+      "version": {
+        "branch": "main",
+      },
+    }, {
+      "kind": "local",
+      "path": "Packages/ProviderFirewall",
+    }, {
+      "kind": "local",
+      "path": "Packages/ProviderFirewallEvents",
+    }, {
+      "kind": "local",
+      "path": "Packages/ProviderAppSettings",
+    }, {
+      "kind": "local",
+      "path": "Packages/ProviderAppCatalog",
+    }, {
+      "kind": "local",
+      "path": "Packages/ProviderShell",
+    }, {
+      "kind": "local",
+      "path": "Packages/ProviderStore",
+    }, {
+      "kind": "local",
+      "path": "Packages/NettoIPCContracts",
+    }, {
+      "kind": "local",
+      "path": "Packages/FactoryNetto",
+    }, {
+      "kind": "local",
+      "path": "Packages/PluginPersistence",
+    }, {
+      "kind": "local",
+      "path": "Packages/PluginAppSettings",
+    }, {
+      "kind": "local",
+      "path": "Packages/PluginEventStore",
+    }, {
+      "kind": "local",
+      "path": "Packages/PluginFirewall",
+    }, {
+      "kind": "local",
+      "path": "Packages/PluginStore",
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/CofficLab/LumiSettings.git",
+      "version": {
+        "up-to-next-major-version": "1.0.1",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/CofficLab/LumiUI.git",
+      "version": {
+        "up-to-next-major-version": "1.7.0",
+      },
+    },
+  ],
+  "files": [
+    { "kind": "folder", "path": "Bridge", "target-membership": [ "Extension", "TavelMode" ] },
+    {
+      "kind": "folder",
+      "path": "App",
+      "target-membership": [
+        "TavelMode",
+      ],
+      "membership-exceptions": [
+        {
+          "target": "TavelMode",
+          "exclusions": [
+            "Info.plist",
+          ],
+        },
+      ],
+    },
+    { "kind": "folder", "path": "docs" },
+    {
+      "kind": "folder",
+      "path": "Extension",
+      "target-membership": [
+        "Extension",
+      ],
+      "membership-exceptions": [
+        {
+          "target": "Extension",
+          "exclusions": [
+            "Info.plist",
+          ],
+        },
+      ],
+    }, {
+      "kind": "group",
+      "name": "Products",
+      "children": [
+        { "path": "<PRODUCTS>/TavelMode.app", "id": "C4B45DB522739FFF0050C59B", "type": "wrapper.application", "index": false },
+        { "path": "<PRODUCTS>/com.yueyi.TravelMode.Extension.systemextension", "id": "C40A5C45229DD6A500627D50", "type": "wrapper.system-extension", "index": false, "target-membership": [ { "build-phase": "TavelMode/copy/Embed System Extensions", "header-preservation": "remove-on-copy" } ] },
+        { "path": "<PRODUCTS>/NettoUITests.xctest", "id": "D10000000000000000000003", "type": "wrapper.cfbundle", "index": false },
+      ],
+    },
+    { "path": "README.md" },
+    { "path": "README-DEV.md" },
+    { "kind": "group", "name": "Frameworks" },
+    {
+      "kind": "group",
+      "path": "NettoUITests",
+      "children": [
+        { "path": "NettoUITests.swift", "target-membership": [ "NettoUITests/compile-sources" ] },
+      ],
+    },
+  ],
+  "targets": [
+    {
+      "name": "TavelMode",
+      "id": "C4B45DB422739FFF0050C59B",
+      "product": "Products/TavelMode.app",
+      "product-type": "application",
+      "dependencies": [
+        "Extension",
+      ],
+      "build-phases": [
+        "compile-sources",
+        "frameworks",
+        "resources",
+        {
+          "kind": "copy",
+          "name": "Embed System Extensions",
+          "bundle-base-path": "build-products-directory",
+          "relative-path": "$(SYSTEM_EXTENSIONS_FOLDER_PATH)",
+        },
+      ],
+      "package-product-members": [
+        {
+          "product-name": "MagicAlert",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "MagicAsset",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "MagicAsset",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "MagicContainer",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "MagicCore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "MagicCore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "product-name": "MagicDevice",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "FactoryNetto",
+          "product-name": "FactoryNetto",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiKernel",
+          "product-name": "KernelCore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiSettings",
+          "product-name": "ProviderSettingView",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiUI",
+          "product-name": "LumiUI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicAlert",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicAlert",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicAlert",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicAsset",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicAsset",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicAsset",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicBackground",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicBackground",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicContainer",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicContainer",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicContainer",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicCore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicCore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicCore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicCore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicDesktop",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicDevice",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicDevice",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicDevice",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicError",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicError",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicError",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicUI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "MagicKit",
+          "product-name": "MagicUI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "NettoIPCContracts",
+          "product-name": "NettoIPCContracts",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginAppSettings",
+          "product-name": "PluginAppSettings",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginEventStore",
+          "product-name": "PluginEventStore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginFirewall",
+          "product-name": "PluginFirewall",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginPersistence",
+          "product-name": "PluginPersistence",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginStore",
+          "product-name": "PluginStore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderAppCatalog",
+          "product-name": "ProviderAppCatalog",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderAppSettings",
+          "product-name": "ProviderAppSettings",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderFirewall",
+          "product-name": "ProviderFirewall",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderFirewallEvents",
+          "product-name": "ProviderFirewallEvents",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderShell",
+          "product-name": "ProviderShell",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderStore",
+          "product-name": "ProviderStore",
+          "build-phase": { "build-phase": "frameworks" },
+        },
+      ],
+      "build-settings": {
+        "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon2",
+        "CODE_SIGN_ENTITLEMENTS": "App/Signing.entitlements",
+        "CODE_SIGN_IDENTITY": "Mac Developer",
+        "CODE_SIGN_IDENTITY[sdk=macosx*]": "Apple Development",
+        "CODE_SIGN_STYLE": "Automatic",
+        "COMBINE_HIDPI_IMAGES": "YES",
+        "CURRENT_PROJECT_VERSION": "103",
+        "DEAD_CODE_STRIPPING": "YES",
+        "ENABLE_APP_SANDBOX": "YES",
+        "ENABLE_FILE_ACCESS_DOWNLOADS_FOLDER": "readwrite",
+        "ENABLE_HARDENED_RUNTIME": "YES",
+        "ENABLE_USER_SELECTED_FILES": "readonly",
+        "INFOPLIST_FILE": "App/Info.plist",
+        "INFOPLIST_KEY_CFBundleDisplayName": "TravelMode",
+        "INFOPLIST_KEY_LSApplicationCategoryType": "public.app-category.productivity",
+        "LD_RUNPATH_SEARCH_PATHS": [
+          "$(inherited)",
+          "@executable_path/../Frameworks",
+        ],
+        "MACOSX_DEPLOYMENT_TARGET": "15.0",
+        "MARKETING_VERSION": "2.3.11",
+        "PRODUCT_BUNDLE_IDENTIFIER": "com.yueyi.TravelMode",
+        "PRODUCT_NAME": "$(TARGET_NAME)",
+        "PROVISIONING_PROFILE_SPECIFIER": "",
+        "REGISTER_APP_GROUPS": "YES",
+        "SWIFT_COMPILATION_MODE[config=Debug]": "wholemodule",
+        "SWIFT_VERSION": "6.0",
+      },
+    }, {
+      "name": "Extension",
+      "id": "C40A5C44229DD6A500627D50",
+      "product": "Products/com.yueyi.TravelMode.Extension.systemextension",
+      "product-type": "system-extension",
+      "build-phases": [
+        "compile-sources",
+        "frameworks",
+        "resources",
+      ],
+      "build-settings": {
+        "CODE_SIGN_ENTITLEMENTS": "Extension/Signing.entitlements",
+        "CODE_SIGN_IDENTITY": "Mac Developer",
+        "CODE_SIGN_STYLE": "Automatic",
+        "CURRENT_PROJECT_VERSION": "103",
+        "DEAD_CODE_STRIPPING": "YES",
+        "ENABLE_HARDENED_RUNTIME": "YES",
+        "INFOPLIST_FILE": "Extension/Info.plist",
+        "LD_RUNPATH_SEARCH_PATHS": [
+          "$(inherited)",
+          "@executable_path/../Frameworks",
+          "@executable_path/../../../../Frameworks",
+        ],
+        "MACOSX_DEPLOYMENT_TARGET": "15.0",
+        "MARKETING_VERSION": "2.3.11",
+        "PRODUCT_BUNDLE_IDENTIFIER": "com.yueyi.TravelMode.Extension",
+        "PRODUCT_NAME": "$(PRODUCT_BUNDLE_IDENTIFIER)",
+        "PROVISIONING_PROFILE_SPECIFIER": "",
+        "REGISTER_APP_GROUPS": "YES",
+        "SKIP_INSTALL": "YES",
+        "SWIFT_VERSION": "6.0",
+      },
+    }, {
+      "name": "NettoUITests",
+      "id": "D10000000000000000000005",
+      "product": "Products/NettoUITests.xctest",
+      "product-type": "bundle.ui-testing",
+      "test-host-target": "TavelMode",
+      "dependencies": [
+        "TavelMode",
+      ],
+      "build-phases": [
+        "compile-sources",
+        "frameworks",
+        "resources",
+      ],
+      "build-settings": {
+        "CODE_SIGN_STYLE": "Automatic",
+        "GENERATE_INFOPLIST_FILE": "YES",
+        "MACOSX_DEPLOYMENT_TARGET": "15.0",
+        "PRODUCT_BUNDLE_IDENTIFIER": "com.yueyi.TravelMode.UITests",
+        "PRODUCT_NAME": "$(TARGET_NAME)",
+        "SWIFT_VERSION": "6.0",
+        "TEST_TARGET_NAME": "TavelMode",
+      },
+    },
+  ],
+  "build-settings": {
+    "ALWAYS_SEARCH_USER_PATHS": "NO",
+    "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
+    "CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED": "YES",
+    "CLANG_ANALYZER_NONNULL": "YES",
+    "CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION": "YES_AGGRESSIVE",
+    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++14",
+    "CLANG_CXX_LIBRARY": "libc++",
+    "CLANG_ENABLE_MODULES": "YES",
+    "CLANG_ENABLE_OBJC_ARC": "YES",
+    "CLANG_ENABLE_OBJC_WEAK": "YES",
+    "CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING": "YES",
+    "CLANG_WARN_BOOL_CONVERSION": "YES",
+    "CLANG_WARN_COMMA": "YES",
+    "CLANG_WARN_CONSTANT_CONVERSION": "YES",
+    "CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS": "YES",
+    "CLANG_WARN_DIRECT_OBJC_ISA_USAGE": "YES_ERROR",
+    "CLANG_WARN_DOCUMENTATION_COMMENTS": "YES",
+    "CLANG_WARN_EMPTY_BODY": "YES",
+    "CLANG_WARN_ENUM_CONVERSION": "YES",
+    "CLANG_WARN_INFINITE_RECURSION": "YES",
+    "CLANG_WARN_INT_CONVERSION": "YES",
+    "CLANG_WARN_NON_LITERAL_NULL_CONVERSION": "YES",
+    "CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF": "YES",
+    "CLANG_WARN_OBJC_LITERAL_CONVERSION": "YES",
+    "CLANG_WARN_OBJC_ROOT_CLASS": "YES_ERROR",
+    "CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER": "YES",
+    "CLANG_WARN_RANGE_LOOP_ANALYSIS": "YES",
+    "CLANG_WARN_STRICT_PROTOTYPES": "YES",
+    "CLANG_WARN_SUSPICIOUS_MOVE": "YES",
+    "CLANG_WARN_UNGUARDED_AVAILABILITY": "YES_AGGRESSIVE",
+    "CLANG_WARN_UNREACHABLE_CODE": "YES",
+    "CLANG_WARN__DUPLICATE_METHOD_MATCH": "YES",
+    "COPY_PHASE_STRIP": "NO",
+    "DEAD_CODE_STRIPPING": "YES",
+    "DEBUG_INFORMATION_FORMAT[config=Debug]": "dwarf",
+    "DEBUG_INFORMATION_FORMAT[config=Release]": "dwarf-with-dsym",
+    "DEVELOPMENT_TEAM": "Y6HZ9JJYV6",
+    "ENABLE_NS_ASSERTIONS[config=Release]": "NO",
+    "ENABLE_STRICT_OBJC_MSGSEND": "YES",
+    "ENABLE_TESTABILITY[config=Debug]": "YES",
+    "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
+    "GCC_C_LANGUAGE_STANDARD": "gnu11",
+    "GCC_DYNAMIC_NO_PIC[config=Debug]": "NO",
+    "GCC_NO_COMMON_BLOCKS": "YES",
+    "GCC_OPTIMIZATION_LEVEL[config=Debug]": "0",
+    "GCC_PREPROCESSOR_DEFINITIONS[config=Debug]": [
+      "DEBUG=1",
+      "$(inherited)",
+    ],
+    "GCC_WARN_64_TO_32_BIT_CONVERSION": "YES",
+    "GCC_WARN_ABOUT_RETURN_TYPE": "YES_ERROR",
+    "GCC_WARN_UNDECLARED_SELECTOR": "YES",
+    "GCC_WARN_UNINITIALIZED_AUTOS": "YES_AGGRESSIVE",
+    "GCC_WARN_UNUSED_FUNCTION": "YES",
+    "GCC_WARN_UNUSED_VARIABLE": "YES",
+    "MACOSX_DEPLOYMENT_TARGET": "12.0",
+    "MTL_ENABLE_DEBUG_INFO[config=Debug]": "INCLUDE_SOURCE",
+    "MTL_ENABLE_DEBUG_INFO[config=Release]": "NO",
+    "MTL_FAST_MATH": "YES",
+    "ONLY_ACTIVE_ARCH[config=Debug]": "YES",
+    "SDKROOT": "macosx",
+    "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS[config=Debug]": "DEBUG",
+    "SWIFT_COMPILATION_MODE[config=Release]": "wholemodule",
+    "SWIFT_EMIT_LOC_STRINGS": "YES",
+    "SWIFT_OPTIMIZATION_LEVEL[config=Debug]": "-Onone",
+    "SWIFT_OPTIMIZATION_LEVEL[config=Release]": "-O",
+  },
+  "last-upgrade": "26.0",
+  "last-swift-update": "15.1",
+}
