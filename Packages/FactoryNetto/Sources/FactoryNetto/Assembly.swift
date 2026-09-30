@@ -64,7 +64,7 @@ public struct DefaultPluginAssembly: PluginAssembling {
             PluginFirewall(),         // order 30：网络过滤、系统扩展与 IPC
             PluginStore(),            // order 40：StoreKit 服务与权益
             FirewallDashboardPlugin(), // order 60：贡献菜单栏 popover 主面板
-            ThemePackPlugin(),        // order 100：复刻 Lumi 主题包（注册 19 主题 + 外观入口）
+            ThemePackPlugin(id: "com.yueyi.TravelMode.plugin.theme-pack", policy: .enabledByDefault),
         ] + HostActionPluginAssembly.makePlugins()
     }
 }
