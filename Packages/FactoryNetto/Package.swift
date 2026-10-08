@@ -13,7 +13,7 @@ let package = Package(
         .library(name: "FactoryNetto", targets: ["FactoryNetto"])
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiThemePack.git", from: "1.0.2"),
+        .package(url: "https://github.com/CofficLab/LumiThemePack.git", from: "1.0.5"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(name: "PluginPersistence", path: "../PluginPersistence"),
         .package(name: "PluginAppSettings", path: "../PluginAppSettings"),
