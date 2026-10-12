@@ -19,7 +19,6 @@ final class MenuBarController: NSObject, MenuBarHosting {
         guard let menuBar = kernel.resolveProvider(MenuBarProviding.self) else { return }
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         guard let button = item.button else { return }
-        button.title = ""
         button.image = nil
         button.setAccessibilityIdentifier("netto.menu-bar")
         button.setAccessibilityLabel("TravelMode 防火墙状态")
