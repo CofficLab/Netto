@@ -263,4 +263,27 @@ final class FactoryNettoTests: XCTestCase {
             pluginAssembly: TestPluginAssembly(plugins: [])
         )
     }
+
+    /// 设置窗口默认选中规则（回归测试）：全新启动（默认装配）后应选中
+    /// order 最小的入口。
+    ///
+    /// 背景：`addEntries` 会走 `registerEntries`，其"选中为空则锁定为当时列表
+    /// 第一个"的语义会让**最先注册入口的插件**意外成为默认选中（Wakey/Lumi/
+    /// GitOK/Kuzee 均已踩坑并在各自内核启动后重置），本测试验证 Netto。
+    func testSettingsDefaultsToFirstEntryByOrder() async throws {
+        let kernel = try await FactoryNetto.makeKernelAsync()
+        let settings = try XCTUnwrap(kernel.resolveProvider((any SettingViewProviding).self))
+
+        XCTAssertFalse(settings.entries.isEmpty, "设置入口应在内核启动后完成注册")
+        let orders = settings.entries.map(\.order)
+        XCTAssertEqual(orders, orders.sorted(), "entries must be sorted by order ascending")
+
+        print("NETTO-ENTRIES: \(settings.entries.map { "\($0.id)#\($0.order)" }.joined(separator: ", "))")
+        print("NETTO-SELECTED: \(settings.selectedEntryID ?? "nil")")
+
+        XCTAssertEqual(
+            settings.selectedEntryID, settings.entries.first?.id,
+            "默认应选中 \(settings.entries.first?.id ?? "nil")，实际为 \(settings.selectedEntryID ?? "nil")"
+        )
+    }
 }

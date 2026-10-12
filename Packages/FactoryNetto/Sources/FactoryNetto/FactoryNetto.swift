@@ -44,7 +44,22 @@ public enum FactoryNetto {
             return kernel
         }
         try kernel.start(plugins: plugins)
+        resetSettingsSelectionToFirstEntry(in: kernel)
         return kernel
+    }
+
+    /// 设置窗口默认选中 order 最小的入口（回归修复）。
+    ///
+    /// `addEntries` 会走 `registerEntries`，其"选中为空则锁定为当时列表第一个"
+    /// 的语义会让**最先注册入口的插件**意外成为默认选中，与"默认选中第一个"
+    /// 的设计意图相悖。全部入口就位后在此重置；本次运行内的用户选择不受影响
+    /// （选中态在内存中保留，重启后回到第一个）。
+    private static func resetSettingsSelectionToFirstEntry(in kernel: KernelCoreContainer) {
+        guard let settings = kernel.resolveProvider((any SettingViewProviding).self),
+              let firstID = settings.entries.first?.id,
+              settings.selectedEntryID != firstID
+        else { return }
+        settings.selectEntry(id: firstID)
     }
 
     /// 异步启动版本（阶段 4 引入 AsyncSuperPlugin 插件后使用）。
@@ -60,6 +75,7 @@ public enum FactoryNetto {
         // shared providers exist, while the popup itself observes boot progress.
         onProvidersRegistered?(kernel)
         try await kernel.startAsync(plugins: pluginAssembly.makePlugins() + additionalPlugins)
+        resetSettingsSelectionToFirstEntry(in: kernel)
         return kernel
     }
 
