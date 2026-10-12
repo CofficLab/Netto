@@ -106,11 +106,12 @@ protocol FirewallIPCServing: AnyObject {
 /// 线程/actor：`@MainActor`；`register()` 以 continuation 包装旧 completion 回调。
 @MainActor
 final class NSXPCFirewallIPCAdapter: FirewallIPCServing {
-    private let extensionBundle: Bundle
+    /// 系统扩展 Bundle；nil 表示宿主环境无扩展（非 App 宿主降级运行）。
+    private let extensionBundle: Bundle?
     private var connection: NSXPCConnection?
     weak var exportedAppCommunication: (any AppCommunication)?
 
-    init(extensionBundle: Bundle) {
+    init(extensionBundle: Bundle?) {
         self.extensionBundle = extensionBundle
     }
 
@@ -132,6 +133,9 @@ final class NSXPCFirewallIPCAdapter: FirewallIPCServing {
         guard let delegate = exportedAppCommunication else {
             return false
         }
+
+        // 扩展 Bundle 缺失（非 App 宿主降级）：无法定位 Mach service，直接失败。
+        guard let extensionBundle else { return false }
 
         let machServiceName = extensionMachServiceName(from: extensionBundle)
         let newConnection = NSXPCConnection(machServiceName: machServiceName, options: [])

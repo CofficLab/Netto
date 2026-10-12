@@ -109,7 +109,8 @@ extension FirewallSystemAdapting {
 /// 不使用 `@unchecked Sendable`。
 @MainActor
 final class SystemFirewallAdapter: FirewallSystemAdapting {
-    private let extensionBundle: Bundle
+    /// 系统扩展 Bundle；nil 表示宿主环境无扩展（非 App 宿主降级运行）。
+    private let extensionBundle: Bundle?
     private let requestBridge: SystemExtensionRequestBridge
     private let requestBox = WeakRequestHandlerBox()
     private var filterObserver: Any?
@@ -117,9 +118,9 @@ final class SystemFirewallAdapter: FirewallSystemAdapting {
     private(set) var workspaceObserverRegistered = false
 
     /// - Parameters:
-    ///   - extensionBundle: 系统扩展 Bundle（定位扩展标识）。
+    ///   - extensionBundle: 系统扩展 Bundle（定位扩展标识；nil 表示扩展缺失）。
     ///   - requestHandler: 系统扩展请求结果接收者（通常为 FirewallController）。
-    init(extensionBundle: Bundle, requestHandler: (any SystemExtensionRequestHandling)? = nil) {
+    init(extensionBundle: Bundle?, requestHandler: (any SystemExtensionRequestHandling)? = nil) {
         self.extensionBundle = extensionBundle
         self.requestBox.handler = requestHandler
         self.requestBridge = SystemExtensionRequestBridge(box: requestBox)
@@ -140,6 +141,7 @@ final class SystemFirewallAdapter: FirewallSystemAdapting {
     // MARK: - 扩展版本信息（旧 getCurrentExtensionVersion）
 
     var currentExtensionVersion: (version: String, shortVersion: String, identifier: String)? {
+        guard let extensionBundle else { return nil }
         guard let identifier = extensionBundle.bundleIdentifier else { return nil }
         guard let version = extensionBundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String else { return nil }
         guard let shortVersion = extensionBundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String else { return nil }
@@ -213,7 +215,7 @@ final class SystemFirewallAdapter: FirewallSystemAdapting {
     // MARK: - 系统扩展请求（迁移自 FirewallService+SystemExt）
 
     func submitSystemExtensionRequest(_ kind: SystemExtensionRequestKind) {
-        guard let identifier = extensionBundle.bundleIdentifier else { return }
+        guard let identifier = extensionBundle?.bundleIdentifier else { return }
 
         let request: OSSystemExtensionRequest
         switch kind {
