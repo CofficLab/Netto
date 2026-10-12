@@ -95,6 +95,11 @@ final class StoreState: ObservableObject, LogPrefixed {
         }
 
         os_log("\(self.t)🎯 校准结果: detectedTier=\(detectedTier.rawValue), detectedExpire=\(detectedExpire?.description ?? "nil")")
+        // 插件关闭（storeTask 已取消）：跳过收尾写入，避免覆盖关闭后的状态。
+        guard !Task.isCancelled else {
+            os_log("\(self.t)⏭️ 校准任务已取消，跳过写入")
+            return
+        }
         update(entitlement: PurchaseInfo(tier: detectedTier, expiresAt: detectedExpire))
     }
 }

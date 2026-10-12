@@ -26,7 +26,8 @@ struct StoreConfigTests {
 /// StoreState UserDefaults 持久化测试（键名与旧实现一致：store.purchase）。
 ///
 /// 串行套件：这些测试共享同一 UserDefaults 键，Swift Testing 默认并行执行
-/// 会导致读写交错，故必须串行且互斥。
+/// 会导致读写交错，故必须串行且互斥。装配测试（PluginStorePluginTests）
+/// 启动的后台校准任务也会写入同一键，故嵌套于此一并串行。
 @Suite(.serialized)
 @MainActor
 struct StoreStateTests {
@@ -92,35 +93,40 @@ struct StoreStateTests {
             return first
         }
     }
-}
 
-/// PluginStore 插件装配测试（真实 Kernel + 真 Provider，不触碰 StoreKit 沙盒）。
-@MainActor
-struct PluginStorePluginTests {
-    @Test func registersProviderAndSettingsEntry() async throws {
-        let kernel = KernelCoreContainer()
-        // 先注册 SettingViewProviding（DefaultSettingViewProviding）与
-        // ShellCenter，再启动 PluginStore（设置视图契约缺失时优雅降级）。
-        let settingsView = DefaultSettingViewProviding()
-        try kernel.registerProvider(SettingViewProviding.self, settingsView)
-        try kernel.start(plugins: [MockShellPlugin(), PluginStore()])
+    /// PluginStore 插件装配测试（真实 Kernel + 真 Provider，不触碰 StoreKit 沙盒）。
+    ///
+    /// 嵌套于 StoreStateTests（.serialized）：onBoot 启动的后台校准任务收尾时
+    /// 会写入 store.purchase 键，必须与上方持久化测试串行且等待其落地。
+    @MainActor
+    struct PluginStorePluginTests {
+        @Test func registersProviderAndSettingsEntry() async throws {
+            let kernel = KernelCoreContainer()
+            // 先注册 SettingViewProviding（DefaultSettingViewProviding）与
+            // ShellCenter，再启动 PluginStore（设置视图契约缺失时优雅降级）。
+            let settingsView = DefaultSettingViewProviding()
+            try kernel.registerProvider(SettingViewProviding.self, settingsView)
+            try kernel.start(plugins: [MockShellPlugin(), PluginStore()])
 
-        // Provider 已注册（owner=store）。
-        let store = kernel.resolveProvider(StoreProviding.self)
-        #expect(store != nil)
-        #expect(store is PluginStore)
+            // Provider 已注册（owner=store）。
+            let store = kernel.resolveProvider(StoreProviding.self)
+            #expect(store != nil)
+            #expect(store is PluginStore)
 
-        // 商店入口已注入设置视图（替代旧主窗口 StoreBtn / store-window）。
-        let entries = settingsView.entries
-        #expect(entries.contains { $0.id == "store" } == true)
-        #expect(entries.first(where: { $0.id == "store" })?.title == "商店")
+            // 商店入口已注入设置视图（替代旧主窗口 StoreBtn / store-window）。
+            let entries = settingsView.entries
+            #expect(entries.contains { $0.id == "store" } == true)
+            #expect(entries.first(where: { $0.id == "store" })?.title == "商店")
 
-        // 停止后：Provider 撤回、设置入口移除。
-        try await kernel.stopAsync()
-        #expect(kernel.resolveProvider(StoreProviding.self) == nil)
-        #expect(settingsView.entries.contains { $0.id == "store" } != true)
+            // 停止后：Provider 撤回、设置入口移除。
+            try await kernel.stopAsync()
+            // 等待被取消的后台校准任务收尾落地（其收尾会写 store.purchase），
+            // 避免残留写入与本 suite 后续的持久化测试交错。
+            try await Task.sleep(for: .milliseconds(300))
+            #expect(kernel.resolveProvider(StoreProviding.self) == nil)
+            #expect(settingsView.entries.contains { $0.id == "store" } != true)
+        }
     }
-
 }
 
 
