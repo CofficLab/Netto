@@ -120,7 +120,10 @@
       "kind": "group",
       "path": "NettoUITests",
       "children": [
-        { "path": "NettoUITests.swift", "target-membership": [ "NettoUITests/compile-sources" ] },
+        { "path": "NettoUITestCase.swift", "target-membership": [ "NettoUITests/compile-sources" ] },
+        { "path": "NettoLaunchUITests.swift", "target-membership": [ "NettoUITests/compile-sources" ] },
+        { "path": "NettoDashboardUITests.swift", "target-membership": [ "NettoUITests/compile-sources" ] },
+        { "path": "NettoSettingsUITests.swift", "target-membership": [ "NettoUITests/compile-sources" ] },
       ],
     },
   ],
