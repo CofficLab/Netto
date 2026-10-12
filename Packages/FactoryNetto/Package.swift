@@ -13,7 +13,7 @@ let package = Package(
         .library(name: "FactoryNetto", targets: ["FactoryNetto"])
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiThemePack.git", from: "1.0.5"),
+        .package(url: "https://github.com/CofficLab/LumiThemePack.git", from: "1.0.6"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
         .package(name: "PluginPersistence", path: "../PluginPersistence"),
         .package(name: "PluginAppSettings", path: "../PluginAppSettings"),
@@ -25,7 +25,7 @@ let package = Package(
         .package(name: "ProviderShell", path: "../ProviderShell"),
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.0.1"),
         .package(name: "ProviderStore", path: "../ProviderStore"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.0.2"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.5.0"),
         .package(url: "https://github.com/CofficLab/LumiPluginThemePack.git", from: "1.1.0"),
         .package(name: "PluginFirewallDashboard", path: "../PluginFirewallDashboard"),
         .package(name: "PluginFirewall", path: "../PluginFirewall"),
