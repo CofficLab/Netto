@@ -25,7 +25,7 @@ let package = Package(
         .package(name: "ProviderShell", path: "../ProviderShell"),
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.0.1"),
         .package(name: "ProviderStore", path: "../ProviderStore"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.6.0"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0"),
         .package(url: "https://github.com/CofficLab/LumiPluginThemePack.git", from: "1.1.0"),
         .package(name: "PluginFirewallDashboard", path: "../PluginFirewallDashboard"),
         .package(name: "PluginFirewall", path: "../PluginFirewall"),
@@ -33,7 +33,7 @@ let package = Package(
         .package(name: "PluginHostActions", path: "../PluginHostActions"),
         .package(name: "ProviderMenuBar", path: "../ProviderMenuBar"),
         .package(name: "ProviderViewEnvironment", path: "../ProviderViewEnvironment"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.10.0"),
     ],
     targets: [
         .target(

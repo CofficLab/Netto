@@ -17,7 +17,7 @@ let package = Package(
         .package(name: "ProviderStore", path: "../ProviderStore"),
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.0.1"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.7.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.10.0"),
     ],
     targets: [
         .target(
