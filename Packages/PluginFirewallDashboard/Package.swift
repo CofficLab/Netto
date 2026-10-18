@@ -36,6 +36,10 @@ let package = Package(
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "LumiUI", package: "LumiUI"),
             ]
+        ),
+        .testTarget(
+            name: "PluginFirewallDashboardTests",
+            dependencies: ["PluginFirewallDashboard"]
         )
     ]
 )

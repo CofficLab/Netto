@@ -33,6 +33,10 @@ let package = Package(
                 "ProviderViewEnvironment",
                 "LumiUI",
             ]
+        ),
+        .testTarget(
+            name: "PluginHostActionsTests",
+            dependencies: ["PluginHostActions"]
         )
     ]
 )
