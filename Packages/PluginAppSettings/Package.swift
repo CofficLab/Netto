@@ -12,7 +12,7 @@ let package = Package(
         .library(name: "PluginAppSettings", targets: ["PluginAppSettings"])
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(name: "PluginPersistence", path: "../PluginPersistence"),
         .package(name: "ProviderAppSettings", path: "../ProviderAppSettings"),
         .package(name: "ProviderPersistence", path: "../ProviderPersistence"),

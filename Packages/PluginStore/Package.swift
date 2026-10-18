@@ -13,7 +13,7 @@ let package = Package(
         .library(name: "PluginStore", targets: ["PluginStore"])
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(name: "ProviderStore", path: "../ProviderStore"),
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.0.1"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
