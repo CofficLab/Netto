@@ -24,5 +24,9 @@ let package = Package(
                 "ProviderStore",
             ]
         ),
+        .testTarget(
+            name: "ProviderViewEnvironmentTests",
+            dependencies: ["ProviderViewEnvironment"]
+        ),
     ]
 )

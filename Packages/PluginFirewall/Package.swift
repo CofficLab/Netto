@@ -14,7 +14,7 @@ let package = Package(
         .library(name: "PluginFirewall", targets: ["PluginFirewall"])
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(name: "ProviderFirewall", path: "../ProviderFirewall"),
         .package(name: "ProviderFirewallEvents", path: "../ProviderFirewallEvents"),
         .package(name: "ProviderAppSettings", path: "../ProviderAppSettings"),

@@ -14,7 +14,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiThemePack.git", from: "1.0.6"),
-        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(name: "PluginPersistence", path: "../PluginPersistence"),
         .package(name: "PluginAppSettings", path: "../PluginAppSettings"),
         .package(name: "PluginEventStore", path: "../PluginEventStore"),

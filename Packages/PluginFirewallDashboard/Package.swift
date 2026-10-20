@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "PluginFirewallDashboard", targets: ["PluginFirewallDashboard"])
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(path: "../ProviderViewEnvironment"),
         .package(path: "../ProviderAppSettings"),
         .package(path: "../ProviderFirewall"),
@@ -36,6 +36,10 @@ let package = Package(
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "LumiUI", package: "LumiUI"),
             ]
+        ),
+        .testTarget(
+            name: "PluginFirewallDashboardTests",
+            dependencies: ["PluginFirewallDashboard"]
         )
     ]
 )

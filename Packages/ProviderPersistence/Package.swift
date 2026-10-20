@@ -10,5 +10,9 @@ let package = Package(
     ],
     targets: [
         .target(name: "ProviderPersistence"),
+        .testTarget(
+            name: "ProviderPersistenceTests",
+            dependencies: ["ProviderPersistence"]
+        ),
     ]
 )

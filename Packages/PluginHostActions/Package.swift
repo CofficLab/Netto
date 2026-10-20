@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "PluginHostActions", targets: ["PluginHostActions"])
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiKernel.git", branch: "main"),
+        .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(name: "ProviderPersistence", path: "../ProviderPersistence"),
         .package(name: "ProviderAppSettings", path: "../ProviderAppSettings"),
         .package(name: "ProviderFirewallEvents", path: "../ProviderFirewallEvents"),
@@ -33,6 +33,10 @@ let package = Package(
                 "ProviderViewEnvironment",
                 "LumiUI",
             ]
+        ),
+        .testTarget(
+            name: "PluginHostActionsTests",
+            dependencies: ["PluginHostActions"]
         )
     ]
 )
