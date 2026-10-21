@@ -29,7 +29,11 @@ public enum PersistenceConfig {
 
     /// 与旧 `AppConfig.getDatabaseURL()` 相同：目录不存在则创建（失败即终止启动，
     /// 与旧行为 fatalError 语义一致）。
-    nonisolated private static func getDatabaseURL() -> URL {
+    ///
+    /// - Parameter baseDocumentsURL: Documents 根目录（生产传 `documentsURL`）。
+    ///   抽出该参数是为了让「目录不存在 → 创建」这一分支可以在单元测试里被覆盖：
+    ///   生产路径的 Documents 目录受 macOS TCC 保护，单测无法清空它来强制走创建分支。
+    nonisolated static func getDatabaseURL(baseDocumentsURL: URL = PersistenceConfig.documentsURL) -> URL {
         let fileName = dbFileName
         #if DEBUG
             let dirName = "debug"
@@ -38,7 +42,7 @@ public enum PersistenceConfig {
         #endif
 
         var isDir: ObjCBool = true
-        let dbDir = documentsURL
+        let dbDir = baseDocumentsURL
             .appendingPathComponent(dirName, isDirectory: true)
 
         if !FileManager.default.fileExists(atPath: dbDir.path, isDirectory: &isDir) {
