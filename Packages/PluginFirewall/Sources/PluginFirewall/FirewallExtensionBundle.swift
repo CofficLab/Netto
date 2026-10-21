@@ -11,9 +11,19 @@ enum FirewallExtensionBundle {
     ///
     /// - Returns: 扩展 Bundle；仅当宿主非 App bundle 且目录缺失时返回 nil。
     static func load() -> Bundle? {
+        load(inHostBundleURL: Bundle.main.bundleURL)
+    }
+
+    /// 定位指定宿主 Bundle 内的系统扩展 Bundle。
+    ///
+    /// - Parameter hostBundleURL: 宿主 App bundle 的 URL（生产传 `Bundle.main.bundleURL`）。
+    ///   抽出该参数是为了让「扩展已存在」的分支可以在单元测试里被覆盖——
+    ///   单测进程没有 App bundle，无法自行构造 `Contents/Library/SystemExtensions` 目录。
+    /// - Returns: 扩展 Bundle；仅当宿主非 App bundle 且目录缺失/为空时返回 nil。
+    static func load(inHostBundleURL hostBundleURL: URL) -> Bundle? {
         let extensionsDirectoryURL = URL(
             fileURLWithPath: "Contents/Library/SystemExtensions",
-            relativeTo: Bundle.main.bundleURL
+            relativeTo: hostBundleURL
         )
         let extensionURLs: [URL]
         do {
@@ -25,12 +35,12 @@ enum FirewallExtensionBundle {
         } catch {
             // 生产 App 内：目录缺失 = 打包配置错误，启动期暴露。
             // 非 App 宿主（如 xctest runner）：无扩展目录属预期，降级运行。
-            guard isAppHost else { return nil }
+            guard isAppHost(hostBundleURL) else { return nil }
             fatalError("Failed to get the contents of \(extensionsDirectoryURL.absoluteString): \(error.localizedDescription)")
         }
 
         guard let extensionURL = extensionURLs.first else {
-            guard isAppHost else { return nil }
+            guard isAppHost(hostBundleURL) else { return nil }
             fatalError("Failed to find any system extensions")
         }
 
@@ -43,7 +53,7 @@ enum FirewallExtensionBundle {
 
     /// 宿主是否为 App bundle（.app）。xctest runner 等非 App 宿主不视为
     /// 打包配置错误。
-    private static var isAppHost: Bool {
-        Bundle.main.bundleURL.pathExtension == "app"
+    private static func isAppHost(_ hostBundleURL: URL) -> Bool {
+        hostBundleURL.pathExtension == "app"
     }
 }
