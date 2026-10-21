@@ -64,7 +64,10 @@ extension ProductGroupsDTO {
     ///
     /// - Parameter subscriptions: 订阅产品列表
     /// - Returns: 订阅组列表：`[SubscriptionGroupDTO]`
-    private static func createSubscriptionGroups(from subscriptions: [ProductDTO]) -> [SubscriptionGroupDTO] {
+    ///
+    /// - Note: 由 `init(products:)` 等入口调用；提升为 internal 以便单元测试
+    ///   直接覆盖分组/排序逻辑（StoreKit `Product` 在单测中不可构造）。
+    static func createSubscriptionGroups(from subscriptions: [ProductDTO]) -> [SubscriptionGroupDTO] {
         // 按订阅组 ID 聚合，避免为同一组重复创建条目
         var grouped: [String: [ProductDTO]] = [:]
         for product in subscriptions {
