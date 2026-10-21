@@ -1,6 +1,7 @@
 import Foundation
 import KernelCore
 import PluginFirewallDashboard
+import PluginPersistence
 import ProviderShell
 import ProviderAppSettings
 import ProviderFirewall
@@ -149,7 +150,18 @@ final class FactoryNettoTests: XCTestCase {
                 pluginAssembly: TestPluginAssembly(plugins: [failing])
             )
         ) { error in
-            XCTAssertEqual(error as NSError, NSError(domain: "test", code: 1))
+            // KernelCore 会把生命周期错误包装成 pluginLifecycleFailed，附带
+            // 归属信息（插件 ID + 阶段），底层错误保留在 underlying 里。
+            guard case KernelCoreError.pluginLifecycleFailed(let pluginID, let phase, let underlying)? =
+                error as? KernelCoreError
+            else {
+                XCTFail("期望 pluginLifecycleFailed，实际是 \(error)")
+                return
+            }
+            XCTAssertEqual(pluginID, "F")
+            XCTAssertEqual(phase, "boot")
+            XCTAssertEqual((underlying as NSError).domain, "test")
+            XCTAssertEqual((underlying as NSError).code, 1)
         }
     }
 
@@ -271,7 +283,19 @@ final class FactoryNettoTests: XCTestCase {
     /// 第一个"的语义会让**最先注册入口的插件**意外成为默认选中（Wakey/Lumi/
     /// GitOK/Kuzee 均已踩坑并在各自内核启动后重置），本测试验证 Netto。
     func testSettingsDefaultsToFirstEntryByOrder() async throws {
-        let kernel = try await FactoryNetto.makeKernelAsync()
+        // 默认插件装配里的 PersistencePlugin 会按生产配置创建
+        // ~/Documents/debug/db.sqlite；单元测试进程没有 App 沙箱容器，
+        // 会在 ModelContainer 创建时 fatalError。这里改注入内存容器。
+        let container = try PersistenceService.inMemoryContainer()
+        let defaultPlugins = DefaultPluginAssembly().makePlugins().map { plugin -> any SuperPlugin in
+            if plugin is PersistencePlugin {
+                return PersistencePlugin(container: container)
+            }
+            return plugin
+        }
+        let kernel = try await FactoryNetto.makeKernelAsync(
+            pluginAssembly: TestPluginAssembly(plugins: defaultPlugins)
+        )
         let settings = try XCTUnwrap(kernel.resolveProvider((any SettingViewProviding).self))
 
         XCTAssertFalse(settings.entries.isEmpty, "设置入口应在内核启动后完成注册")
