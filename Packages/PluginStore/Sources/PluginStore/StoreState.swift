@@ -41,8 +41,7 @@ final class StoreState: ObservableObject, LogPrefixed {
 
     // 校准：从当前权益拉取并写入本地状态
     static func calibrateFromCurrentEntitlements() async {
-        var detectedTier: SubscriptionTier = .none
-        var detectedExpire: Date?
+        var transactions: [EntitlementTransaction] = []
 
         os_log("\(self.t)🔄 开始校准当前权益...")
 
@@ -54,6 +53,47 @@ final class StoreState: ObservableObject, LogPrefixed {
 
             os_log("\(self.t)📋 检查交易: \(transaction.productID), 类型: \(transaction.productType.rawValue)")
 
+            transactions.append(
+                EntitlementTransaction(
+                    productID: transaction.productID,
+                    productType: transaction.productType,
+                    expirationDate: transaction.expirationDate
+                )
+            )
+        }
+
+        let info = aggregatedEntitlement(from: transactions)
+
+        os_log("\(self.t)🎯 校准结果: detectedTier=\(info.tier.rawValue), detectedExpire=\(info.expiresAt?.description ?? "nil")")
+        // 插件关闭（storeTask 已取消）：跳过收尾写入，避免覆盖关闭后的状态。
+        guard !Task.isCancelled else {
+            os_log("\(self.t)⏭️ 校准任务已取消，跳过写入")
+            return
+        }
+        update(entitlement: info)
+    }
+}
+
+/// 交易凭据摘要（纯值；把 StoreKit 交易压缩成权益聚合所需的最小信息）。
+///
+/// 存在意义：StoreKit 的 `Transaction` 没有公开构造入口，单测无法构造交易对象；
+/// 权益聚合只用到产品 ID / 产品类型 / 到期时间三个字段，用本摘要承载即可。
+struct EntitlementTransaction: Sendable {
+    let productID: String
+    let productType: Product.ProductType
+    let expirationDate: Date?
+}
+
+extension StoreState {
+    /// 纯逻辑：由交易凭据摘要聚合权益（`calibrateFromCurrentEntitlements` 的聚合内核）。
+    ///
+    /// - Note: 只统计自动续订与非续订订阅；消耗型/一次性解锁不授予订阅权益。
+    ///   非续订订阅仅在「购买日起一年内未过期」时计入到期时间。
+    static func aggregatedEntitlement(from transactions: [EntitlementTransaction]) -> PurchaseInfo {
+        var detectedTier: SubscriptionTier = .none
+        var detectedExpire: Date?
+
+        for transaction in transactions {
             switch transaction.productType {
             case .autoRenewable:
                 let t = StoreService.tier(for: transaction.productID)
@@ -94,12 +134,6 @@ final class StoreState: ObservableObject, LogPrefixed {
             }
         }
 
-        os_log("\(self.t)🎯 校准结果: detectedTier=\(detectedTier.rawValue), detectedExpire=\(detectedExpire?.description ?? "nil")")
-        // 插件关闭（storeTask 已取消）：跳过收尾写入，避免覆盖关闭后的状态。
-        guard !Task.isCancelled else {
-            os_log("\(self.t)⏭️ 校准任务已取消，跳过写入")
-            return
-        }
-        update(entitlement: PurchaseInfo(tier: detectedTier, expiresAt: detectedExpire))
+        return PurchaseInfo(tier: detectedTier, expiresAt: detectedExpire)
     }
 }

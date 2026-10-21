@@ -151,26 +151,21 @@ public enum StoreService: LogPrefixed {
             do {
                 let transaction: Transaction = try checkVerified(result)
 
-                switch transaction.productType {
-                case .nonConsumable:
-                    if let car = cars.first(where: { $0.id == transaction.productID }) {
-                        purchasedCars.append(car)
-                    }
-                case .nonRenewable:
-                    if let nonRenewable = nonRenewables.first(where: { $0.id == transaction.productID }),
-                       transaction.productID == "nonRenewing.standard" {
-                        let currentDate = Date()
-                        let expirationDate = Calendar(identifier: .gregorian)
-                            .date(byAdding: DateComponents(year: 1), to: transaction.purchaseDate)!
-                        if currentDate < expirationDate {
-                            purchasedNonRenewableSubscriptions.append(nonRenewable)
-                        }
-                    }
-                case .autoRenewable:
-                    if let subscription = subscriptions.first(where: { $0.id == transaction.productID }) {
-                        purchasedSubscriptions.append(subscription)
-                    }
-                default:
+                switch Self.purchasedProduct(
+                    productID: transaction.productID,
+                    productType: transaction.productType,
+                    purchaseDate: transaction.purchaseDate,
+                    cars: cars,
+                    subscriptions: subscriptions,
+                    nonRenewables: nonRenewables
+                ) {
+                case .car(let car):
+                    purchasedCars.append(car)
+                case .nonRenewable(let nonRenewable):
+                    purchasedNonRenewableSubscriptions.append(nonRenewable)
+                case .subscription(let subscription):
+                    purchasedSubscriptions.append(subscription)
+                case nil:
                     break
                 }
             } catch {
@@ -184,6 +179,59 @@ public enum StoreService: LogPrefixed {
             nonRenewables: purchasedNonRenewableSubscriptions,
             subscriptions: purchasedSubscriptions
         )
+    }
+
+    /// 已购商品归类（纯值；`fetchPurchasedLists` 的判定结果）。
+    enum PurchasedProduct: Sendable, Equatable {
+        /// 一次性解锁（nonConsumable）。
+        case car(ProductDTO)
+        /// 非续订订阅（nonRenewable，且仍在有效期内）。
+        case nonRenewable(ProductDTO)
+        /// 自动续订订阅（autoRenewable）。
+        case subscription(ProductDTO)
+    }
+
+    /// 纯逻辑：单笔交易的已购归类（`fetchPurchasedLists` 的判定内核）。
+    ///
+    /// 抽成独立方法的原因：StoreKit 的 `Transaction` 没有公开构造入口，
+    /// 单测无法构造交易对象；把「交易 → 已购清单」的判定内核独立出来后，
+    /// 可直接用 `Product.ProductType` 覆盖全部分类分支。
+    ///
+    /// - Parameters:
+    ///   - productID: 交易的产品 ID。
+    ///   - productType: StoreKit 产品类型。
+    ///   - purchaseDate: 购买日期（非续订订阅的一年有效期从该日期起算）。
+    ///   - cars: 已知的一次性解锁候选清单。
+    ///   - subscriptions: 已知的自动续订订阅候选清单。
+    ///   - nonRenewables: 已知的非续订订阅候选清单。
+    ///   - now: 当前时间（非续订订阅有效期判定基准）。
+    /// - Returns: 归类结果；不计入任何清单时为 nil。
+    static func purchasedProduct(
+        productID: String,
+        productType: Product.ProductType,
+        purchaseDate: Date,
+        cars: [ProductDTO],
+        subscriptions: [ProductDTO],
+        nonRenewables: [ProductDTO],
+        now: Date = Date()
+    ) -> PurchasedProduct? {
+        switch productType {
+        case .nonConsumable:
+            guard let car = cars.first(where: { $0.id == productID }) else { return nil }
+            return .car(car)
+        case .nonRenewable:
+            guard let nonRenewable = nonRenewables.first(where: { $0.id == productID }),
+                  productID == "nonRenewing.standard" else { return nil }
+            let expirationDate = Calendar(identifier: .gregorian)
+                .date(byAdding: DateComponents(year: 1), to: purchaseDate)!
+            guard now < expirationDate else { return nil }
+            return .nonRenewable(nonRenewable)
+        case .autoRenewable:
+            guard let subscription = subscriptions.first(where: { $0.id == productID }) else { return nil }
+            return .subscription(subscription)
+        default:
+            return nil
+        }
     }
 
     public static func tier(for productId: String) -> SubscriptionTier {
@@ -209,22 +257,45 @@ public enum StoreService: LogPrefixed {
             return Date.distantPast
         }
 
-        switch status.state {
+        return expirationDate(
+            for: status.state,
+            transactionExpirationDate: transaction.expirationDate,
+            gracePeriodExpirationDate: renewalInfo.gracePeriodExpirationDate
+        )
+    }
+
+    /// 纯逻辑：由续订状态推导到期时间（`computeExpirationDate(from:)` 的判定内核）。
+    ///
+    /// 抽成独立方法的原因：StoreKit 的 `Product.SubscriptionInfo.Status` 没有公开
+    /// 构造入口，单测无法构造；把「状态 → 到期时间」的判定内核独立出来后，
+    /// 可直接用 `RenewalState` 覆盖全部状态分支。
+    ///
+    /// - Parameters:
+    ///   - state: StoreKit 续订状态。
+    ///   - transactionExpirationDate: 交易到期时间（nil 视为无到期时间）。
+    ///   - gracePeriodExpirationDate: 宽限期截止时间（nil 视为无宽限期）。
+    /// - Returns: 到期时间；无法判定时为 `Date.distantPast`。
+    static func expirationDate(
+        for state: RenewalState,
+        transactionExpirationDate: Date?,
+        gracePeriodExpirationDate: Date?
+    ) -> Date {
+        switch state {
         case .subscribed:
-            if let expirationDate = transaction.expirationDate {
+            if let expirationDate = transactionExpirationDate {
                 return expirationDate
             } else {
                 return Date.distantPast
             }
         case .expired:
-            if let expirationDate = transaction.expirationDate {
+            if let expirationDate = transactionExpirationDate {
                 return expirationDate
             }
             return Date.distantPast
         case .revoked:
             return Date.distantPast
         case .inGracePeriod:
-            if let untilDate = renewalInfo.gracePeriodExpirationDate {
+            if let untilDate = gracePeriodExpirationDate {
                 return untilDate
             } else {
                 return Date.distantPast

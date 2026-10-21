@@ -240,6 +240,23 @@ struct StoreDTOTests {
         #expect(ProductGroupsDTO.createSubscriptionGroups(from: []).isEmpty)
     }
 
+    // MARK: - category(for:)
+
+    @Test("category：StoreKit 商品类型映射到 DTO 分类")
+    func categoryMapping() {
+        #expect(ProductGroupsDTO.category(for: .consumable) == .consumable)
+        #expect(ProductGroupsDTO.category(for: .nonConsumable) == .nonConsumable)
+        #expect(ProductGroupsDTO.category(for: .autoRenewable) == .autoRenewable)
+        #expect(ProductGroupsDTO.category(for: .nonRenewable) == .nonRenewable)
+    }
+
+    @Test("category：未知商品类型回退 unknown")
+    func categoryFallsBackToUnknown() {
+        // 构造一个 StoreKit 未定义的商品类型，覆盖 default 分支。
+        let unknown = Product.ProductType(rawValue: "futureType")
+        #expect(ProductGroupsDTO.category(for: unknown) == .unknown)
+    }
+
     // MARK: - 订阅 DTO
 
     @Test("SubscriptionInfoDTO：status 缺省为空数组")

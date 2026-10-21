@@ -69,28 +69,7 @@ public final class PluginStore: SuperPlugin, StoreProviding {
 
     public func loadProducts() async throws -> [StoreProductSnapshot] {
         let groups = try await StoreService.fetchAllProducts()
-        var result: [StoreProductSnapshot] = []
-        for dto in groups.cars + groups.nonRenewables + groups.fuel {
-            result.append(StoreProductSnapshot(
-                id: dto.id,
-                displayName: dto.displayName,
-                price: dto.displayPrice,
-                tier: StoreTier(rawValue: StoreConfig.tier(for: dto.id).rawValue) ?? .none,
-                isSubscription: false
-            ))
-        }
-        for group in groups.subscriptionGroups {
-            for dto in group.subscriptions {
-                result.append(StoreProductSnapshot(
-                    id: dto.id,
-                    displayName: dto.displayName,
-                    price: dto.displayPrice,
-                    tier: StoreTier(rawValue: StoreConfig.tier(for: dto.id).rawValue) ?? .none,
-                    isSubscription: true
-                ))
-            }
-        }
-        return result
+        return Self.productSnapshots(from: groups)
     }
 
     public func purchase(_ productID: String) async throws {
@@ -117,6 +96,37 @@ public final class PluginStore: SuperPlugin, StoreProviding {
     }
 
     // MARK: - Private
+
+    /// 纯逻辑：商品分组 → 中立商品快照列表（`loadProducts` 的映射内核）。
+    ///
+    /// 抽成独立方法的原因：拉取商品依赖真实 App Store 会话，单测不可达；
+    /// 映射本身不依赖 StoreKit，可直接用 `ProductGroupsDTO` 覆盖。
+    ///
+    /// - Note: 顺序与旧实现一致——一次性解锁/非续订/消耗型在前，自动续订订阅在后。
+    static func productSnapshots(from groups: ProductGroupsDTO) -> [StoreProductSnapshot] {
+        var result: [StoreProductSnapshot] = []
+        for dto in groups.cars + groups.nonRenewables + groups.fuel {
+            result.append(StoreProductSnapshot(
+                id: dto.id,
+                displayName: dto.displayName,
+                price: dto.displayPrice,
+                tier: StoreTier(rawValue: StoreConfig.tier(for: dto.id).rawValue) ?? .none,
+                isSubscription: false
+            ))
+        }
+        for group in groups.subscriptionGroups {
+            for dto in group.subscriptions {
+                result.append(StoreProductSnapshot(
+                    id: dto.id,
+                    displayName: dto.displayName,
+                    price: dto.displayPrice,
+                    tier: StoreTier(rawValue: StoreConfig.tier(for: dto.id).rawValue) ?? .none,
+                    isSubscription: true
+                ))
+            }
+        }
+        return result
+    }
 
     private func mapEntitlement(_ info: PurchaseInfo) -> StoreEntitlementSnapshot {
         StoreEntitlementSnapshot(

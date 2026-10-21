@@ -33,7 +33,7 @@ public struct ProductGroupsDTO: Hashable, Sendable {
         var newFuel: [Product] = []
 
         for product in products {
-            switch product.type {
+            switch Self.category(for: product.type) {
             case .consumable:
                 newFuel.append(product)
             case .nonConsumable:
@@ -48,13 +48,36 @@ public struct ProductGroupsDTO: Hashable, Sendable {
         }
 
         self.cars = newCars.map { ProductDTO.toDTO($0, kind: .nonConsumable) }
-        
+
         // 将订阅产品按组聚合
         let subscriptionDTOs = newSubscriptions.map { ProductDTO.toDTO($0, kind: .autoRenewable) }
         self.subscriptionGroups = Self.createSubscriptionGroups(from: subscriptionDTOs)
-        
+
         self.nonRenewables = newNonRenewables.map { ProductDTO.toDTO($0, kind: .nonRenewable) }
         self.fuel = newFuel.map { ProductDTO.toDTO($0, kind: .consumable) }
+    }
+
+    /// 商品类型 → 分组归属（纯逻辑；`init(products:)` 的分类内核）。
+    ///
+    /// 抽成独立方法的原因：StoreKit 的 `Product` 没有公开构造入口，单测无法构造
+    /// 商品；把「商品类型 → DTO 分类」的映射独立出来后，可直接用
+    /// `Product.ProductType` 覆盖全部分类分支。
+    ///
+    /// - Parameter productType: StoreKit 商品类型。
+    /// - Returns: 对应的 DTO 分类；未知类型回退为 `.unknown`（不进入任何分组）。
+    static func category(for productType: Product.ProductType) -> ProductDTO.ProductKind {
+        switch productType {
+        case .consumable:
+            return .consumable
+        case .nonConsumable:
+            return .nonConsumable
+        case .autoRenewable:
+            return .autoRenewable
+        case .nonRenewable:
+            return .nonRenewable
+        default:
+            return .unknown
+        }
     }
 }
 
