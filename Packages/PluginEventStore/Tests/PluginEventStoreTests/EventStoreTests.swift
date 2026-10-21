@@ -202,7 +202,10 @@ final class EventStoreTests: XCTestCase {
 
     func testPluginRegistersAndMaintains() async throws {
         let kernel = KernelCoreContainer()
-        try await kernel.startAsync(plugins: [PersistencePlugin(), PluginAppSettingsPluginForTest(), PluginEventStore()])
+        // 注入内存容器：生产路径依赖 App 沙箱容器（~/Documents/debug/db.sqlite），
+        // 单元测试进程没有该容器会在 ModelContainer 创建时 fatalError。
+        let persistence = PersistencePlugin(container: try PersistenceService.inMemoryContainer())
+        try await kernel.startAsync(plugins: [persistence, PluginAppSettingsPluginForTest(), PluginEventStore()])
         XCTAssertNotNil(kernel.resolveProvider(FirewallEventsProviding.self))
         let store = kernel.resolveProvider(FirewallEventsProviding.self) as? EventStore
         XCTAssertNotNil(store)
