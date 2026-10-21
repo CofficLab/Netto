@@ -65,7 +65,9 @@ final class PersistenceTests: XCTestCase {
 
     func testPersistencePluginRegistersService() throws {
         let kernel = KernelCoreContainer()
-        let plugin = PersistencePlugin()
+        // 注入内存容器：生产路径依赖 App 沙箱容器（~/Documents/debug/db.sqlite），
+        // 单元测试进程拿不到该容器会在创建 ModelContainer 时 fatalError。
+        let plugin = PersistencePlugin(container: try makeContainer())
         try kernel.start(plugins: [plugin])
         XCTAssertNotNil(kernel.resolveProvider(PersistenceProviding.self))
         // PersistenceProviding 的 container 与生产 schema 一致。

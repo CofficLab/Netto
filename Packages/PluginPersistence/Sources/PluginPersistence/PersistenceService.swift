@@ -69,10 +69,21 @@ public final class PersistencePlugin: SuperPlugin {
         policy: .required
     )
 
-    public init() {}
+    /// 注入用的容器。生产环境为 nil，此时按生产配置创建 db.sqlite 容器；
+    /// 单元测试可传入内存容器，避免依赖 App 沙箱容器。
+    private let containerOverride: ModelContainer?
+
+    public init(container: ModelContainer? = nil) {
+        self.containerOverride = container
+    }
 
     public func onBoot(kernel: KernelCoreContainer) throws {
-        let service = PersistenceService(production: ())
+        let service: PersistenceService
+        if let containerOverride {
+            service = PersistenceService(container: containerOverride)
+        } else {
+            service = PersistenceService(production: ())
+        }
         try kernel.registerProvider(PersistenceProviding.self, service)
     }
 }
