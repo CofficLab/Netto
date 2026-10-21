@@ -84,7 +84,10 @@ final class AppSettingsStoreTests: XCTestCase {
 
     func testPluginRegistersProvider() throws {
         let kernel = KernelCoreContainer()
-        try kernel.start(plugins: [PersistencePlugin(), PluginAppSettings()])
+        // 注入内存容器：生产路径依赖 App 沙箱容器（~/Documents/debug/db.sqlite），
+        // 单元测试进程没有该容器会在 ModelContainer 创建时 fatalError。
+        let persistence = PersistencePlugin(container: try PersistenceService.inMemoryContainer())
+        try kernel.start(plugins: [persistence, PluginAppSettings()])
         XCTAssertNotNil(kernel.resolveProvider(AppSettingsProviding.self))
         let store = kernel.resolveProvider(AppSettingsProviding.self)
         XCTAssertNotNil(store)
