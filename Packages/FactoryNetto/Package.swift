@@ -26,7 +26,7 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.0.1"),
         .package(name: "ProviderStore", path: "../ProviderStore"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0"),
-        .package(url: "https://github.com/CofficLab/LumiPluginThemePack.git", from: "1.1.0"),
+        .package(url: "https://github.com/CofficLab/LumiPluginThemePack.git", from: "1.2.1"),
         .package(name: "PluginFirewallDashboard", path: "../PluginFirewallDashboard"),
         .package(name: "PluginFirewall", path: "../PluginFirewall"),
         .package(name: "PluginStore", path: "../PluginStore"),
