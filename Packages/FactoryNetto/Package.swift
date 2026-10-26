@@ -13,7 +13,7 @@ let package = Package(
         .library(name: "FactoryNetto", targets: ["FactoryNetto"])
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiThemePack.git", from: "1.0.10"),
+        .package(url: "https://github.com/CofficLab/LumiThemePack.git", from: "1.0.12"),
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
         .package(name: "PluginPersistence", path: "../PluginPersistence"),
         .package(name: "PluginAppSettings", path: "../PluginAppSettings"),
@@ -23,9 +23,9 @@ let package = Package(
         .package(name: "ProviderFirewall", path: "../ProviderFirewall"),
         .package(name: "ProviderFirewallEvents", path: "../ProviderFirewallEvents"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
-        .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.0.1"),
+        .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.1.0"),
         .package(name: "ProviderStore", path: "../ProviderStore"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.9.0"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.13.0"),
         .package(url: "https://github.com/CofficLab/LumiPluginThemePack.git", from: "1.2.1"),
         .package(name: "PluginFirewallDashboard", path: "../PluginFirewallDashboard"),
         .package(name: "PluginFirewall", path: "../PluginFirewall"),
@@ -33,7 +33,7 @@ let package = Package(
         .package(name: "PluginHostActions", path: "../PluginHostActions"),
         .package(name: "ProviderMenuBar", path: "../ProviderMenuBar"),
         .package(name: "ProviderViewEnvironment", path: "../ProviderViewEnvironment"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.10.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
     ],
     targets: [
         .target(

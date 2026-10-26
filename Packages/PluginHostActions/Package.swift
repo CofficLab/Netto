@@ -14,10 +14,10 @@ let package = Package(
         .package(name: "ProviderAppSettings", path: "../ProviderAppSettings"),
         .package(name: "ProviderFirewallEvents", path: "../ProviderFirewallEvents"),
         .package(name: "ProviderFirewall", path: "../ProviderFirewall"),
-        .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.0.1"),
+        .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.1.0"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
         .package(name: "ProviderViewEnvironment", path: "../ProviderViewEnvironment"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.10.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
     ],
     targets: [
         .target(

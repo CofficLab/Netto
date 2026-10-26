@@ -15,11 +15,11 @@ let package = Package(
         .package(path: "../ProviderAppSettings"),
         .package(path: "../ProviderFirewall"),
         .package(path: "../ProviderFirewallEvents"),
-        .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.0.1"),
+        .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.1.0"),
         .package(path: "../ProviderShell"),
         .package(path: "../ProviderStore"),
         .package(path: "../ProviderMenuBar"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.10.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
     ],
     targets: [
         .target(
