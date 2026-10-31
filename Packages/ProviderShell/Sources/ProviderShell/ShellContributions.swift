@@ -40,12 +40,29 @@ public protocol SettingsProviding: AnyObject, Sendable {
 
 /// 窗口请求（typed，替代 NotificationCenter 对象传递）。
 public struct WindowRequest: Sendable, Equatable {
+    /// 目标窗口 ID（见 `ShellWindowID`）。
     public let windowID: String
+    /// 窗口标题（见 `ShellWindowTitle`）。
     public let title: String
+    /// 深链参数：打开后要选中的设置入口 ID。
+    ///
+    /// 仅设置窗口有意义（见 `ShellWindowID.settings`）；其余窗口忽略该字段。
+    /// 宿主在打开窗口前用它选中对应入口，实现「跳到某个设置页」。
+    public let entryID: String?
 
-    public init(windowID: String, title: String) {
+    public init(windowID: String, title: String, entryID: String? = nil) {
         self.windowID = windowID
         self.title = title
+        self.entryID = entryID
+    }
+
+    /// 便捷构造：请求打开设置窗口（可带深链入口）。
+    public static func settings(entryID: String? = nil) -> WindowRequest {
+        WindowRequest(
+            windowID: ShellWindowID.settings,
+            title: ShellWindowTitle.settings,
+            entryID: entryID
+        )
     }
 }
 

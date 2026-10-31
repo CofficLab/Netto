@@ -14,6 +14,7 @@ public final class ShellCenter: ObservableObject,
     ShellToolbarProviding,
     SettingsProviding,
     WindowProviding,
+    WindowRoutingProviding,
     ToastProviding
 {
     /// 工具栏贡献：ID → 贡献。
@@ -30,6 +31,12 @@ public final class ShellCenter: ObservableObject,
 
     /// 最近一次窗口请求。
     @Published public private(set) var lastWindowRequest: WindowRequest?
+
+    /// 最近一次请求选中的设置入口 ID（深链）。
+    ///
+    /// 宿主在打开设置窗口前用它调用 `SettingViewProviding.selectEntry(id:)`，
+    /// 保证窗口首次呈现就落在目标入口上。
+    @Published public private(set) var lastSettingsEntryID: String?
 
     /// Host 注入的窗口打开回调（App 侧在装配时设置）。
     public var onRequestOpen: (@MainActor (WindowRequest) -> Void)?
@@ -98,6 +105,36 @@ public final class ShellCenter: ObservableObject,
 
     public func hideWindow() {
         currentContent = nil
+    }
+
+    // MARK: - WindowRoutingProviding
+
+    /// 打开设置窗口。
+    ///
+    /// 深链入口在**打开之前**先选中，保证窗口首次呈现时右侧就是目标页面
+    /// （否则会短暂显示旧入口再跳转）。
+    public func openSettings(_ request: SettingsOpenRequest) {
+        if let entryID = request.entryID {
+            lastSettingsEntryID = entryID
+        }
+        requestOpen(WindowRequest(
+            windowID: ShellWindowID.settings,
+            title: ShellWindowTitle.settings,
+            entryID: request.entryID
+        ))
+    }
+
+    /// 打开指定 ID 的窗口。
+    public func openWindow(windowID: String, entryID: String?) {
+        if windowID == ShellWindowID.settings {
+            openSettings(SettingsOpenRequest(entryID: entryID))
+            return
+        }
+        requestOpen(WindowRequest(
+            windowID: windowID,
+            title: ShellWindowTitle.plugin,
+            entryID: entryID
+        ))
     }
 
     // MARK: - ToastProviding
