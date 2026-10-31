@@ -3,6 +3,7 @@ import ProviderAppSettings
 import ProviderFirewall
 import ProviderFirewallEvents
 import ProviderStore
+import ProviderStoreKit
 import SwiftUI
 import Testing
 @testable import ProviderViewEnvironment

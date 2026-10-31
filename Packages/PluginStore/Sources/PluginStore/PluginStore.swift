@@ -4,6 +4,7 @@ import OSLog
 import ProviderShell
 import ProviderSettingView
 import ProviderStore
+import ProviderStoreKit
 import StoreKit
 import SwiftUI
 
@@ -64,7 +65,7 @@ public final class PluginStore: SuperPlugin, StoreProviding {
     // MARK: - StoreProviding
 
     public var entitlement: StoreEntitlementSnapshot {
-        mapEntitlement(StoreState.cachedPurchaseInfo())
+        StoreState.cachedPurchaseInfo()
     }
 
     public func loadProducts() async throws -> [StoreProductSnapshot] {
@@ -77,8 +78,8 @@ public final class PluginStore: SuperPlugin, StoreProviding {
     }
 
     public func restore() async throws {
-        // StoreKit 2 无独立 restore API：重放 currentEntitlements 校准本地状态。
-        await StoreState.calibrateFromCurrentEntitlements()
+        // 恢复走共享机制层的 AppStore.sync()，交易监听随后收到凭据并更新权益。
+        try await StoreService.restorePurchases()
     }
 
     public func observeEntitlement() -> AsyncStream<StoreEntitlementSnapshot> {
@@ -110,8 +111,8 @@ public final class PluginStore: SuperPlugin, StoreProviding {
                 id: dto.id,
                 displayName: dto.displayName,
                 price: dto.displayPrice,
-                tier: StoreTier(rawValue: StoreConfig.tier(for: dto.id).rawValue) ?? .none,
-                isSubscription: false
+                kind: .nonConsumable,
+                tier: NettoStoreCatalog.shared.tier(for: dto.id)
             ))
         }
         for group in groups.subscriptionGroups {
@@ -120,25 +121,17 @@ public final class PluginStore: SuperPlugin, StoreProviding {
                     id: dto.id,
                     displayName: dto.displayName,
                     price: dto.displayPrice,
-                    tier: StoreTier(rawValue: StoreConfig.tier(for: dto.id).rawValue) ?? .none,
-                    isSubscription: true
+                    kind: .autoRenewable,
+                    tier: NettoStoreCatalog.shared.tier(for: dto.id)
                 ))
             }
         }
         return result
     }
 
-    private func mapEntitlement(_ info: PurchaseInfo) -> StoreEntitlementSnapshot {
-        StoreEntitlementSnapshot(
-            tier: StoreTier(rawValue: info.tier.rawValue) ?? .none,
-            expiresAt: info.expiresAt
-        )
-    }
-
     /// 启动交易监听与权益校准（可取消；校准先于监听，恢复旧 bootstrap 语义）。
     private func runStoreServices() async {
-        await StoreState.calibrateFromCurrentEntitlements()
-        await StoreService.observeTransactionUpdates()
+        await StoreService.bootstrap()
     }
 }
 

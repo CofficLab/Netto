@@ -8,6 +8,7 @@ import ProviderAppSettings
 import ProviderFirewall
 import ProviderFirewallEvents
 import ProviderStore
+import ProviderStoreKit
 import SwiftUI
 
 /// App 装配宿主环境 —— 唯一在 App 初始化期装配并缓存核心服务的对象。

@@ -3,6 +3,7 @@ import OSLog
 import ProviderShell
 import ProviderAppSettings
 import ProviderStore
+import ProviderStoreKit
 import SwiftUI
 
 private struct AppActionContent: View, LogPrefixed {

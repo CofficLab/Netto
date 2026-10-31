@@ -12,7 +12,8 @@ let package = Package(
         .package(path: "../ProviderAppSettings"),
         .package(path: "../ProviderFirewall"),
         .package(path: "../ProviderFirewallEvents"),
-        .package(path: "../ProviderStore"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.17.0"),
+        .package(name: "ProviderStoreKit", path: "../ProviderStoreKit"),
     ],
     targets: [
         .target(
@@ -21,7 +22,8 @@ let package = Package(
                 "ProviderAppSettings",
                 "ProviderFirewall",
                 "ProviderFirewallEvents",
-                "ProviderStore",
+                .product(name: "ProviderStore", package: "LumiProviders"),
+                "ProviderStoreKit",
             ]
         ),
         .testTarget(

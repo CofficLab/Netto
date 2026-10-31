@@ -10,6 +10,7 @@ import ProviderFirewall
 import ProviderFirewallEvents
 import ProviderSettingView
 import ProviderStore
+import ProviderStoreKit
 import ProviderTheme
 import ProviderMenuBar
 import SwiftUI

@@ -3,21 +3,22 @@ import KernelCore
 import ProviderShell
 import ProviderSettingView
 import ProviderStore
+import ProviderStoreKit
 import Testing
 @testable import PluginStore
 
 /// StoreConfig 产品映射测试（不触碰 StoreKit）。
 struct StoreConfigTests {
     @Test func productTierMapping() {
-        // 已知产品 ID → 等级映射（与 StoreConfig.productTier 一致）。
-        #expect(StoreConfig.tier(for: "com.coffic.netto.monthly") == .pro)
-        #expect(StoreConfig.tier(for: "com.coffic.netto.annual") == .pro)
+        // 已知产品 ID → 等级映射（与 NettoStoreCatalog.shared.productTiers 一致）。
+        #expect(NettoStoreCatalog.shared.tier(for: "com.coffic.netto.monthly") == .pro)
+        #expect(NettoStoreCatalog.shared.tier(for: "com.coffic.netto.annual") == .pro)
         // 未知 ID 回退 none。
-        #expect(StoreConfig.tier(for: "com.example.unknown") == .none)
+        #expect(NettoStoreCatalog.shared.tier(for: "com.example.unknown") == .none)
     }
 
     @Test func allProductIdsUniqueAndNonEmpty() {
-        let ids = StoreConfig.allProductIds
+        let ids = NettoStoreCatalog.shared.allProductIds
         #expect(!ids.isEmpty)
         #expect(Set(ids).count == ids.count)
     }
@@ -37,7 +38,7 @@ struct StoreStateTests {
         let none = StoreState.cachedPurchaseInfo()
         #expect(none.tier == .none)
 
-        StoreState.update(entitlement: PurchaseInfo(tier: .pro, expiresAt: Date(timeIntervalSinceNow: 3600)))
+        StoreState.update(entitlement: StoreEntitlementSnapshot(tier: .pro, expiresAt: Date(timeIntervalSinceNow: 3600)))
         let loaded = StoreState.cachedPurchaseInfo()
         #expect(loaded.tier == .pro)
         #expect(loaded.expiresAt != nil)
@@ -50,7 +51,7 @@ struct StoreStateTests {
         let plugin = PluginStore()
         StoreState.clear()
         #expect(plugin.entitlement.tier == .none)
-        StoreState.update(entitlement: PurchaseInfo(tier: .ultimate, expiresAt: Date(timeIntervalSinceNow: 7200)))
+        StoreState.update(entitlement: StoreEntitlementSnapshot(tier: .ultimate, expiresAt: Date(timeIntervalSinceNow: 7200)))
         #expect(plugin.entitlement.tier == .ultimate)
         #expect(plugin.entitlement.isProOrHigher)
         StoreState.clear()
@@ -64,7 +65,7 @@ struct StoreStateTests {
         await Task.yield()
 
         // 触发一次更新，应收到快照。
-        StoreState.update(entitlement: PurchaseInfo(tier: .pro, expiresAt: Date(timeIntervalSinceNow: 3600)))
+        StoreState.update(entitlement: StoreEntitlementSnapshot(tier: .pro, expiresAt: Date(timeIntervalSinceNow: 3600)))
 
         // 收集直到收到 .pro（当前快照或变更通知都算；容忍订阅竞态）。
         let first = await firstPro(of: stream, timeoutSeconds: 3)

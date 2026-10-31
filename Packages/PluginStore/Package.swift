@@ -14,7 +14,9 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
-        .package(name: "ProviderStore", path: "../ProviderStore"),
+        .package(url: "https://github.com/CofficLab/LumiStoreKit.git", from: "1.0.1"),
+        .package(name: "ProviderStoreKit", path: "../ProviderStoreKit"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.17.0"),
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.1.0"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.11.1"),
@@ -24,7 +26,9 @@ let package = Package(
             name: "PluginStore",
             dependencies: [
                 .product(name: "KernelCore", package: "LumiKernel"),
-                "ProviderStore",
+                .product(name: "ProviderStore", package: "LumiProviders"),
+                .product(name: "KitStoreKit", package: "LumiStoreKit"),
+                "ProviderStoreKit",
                 .product(name: "ProviderSettingView", package: "LumiSettings"),
                 "ProviderShell",
                 "LumiUI",
@@ -32,7 +36,7 @@ let package = Package(
         ),
         .testTarget(
             name: "PluginStoreTests",
-            dependencies: ["PluginStore", .product(name: "KernelCore", package: "LumiKernel"), "ProviderStore"]
+            dependencies: ["PluginStore", .product(name: "KernelCore", package: "LumiKernel"), .product(name: "ProviderStore", package: "LumiProviders"), .product(name: "KitStoreKit", package: "LumiStoreKit"), "ProviderStoreKit"]
         ),
     ]
 )

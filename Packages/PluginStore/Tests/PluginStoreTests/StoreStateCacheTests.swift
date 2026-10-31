@@ -2,6 +2,7 @@ import Foundation
 import KernelCore
 import ProviderSettingView
 import ProviderStore
+import ProviderStoreKit
 import Testing
 @testable import PluginStore
 
@@ -45,7 +46,7 @@ extension StoreStateTests {
         @Test("校准：无权益时写入 none 权益")
         func calibrateWithoutEntitlementsWritesNone() async {
             resetSharedState()
-            await StoreState.calibrateFromCurrentEntitlements()
+            await StoreService.calibrateFromCurrentEntitlements()
             let cached = StoreState.cachedPurchaseInfo()
             #expect(cached.tier == .none)
             #expect(cached.expiresAt == nil)
@@ -54,7 +55,7 @@ extension StoreStateTests {
         @Test("StoreService 缓存读取入口与 StoreState 一致")
         func storeServiceCacheAccessors() {
             resetSharedState()
-            StoreState.update(entitlement: PurchaseInfo(tier: .ultimate, expiresAt: Date(timeIntervalSinceNow: 7200)))
+            StoreState.update(entitlement: StoreEntitlementSnapshot(tier: .ultimate, expiresAt: Date(timeIntervalSinceNow: 7200)))
 
             #expect(StoreService.cachedPurchaseInfo().tier == .ultimate)
             #expect(StoreService.tierCached() == .ultimate)

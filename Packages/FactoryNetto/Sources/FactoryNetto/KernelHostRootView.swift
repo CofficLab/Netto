@@ -7,6 +7,7 @@ import ProviderAppSettings
 import ProviderFirewall
 import ProviderFirewallEvents
 import ProviderStore
+import ProviderStoreKit
 import SwiftUI
 
 /// 主视图装配 —— FactoryNetto 生成的真实主界面（阶段 6 起替代阶段 3 占位）。

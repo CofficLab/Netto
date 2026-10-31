@@ -2,6 +2,7 @@ import ProviderAppSettings
 import ProviderFirewall
 import ProviderFirewallEvents
 import ProviderStore
+import ProviderStoreKit
 import SwiftUI
 
 // MARK: - 契约环境键
