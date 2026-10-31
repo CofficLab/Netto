@@ -36,9 +36,6 @@
       "path": "Packages/ProviderShell",
     }, {
       "kind": "local",
-      "path": "Packages/ProviderStore",
-    }, {
-      "kind": "local",
       "path": "Packages/NettoIPCContracts",
     }, {
       "kind": "local",
@@ -205,10 +202,6 @@
         }, {
           "package": "ProviderShell",
           "product-name": "ProviderShell",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "ProviderStore",
-          "product-name": "ProviderStore",
           "build-phase": { "build-phase": "frameworks" },
         },
       ],
