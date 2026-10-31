@@ -215,13 +215,18 @@ public enum FactoryNetto {
         guard let settings = kernel.resolveProvider(SettingViewProviding.self) else {
             return AnyView(BootstrapFailureView(title: "设置 Provider 未装配", message: "SettingViewProviding not registered"))
         }
-        let view = settings.makeSettingView()
+        // 刷新桥：上游 `SettingView` 读取的是非可观察 Provider 的
+        // `selectedEntryID`，自身 @State 又从未在 body 读取，导致点击左侧
+        // 入口后右侧详情不刷新。桥接层订阅变更并用 `.id()` 强制重建。
+        let view = SettingsViewRefreshBridge(provider: settings) {
+            settings.makeSettingView()
+        }
         // 复刻 Lumi ViewFactory：解析 ThemeProviding 并以主题感知视图包装
         // 设置窗口（切换主题即时同步 LumiUI 全局主题状态）。
         if let theme = kernel.resolveProvider(ThemeProviding.self) {
             return AnyView(ThemeHostingView(theme: theme, content: view))
         }
-        return view
+        return AnyView(view)
     }
 }
 

@@ -17,8 +17,17 @@ struct DBEventView: View {
     /// 事件契约来源：注入优先，其次环境。
     private var repo: FirewallEventsProviding? { injectedRepo ?? envRepo }
 
-    init(events: FirewallEventsProviding? = nil) {
+    /// 是否设置导航标题（`.navigationTitle`）。
+    ///
+    /// 默认 **false**：本视图作为「数据库」设置入口的详情内容嵌入设置窗口，
+    /// 而 SwiftUI 会把内容里的 `navigationTitle` 提升为**宿主窗口标题**，
+    /// 导致设置窗口标题被改写成「防火墙事件」。仅在独立窗口/预览场景需要
+    /// 标题时才开启。
+    private let showsNavigationTitle: Bool
+
+    init(events: FirewallEventsProviding? = nil, showsNavigationTitle: Bool = false) {
         self.injectedRepo = events
+        self.showsNavigationTitle = showsNavigationTitle
     }
 
     // 存储加载的事件数据
@@ -290,13 +299,30 @@ struct DBEventView: View {
             .padding(.horizontal)
             .padding(.bottom, 8)
         }
-        .navigationTitle("防火墙事件")
+        // 导航标题仅在明确开启时设置：SwiftUI 会把内容里的
+        // `navigationTitle` 提升为宿主窗口标题，嵌入设置窗口时会改写
+        // 「设置」窗口标题，因此默认不设置。
+        .modifier(OptInNavigationTitle(isEnabled: showsNavigationTitle, title: "防火墙事件"))
         .onAppear {
             // 视图出现时加载数据
             loadEvents()
         }
         .onReceive(Timer.publish(every: 5, on: .main, in: .common).autoconnect()) { _ in
             loadEvents()
+        }
+    }
+}
+
+/// 按开关应用 `navigationTitle` 的视图修饰器。
+private struct OptInNavigationTitle: ViewModifier {
+    let isEnabled: Bool
+    let title: String
+
+    func body(content: Content) -> some View {
+        if isEnabled {
+            content.navigationTitle(title)
+        } else {
+            content
         }
     }
 }
