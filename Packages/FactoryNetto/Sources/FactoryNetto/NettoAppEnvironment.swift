@@ -7,6 +7,7 @@ import ProviderShell
 import ProviderAppSettings
 import ProviderFirewall
 import ProviderFirewallEvents
+import ProviderSettingView
 import ProviderStore
 import ProviderStoreKit
 import SwiftUI
@@ -60,6 +61,12 @@ public final class AppEnvironment: ObservableObject {
     /// 设置窗口视图（`Window("设置")` 内容，Lumi 式：bootstrap 完成后装配
     /// 一次并缓存，绝不在 body 求值期间装配；仅渲染「通用」入口）。
     @Published private(set) var settingsWindowView: AnyView?
+
+    /// 窗口路由宿主（常驻）。
+    ///
+    /// 持有捕获到的 `openWindow` 与路由通知监听，生命周期 = App 生命周期。
+    /// 场景层（`NettoAppScenes`）负责把 `openWindow` 交给它。
+    public let router = SettingsWindowRouter()
 
     /// 防火墙契约（缓存，避免视图反复解析；bootstrap 后填充）。
     private(set) var firewall: FirewallProviding?
@@ -125,6 +132,11 @@ public final class AppEnvironment: ObservableObject {
             let kernel = try await FactoryNetto.makeKernelAsync(onProvidersRegistered: { [weak self, weak menuBarHost] kernel in
                 guard let self, let menuBarHost else { return }
                 self.kernel = kernel
+                // 窗口路由绑定必须**早于**菜单栏可交互：`install` 之后用户
+                // 立刻就能点「设置…」，此时 `onRequestOpen` 若还没挂上，
+                // 请求会被静默丢弃。共享 Provider（Shell / SettingView）
+                // 此时已注册，可以立即绑定。
+                self.bindWindowRouting(kernel: kernel)
                 menuBarHost.install(kernel: kernel, environment: self)
             })
             guard let shell = kernel.resolveProvider(ShellToolbarProviding.self) as? ShellCenter else {
@@ -149,6 +161,34 @@ public final class AppEnvironment: ObservableObject {
             os_log(.error, "AppEnvironment 内核启动失败: %{public}@", error.localizedDescription)
             self.phase = .failed(error.localizedDescription)
             return false
+        }
+    }
+
+    /// 绑定窗口路由（常驻宿主 → SwiftUI 窗口动作）。
+    ///
+    /// 必须在**常驻宿主**完成，不能放进设置窗口场景（那个场景从不创建 →
+    /// 鸡生蛋死锁：想打开设置窗口，得先有设置窗口）。
+    ///
+    /// - Parameter kernel: 已注册共享 Provider 的内核。
+    private func bindWindowRouting(kernel: KernelCoreContainer) {
+        // 深链用的设置视图契约。
+        router.attach(settingViewProvider: kernel.resolveProvider(SettingViewProviding.self))
+        // 规则变化 → 刷新菜单栏指示灯。
+        router.onAppRulesChanged = { [weak self] in
+            guard let self else { return }
+            Task { await self.refreshDeniedAppIndicator() }
+        }
+        // 打开欢迎窗口前先置位「展示引导内容」标记。
+        router.onRequestWelcomeContent = { [weak self] in
+            self?.shouldShowWelcomeWindow = true
+        }
+        // 常驻监听路由通知（生命周期 = App 生命周期）。
+        router.startObservingNotifications()
+        // 插件/UI 的窗口请求（ShellCenter.requestOpen）统一由路由宿主处理。
+        guard let shell = kernel.resolveProvider(ShellToolbarProviding.self) as? ShellCenter else { return }
+        shell.onRequestOpen = { [weak router] request in
+            guard let router else { return }
+            router.openWindow(windowID: request.windowID, entryID: request.entryID)
         }
     }
 

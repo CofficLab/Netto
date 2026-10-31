@@ -36,6 +36,7 @@ public struct DefaultProviderAssembly: ProviderAssembling {
         try kernel.registerProvider(ShellToolbarProviding.self, shell)
         try kernel.registerProvider(SettingsProviding.self, shell)
         try kernel.registerProvider(WindowProviding.self, shell)
+        try kernel.registerProvider(WindowRoutingProviding.self, shell)
         try kernel.registerProvider(ToastProviding.self, shell)
         try kernel.registerProvider(SettingViewProviding.self, DefaultSettingViewProviding())
         try kernel.registerProvider(ThemeProviding.self, DefaultThemeProviding())
