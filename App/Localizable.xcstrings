@@ -213,9 +213,6 @@
       },
       "shouldTranslate" : false
     },
-    "Plugin Window" : {
-
-    },
     "Port" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -430,9 +427,6 @@
         }
       }
     },
-    "初始化失败" : {
-
-    },
     "刷新" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -454,9 +448,6 @@
           }
         }
       }
-    },
-    "启动中…" : {
-
     },
     "在 Finder 中显示" : {
       "extractionState" : "stale",
@@ -865,12 +856,6 @@
         }
       }
     },
-    "正在初始化服务..." : {
-
-    },
-    "正在检查版本…" : {
-
-    },
     "每页显示:" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1024,12 +1009,6 @@
           }
         }
       }
-    },
-    "设置" : {
-
-    },
-    "请选择一个插件功能" : {
-
     },
     "辅助功能" : {
       "extractionState" : "stale",
