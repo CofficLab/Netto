@@ -12,7 +12,7 @@ let package = Package(
         .library(name: "ProviderStoreKit", targets: ["ProviderStoreKit"])
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.18.0"),
+        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.19.0"),
     ],
     targets: [
         .target(

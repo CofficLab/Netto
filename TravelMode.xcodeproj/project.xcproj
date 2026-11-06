@@ -65,7 +65,7 @@
       "kind": "remote",
       "repository": "https://github.com/CofficLab/LumiUI.git",
       "version": {
-        "up-to-next-major-version": "1.11.1",
+        "up-to-next-major-version": "1.12.0",
       },
     },
   ],
