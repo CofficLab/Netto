@@ -17,7 +17,7 @@
       "kind": "remote",
       "repository": "https://github.com/CofficLab/LumiKernel.git",
       "version": {
-        "branch": "main",
+        "up-to-next-major-version": "1.1.0",
       },
     }, {
       "kind": "local",
