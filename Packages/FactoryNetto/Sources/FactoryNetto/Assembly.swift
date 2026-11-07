@@ -9,6 +9,7 @@ import PluginPersistence
 import ProviderShell
 import PluginStore
 import PluginThemePack
+import PluginAbout
 import ProviderSettingView
 import ProviderTheme
 import ProviderMenuBar
@@ -66,6 +67,16 @@ public struct DefaultPluginAssembly: PluginAssembling {
             PluginStore(),            // order 40：StoreKit 服务与权益
             FirewallDashboardPlugin(), // order 60：贡献菜单栏 popover 主面板
             ThemePackPlugin(id: "com.yueyi.TravelMode.plugin.theme-pack", policy: .enabledByDefault),
+            // 「关于」入口（共享远程包 LumiPluginAbout，注入 TravelMode 品牌配置）。
+            // Netto 现已在官网更名为 TravelMode，故官网地址用 travelmode。
+            AboutPlugin(
+                id: "com.yueyi.TravelMode.plugin.about",
+                configuration: AboutConfiguration(
+                    officialWebsiteURLString: "https://coffic.cn/travelmode",
+                    privacyPolicyURLString: "https://coffic.cn/privacy",
+                    termsOfServiceURLString: "https://coffic.cn/terms"
+                )
+            ),
         ] + HostActionPluginAssembly.makePlugins()
     }
 }

@@ -27,6 +27,8 @@ let package = Package(
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.19.0"),
         .package(name: "ProviderStoreKit", path: "../ProviderStoreKit"),
         .package(url: "https://github.com/CofficLab/LumiPluginThemePack.git", from: "1.2.1"),
+        // 共享远程包：Coffic「关于」页（我们的应用 + 官网 / 隐私政策 / 服务条款）。
+        .package(url: "https://github.com/CofficLab/LumiPluginAbout.git", from: "2.0.0"),
         .package(name: "PluginFirewallDashboard", path: "../PluginFirewallDashboard"),
         .package(name: "PluginFirewall", path: "../PluginFirewall"),
         .package(name: "PluginStore", path: "../PluginStore"),
@@ -54,6 +56,7 @@ let package = Package(
                 "ProviderStoreKit",
                 .product(name: "ProviderTheme", package: "LumiProviders"),
                 .product(name: "PluginThemePack", package: "LumiPluginThemePack"),
+                .product(name: "PluginAbout", package: "LumiPluginAbout"),
                 "PluginFirewallDashboard",
                 "PluginFirewall",
                 "PluginStore",
