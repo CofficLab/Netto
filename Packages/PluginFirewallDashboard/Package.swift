@@ -19,7 +19,6 @@ let package = Package(
         .package(path: "../ProviderShell"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.19.0"),
         .package(name: "ProviderStoreKit", path: "../ProviderStoreKit"),
-        .package(path: "../ProviderMenuBar"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.12.0"),
     ],
     targets: [
@@ -33,7 +32,7 @@ let package = Package(
                 .product(name: "ProviderShell", package: "ProviderShell"),
                 .product(name: "ProviderStore", package: "LumiProviders"),
                 "ProviderStoreKit",
-                .product(name: "ProviderMenuBar", package: "ProviderMenuBar"),
+                .product(name: "ProviderMenuBar", package: "LumiProviders"),
                 .product(name: "ProviderViewEnvironment", package: "ProviderViewEnvironment"),
                 .product(name: "KernelCore", package: "LumiKernel"),
                 .product(name: "LumiUI", package: "LumiUI"),

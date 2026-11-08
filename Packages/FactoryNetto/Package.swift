@@ -33,7 +33,6 @@ let package = Package(
         .package(name: "PluginFirewall", path: "../PluginFirewall"),
         .package(name: "PluginStore", path: "../PluginStore"),
         .package(name: "PluginHostActions", path: "../PluginHostActions"),
-        .package(name: "ProviderMenuBar", path: "../ProviderMenuBar"),
         .package(name: "ProviderViewEnvironment", path: "../ProviderViewEnvironment"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.12.0"),
     ],
@@ -61,7 +60,7 @@ let package = Package(
                 "PluginFirewall",
                 "PluginStore",
                 .product(name: "PluginHostActions", package: "PluginHostActions"),
-                "ProviderMenuBar",
+                .product(name: "ProviderMenuBar", package: "LumiProviders"),
                 "ProviderViewEnvironment",
                 "LumiUI",
             ]

@@ -2,77 +2,44 @@ import AppKit
 import Combine
 import FactoryNetto
 import KernelCore
+import MenuBarHostKit
 import ProviderMenuBar
 import SwiftUI
 
 /// AppKit owns the system status item and popover; packages contribute the views.
 @MainActor
 final class MenuBarController: NSObject, MenuBarHosting {
-    private var statusItem: NSStatusItem?
-    private var statusHostingView: MenuBarHostingView<MenuBarStatusContent>?
-    private var popover: NSPopover?
+    private let menuBarHost = MenuBarHost()
     private let statusModel = MenuBarStatusModel()
 
     func install(kernel: KernelCoreContainer, environment: AppEnvironment) {
-        guard statusItem == nil else { return }
-
+        guard !menuBarHost.isInstalled else { return }
         guard let menuBar = kernel.resolveProvider(MenuBarProviding.self) else { return }
-        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        guard let button = item.button else { return }
-        button.image = nil
-        button.setAccessibilityIdentifier("netto.menu-bar")
-        button.setAccessibilityLabel("TravelMode 防火墙状态")
-        button.target = self
-        button.action = #selector(togglePopover(_:))
 
-        let hostedStatus = MenuBarHostingView(
-            rootView: MenuBarStatusContent(
+        menuBarHost.install(
+            statusView: AnyView(MenuBarStatusContent(
                 provider: menuBar,
                 model: statusModel,
                 isDebug: Self.isDebugBuild
+            )),
+            configuration: MenuBarHostConfiguration(
+                popoverSizing: .fixedSize(NSSize(width: 640, height: 760)),
+                accessibilityIdentifier: "netto.menu-bar",
+                accessibilityLabel: "TravelMode 防火墙状态"
             )
-        )
-        hostedStatus.translatesAutoresizingMaskIntoConstraints = false
-        button.subviews.forEach { $0.removeFromSuperview() }
-        button.addSubview(hostedStatus)
-        NSLayoutConstraint.activate([
-            hostedStatus.leadingAnchor.constraint(equalTo: button.leadingAnchor),
-            hostedStatus.trailingAnchor.constraint(equalTo: button.trailingAnchor),
-            hostedStatus.centerYAnchor.constraint(equalTo: button.centerYAnchor),
-            hostedStatus.heightAnchor.constraint(equalToConstant: 22),
-        ])
-
-        let popup = NSPopover()
-        popup.behavior = .transient
-        popup.animates = true
-        popup.contentSize = NSSize(width: 640, height: 760)
-        popup.contentViewController = NSHostingController(
-            rootView: FactoryNetto.makeRootView(environment: environment) {
+        ) {
+            AnyView(FactoryNetto.makeRootView(environment: environment) {
                 FactoryNetto.makeMenuBarPopupView(
                     kernel: kernel,
                     environment: environment
                 )
                 .frame(width: 640, height: 760)
-            }
-        )
-
-        statusItem = item
-        statusHostingView = hostedStatus
-        popover = popup
+            })
+        }
     }
 
     func updateDeniedApps(_ hasDeniedApps: Bool) {
         statusModel.hasDeniedApps = hasDeniedApps
-    }
-
-    @objc private func togglePopover(_ sender: Any?) {
-        guard let button = statusItem?.button, let popover else { return }
-        if popover.isShown {
-            popover.performClose(sender)
-        } else {
-            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            popover.contentViewController?.view.window?.makeKey()
-        }
     }
 
     private static var isDebugBuild: Bool {
@@ -87,10 +54,6 @@ final class MenuBarController: NSObject, MenuBarHosting {
 @MainActor
 private final class MenuBarStatusModel: ObservableObject {
     @Published var hasDeniedApps = false
-}
-
-private final class MenuBarHostingView<Content: View>: NSHostingView<Content> {
-    override func hitTest(_ point: NSPoint) -> NSView? { nil }
 }
 
 @MainActor

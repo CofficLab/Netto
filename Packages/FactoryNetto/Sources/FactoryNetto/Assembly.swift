@@ -33,7 +33,7 @@ public struct DefaultProviderAssembly: ProviderAssembling {
 
     public func registerProviders(into kernel: KernelCoreContainer) throws {
         let shell = ShellCenter()
-        try kernel.registerProvider(MenuBarProviding.self, DefaultMenuBarProviding())
+        try kernel.registerHostProvider(MenuBarProviding.self, DefaultMenuBarProviding())
         try kernel.registerProvider(ShellToolbarProviding.self, shell)
         try kernel.registerProvider(SettingsProviding.self, shell)
         try kernel.registerProvider(WindowProviding.self, shell)

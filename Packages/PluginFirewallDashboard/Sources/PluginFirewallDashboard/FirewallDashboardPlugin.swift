@@ -29,17 +29,14 @@ public final class FirewallDashboardPlugin: SuperPlugin {
     }
 
     public func onDisable(kernel: KernelCoreContainer) async throws {
-        kernel.resolveProvider(MenuBarProviding.self)?.removeItems(ownedBy: id)
         kernel.resolveProvider(ShellToolbarProviding.self)?.removeToolbar(ownedBy: id)
     }
 
     public func onShutdown(kernel: KernelCoreContainer) throws {
-        kernel.resolveProvider(MenuBarProviding.self)?.removeItems(ownedBy: id)
         kernel.resolveProvider(ShellToolbarProviding.self)?.removeToolbar(ownedBy: id)
     }
 
     public func onUnregister(kernel: KernelCoreContainer) throws {
-        kernel.resolveProvider(MenuBarProviding.self)?.removeItems(ownedBy: id)
         kernel.resolveProvider(ShellToolbarProviding.self)?.removeToolbar(ownedBy: id)
     }
 
@@ -47,6 +44,10 @@ public final class FirewallDashboardPlugin: SuperPlugin {
         let menuBar = try kernel.requireProvider(MenuBarProviding.self)
         let firewall = try kernel.requireProvider(FirewallProviding.self)
         let toolbar = try kernel.requireProvider(ShellToolbarProviding.self)
+        let ownerID = id
+        try kernel.trackContribution {
+            menuBar.removeItems(ownedBy: ownerID)
+        }
         let itemID = "firewall-dashboard"
         menuBar.addContent(MenuBarContribution(
             id: "\(id).status",
