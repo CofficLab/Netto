@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import ProviderViewEnvironment
 import KernelCore
@@ -21,8 +22,9 @@ import SwiftUI
 /// 1. `makeKernelAsync()`：创建 KernelCore 容器、注册共享 Provider，并启动
 ///    `makePlugins()` 返回的显式插件数组；可在 Provider 就绪时安装 AppKit Host。
 /// 2. `makePlugins()`：返回稳定顺序的插件数组（阶段 4-7 逐步填充真实插件）。
-/// 3. `makeMainView(kernel:)` / `makeMenuBarPopupView(kernel:)` /
-///    `makeSettingsView(kernel:)`：装配主视图、状态栏 popover 与设置视图；
+/// 3. `makeMainView(kernel:)` / `makeStatusBarView(kernel:brandImage:)` /
+///    `makeMenuBarPopoverView(kernel:...)` / `makeSettingsView(kernel:)`：
+///    装配主窗口视图、状态栏图标、菜单栏面板与设置视图；
 ///    宿主 App 不得在 `body` 求值期间创建或启动服务。
 ///
 /// Factory 不是第二个 Kernel，也不是万能 Service Locator；它只做装配。
@@ -152,43 +154,46 @@ public enum FactoryNetto {
         ))
     }
 
-    /// 返回由插件注入的菜单栏 popover 主面板。
-    public static func makeMenuBarPopupView(
-        kernel: KernelCoreContainer,
-        environment: AppEnvironment
-    ) -> AnyView {
-        makeMenuBarPopupView(kernel: kernel, sessionStartDate: environment.sessionStartDate)
-    }
+    // MARK: - Menu Bar
 
-    /// 返回由插件注入的菜单栏 popover 主面板。
-    public static func makeMenuBarPopupView(
+    /// 状态栏图标视图：App 品牌标识 + 各插件注入的 `contentItems`。
+    ///
+    /// 系统菜单栏只由这里绘制一次；状态与文字全部来自 `MenuBarProviding`，
+    /// Factory 不感知任何具体插件。
+    public static func makeStatusBarView(
         kernel: KernelCoreContainer,
-        sessionStartDate: Date = Date()
+        brandImage: Image
     ) -> AnyView {
         guard let menuBar = kernel.resolveProvider(MenuBarProviding.self) else {
-            return AnyView(BootstrapFailureView(
-                title: "菜单栏 Provider 未装配",
-                message: "MenuBarProviding not registered"
-            ))
+            return AnyView(MenuBarBrandMark(image: brandImage).frame(height: 20))
         }
-        guard let shell = kernel.resolveProvider(ShellToolbarProviding.self) as? ShellCenter,
-              let firewall = kernel.resolveProvider(FirewallProviding.self),
-              let events = kernel.resolveProvider(FirewallEventsProviding.self),
-              let settings = kernel.resolveProvider(AppSettingsProviding.self),
-              let store = kernel.resolveProvider(StoreProviding.self) else {
-            return AnyView(BootstrapFailureView(
-                title: "主面板 Provider 未装配",
-                message: "Shell / Firewall / Events / Settings / Store provider missing"
-            ))
-        }
-        return AnyView(MenuBarPopupHost(
-            provider: menuBar,
-            shell: shell,
-            firewall: firewall,
-            events: events,
-            settings: settings,
-            store: store,
-            sessionStartDate: sessionStartDate
+        return AnyView(MenuBarStatusBarView(provider: menuBar, brandImage: brandImage))
+    }
+
+    /// 返回由插件注入的菜单栏弹出面板（紧凑型）。
+    ///
+    /// 分区：上 = 插件贡献的 `popupItems`；下 = App 级动作行
+    /// （打开主窗口 / 设置 / 退出）。动作行由宿主提供，避免产品文案进入通用插件包。
+    public static func makeMenuBarPopoverView(
+        kernel: KernelCoreContainer,
+        environment: AppEnvironment,
+        onOpenMainWindow: @escaping () -> Void,
+        onOpenSettings: @escaping () -> Void,
+        onQuit: @escaping () -> Void
+    ) -> AnyView {
+        AnyView(MenuBarPopoverHost(
+            provider: kernel.resolveProvider(MenuBarProviding.self),
+            shell: (kernel.resolveProvider(ShellToolbarProviding.self) as? ShellCenter) ?? ShellCenter(),
+            firewall: kernel.resolveProvider(FirewallProviding.self),
+            events: kernel.resolveProvider(FirewallEventsProviding.self),
+            settings: kernel.resolveProvider(AppSettingsProviding.self),
+            store: kernel.resolveProvider(StoreProviding.self),
+            ui: environment.ui,
+            appProvider: environment.appProvider,
+            sessionStartDate: environment.sessionStartDate,
+            onOpenMainWindow: onOpenMainWindow,
+            onOpenSettings: onOpenSettings,
+            onQuit: onQuit
         ))
     }
 
@@ -231,52 +236,269 @@ public enum FactoryNetto {
 }
 
 @MainActor
-private struct MenuBarPopupHost: View {
+private struct MenuBarStatusBarView: View {
     let provider: any MenuBarProviding
-    let shell: ShellCenter
-    let firewall: FirewallProviding
-    let events: FirewallEventsProviding
-    let settings: AppSettingsProviding
-    let store: StoreProviding
-    let sessionStartDate: Date
+    let brandImage: Image
 
-    @StateObject private var ui: UIProvider
-    @StateObject private var appProvider: AppProvider
     @StateObject private var refreshModel: MenuBarRefreshModel
 
-    init(
-        provider: any MenuBarProviding,
-        shell: ShellCenter,
-        firewall: FirewallProviding,
-        events: FirewallEventsProviding,
-        settings: AppSettingsProviding,
-        store: StoreProviding,
-        sessionStartDate: Date
-    ) {
+    init(provider: any MenuBarProviding, brandImage: Image) {
         self.provider = provider
-        self.shell = shell
-        self.firewall = firewall
-        self.events = events
-        self.settings = settings
-        self.store = store
-        self.sessionStartDate = sessionStartDate
-        _ui = StateObject(wrappedValue: UIProvider())
-        _appProvider = StateObject(wrappedValue: AppProvider())
+        self.brandImage = brandImage
         _refreshModel = StateObject(wrappedValue: MenuBarRefreshModel(provider: provider))
+    }
+
+    private var items: [MenuBarContribution] {
+        provider.contentItems.sorted {
+            if $0.order == $1.order { return $0.id < $1.id }
+            return $0.order < $1.order
+        }
     }
 
     var body: some View {
         let _ = refreshModel.revision
-        provider.makePopupView()
-            .environmentObject(shell)
-            .environmentObject(ui)
-            .environmentObject(appProvider)
-            .environment(\.firewallProvider, firewall)
-            .environment(\.eventsProvider, events)
-            .environment(\.settingsProvider, settings)
-            .environment(\.storeProvider, store)
-            .environment(\.sessionStartDate, sessionStartDate)
-            .onAppear { refreshModel.resume() }
-            .onDisappear { refreshModel.cancel() }
+        HStack(spacing: 4) {
+            MenuBarBrandMark(image: brandImage)
+
+            ForEach(items) { item in
+                item.makeView()
+                    .fixedSize(horizontal: true, vertical: true)
+                    .help(item.title)
+            }
+        }
+        .padding(.horizontal, 2)
+        .frame(height: 20)
+    }
+}
+
+@MainActor
+private struct MenuBarBrandMark: View {
+    let image: Image
+
+    var body: some View {
+        image
+            .resizable()
+            .scaledToFit()
+            .frame(width: 18, height: 18)
+    }
+}
+
+@MainActor
+private struct MenuBarPopoverHost: View {
+    let provider: (any MenuBarProviding)?
+    let shell: ShellCenter
+    let firewall: FirewallProviding?
+    let events: FirewallEventsProviding?
+    let settings: AppSettingsProviding?
+    let store: StoreProviding?
+    let ui: UIProvider
+    let appProvider: AppProvider
+    let sessionStartDate: Date
+    let onOpenMainWindow: () -> Void
+    let onOpenSettings: () -> Void
+    let onQuit: () -> Void
+
+    var body: some View {
+        Group {
+            if let provider {
+                MenuBarPopoverView(
+                    provider: provider,
+                    onOpenMainWindow: onOpenMainWindow,
+                    onOpenSettings: onOpenSettings,
+                    onQuit: onQuit
+                )
+            } else {
+                MenuBarPopoverUnavailable(
+                    onOpenMainWindow: onOpenMainWindow,
+                    onOpenSettings: onOpenSettings,
+                    onQuit: onQuit
+                )
+            }
+        }
+        .environmentObject(shell)
+        .environmentObject(ui)
+        .environmentObject(appProvider)
+        .environment(\.firewallProvider, firewall)
+        .environment(\.eventsProvider, events)
+        .environment(\.settingsProvider, settings)
+        .environment(\.storeProvider, store)
+        .environment(\.sessionStartDate, sessionStartDate)
+        .preferredColorScheme(
+            (NSApp?.effectiveAppearance ?? NSAppearance(named: .aqua))?
+                .bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? .dark : .light
+        )
+    }
+}
+
+@MainActor
+private struct MenuBarPopoverView: View {
+    let provider: any MenuBarProviding
+    let onOpenMainWindow: () -> Void
+    let onOpenSettings: () -> Void
+    let onQuit: () -> Void
+
+    @StateObject private var refreshModel: MenuBarRefreshModel
+
+    init(
+        provider: any MenuBarProviding,
+        onOpenMainWindow: @escaping () -> Void,
+        onOpenSettings: @escaping () -> Void,
+        onQuit: @escaping () -> Void
+    ) {
+        self.provider = provider
+        self.onOpenMainWindow = onOpenMainWindow
+        self.onOpenSettings = onOpenSettings
+        self.onQuit = onQuit
+        _refreshModel = StateObject(wrappedValue: MenuBarRefreshModel(provider: provider))
+    }
+
+    private var items: [MenuBarContribution] {
+        provider.popupItems.sorted {
+            if $0.order == $1.order { return $0.id < $1.id }
+            return $0.order < $1.order
+        }
+    }
+
+    var body: some View {
+        let _ = refreshModel.revision
+        VStack(spacing: 0) {
+            if !items.isEmpty {
+                VStack(spacing: 0) {
+                    ForEach(items) { item in
+                        item.makeView()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        if item.id != items.last?.id {
+                            Divider()
+                        }
+                    }
+                }
+
+                Divider()
+            }
+
+            MenuBarActionSection(
+                onOpenMainWindow: onOpenMainWindow,
+                onOpenSettings: onOpenSettings,
+                onQuit: onQuit
+            )
+        }
+        .frame(width: 300)
+        .padding(.vertical, 6)
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+}
+
+/// 菜单栏 Provider 缺失时的降级面板：保留宿主动作，避免用户无法打开主窗口/退出。
+@MainActor
+private struct MenuBarPopoverUnavailable: View {
+    let onOpenMainWindow: () -> Void
+    let onOpenSettings: () -> Void
+    let onQuit: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Text("菜单栏功能未装配")
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+
+            Divider()
+
+            MenuBarActionSection(
+                onOpenMainWindow: onOpenMainWindow,
+                onOpenSettings: onOpenSettings,
+                onQuit: onQuit
+            )
+        }
+        .frame(width: 300)
+        .padding(.vertical, 6)
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+}
+
+/// Popover 底部 App 级动作行。动作由宿主注入，不进入通用插件包。
+@MainActor
+private struct MenuBarActionSection: View {
+    let onOpenMainWindow: () -> Void
+    let onOpenSettings: () -> Void
+    let onQuit: () -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 0) {
+            MenuBarActionRow(
+                title: "打开 TravelMode",
+                icon: "macwindow",
+                color: .accentColor,
+                action: perform(onOpenMainWindow)
+            )
+            .accessibilityIdentifier("netto.menubar.open-main")
+
+            Divider().padding(.leading, 36)
+
+            MenuBarActionRow(
+                title: "设置…",
+                icon: "gearshape",
+                color: .accentColor,
+                action: perform(onOpenSettings)
+            )
+            .accessibilityIdentifier("netto.menubar.settings")
+
+            Divider().padding(.leading, 36)
+
+            MenuBarActionRow(
+                title: "退出 TravelMode",
+                icon: "power",
+                color: .red,
+                action: perform(onQuit)
+            )
+            .accessibilityIdentifier("netto.menubar.quit")
+        }
+        .padding(.vertical, 8)
+    }
+
+    private func perform(_ action: @escaping () -> Void) -> () -> Void {
+        {
+            dismiss()
+            action()
+        }
+    }
+}
+
+@MainActor
+private struct MenuBarActionRow: View {
+    let title: String
+    let icon: String
+    let color: Color
+    let action: () -> Void
+
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: icon)
+                    .font(.system(size: 11))
+                    .foregroundStyle(isHovering ? Color.primary : color)
+                    .frame(width: 18)
+
+                Text(title)
+                    .font(.system(size: 11))
+                    .foregroundStyle(isHovering ? Color.primary : Color.secondary)
+
+                Spacer()
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .background(isHovering ? Color.accentColor.opacity(0.16) : .clear)
+        .onHover { isHovering = $0 }
     }
 }

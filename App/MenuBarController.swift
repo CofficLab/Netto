@@ -1,93 +1,56 @@
 import AppKit
-import Combine
 import FactoryNetto
 import KernelCore
 import MenuBarHostKit
-import ProviderMenuBar
+import ProviderShell
 import SwiftUI
 
-/// AppKit owns the system status item and popover; packages contribute the views.
+/// AppKit 持有系统状态项与 popover；菜单栏内容全部由插件贡献。
+///
+/// 状态栏图标 = 品牌 Logo + `MenuBarProviding.contentItems`；
+/// popover = 紧凑面板（`popupItems` + 宿主动作行），由 Factory 装配。
 @MainActor
 final class MenuBarController: NSObject, MenuBarHosting {
     private let menuBarHost = MenuBarHost()
-    private let statusModel = MenuBarStatusModel()
 
     func install(kernel: KernelCoreContainer, environment: AppEnvironment) {
         guard !menuBarHost.isInstalled else { return }
-        guard let menuBar = kernel.resolveProvider(MenuBarProviding.self) else { return }
 
         menuBarHost.install(
-            statusView: AnyView(MenuBarStatusContent(
-                provider: menuBar,
-                model: statusModel,
-                isDebug: Self.isDebugBuild
-            )),
+            statusView: FactoryNetto.makeStatusBarView(
+                kernel: kernel,
+                brandImage: Image("Logo")
+            ),
             configuration: MenuBarHostConfiguration(
-                popoverSizing: .fixedSize(NSSize(width: 640, height: 760)),
+                statusViewHeight: 20,
+                popoverSizing: .fixedWidth(300, maximumHeight: 800),
                 accessibilityIdentifier: "netto.menu-bar",
-                accessibilityLabel: "TravelMode 防火墙状态"
+                accessibilityLabel: "TravelMode",
+                activatesApplication: true
             )
-        ) {
+        ) { [weak self, environment] in
+            // 外层 RootView 让面板在 Kernel 启动完成后自动切换到真实内容：
+            // popover 内容只构建一次并缓存，直接解析 Provider 会把启动期的
+            // nil 契约固化下来。
             AnyView(FactoryNetto.makeRootView(environment: environment) {
-                FactoryNetto.makeMenuBarPopupView(
+                FactoryNetto.makeMenuBarPopoverView(
                     kernel: kernel,
-                    environment: environment
+                    environment: environment,
+                    onOpenMainWindow: { self?.openMainWindow(environment) },
+                    onOpenSettings: { self?.openSettings(environment) },
+                    onQuit: { NSApp.terminate(nil) }
                 )
-                .frame(width: 640, height: 760)
             })
         }
     }
 
-    func updateDeniedApps(_ hasDeniedApps: Bool) {
-        statusModel.hasDeniedApps = hasDeniedApps
+    private func openMainWindow(_ environment: AppEnvironment) {
+        menuBarHost.closePopover()
+        environment.router.openWindow(windowID: ShellWindowID.main)
     }
 
-    private static var isDebugBuild: Bool {
-        #if DEBUG
-        true
-        #else
-        false
-        #endif
-    }
-}
-
-@MainActor
-private final class MenuBarStatusModel: ObservableObject {
-    @Published var hasDeniedApps = false
-}
-
-@MainActor
-private struct MenuBarStatusContent: View {
-    let provider: any MenuBarProviding
-    @ObservedObject var model: MenuBarStatusModel
-    let isDebug: Bool
-    @StateObject private var refreshModel: MenuBarRefreshModel
-
-    init(provider: any MenuBarProviding, model: MenuBarStatusModel, isDebug: Bool) {
-        self.provider = provider
-        self.model = model
-        self.isDebug = isDebug
-        _refreshModel = StateObject(wrappedValue: MenuBarRefreshModel(provider: provider))
-    }
-
-    private var symbol: String {
-        if model.hasDeniedApps {
-            return isDebug ? "airplane.departure" : "network.badge.shield.half.filled"
-        }
-        return isDebug ? "airplane" : "checkmark.circle.fill"
-    }
-
-    var body: some View {
-        let _ = refreshModel.revision
-        HStack(spacing: 4) {
-            Image(systemName: symbol)
-                .frame(width: 20, height: 20)
-            provider.makeContentView()
-                .fixedSize(horizontal: true, vertical: true)
-        }
-        .padding(.horizontal, 2)
-        .frame(height: 22)
-        .onAppear { refreshModel.resume() }
-        .onDisappear { refreshModel.cancel() }
+    private func openSettings(_ environment: AppEnvironment) {
+        menuBarHost.closePopover()
+        environment.router.openSettings()
     }
 }

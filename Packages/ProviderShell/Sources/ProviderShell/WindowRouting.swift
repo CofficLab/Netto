@@ -7,6 +7,9 @@ import Foundation
 /// 等于 Scene id），因此宿主既能用 `openWindow(id:)` 打开，也能用
 /// identifier 精确定位已存在的窗口。
 public enum ShellWindowID {
+    /// 主窗口（复杂界面：防火墙仪表盘）。
+    public static let main = "main-window"
+
     /// 设置窗口（双栏设置视图：左侧入口列表 + 右侧详情）。
     public static let settings = "settings-window"
 
@@ -22,6 +25,9 @@ public enum ShellWindowID {
 /// 宿主 SwiftUI 场景（`Window("标题", id:)`）与 Provider 契约共用同一来源，
 /// 避免「契约里的 ID」与「场景里的标题」各写一份而漂移。
 public enum ShellWindowTitle {
+    /// 主窗口标题。
+    public static let main = "TravelMode"
+
     /// 设置窗口标题。
     public static let settings = "设置"
 
@@ -81,5 +87,10 @@ public extension WindowRoutingProviding {
     /// 打开指定 ID 的窗口（不带深链参数）。
     func openWindow(windowID: String) {
         openWindow(windowID: windowID, entryID: nil)
+    }
+
+    /// 打开主窗口（复杂界面所在窗口）。
+    func openMainWindow() {
+        openWindow(windowID: ShellWindowID.main)
     }
 }

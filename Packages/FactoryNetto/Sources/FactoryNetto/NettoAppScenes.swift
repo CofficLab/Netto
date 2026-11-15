@@ -12,11 +12,11 @@ import SwiftUI
 /// ## 窗口路由的关键设计
 ///
 /// Netto 是 `LSUIElement` 菜单栏应用：启动时 `Group` 场景里只有**第一个**
-/// `Window`（欢迎窗口）会自动呈现，其余场景（设置窗口、插件窗口）需要
-/// `openWindow(id:)` 主动打开。
+/// `Window`（主窗口）会自动呈现，其余场景（欢迎窗口、设置窗口、插件窗口）
+/// 需要 `openWindow(id:)` 主动打开。
 ///
 /// `openWindow` 只能从视图的 `Environment` 拿到，因此**必须**由一个启动时
-/// 必定出现的场景来捕获 —— 本文件用欢迎窗口场景捕获后交给
+/// 必定出现的场景来捕获 —— 本文件用主窗口场景捕获后交给
 /// `SettingsWindowRouter`（常驻宿主）持有。设置窗口自己的场景**不再**
 /// 捕获 `openWindow`、**不再**监听路由通知，否则会形成「要先有设置窗口
 /// 才能打开设置窗口」的鸡生蛋死锁。
@@ -36,8 +36,16 @@ public struct NettoAppScenes: Scene {
 
     public var body: some Scene {
         Group {
+            Window(ShellWindowTitle.main, id: ShellWindowID.main) {
+                MainWindowHost(environment: environment)
+            }
+            .windowStyle(.hiddenTitleBar)
+            .windowResizability(.contentMinSize)
+            .defaultPosition(.center)
+            .defaultSize(width: 760, height: 800)
+
             Window(ShellWindowTitle.welcome, id: ShellWindowID.welcome) {
-                WelcomeWindowHost(environment: environment, router: router)
+                WelcomeWindowHost(environment: environment)
             }
             .windowStyle(.hiddenTitleBar)
             .windowResizability(.contentSize)
@@ -86,24 +94,60 @@ struct NettoAppCommands: Commands {
     }
 }
 
+/// 主窗口 Host —— 复杂界面（防火墙仪表盘）所在窗口，启动即打开。
+///
+/// 由它捕获 `openWindow` 交给常驻路由宿主；同时承担首次安装/重要版本升级
+/// 时打开欢迎窗口的职责（欢迎窗口已不是第一个场景，不再自动呈现）。
+@MainActor
+private struct MainWindowHost: View {
+    @ObservedObject var environment: AppEnvironment
+
+    @Environment(\.openWindow) private var openWindow
+
+    @State private var didCheckVersion = false
+
+    var body: some View {
+        FactoryNetto.makeRootView(environment: environment) {
+            Group {
+                if let kernel = environment.kernel {
+                    FactoryNetto.makeMainView(
+                        kernel: kernel,
+                        ui: environment.ui,
+                        appProvider: environment.appProvider,
+                        sessionStartDate: environment.sessionStartDate
+                    )
+                }
+            }
+            .frame(minWidth: 640, minHeight: 600)
+            .nettoMinimalWindowChrome()
+        }
+        .onAppear {
+            // 启动即存在的场景负责捕获 openWindow（关闭后动作依然有效）。
+            environment.router.attach(openWindow: openWindow)
+            environment.router.attach(
+                settingViewProvider: environment.kernel?.resolveProvider(SettingViewProviding.self)
+            )
+            NSApplication.shared.activate(ignoringOtherApps: true)
+            checkVersionOnce()
+        }
+    }
+
+    /// 首次安装或 major/minor 升级时打开欢迎引导窗口。
+    private func checkVersionOnce() {
+        guard !didCheckVersion else { return }
+        didCheckVersion = true
+        guard VersionService().shouldShowWelcomeWindow() else { return }
+        environment.shouldShowWelcomeWindow = true
+        environment.router.openWelcomeWindow()
+    }
+}
+
 @MainActor
 private struct WelcomeWindowHost: View {
     @ObservedObject var environment: AppEnvironment
-    @ObservedObject var router: SettingsWindowRouter
 
     var body: some View {
         Group {
-            if shouldShowLoading && !environment.shouldShowWelcomeWindow {
-                ProgressView("正在检查版本…")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .onAppear {
-                        let shouldShowWelcome = versionService.shouldShowWelcomeWindow()
-                        os_log("🐦 检查版本，shouldShowWelcome: \(shouldShowWelcome)")
-                        environment.shouldShowWelcomeWindow = shouldShowWelcome
-                        shouldShowLoading = false
-                    }
-            }
-
             if environment.shouldShowWelcomeWindow {
                 FactoryNetto.makeWelcomeGuideView()
                     .onAppear {
@@ -117,18 +161,7 @@ private struct WelcomeWindowHost: View {
                     }
             }
         }
-        .onAppear {
-            // 关键：欢迎窗口是**启动时必定出现**的场景，由它捕获 `openWindow`
-            // 并交给常驻路由宿主。捕获到的动作在欢迎窗口关闭后依然有效
-            // （实测），因此设置窗口随时可以被打开。
-            router.attach(openWindow: openWindow)
-            router.attach(settingViewProvider: environment.kernel?.resolveProvider(SettingViewProviding.self))
-        }
     }
-
-    @State private var shouldShowLoading = true
-    private let versionService = VersionService()
-    @Environment(\.openWindow) private var openWindow
 }
 
 @MainActor

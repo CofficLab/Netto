@@ -1,5 +1,6 @@
 import Foundation
 import KernelCore
+import ProviderAppSettings
 import ProviderFirewall
 import ProviderMenuBar
 import ProviderShell
@@ -116,6 +117,20 @@ struct FirewallDashboardPluginTests {
         func observe() -> AsyncStream<FirewallSnapshot> { AsyncStream { $0.finish() } }
     }
 
+    /// 满足 `AppSettingsProviding` 的最小实现（插件贡献需要读取被阻止应用数）。
+    private final class StubAppSettings: AppSettingsProviding {
+        func fetchAll() async throws -> [AppSettingSnapshot] { [] }
+        func find(_ appId: String) async throws -> AppSettingSnapshot? { nil }
+        func deniedApps() async throws -> [AppSettingSnapshot] { [] }
+        func deniedAppsCount() async throws -> Int { 0 }
+        func shouldAllow(_ appId: String) async -> Bool { true }
+        func shouldAllowSync(_ appId: String) -> Bool { true }
+        func setAllow(_ appId: String) async throws {}
+        func setDeny(_ appId: String) async throws {}
+        func delete(_ appId: String) async throws {}
+        func observeChanges() -> AsyncStream<AppSettingsChange> { AsyncStream { $0.finish() } }
+    }
+
     /// 只提供插件 ID 的占位插件（用于满足 Kernel 的依赖图校验）。
     private final class PlaceholderPlugin: SuperPlugin {
         let id: String
@@ -156,12 +171,24 @@ struct FirewallDashboardPluginTests {
         }
     }
 
+    /// 注册 `AppSettingsProviding` 的插件（id 与生产插件一致）。
+    private final class AppSettingsProviderPlugin: SuperPlugin {
+        let id = "appsettings"
+        var order: Int { 1 }
+        var dependencies: [String] { [] }
+        let metadata = PluginMetadata(id: "appsettings", name: "AppSettings", version: "1.0", policy: .enabledByDefault)
+
+        func onBoot(kernel: KernelCoreContainer) throws {
+            try kernel.registerProvider(AppSettingsProviding.self, StubAppSettings())
+        }
+    }
+
     /// 启动一个满足依赖图的内核（含防火墙面板插件）。
     private func makeKernel() throws -> (KernelCoreContainer, FirewallDashboardPlugin) {
         let kernel = KernelCoreContainer()
         let plugin = FirewallDashboardPlugin()
         try kernel.start(plugins: [
-            PlaceholderPlugin(id: "appsettings"),
+            AppSettingsProviderPlugin(),
             PlaceholderPlugin(id: "eventstore"),
             PlaceholderPlugin(id: "store"),
             FirewallProviderPlugin(),

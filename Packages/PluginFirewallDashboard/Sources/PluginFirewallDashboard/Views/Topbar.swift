@@ -10,12 +10,13 @@ struct TopBar: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            // 左侧贡献
+            // 左侧贡献（为窗口红绿灯预留 76pt，与 Lumi/Wakey 主窗口 chrome 一致）
             HStack(spacing: 8) {
                 ForEach(shell.leftContributions) { contribution in
                     contribution.makeView()
                 }
             }
+            .padding(.leading, 76)
 
             Spacer()
 

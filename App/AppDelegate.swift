@@ -15,6 +15,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ notification: Notification) {
         os_log("🍎 应用即将退出")
     }
+
+    /// 菜单栏应用：关闭主窗口后继续驻留状态栏，不随最后一个窗口退出。
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        false
+    }
 }
 
 // MARK: - Notification Names

@@ -3,6 +3,7 @@ import Foundation
 import KernelCore
 import LumiUI
 import OSLog
+import PluginFirewallDashboard
 import ProviderShell
 import ProviderAppSettings
 import ProviderFirewall
@@ -26,14 +27,15 @@ import SwiftUI
 /// - `preview()` 只用于 Xcode 预览（内存 Mock，不落库、不碰系统扩展）。
 ///
 /// 线程/actor：`@MainActor`；`bootstrap()` 必须由 App 启动期调用一次。
+
 /// AppKit 菜单栏宿主能力。App Target 实现窗口/状态栏系统接入，Factory 负责
 /// 在正确的 Kernel 生命周期时机调用它。
 @MainActor
 public protocol MenuBarHosting: AnyObject {
     func install(kernel: KernelCoreContainer, environment: AppEnvironment)
-    func updateDeniedApps(_ hasDeniedApps: Bool)
 }
 
+/// App 组合根：持有 Kernel、共享 UI 状态与窗口路由宿主。
 @MainActor
 public final class AppEnvironment: ObservableObject {
     /// 生命周期阶段（Host shell 的启动/失败/运行三态来源）。
@@ -49,14 +51,17 @@ public final class AppEnvironment: ObservableObject {
     /// 欢迎窗口是否应显示引导内容（版本升级或插件主动请求）。
     @Published var shouldShowWelcomeWindow = false
 
-    /// 由 App Target 持有的 AppKit 状态栏 Host。
-    private weak var menuBarHost: (any MenuBarHosting)?
-
     /// 已装配的 Kernel（App 唯一实例；由 Factory 创建）。
     @Published private(set) var kernel: KernelCoreContainer?
 
     /// Shell 中心（工具栏/设置/窗口/Toast 四契约聚合宿主）。
     @Published private(set) var shell: ShellCenter?
+
+    /// 仪表盘 UI 状态（主窗口与菜单栏面板共享同一份）。
+    let ui = UIProvider()
+
+    /// Store 等视图的兼容 UI 状态（主窗口与菜单栏面板共享同一份）。
+    let appProvider = AppProvider()
 
     /// 设置窗口视图（`Window("设置")` 内容，Lumi 式：bootstrap 完成后装配
     /// 一次并缓存，绝不在 body 求值期间装配；仅渲染「通用」入口）。
@@ -125,7 +130,6 @@ public final class AppEnvironment: ObservableObject {
     public func bootstrap(menuBarHost: any MenuBarHosting) async -> Bool {
         guard !didStart else { return phase == .running }
         didStart = true
-        self.menuBarHost = menuBarHost
 
         do {
             // Factory 拥有完整插件目录；App 只启动 Kernel 并解析所需 Provider。
@@ -173,11 +177,6 @@ public final class AppEnvironment: ObservableObject {
     private func bindWindowRouting(kernel: KernelCoreContainer) {
         // 深链用的设置视图契约。
         router.attach(settingViewProvider: kernel.resolveProvider(SettingViewProviding.self))
-        // 规则变化 → 刷新菜单栏指示灯。
-        router.onAppRulesChanged = { [weak self] in
-            guard let self else { return }
-            Task { await self.refreshDeniedAppIndicator() }
-        }
         // 打开欢迎窗口前先置位「展示引导内容」标记。
         router.onRequestWelcomeContent = { [weak self] in
             self?.shouldShowWelcomeWindow = true
@@ -189,16 +188,6 @@ public final class AppEnvironment: ObservableObject {
         shell.onRequestOpen = { [weak router] request in
             guard let router else { return }
             router.openWindow(windowID: request.windowID, entryID: request.entryID)
-        }
-    }
-
-    /// 刷新菜单栏对被禁止应用的指示状态。
-    func refreshDeniedAppIndicator() async {
-        guard let settings else { return }
-        do {
-            menuBarHost?.updateDeniedApps(try await settings.deniedAppsCount() > 0)
-        } catch {
-            os_log(.error, "检查被禁止应用时出错: %{public}@", error.localizedDescription)
         }
     }
 }

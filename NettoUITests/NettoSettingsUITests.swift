@@ -81,7 +81,7 @@ final class NettoSettingsUITests: NettoUITestBase {
         aboutAction.click()
 
         let aboutPanel = app.windows.matching(
-            NSPredicate(format: "title CONTAINS %@", "TravelMode")
+            NSPredicate(format: "title CONTAINS %@ OR title CONTAINS %@", "关于", "About")
         ).firstMatch
         XCTAssertTrue(aboutPanel.waitForExistence(timeout: 10), "About action did not open the system About panel")
     }

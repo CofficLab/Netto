@@ -122,10 +122,11 @@ final class NettoSettingsWindowUITests: NettoUITestBase {
         XCTAssertTrue(databaseEntry.waitForExistence(timeout: 5))
         databaseEntry.click()
 
-        let title = app.windows.firstMatch.title
+        // 主窗口也在前台，不能直接读 `app.windows.firstMatch`；按标题断言
+        // 设置窗口仍然存在（标题被改写时会变成 0 个匹配）。
         XCTAssertTrue(
-            title.contains(settingsWindowTitle),
-            "切换入口后窗口标题被改写为「\(title)」"
+            settingsWindow(in: app).waitForExistence(timeout: 5),
+            "切换入口后设置窗口标题被改写"
         )
     }
 

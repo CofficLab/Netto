@@ -84,13 +84,28 @@ private struct EmptyProviderAssembly: ProviderAssembling {
     func registerProviders(into kernel: KernelCoreContainer) throws {}
 }
 
-/// 仪表盘贡献测试需要的防火墙契约；真实功能由 PluginFirewall 提供。
+/// 仪表盘贡献测试需要的契约；真实功能由 PluginFirewall / PluginAppSettings 提供。
 @MainActor
 private struct DashboardTestProviderAssembly: ProviderAssembling {
     func registerProviders(into kernel: KernelCoreContainer) throws {
         try DefaultProviderAssembly().registerProviders(into: kernel)
         try kernel.registerProvider(FirewallProviding.self, TestFirewallProvider())
+        try kernel.registerProvider(AppSettingsProviding.self, TestAppSettingsProvider())
     }
+}
+
+@MainActor
+private final class TestAppSettingsProvider: AppSettingsProviding {
+    func fetchAll() async throws -> [AppSettingSnapshot] { [] }
+    func find(_ appId: String) async throws -> AppSettingSnapshot? { nil }
+    func deniedApps() async throws -> [AppSettingSnapshot] { [] }
+    func deniedAppsCount() async throws -> Int { 0 }
+    func shouldAllow(_ appId: String) async -> Bool { true }
+    func shouldAllowSync(_ appId: String) -> Bool { true }
+    func setAllow(_ appId: String) async throws {}
+    func setDeny(_ appId: String) async throws {}
+    func delete(_ appId: String) async throws {}
+    func observeChanges() -> AsyncStream<AppSettingsChange> { AsyncStream { _ in } }
 }
 
 @MainActor

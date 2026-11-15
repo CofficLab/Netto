@@ -1,7 +1,14 @@
 import XCTest
 
-/// 启动与状态栏：App 启动安装菜单栏条目、点击展开/收起仪表盘。
+/// 启动与状态栏：主窗口启动即打开、菜单栏条目安装、面板展开/收起。
 final class NettoLaunchUITests: NettoUITestBase {
+    func testLaunchOpensMainWindowDashboard() {
+        let app = launchApp()
+        _ = openDashboard(in: app)
+        XCTAssertTrue(element(in: app, identifier: "netto.dashboard.toolbar").exists)
+        XCTAssertTrue(element(in: app, identifier: "netto.apps.list").exists)
+    }
+
     func testLaunchInstallsMenuBarStatusItem() {
         let app = launchApp()
         let statusItem = app.statusItems.matching(identifier: "netto.menu-bar").firstMatch
@@ -9,18 +16,27 @@ final class NettoLaunchUITests: NettoUITestBase {
         XCTAssertNotEqual(app.state, .notRunning)
     }
 
-    func testStatusItemOpensDashboardPopover() {
+    func testStatusItemOpensCompactPanel() {
         let app = launchApp()
-        XCTAssertTrue(openDashboard(in: app).exists)
-        XCTAssertTrue(element(in: app, identifier: "netto.dashboard.toolbar").exists)
-        XCTAssertTrue(element(in: app, identifier: "netto.apps.list").exists)
+        _ = openMenuBarPanel(in: app)
+
+        for identifier in [
+            "netto.menubar.open-main",
+            "netto.menubar.settings",
+            "netto.menubar.quit",
+        ] {
+            XCTAssertTrue(
+                element(in: app, identifier: identifier).exists,
+                "Menu-bar panel is missing \(identifier)"
+            )
+        }
     }
 
-    func testStatusItemCanCloseDashboardPopover() {
+    func testStatusItemCanClosePanel() {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = openMenuBarPanel(in: app)
         let statusItem = app.statusItems.matching(identifier: "netto.menu-bar").firstMatch
         statusItem.click()
-        XCTAssertFalse(element(in: app, identifier: "netto.dashboard").waitForExistence(timeout: 2))
+        XCTAssertFalse(element(in: app, identifier: "netto.menubar.firewall").waitForExistence(timeout: 2))
     }
 }

@@ -1,6 +1,6 @@
 import XCTest
 
-/// UI coverage for Netto's primary menu-bar workflow.
+/// UI coverage for Netto's primary menu-bar + main-window workflow.
 ///
 /// Tests only inspect or change local presentation state. They intentionally do
 /// not install/enable the system extension, change firewall rules, or purchase
@@ -24,19 +24,24 @@ class NettoUITestBase: XCTestCase {
         app.descendants(matching: .any).matching(identifier: identifier).firstMatch
     }
 
+    /// 仪表盘在主窗口中（启动即打开）；这里只等待它出现。
     @discardableResult
     func openDashboard(in app: XCUIApplication) -> XCUIElement {
+        let dashboard = element(in: app, identifier: "netto.dashboard")
+        XCTAssertTrue(dashboard.waitForExistence(timeout: 30), "Main window dashboard did not appear")
+        return dashboard
+    }
+
+    /// 点击状态栏图标打开紧凑面板。
+    @discardableResult
+    func openMenuBarPanel(in app: XCUIApplication) -> XCUIElement {
         let statusItem = app.statusItems.matching(identifier: "netto.menu-bar").firstMatch
         XCTAssertTrue(statusItem.waitForExistence(timeout: 20), "Menu-bar status item was not installed")
-        // 弹窗可能残留自上一次测试，先关闭再打开，保证状态干净。
-        if element(in: app, identifier: "netto.dashboard").waitForExistence(timeout: 2) {
-            statusItem.click()
-        }
         statusItem.click()
 
-        let dashboard = element(in: app, identifier: "netto.dashboard")
-        XCTAssertTrue(dashboard.waitForExistence(timeout: 20), "Dashboard popover did not appear")
-        return dashboard
+        let panel = element(in: app, identifier: "netto.menubar.firewall")
+        XCTAssertTrue(panel.waitForExistence(timeout: 10), "Menu-bar panel did not appear")
+        return panel
     }
 
     func element(in app: XCUIApplication, containing text: String) -> XCUIElement {

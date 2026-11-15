@@ -107,23 +107,7 @@ public final class SettingsWindowRouter: ObservableObject {
                 }
         )
 
-        // 允许/拒绝规则变化 → 刷新菜单栏指示灯（兼容保留的旧信号）。
-        for name in [Notification.Name.firewallDidSetAllow, .firewallDidSetDeny] {
-            cancellables.insert(
-                NotificationCenter.default
-                    .publisher(for: name)
-                    .receive(on: RunLoop.main)
-                    .sink { [weak self] _ in
-                        MainActor.assumeIsolated {
-                            self?.onAppRulesChanged?()
-                        }
-                    }
-            )
-        }
     }
-
-    /// 应用允许/拒绝规则变化回调（由宿主注入，用于刷新菜单栏指示灯）。
-    public var onAppRulesChanged: (() -> Void)?
 
     /// 打开欢迎窗口前的回调（由宿主注入，用于置位「展示引导内容」标记）。
     public var onRequestWelcomeContent: (() -> Void)?
