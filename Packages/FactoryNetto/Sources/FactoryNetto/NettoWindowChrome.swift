@@ -3,7 +3,7 @@ import SwiftUI
 
 public extension View {
     /// Lumi 同款主窗口 chrome：内容延伸到标题栏区域，顶部工具栏从窗口最顶部
-    /// 开始渲染，红绿灯悬浮在工具栏上（Topbar 已预留 76pt）。
+    /// 开始渲染，红绿灯悬浮在工具栏上（共享 `DefaultToolbarProviding` 已预留 76pt）。
     ///
     /// 除窗口样式外的清理必须在拿到 `NSWindow` 之后做：SwiftUI 的 `Window`
     /// 场景会给窗口装一条空工具栏，不清掉会在自定义工具栏上方多出一条标题栏。

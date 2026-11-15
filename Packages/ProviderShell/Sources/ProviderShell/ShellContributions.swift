@@ -25,7 +25,7 @@ public struct SettingsEntry: Sendable, Identifiable {
     }
 }
 
-/// 设置入口聚合能力（BtnSettings 只依赖本协议）。
+/// 设置入口聚合能力（宿主设置面板与预览读取排序后的入口）。
 @MainActor
 public protocol SettingsProviding: AnyObject, Sendable {
     /// 全部设置入口（按 order 升序）。

@@ -36,6 +36,10 @@ let package = Package(
         .package(name: "PluginHostActions", path: "../PluginHostActions"),
         .package(name: "ProviderViewEnvironment", path: "../ProviderViewEnvironment"),
         .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.12.0"),
+        // 共享根视图插件（与 Lumi / Wakey 同一套主窗口体系）。
+        // 锁定 1.1.0：与 Wakey 使用的产品/API 一致（1.2 起产品改名为
+        // `WorkbenchRootView`，主窗口布局契约不同）。
+        .package(url: "https://github.com/lumi-softworks/LumiPluginRootView.git", exact: "1.1.0"),
     ],
     targets: [
         .target(
@@ -64,6 +68,9 @@ let package = Package(
                 .product(name: "PluginHostActions", package: "PluginHostActions"),
                 .product(name: "ProviderMenuBar", package: "LumiProviders"),
                 .product(name: "ProviderLogo", package: "LumiProviders"),
+                .product(name: "ProviderRootView", package: "LumiProviders"),
+                .product(name: "ProviderToolbar", package: "LumiProviders"),
+                .product(name: "PluginRootView", package: "LumiPluginRootView"),
                 "ProviderViewEnvironment",
                 "LumiUI",
             ]
@@ -76,6 +83,8 @@ let package = Package(
                 "ProviderFirewall",
                 "PluginPersistence",
                 .product(name: "ProviderLogo", package: "LumiProviders"),
+                .product(name: "ProviderRootView", package: "LumiProviders"),
+                .product(name: "ProviderToolbar", package: "LumiProviders"),
             ]
         ),
     ]

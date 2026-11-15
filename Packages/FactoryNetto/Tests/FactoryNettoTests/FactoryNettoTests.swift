@@ -3,12 +3,14 @@ import KernelCore
 import PluginBrandLogo
 import PluginFirewallDashboard
 import PluginPersistence
+import ProviderRootView
 import ProviderShell
 import ProviderAppSettings
 import ProviderFirewall
 import ProviderFirewallEvents
 import ProviderSettingView
 import ProviderTheme
+import ProviderToolbar
 import ProviderMenuBar
 import ProviderLogo
 import SwiftUI
@@ -141,6 +143,7 @@ final class FactoryNettoTests: XCTestCase {
         XCTAssertNotNil(kernel.resolveProvider(WindowProviding.self))
         XCTAssertNotNil(kernel.resolveProvider(ToastProviding.self))
         XCTAssertNotNil(kernel.resolveProvider(MenuBarProviding.self))
+        XCTAssertNotNil(kernel.resolveProvider((any ToolbarProviding).self))
         XCTAssertEqual(kernel.lifecycleState, .running)
         XCTAssertEqual(kernel.registeredPluginCount, 0)
     }
@@ -310,6 +313,44 @@ final class FactoryNettoTests: XCTestCase {
         let ids = DefaultPluginAssembly().makePlugins().map(\.id)
 
         XCTAssertTrue(ids.contains("brand-logo"), "默认装配应包含品牌 Logo 插件：\(ids)")
+        XCTAssertTrue(
+            ids.contains(DefaultPluginAssembly.rootViewConfiguration.pluginID),
+            "默认装配应包含根视图插件：\(ids)"
+        )
+    }
+
+    /// 工具栏设置按钮：宿主贡献的 `settings` 项位于 trailing，点击发出标准的
+    /// 「打开设置」通知（由常驻 `SettingsWindowRouter` 打开设置窗口）。
+    func testToolbarSettingsItemRoutesToSettingsNotification() throws {
+        let item = NettoToolbarSettings.makeItem()
+
+        XCTAssertEqual(item.id, "settings")
+        XCTAssertEqual(item.placement, .trailing)
+        XCTAssertEqual(item.category, .global)
+        XCTAssertEqual(item.order, 300)
+        XCTAssertNotNil(item.makeView())
+    }
+
+    /// 生产装配完成后，共享根视图的工具栏包含防火墙控件与宿主设置按钮，
+    /// 内容区已注入仪表盘 —— 主窗口与 Wakey / Lumi 走同一套体系。
+    func testDefaultAssemblyWiresMainWindowRootView() async throws {
+        let container = try PersistenceService.inMemoryContainer()
+        let plugins = DefaultPluginAssembly().makePlugins().map { plugin -> any SuperPlugin in
+            if plugin is PersistencePlugin {
+                return PersistencePlugin(container: container)
+            }
+            return plugin
+        }
+        let kernel = try await FactoryNetto.makeKernelAsync(
+            pluginAssembly: TestPluginAssembly(plugins: plugins)
+        )
+
+        let rootView = try XCTUnwrap(kernel.resolveProvider((any RootViewProviding).self))
+        let toolbar = try XCTUnwrap(kernel.resolveProvider((any ToolbarProviding).self))
+
+        XCTAssertEqual(toolbar.visibleToolbarItems.map(\.id), ["switcher", "filter", "settings"])
+        XCTAssertNotNil(rootView.view(for: .toolbar), "工具栏应已接入根视图")
+        XCTAssertNotNil(rootView.view(for: .content), "内容区应已注入仪表盘")
     }
 
     /// 生产插件目录启动后，菜单栏品牌 Logo 由 `brand-logo` 插件提供。

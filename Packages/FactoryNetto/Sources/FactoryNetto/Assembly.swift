@@ -7,12 +7,15 @@ import PluginFirewallDashboard
 import PluginBrandLogo
 import PluginHostActions
 import PluginPersistence
+import PluginRootView
 import ProviderShell
 import PluginStore
 import PluginThemePack
 import PluginAbout
+import ProviderRootView
 import ProviderSettingView
 import ProviderTheme
+import ProviderToolbar
 import ProviderMenuBar
 import ProviderLogo
 
@@ -37,6 +40,7 @@ public struct DefaultProviderAssembly: ProviderAssembling {
         let shell = ShellCenter()
         try kernel.registerHostProvider(MenuBarProviding.self, DefaultMenuBarProviding())
         try kernel.registerHostProvider(LogoProviding.self, DefaultLogoProviding())
+        try kernel.registerHostProvider((any ToolbarProviding).self, DefaultToolbarProviding())
         try kernel.registerProvider(ShellToolbarProviding.self, shell)
         try kernel.registerProvider(SettingsProviding.self, shell)
         try kernel.registerProvider(WindowProviding.self, shell)
@@ -59,10 +63,30 @@ public protocol PluginAssembling {
 /// `appsettings` / `eventstore` 依赖它；Dashboard 依赖防火墙、设置、事件与 Store。
 @MainActor
 public struct DefaultPluginAssembly: PluginAssembling {
+    /// 主窗口根布局：顶部工具栏 + 内容区（与 Wakey / Lumi 同构）。
+    nonisolated static let rootViewLayout = RootViewLayoutConfiguration(
+        showsToolbar: true,
+        emptyStateTitle: "暂无内容"
+    )
+
+    /// 根视图插件品牌配置：插件 id 决定启用状态存储 key，必须保持稳定。
+    nonisolated static let rootViewConfiguration = RootViewPluginConfiguration(
+        pluginID: "com.yueyi.TravelMode.plugin.root-view",
+        pluginName: "根视图",
+        pluginDescription: "提供 TravelMode 主窗口的根布局",
+        order: -1,
+        loggerSubsystem: "com.yueyi.TravelMode.plugin.root-view",
+        layout: rootViewLayout
+    )
+
     public init() {}
 
     public func makePlugins() -> [any SuperPlugin] {
         [
+            RootViewPlugin(
+                configuration: Self.rootViewConfiguration,
+                provider: ConfigurableRootViewProviding(layout: Self.rootViewLayout)
+            ),                        // order -1：先于全部内容/工具栏贡献者提供根视图
             BrandLogoPlugin(),        // order 20：向菜单栏贡献品牌图标（LogoProviding）
             PersistencePlugin(),      // order 1：db.sqlite / ModelContainer 唯一所有者
             PluginAppSettings(),      // order 10：依赖 persistence

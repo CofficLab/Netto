@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-/// 工具栏位置（旧 `TopBarPosition` 语义）。
+/// 工具栏位置（主窗口顶栏位置语义）。
 public enum ToolbarPosition: String, Sendable, Equatable, Hashable {
     case left
     case center
@@ -39,7 +39,7 @@ public struct ToolbarContribution: Sendable, Identifiable {
     }
 }
 
-/// 工具栏贡献聚合能力（TopBar 只依赖本协议读取排序后贡献）。
+/// 工具栏贡献聚合能力（主窗口顶栏按位置读取排序后的贡献）。
 @MainActor
 public protocol ShellToolbarProviding: AnyObject, Sendable {
     /// 左侧贡献（按 order 升序）。

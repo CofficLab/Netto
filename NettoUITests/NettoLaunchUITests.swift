@@ -5,8 +5,8 @@ final class NettoLaunchUITests: NettoUITestBase {
     func testLaunchOpensMainWindowDashboard() {
         let app = launchApp()
         _ = openDashboard(in: app)
-        XCTAssertTrue(element(in: app, identifier: "netto.dashboard.toolbar").exists)
-        XCTAssertTrue(element(in: app, identifier: "netto.apps.list").exists)
+        XCTAssertTrue(element(in: app, identifier: "netto.toolbar.settings").waitForExistence(timeout: 10))
+        XCTAssertTrue(element(in: app, identifier: "netto.apps.list").waitForExistence(timeout: 10))
     }
 
     func testLaunchInstallsMenuBarStatusItem() {

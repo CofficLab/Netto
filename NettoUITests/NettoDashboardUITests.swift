@@ -9,7 +9,7 @@ final class NettoDashboardUITests: NettoUITestBase {
         // 防火墙状态（未就绪引导/就绪控制）由 testFirewallGuide… 与
         // testFirewallStatus… 分别覆盖；本用例验证仪表盘核心结构，
         // 避免在筛选切换后防火墙状态区渲染时机差异导致误报。
-        XCTAssertTrue(element(in: app, identifier: "netto.dashboard.toolbar").exists)
+        XCTAssertTrue(element(in: app, identifier: "netto.toolbar.settings").waitForExistence(timeout: 10))
         XCTAssertTrue(element(in: app, identifier: "netto.filter.all").exists)
         XCTAssertTrue(element(in: app, identifier: "netto.apps.list").exists)
     }
@@ -31,7 +31,7 @@ final class NettoDashboardUITests: NettoUITestBase {
             let option = element(in: app, identifier: identifier)
             XCTAssertTrue(option.waitForExistence(timeout: 5), "Missing filter: \(identifier)")
             option.click()
-            XCTAssertTrue(element(in: app, identifier: "netto.dashboard").exists, "Selecting \(identifier) closed the dashboard")
+            XCTAssertTrue(element(in: app, identifier: "netto.apps.list").exists, "Selecting \(identifier) closed the dashboard")
         }
     }
 
@@ -57,8 +57,21 @@ final class NettoDashboardUITests: NettoUITestBase {
     func testFirewallStatusIsExposedToAccessibility() {
         let app = launchApp()
         _ = openDashboard(in: app)
-        let status = element(in: app, containing: "防火墙")
-        XCTAssertTrue(status.waitForExistence(timeout: 10), "Status item does not expose a firewall status label")
+
+        // 主窗口共享工具栏暴露防火墙开关（运行中为停止按钮，否则为开始按钮）。
+        let start = element(in: app, identifier: "netto.firewall.start")
+        let stop = element(in: app, identifier: "netto.firewall.stop")
+        XCTAssertTrue(
+            start.waitForExistence(timeout: 10) || stop.exists,
+            "主窗口工具栏未暴露防火墙开关状态"
+        )
+
+        // 菜单栏面板暴露状态文案（「防火墙已停止」/「防火墙运行中」等）。
+        _ = openMenuBarPanel(in: app)
+        XCTAssertTrue(
+            element(in: app, containing: "防火墙").waitForExistence(timeout: 10),
+            "菜单栏面板未暴露防火墙状态文案"
+        )
     }
 
     func testDashboardRemainsUsableAfterRepeatedFilterChanges() {
@@ -74,7 +87,7 @@ final class NettoDashboardUITests: NettoUITestBase {
             }
         }
 
-        XCTAssertTrue(element(in: app, identifier: "netto.dashboard.toolbar").exists)
+        XCTAssertTrue(element(in: app, identifier: "netto.toolbar.settings").waitForExistence(timeout: 10))
         XCTAssertTrue(element(in: app, identifier: "netto.apps.list").exists)
     }
 

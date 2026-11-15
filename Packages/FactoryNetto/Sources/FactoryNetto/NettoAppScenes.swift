@@ -40,9 +40,10 @@ public struct NettoAppScenes: Scene {
                 MainWindowHost(environment: environment)
             }
             .windowStyle(.hiddenTitleBar)
-            .windowResizability(.contentMinSize)
-            .defaultPosition(.center)
-            .defaultSize(width: 760, height: 800)
+            // 与 Lumi / Wakey 一致：内容延伸到标题栏区域，共享工具栏承载
+            // 红绿灯与右侧设置按钮。
+            .windowToolbarStyle(.unified(showsTitle: false))
+            .defaultSize(width: 1000, height: 760)
 
             Window(ShellWindowTitle.welcome, id: ShellWindowID.welcome) {
                 WelcomeWindowHost(environment: environment)
@@ -56,10 +57,9 @@ public struct NettoAppScenes: Scene {
                 SettingsWindowHost(environment: environment)
             }
             .windowStyle(.hiddenTitleBar)
-            .windowResizability(.contentSize)
-            .defaultPosition(.center)
-            // LumiSettings 的双栏设置视图最小尺寸为 960x520，这里给足空间。
-            .defaultSize(width: 960, height: 520)
+            .windowToolbarStyle(.unified(showsTitle: false))
+            // 与 Wakey 一致：960x560，宽度对齐设置壳 minWidth 960。
+            .defaultSize(width: 960, height: 560)
 
             Window(ShellWindowTitle.plugin, id: ShellWindowID.plugin) {
                 PluginWindowHost(environment: environment)
@@ -118,7 +118,7 @@ private struct MainWindowHost: View {
                     )
                 }
             }
-            .frame(minWidth: 640, minHeight: 600)
+            .frame(minWidth: 820, minHeight: 560)
             .nettoMinimalWindowChrome()
         }
         .onAppear {

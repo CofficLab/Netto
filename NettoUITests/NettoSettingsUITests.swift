@@ -1,101 +1,70 @@
 import XCTest
 
-/// 设置菜单：弹出层、使用引导窗口、关于面板、退出动作。
+/// 工具栏「设置」按钮：共享工具栏中的齿轮入口、打开设置窗口、
+/// 重复触发不新建窗口、应用菜单退出命令。
 final class NettoSettingsUITests: NettoUITestBase {
-    /// 设置按钮：dashboard 工具栏中的「设置」按钮（id 在不同构建中不稳定，按 label 匹配）。
-    func settingsButton(in app: XCUIApplication) -> XCUIElement {
-        app.buttons.matching(NSPredicate(format: "label == %@", "设置")).firstMatch
+    private let settingsWindowTitle = "设置"
+
+    /// 主窗口共享工具栏的「设置」按钮。
+    private func settingsButton(in app: XCUIApplication) -> XCUIElement {
+        element(in: app, identifier: "netto.toolbar.settings")
     }
 
-    func testSettingsMenuOpensAndContainsActions() {
+    /// 设置窗口（按标题匹配）。
+    private func settingsWindow(in app: XCUIApplication) -> XCUIElement {
+        app.windows.matching(NSPredicate(format: "title == %@", settingsWindowTitle)).firstMatch
+    }
+
+    func testToolbarExposesSettingsButton() {
         let app = launchApp()
         _ = openDashboard(in: app)
 
-        let settingsButton = settingsButton(in: app)
-        XCTAssertTrue(settingsButton.waitForExistence(timeout: 5), "Settings menu button is missing")
-        settingsButton.click()
-
-        let settingsMenu = element(in: app, identifier: "netto.settings.menu")
-        XCTAssertTrue(settingsMenu.waitForExistence(timeout: 5), "Settings actions popover did not open")
-        XCTAssertGreaterThan(settingsMenu.buttons.count, 0, "Settings popover contains no actionable entries")
-    }
-
-    func testSettingsMenuCanBeOpenedAndClosedRepeatedly() {
-        let app = launchApp()
-        _ = openDashboard(in: app)
-        let settingsButton = settingsButton(in: app)
-        XCTAssertTrue(settingsButton.waitForExistence(timeout: 5))
-
-        for _ in 0..<2 {
-            settingsButton.click()
-            XCTAssertTrue(element(in: app, identifier: "netto.settings.menu").waitForExistence(timeout: 5))
-            settingsButton.click()
-            XCTAssertFalse(element(in: app, identifier: "netto.settings.menu").waitForExistence(timeout: 2))
-        }
-    }
-
-    func testSettingsMenuExposesGuideAboutAndQuitActions() {
-        let app = launchApp()
-        _ = openDashboard(in: app)
-        settingsButton(in: app).click()
-        XCTAssertTrue(element(in: app, identifier: "netto.settings.menu").waitForExistence(timeout: 5))
-
-        for label in ["使用引导", "关于", "退出"] {
-            XCTAssertTrue(
-                app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", label)).firstMatch.exists,
-                "Settings menu is missing the \(label) action"
-            )
-        }
-    }
-
-    func testGuideActionOpensWelcomeWindow() {
-        let app = launchApp()
-        _ = openDashboard(in: app)
-        settingsButton(in: app).click()
-        XCTAssertTrue(element(in: app, identifier: "netto.settings.menu").waitForExistence(timeout: 5))
-
-        let guideAction = element(in: app, identifier: "netto.settings.guide")
-        XCTAssertTrue(guideAction.waitForExistence(timeout: 5), "Guide action is missing")
-        guideAction.click()
-
-        let welcomeWindow = app.windows.matching(
-            NSPredicate(format: "title CONTAINS %@", "Welcome to TravelMode")
-        ).firstMatch
-        XCTAssertTrue(welcomeWindow.waitForExistence(timeout: 10), "Guide action did not open the welcome window")
-
-        // 欢迎引导应包含可推进的内容（按钮/文本），不强依赖具体按钮 label。
         XCTAssertTrue(
-            welcomeWindow.buttons.count > 0 || welcomeWindow.staticTexts.count > 0,
-            "Welcome guide window appears empty"
+            settingsButton(in: app).waitForExistence(timeout: 10),
+            "主窗口工具栏缺少「设置」按钮"
         )
     }
 
-    func testAboutActionOpensTheSystemAboutPanel() {
+    func testSettingsButtonOpensSettingsWindow() {
         let app = launchApp()
         _ = openDashboard(in: app)
-        settingsButton(in: app).click()
-        XCTAssertTrue(element(in: app, identifier: "netto.settings.menu").waitForExistence(timeout: 5))
 
-        let aboutAction = element(in: app, identifier: "netto.settings.about")
-        XCTAssertTrue(aboutAction.waitForExistence(timeout: 5), "About action is missing")
-        aboutAction.click()
+        let button = settingsButton(in: app)
+        XCTAssertTrue(button.waitForExistence(timeout: 10), "「设置」按钮缺失")
+        button.click()
 
-        let aboutPanel = app.windows.matching(
-            NSPredicate(format: "title CONTAINS %@ OR title CONTAINS %@", "关于", "About")
-        ).firstMatch
-        XCTAssertTrue(aboutPanel.waitForExistence(timeout: 10), "About action did not open the system About panel")
+        XCTAssertTrue(
+            settingsWindow(in: app).waitForExistence(timeout: 20),
+            "点击「设置」后设置窗口未出现"
+        )
     }
 
-    func testQuitActionTerminatesTheApp() {
+    /// 重复触发（工具栏按钮 + ⌘,）不会创建第二个设置窗口。
+    func testRepeatedSettingsRequestsDoNotDuplicateWindow() {
         let app = launchApp()
         _ = openDashboard(in: app)
-        settingsButton(in: app).click()
-        XCTAssertTrue(element(in: app, identifier: "netto.settings.menu").waitForExistence(timeout: 5))
 
-        let quitAction = element(in: app, identifier: "netto.settings.quit")
-        XCTAssertTrue(quitAction.waitForExistence(timeout: 5), "Quit action is missing")
-        quitAction.click()
+        let button = settingsButton(in: app)
+        XCTAssertTrue(button.waitForExistence(timeout: 10))
+        button.click()
+        XCTAssertTrue(settingsWindow(in: app).waitForExistence(timeout: 20))
 
-        XCTAssertTrue(app.wait(for: .notRunning, timeout: 10), "Quit action did not terminate the app")
+        app.typeKey(",", modifierFlags: .command)
+        XCTAssertTrue(settingsWindow(in: app).waitForExistence(timeout: 20))
+
+        XCTAssertEqual(
+            app.windows.matching(NSPredicate(format: "title == %@", settingsWindowTitle)).count,
+            1,
+            "重复触发创建了多个设置窗口"
+        )
+    }
+
+    func testQuitCommandTerminatesTheApp() {
+        let app = launchApp()
+        _ = openDashboard(in: app)
+
+        app.typeKey("q", modifierFlags: .command)
+
+        XCTAssertTrue(app.wait(for: .notRunning, timeout: 10), "⌘Q 未结束应用")
     }
 }

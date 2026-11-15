@@ -24,10 +24,10 @@ class NettoUITestBase: XCTestCase {
         app.descendants(matching: .any).matching(identifier: identifier).firstMatch
     }
 
-    /// 仪表盘在主窗口中（启动即打开）；这里只等待它出现。
+    /// 仪表盘在主窗口中（启动即打开）；这里只等待应用列表出现。
     @discardableResult
     func openDashboard(in app: XCUIApplication) -> XCUIElement {
-        let dashboard = element(in: app, identifier: "netto.dashboard")
+        let dashboard = element(in: app, identifier: "netto.apps.list")
         XCTAssertTrue(dashboard.waitForExistence(timeout: 30), "Main window dashboard did not appear")
         return dashboard
     }

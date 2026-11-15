@@ -2,6 +2,7 @@ import AppKit
 import Foundation
 import ProviderViewEnvironment
 import KernelCore
+import LumiUI
 import PluginFirewallDashboard
 import PluginHostActions
 import ProviderShell
@@ -9,10 +10,12 @@ import ProviderAppCatalog
 import ProviderAppSettings
 import ProviderFirewall
 import ProviderFirewallEvents
+import ProviderRootView
 import ProviderSettingView
 import ProviderStore
 import ProviderStoreKit
 import ProviderTheme
+import ProviderToolbar
 import ProviderMenuBar
 import ProviderLogo
 import SwiftUI
@@ -41,14 +44,15 @@ public enum FactoryNetto {
     ) throws -> KernelCoreContainer {
         let kernel = KernelCoreContainer()
         try providerAssembly.registerProviders(into: kernel)
-        let plugins = pluginAssembly.makePlugins() + additionalPlugins
-        guard !plugins.isEmpty else {
+        let pluginList = pluginAssembly.makePlugins() + additionalPlugins
+        guard !pluginList.isEmpty else {
             // 空目录也推进内核到 running，保证宿主视图可展示。
             try kernel.start(plugins: [])
             return kernel
         }
-        try kernel.start(plugins: plugins)
+        try kernel.start(plugins: pluginList)
         resetSettingsSelectionToFirstEntry(in: kernel)
+        wireMainWindowRootView(in: kernel)
         return kernel
     }
 
@@ -80,6 +84,7 @@ public enum FactoryNetto {
         onProvidersRegistered?(kernel)
         try await kernel.startAsync(plugins: pluginAssembly.makePlugins() + additionalPlugins)
         resetSettingsSelectionToFirstEntry(in: kernel)
+        wireMainWindowRootView(in: kernel)
         return kernel
     }
 
@@ -100,8 +105,27 @@ public enum FactoryNetto {
 
     /// 在没有启动 Kernel 的 SwiftUI 预览中注册 UI 插件贡献。
     public static func registerPreviewContributions(into shell: ShellCenter) {
-        FirewallDashboardPlugin.registerPreviewContributions(into: shell)
         HostActionPluginAssembly.registerPreviewContributions(into: shell)
+    }
+
+    /// 主窗口根视图接线（对齐 Wakey / Lumi）。
+    ///
+    /// 根视图插件在内核启动时已注册 `RootViewProviding`；这里在装配期写入
+    /// 宿主共享工具栏（含右侧设置按钮）与主内容区。工具栏与内容的贡献字段
+    /// 是 `@Published`，必须在 SwiftUI 视图更新期间之外写入，避免
+    /// "Publishing changes from within view updates" 告警与丢更新。
+    private static func wireMainWindowRootView(in kernel: KernelCoreContainer) {
+        guard let rootView = kernel.resolveProvider((any RootViewProviding).self) else { return }
+
+        if let toolbar = kernel.resolveProvider((any ToolbarProviding).self) {
+            toolbar.addToolbarItems([NettoToolbarSettings.makeItem()])
+            // 不给工具栏容器加 accessibilityIdentifier：SwiftUI 会把容器标识
+            // 覆盖到子按钮上，导致设置按钮自身的标识不可查（与 Wakey 一致，
+            // 只依赖各项自身的标识）。
+            rootView.setToolbarView(AnyView(toolbar.makeToolbarView()))
+        }
+
+        rootView.setContentView(AnyView(ContentView()))
     }
 
     // MARK: - Main View
@@ -135,10 +159,10 @@ public enum FactoryNetto {
 
     /// 使用已装配的内核返回主视图（主窗口/菜单栏共享同一内核时使用）。
     ///
-    /// 解析 Shell 与全部 Provider 契约并注入环境后渲染真实 Dashboard
-    /// （`KernelHostRootView` → `ContentView`）；契约缺失时显式失败视图。
-    /// `ui`/`appProvider`/`sessionStartDate` 由调用方持有（App 组合根
-    /// `AppEnvironment` 或本方法默认实例），不在 body 中创建服务。
+    /// 解析 Shell 与全部 Provider 契约并注入环境后渲染共享根视图
+    /// （`RootViewProviding`：工具栏 + 仪表盘内容）；根视图缺失时退回
+    /// 仪表盘内容本身。`ui`/`appProvider`/`sessionStartDate` 由调用方持有
+    /// （App 组合根 `AppEnvironment` 或本方法默认实例），不在 body 中创建服务。
     public static func makeMainView(
         kernel: KernelCoreContainer,
         ui: UIProvider,
@@ -146,13 +170,19 @@ public enum FactoryNetto {
         sessionStartDate: Date
     ) -> AnyView {
         let shell = kernel.resolveProvider(ShellToolbarProviding.self) as? ShellCenter
-        return AnyView(KernelHostRootView(
+        let host = KernelHostRootView(
             kernel: kernel,
             shell: shell,
             ui: ui,
             appProvider: appProvider,
             sessionStartDate: sessionStartDate
-        ))
+        )
+        // 与设置窗口一致：把 ThemeProviding 选中的主题桥接到 LumiUI，
+        // 让共享工具栏（`@LumiTheme`）使用宿主主题。
+        if let theme = kernel.resolveProvider(ThemeProviding.self) {
+            return AnyView(ThemeHostingView(theme: theme, content: host))
+        }
+        return AnyView(host)
     }
 
     // MARK: - Menu Bar
