@@ -4,6 +4,7 @@ import PluginAppSettings
 import PluginEventStore
 import PluginFirewall
 import PluginFirewallDashboard
+import PluginBrandLogo
 import PluginHostActions
 import PluginPersistence
 import ProviderShell
@@ -13,6 +14,7 @@ import PluginAbout
 import ProviderSettingView
 import ProviderTheme
 import ProviderMenuBar
+import ProviderLogo
 
 /// Provider 装配协议：把 Factory 拥有的共享 Provider 实现注册进 Kernel。
 ///
@@ -34,6 +36,7 @@ public struct DefaultProviderAssembly: ProviderAssembling {
     public func registerProviders(into kernel: KernelCoreContainer) throws {
         let shell = ShellCenter()
         try kernel.registerHostProvider(MenuBarProviding.self, DefaultMenuBarProviding())
+        try kernel.registerHostProvider(LogoProviding.self, DefaultLogoProviding())
         try kernel.registerProvider(ShellToolbarProviding.self, shell)
         try kernel.registerProvider(SettingsProviding.self, shell)
         try kernel.registerProvider(WindowProviding.self, shell)
@@ -60,6 +63,7 @@ public struct DefaultPluginAssembly: PluginAssembling {
 
     public func makePlugins() -> [any SuperPlugin] {
         [
+            BrandLogoPlugin(),        // order 20：向菜单栏贡献品牌图标（LogoProviding）
             PersistencePlugin(),      // order 1：db.sqlite / ModelContainer 唯一所有者
             PluginAppSettings(),      // order 10：依赖 persistence
             PluginEventStore(),       // order 10：依赖 persistence

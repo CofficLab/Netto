@@ -30,6 +30,7 @@ let package = Package(
         // 共享远程包：Coffic「关于」页（我们的应用 + 官网 / 隐私政策 / 服务条款）。
         .package(url: "https://github.com/CofficLab/LumiPluginAbout.git", from: "2.0.0"),
         .package(name: "PluginFirewallDashboard", path: "../PluginFirewallDashboard"),
+        .package(name: "PluginBrandLogo", path: "../PluginBrandLogo"),
         .package(name: "PluginFirewall", path: "../PluginFirewall"),
         .package(name: "PluginStore", path: "../PluginStore"),
         .package(name: "PluginHostActions", path: "../PluginHostActions"),
@@ -57,10 +58,12 @@ let package = Package(
                 .product(name: "PluginThemePack", package: "LumiPluginThemePack"),
                 .product(name: "PluginAbout", package: "LumiPluginAbout"),
                 "PluginFirewallDashboard",
+                "PluginBrandLogo",
                 "PluginFirewall",
                 "PluginStore",
                 .product(name: "PluginHostActions", package: "PluginHostActions"),
                 .product(name: "ProviderMenuBar", package: "LumiProviders"),
+                .product(name: "ProviderLogo", package: "LumiProviders"),
                 "ProviderViewEnvironment",
                 "LumiUI",
             ]
@@ -69,8 +72,10 @@ let package = Package(
             name: "FactoryNettoTests",
             dependencies: [
                 "FactoryNetto",
+                "PluginBrandLogo",
                 "ProviderFirewall",
                 "PluginPersistence",
+                .product(name: "ProviderLogo", package: "LumiProviders"),
             ]
         ),
     ]

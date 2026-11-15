@@ -14,6 +14,7 @@ import ProviderStore
 import ProviderStoreKit
 import ProviderTheme
 import ProviderMenuBar
+import ProviderLogo
 import SwiftUI
 
 /// FactoryNetto —— Netto 唯一静态装配点。
@@ -156,10 +157,11 @@ public enum FactoryNetto {
 
     // MARK: - Menu Bar
 
-    /// 状态栏图标视图：App 品牌标识 + 各插件注入的 `contentItems`。
+    /// 状态栏图标视图：插件注入的品牌 Logo + 各插件注入的 `contentItems`。
     ///
-    /// 系统菜单栏只由这里绘制一次；状态与文字全部来自 `MenuBarProviding`，
-    /// Factory 不感知任何具体插件。
+    /// 系统菜单栏只由这里绘制一次；品牌图标来自 `LogoProviding` 的最高优先级
+    /// `LogoItem`（无插件贡献时退回 App 资源 `brandImage`），状态与文字全部来自
+    /// `MenuBarProviding`，Factory 不感知任何具体插件。
     public static func makeStatusBarView(
         kernel: KernelCoreContainer,
         brandImage: Image
@@ -167,7 +169,11 @@ public enum FactoryNetto {
         guard let menuBar = kernel.resolveProvider(MenuBarProviding.self) else {
             return AnyView(MenuBarBrandMark(image: brandImage).frame(height: 20))
         }
-        return AnyView(MenuBarStatusBarView(provider: menuBar, brandImage: brandImage))
+        return AnyView(MenuBarStatusBarView(
+            logo: kernel.resolveProvider((any LogoProviding).self),
+            provider: menuBar,
+            brandImage: brandImage
+        ))
     }
 
     /// 返回由插件注入的菜单栏弹出面板（紧凑型）。
@@ -237,15 +243,19 @@ public enum FactoryNetto {
 
 @MainActor
 private struct MenuBarStatusBarView: View {
+    let logo: (any LogoProviding)?
     let provider: any MenuBarProviding
     let brandImage: Image
 
     @StateObject private var refreshModel: MenuBarRefreshModel
+    @StateObject private var logoRefreshModel: LogoRefreshModel
 
-    init(provider: any MenuBarProviding, brandImage: Image) {
+    init(logo: (any LogoProviding)?, provider: any MenuBarProviding, brandImage: Image) {
+        self.logo = logo
         self.provider = provider
         self.brandImage = brandImage
         _refreshModel = StateObject(wrappedValue: MenuBarRefreshModel(provider: provider))
+        _logoRefreshModel = StateObject(wrappedValue: LogoRefreshModel(provider: logo))
     }
 
     private var items: [MenuBarContribution] {
@@ -257,8 +267,9 @@ private struct MenuBarStatusBarView: View {
 
     var body: some View {
         let _ = refreshModel.revision
+        let _ = logoRefreshModel.revision
         HStack(spacing: 4) {
-            MenuBarBrandMark(image: brandImage)
+            brandMark
 
             ForEach(items) { item in
                 item.makeView()
@@ -268,6 +279,31 @@ private struct MenuBarStatusBarView: View {
         }
         .padding(.horizontal, 2)
         .frame(height: 20)
+    }
+
+    @ViewBuilder
+    private var brandMark: some View {
+        if let item = logo?.highestPriorityLogoItem {
+            item.makeView(.statusBar)
+                .frame(width: 18, height: 18)
+        } else {
+            MenuBarBrandMark(image: brandImage)
+        }
+    }
+}
+
+/// Logo 刷新桥：`LogoProviding` 不是 `ObservableObject`，用观察者把插件在
+/// `onBoot` 期间追加的 Logo 贡献收敛到状态栏视图的一次重绘。
+@MainActor
+private final class LogoRefreshModel: ObservableObject {
+    @Published private(set) var revision = 0
+    private var observer: (any LogoObserverHandle)?
+
+    init(provider: (any LogoProviding)?) {
+        guard let provider else { return }
+        observer = provider.addLogoObserver { [weak self] _ in
+            self?.revision &+= 1
+        }
     }
 }
 

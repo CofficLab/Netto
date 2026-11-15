@@ -56,14 +56,8 @@ public final class FirewallDashboardPlugin: SuperPlugin {
         try kernel.trackContribution {
             menuBar.removeItems(ownedBy: self.id)
         }
-        menuBar.addContent(MenuBarContribution(
-            id: "\(id).status",
-            title: "防火墙状态",
-            order: 60,
-            ownerPluginID: id
-        ) {
-            FirewallMenuBarStatusView(firewall: firewall, deniedApps: deniedApps)
-        })
+        // 状态栏只保留宿主装配的品牌 Logo：防火墙状态与操作都在 popover 内呈现，
+        // 避免菜单栏出现「品牌图标 + 状态图标」两个图标。
         menuBar.addPopup(MenuBarContribution(
             id: id,
             title: "TravelMode",

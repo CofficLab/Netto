@@ -1,5 +1,6 @@
 import Foundation
 import KernelCore
+import PluginBrandLogo
 import PluginFirewallDashboard
 import PluginPersistence
 import ProviderShell
@@ -9,6 +10,7 @@ import ProviderFirewallEvents
 import ProviderSettingView
 import ProviderTheme
 import ProviderMenuBar
+import ProviderLogo
 import SwiftUI
 import XCTest
 @testable import FactoryNetto
@@ -210,7 +212,7 @@ final class FactoryNettoTests: XCTestCase {
             pluginAssembly: TestPluginAssembly(plugins: dependencies + [dashboard])
         )
         let menuBar = try XCTUnwrap(kernel.resolveProvider(MenuBarProviding.self))
-        XCTAssertEqual(menuBar.contentItems.map(\.id), ["firewall-dashboard.status"])
+        XCTAssertTrue(menuBar.contentItems.isEmpty)
         XCTAssertEqual(menuBar.popupItems.map(\.id), ["firewall-dashboard"])
 
         try await kernel.disablePlugin(id: dashboard.id)
@@ -218,7 +220,7 @@ final class FactoryNettoTests: XCTestCase {
         XCTAssertTrue(menuBar.popupItems.isEmpty)
 
         try await kernel.enablePlugin(id: dashboard.id)
-        XCTAssertEqual(menuBar.contentItems.map(\.id), ["firewall-dashboard.status"])
+        XCTAssertTrue(menuBar.contentItems.isEmpty)
         XCTAssertEqual(menuBar.popupItems.map(\.id), ["firewall-dashboard"])
 
         try await kernel.stopAsync()
@@ -282,6 +284,49 @@ final class FactoryNettoTests: XCTestCase {
             }
         )
         XCTAssertEqual(shell.leftContributions.count, 1)
+    }
+
+    /// 菜单栏品牌图标由插件贡献：宿主装配注册 `LogoProviding`，插件在
+    /// `onBoot` 追加 `LogoItem`，状态栏取最高优先级项（无贡献时退回 App 资源）。
+    func testBrandLogoPluginContributesMenuBarLogo() async throws {
+        let kernel = try await FactoryNetto.makeKernelAsync(
+            providerAssembly: DefaultProviderAssembly(),
+            pluginAssembly: TestPluginAssembly(plugins: [])
+        )
+        let logo = try XCTUnwrap(kernel.resolveProvider((any LogoProviding).self))
+        XCTAssertNil(logo.highestPriorityLogoItem, "没有 Logo 插件时不应有贡献")
+
+        try BrandLogoPlugin().onBoot(kernel: kernel)
+
+        XCTAssertEqual(logo.highestPriorityLogoItem?.id, "brand-logo")
+        // 状态栏视图可正常构造（Logo 项视图在状态栏尺寸内渲染）。
+        _ = FactoryNetto.makeStatusBarView(
+            kernel: kernel,
+            brandImage: Image(systemName: "shield")
+        )
+    }
+
+    func testDefaultPluginAssemblyIncludesBrandLogo() {
+        let ids = DefaultPluginAssembly().makePlugins().map(\.id)
+
+        XCTAssertTrue(ids.contains("brand-logo"), "默认装配应包含品牌 Logo 插件：\(ids)")
+    }
+
+    /// 生产插件目录启动后，菜单栏品牌 Logo 由 `brand-logo` 插件提供。
+    func testDefaultAssemblyContributesBrandLogoItem() async throws {
+        let container = try PersistenceService.inMemoryContainer()
+        let plugins = DefaultPluginAssembly().makePlugins().map { plugin -> any SuperPlugin in
+            if plugin is PersistencePlugin {
+                return PersistencePlugin(container: container)
+            }
+            return plugin
+        }
+        let kernel = try await FactoryNetto.makeKernelAsync(
+            pluginAssembly: TestPluginAssembly(plugins: plugins)
+        )
+        let logo = try XCTUnwrap(kernel.resolveProvider((any LogoProviding).self))
+
+        XCTAssertEqual(logo.highestPriorityLogoItem?.id, "brand-logo")
     }
 
     private func makeIsolatedKernel() async throws -> KernelCoreContainer {

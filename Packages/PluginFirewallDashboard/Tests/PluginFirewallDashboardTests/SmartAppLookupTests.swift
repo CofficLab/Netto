@@ -216,7 +216,8 @@ struct FirewallDashboardPluginTests {
         let menuBar = try #require(kernel.resolveProvider(MenuBarProviding.self))
         let toolbar = try #require(kernel.resolveProvider(ShellToolbarProviding.self))
 
-        #expect(menuBar.contentItems.map(\.id) == ["firewall-dashboard.status"])
+        // 状态栏只由宿主的品牌 Logo 占位，插件只贡献 popover。
+        #expect(menuBar.contentItems.isEmpty)
         #expect(menuBar.popupItems.map(\.id) == ["firewall-dashboard"])
         #expect(toolbar.leftContributions.map(\.id) == ["switcher"])
         #expect(toolbar.centerContributions.map(\.id) == ["filter"])
@@ -229,7 +230,7 @@ struct FirewallDashboardPluginTests {
 
         try await plugin.onEnable(kernel: kernel)
 
-        #expect(menuBar.contentItems.count == 1)
+        #expect(menuBar.contentItems.isEmpty)
         #expect(menuBar.popupItems.count == 1)
     }
 
