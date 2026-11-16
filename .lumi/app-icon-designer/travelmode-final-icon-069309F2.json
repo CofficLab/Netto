@@ -1,0 +1,165 @@
+{
+  "background" : {
+    "linearGradient" : {
+      "colors" : [
+        "#0a1628",
+        "#1a2d4a"
+      ],
+      "endPoint" : {
+        "x" : 1,
+        "y" : 1
+      },
+      "startPoint" : {
+        "x" : 0,
+        "y" : 0
+      }
+    }
+  },
+  "createdAt" : "2026-11-16T08:45:46Z",
+  "height" : 1024,
+  "id" : "069309F2-0EBD-4493-BC58-4F2C2A969BA1",
+  "layers" : [
+    {
+      "blurRadius" : 0,
+      "fill" : {
+        "color" : {
+          "_0" : "#38bdf8"
+        }
+      },
+      "id" : "E2829EC6-BCB6-454D-91C8-CC761300E78F",
+      "name" : "Circle",
+      "opacity" : 1,
+      "shape" : {
+        "circle" : {
+          "cx" : 512,
+          "cy" : 512,
+          "radius" : 300
+        }
+      },
+      "stroke" : {
+        "color" : "#00d4ff",
+        "width" : 20
+      },
+      "transform" : {
+        "rotationDegrees" : 0,
+        "scale" : 1,
+        "translateX" : 0,
+        "translateY" : 0
+      }
+    },
+    {
+      "blurRadius" : 0,
+      "fill" : {
+        "color" : {
+          "_0" : "#38bdf8"
+        }
+      },
+      "id" : "3ACB0E13-6AD9-44F7-B571-8B0CD0ACE01F",
+      "name" : "Circle",
+      "opacity" : 1,
+      "shape" : {
+        "circle" : {
+          "cx" : 512,
+          "cy" : 512,
+          "radius" : 300
+        }
+      },
+      "stroke" : {
+        "color" : "#00d4ff",
+        "width" : 4
+      },
+      "transform" : {
+        "rotationDegrees" : 0,
+        "scale" : 1,
+        "translateX" : 0,
+        "translateY" : 0
+      }
+    },
+    {
+      "blurRadius" : 0,
+      "fill" : {
+        "color" : {
+          "_0" : "#111827"
+        }
+      },
+      "id" : "A42000AD-BC21-467C-ACD9-9E3BB34BD128",
+      "name" : "Line",
+      "opacity" : 0.4,
+      "shape" : {
+        "line" : {
+          "x1" : 212,
+          "x2" : 812,
+          "y1" : 512,
+          "y2" : 512
+        }
+      },
+      "stroke" : {
+        "color" : "#00d4ff",
+        "width" : 6
+      },
+      "transform" : {
+        "rotationDegrees" : 0,
+        "scale" : 1,
+        "translateX" : 0,
+        "translateY" : 0
+      }
+    },
+    {
+      "blurRadius" : 0,
+      "fill" : {
+        "color" : {
+          "_0" : "#111827"
+        }
+      },
+      "id" : "5AE97A2A-8D69-4BFD-AEAB-FA94D4D5E2D6",
+      "name" : "Line",
+      "opacity" : 0.4,
+      "shape" : {
+        "line" : {
+          "x1" : 512,
+          "x2" : 512,
+          "y1" : 212,
+          "y2" : 812
+        }
+      },
+      "stroke" : {
+        "color" : "#00d4ff",
+        "width" : 6
+      },
+      "transform" : {
+        "rotationDegrees" : 0,
+        "scale" : 1,
+        "translateX" : 0,
+        "translateY" : 0
+      }
+    },
+    {
+      "blurRadius" : 0,
+      "fill" : {
+        "color" : {
+          "_0" : "#ff6b35"
+        }
+      },
+      "id" : "F54ADEC5-940D-4A74-AE9A-760425E57A86",
+      "name" : "Circle",
+      "opacity" : 1,
+      "shape" : {
+        "circle" : {
+          "cx" : 700,
+          "cy" : 700,
+          "radius" : 100
+        }
+      },
+      "transform" : {
+        "rotationDegrees" : 0,
+        "scale" : 1,
+        "translateX" : 0,
+        "translateY" : 0
+      }
+    }
+  ],
+  "schemaVersion" : 1,
+  "title" : "TravelMode Final Icon",
+  "updatedAt" : "2026-11-16T08:47:51Z",
+  "width" : 1024
+}
