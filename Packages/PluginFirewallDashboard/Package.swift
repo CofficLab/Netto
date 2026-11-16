@@ -10,16 +10,16 @@ let package = Package(
         .library(name: "PluginFirewallDashboard", targets: ["PluginFirewallDashboard"])
     ],
     dependencies: [
-        .package(url: "https://github.com/CofficLab/LumiKernel.git", from: "1.1.0"),
+        .package(url: "https://github.com/lumi-softworks/LumiKernel.git", from: "1.1.0"),
         .package(path: "../ProviderViewEnvironment"),
         .package(path: "../ProviderAppSettings"),
         .package(path: "../ProviderFirewall"),
         .package(path: "../ProviderFirewallEvents"),
-        .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.1.0"),
+        .package(url: "https://github.com/lumi-softworks/LumiSettings.git", from: "1.1.0"),
         .package(path: "../ProviderShell"),
-        .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.19.0"),
+        .package(url: "https://github.com/lumi-softworks/LumiProviders.git", from: "1.19.0"),
         .package(name: "ProviderStoreKit", path: "../ProviderStoreKit"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.18.0"),
+        .package(url: "https://github.com/lumi-softworks/LumiUI.git", from: "1.18.0"),
     ],
     targets: [
         .target(

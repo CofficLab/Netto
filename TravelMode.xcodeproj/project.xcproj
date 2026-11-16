@@ -15,7 +15,7 @@
   "packages": [
     {
       "kind": "remote",
-      "repository": "https://github.com/CofficLab/LumiKernel.git",
+      "repository": "https://github.com/lumi-softworks/LumiKernel.git",
       "version": {
         "up-to-next-major-version": "1.1.0",
       },
@@ -57,19 +57,19 @@
       "path": "Packages/PluginStore",
     }, {
       "kind": "remote",
-      "repository": "https://github.com/CofficLab/LumiProviders.git",
+      "repository": "https://github.com/lumi-softworks/LumiProviders.git",
       "version": {
         "up-to-next-major-version": "1.19.0",
       },
     }, {
       "kind": "remote",
-      "repository": "https://github.com/CofficLab/LumiSettings.git",
+      "repository": "https://github.com/lumi-softworks/LumiSettings.git",
       "version": {
         "up-to-next-major-version": "1.1.0",
       },
     }, {
       "kind": "remote",
-      "repository": "https://github.com/CofficLab/LumiUI.git",
+      "repository": "https://github.com/lumi-softworks/LumiUI.git",
       "version": {
         "up-to-next-major-version": "1.12.0",
       },

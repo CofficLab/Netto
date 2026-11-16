@@ -6,8 +6,8 @@ Netto 特有的商店能力契约。
 
 | 层 | 位置 | 职责 |
 |---|---|---|
-| 通用契约 | `ProviderStore`（[LumiProviders](https://github.com/CofficLab/LumiProviders)） | 订阅档位、权益快照、权益能力协议、购买呈现协议、商品表契约 |
-| 通用机制 | `KitStoreKit`（[LumiStoreKit](https://github.com/CofficLab/LumiStoreKit)） | 交易监听、权益校准、商品拉取、购买、恢复、交易验证、订阅聚合 |
+| 通用契约 | `ProviderStore`（[LumiProviders](https://github.com/lumi-softworks/LumiProviders)） | 订阅档位、权益快照、权益能力协议、购买呈现协议、商品表契约 |
+| 通用机制 | `KitStoreKit`（[LumiStoreKit](https://github.com/lumi-softworks/LumiStoreKit)） | 交易监听、权益校准、商品拉取、购买、恢复、交易验证、订阅聚合 |
 | 本包 | ProviderStoreKit | Netto 特有的应用内能力契约 |
 
 Netto 原来的 `ProviderStore` 包同时承担了「通用契约」与「Netto 特有契约」两件事。接入共享层后，通用部分交给共享契约包，本包只保留 Netto 特有的部分：
