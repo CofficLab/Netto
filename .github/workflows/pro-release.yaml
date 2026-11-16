@@ -18,6 +18,7 @@ env:
 
 jobs:
   release:
+    if: github.event_name == 'push' || github.event.workflow_run.conclusion == 'success'
     runs-on: macos-latest
     steps:
       - name: Checkout repository
@@ -26,11 +27,19 @@ jobs:
           ref: main
       - name: 读取版本号
         run: |
-          # 读取配置文件路径
-          projectFile=$(find $(pwd) -type f -name "*.pbxproj" | head -n 1)
+          # 读取配置文件路径（Xcode 16 工程格式：project.xcproj）
+          projectFile=$(find "$(pwd)" -type f -name "project.xcproj" | head -n 1)
+          if [[ -z "$projectFile" ]]; then
+            echo "未找到 project.xcproj"
+            exit 1
+          fi
 
           # 读取文件中的版本号
-          version=$(grep -o 'MARKETING_VERSION = [^"]*' $projectFile | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+          version=$(grep -Eo '"MARKETING_VERSION": "[0-9]+\.[0-9]+\.[0-9]+"' "$projectFile" | head -n 1 | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+          if [[ -z "$version" ]]; then
+            echo "未能解析 MARKETING_VERSION"
+            exit 1
+          fi
 
           echo "版本号->$version"
 
