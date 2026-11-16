@@ -11,15 +11,13 @@ import SwiftUI
 /// 解析 Provider 并渲染「左侧入口列表 + 右侧详情视图」（复刻 Lumi
 /// `ProviderSettingView`），组合根只装配一次并缓存。
 ///
-/// 样式：自 v2 起全部使用 **LumiUI 组件**（`AppCard` + `AppSettingsSection`
-/// + `AppSettingRow`，与 Lumi 插件设置页同构）以统一视觉；主题由 LumiUI 内置
-/// `LumiDefaultTheme`（森林墨）兜底，宿主启动时另设 `ChromeThemes.current`
-/// 为 `LumiFallbackChromeTheme` 供氛围背景使用。
+/// 样式：与 Lumi / JuiceNote / Wakey 的通用设置页同构 ——
+/// `AppSettingsContentScaffold` + `AppSettingSection` + `AppSettingRow`，
+/// 行尾统一用 `AppButton(.secondary, .small)`；不再为每个分组额外套 `AppCard`
+/// （`AppSettingSection` 在 macOS 已自带卡片）。
 ///
-/// 「使用引导」入口：通用卡片内新增「使用引导」行（复刻 Lumi 设置页
-/// `AppSettingRow` 动作行形态），点击以 sheet 展示 `WelcomeGuideView`
-/// （使用引导步骤，无 Provider 环境依赖、不创建核心服务；与启动欢迎窗
-/// 共用同一视图，`hasShownWelcome` 键与旧实现一致）。
+/// 「使用引导」：通用页的「使用引导」行以 sheet 展示 `WelcomeGuideView`
+/// （与启动欢迎窗共用同一视图，`hasShownWelcome` 键与旧实现一致）。
 ///
 /// 依赖约束：
 /// - 依赖持久化路径配置、LumiUI 组件与系统框架（AppKit），
@@ -29,82 +27,138 @@ import SwiftUI
 ///
 /// 线程/actor：`View`，body 求值无副作用；按钮动作在主线程执行。
 struct GeneralSettingsView: View {
-    /// 是否展示「使用引导」sheet（点击通用卡片「使用引导」行置位）。
+    /// 是否展示「使用引导」sheet（点击通用页「使用引导」行置位）。
     @State private var showGuide = false
+
+    /// App bundle 元数据（名称 / 包名 / 版本 / 构建）。
+    private let bundleInfo = AppBundleInfo()
 
     /// 数据目录（与持久化插件使用同一配置）。
     private var dataFolder: URL { PersistenceConfig.databaseFolder }
 
-    /// 版本号（CFBundleShortVersionString）。
-    private var version: String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
-    }
-
-    /// 构建号（CFBundleVersion）。
-    private var build: String {
-        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—"
-    }
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            AppCard {
-                AppSettingsSection(title: "通用", spacing: 12) {
-                    AppSettingRow(
-                        title: "使用引导",
-                        description: "查看应用使用说明",
-                        icon: "graduationcap.fill",
-                        action: { showGuide = true }
-                    ) {
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    AppSettingRow(
-                        title: "数据目录",
-                        description: dataFolder.path,
-                        icon: "folder"
-                    ) {
-                        Button("在访达中显示") {
-                            NSWorkspace.shared.activateFileViewerSelecting([dataFolder])
-                        }
-                    }
-                }
+        AppSettingsContentScaffold(maxContentWidth: nil) {
+            VStack(alignment: .leading, spacing: AppUI.Spacing.lg) {
+                guideSection
+                appSection
+                systemExtensionSection
             }
-
-            AppCard {
-                AppSettingsSection(title: "系统扩展", spacing: 12) {
-                    AppSettingRow(
-                        title: "网络扩展",
-                        description: "打开系统设置中的网络扩展页",
-                        icon: "puzzlepiece.extension",
-                        action: openSystemSettings
-                    ) {
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-
-            AppCard {
-                AppSettingsSection(title: "关于", spacing: 12) {
-                    AppSettingRow(
-                        title: PersistenceConfig.appName,
-                        description: "版本 \(version) (\(build))",
-                        icon: "info.circle"
-                    ) {}
-                }
-            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(16)
-        .frame(minWidth: 420, minHeight: 360, alignment: .topLeading)
         // 「使用引导」sheet：尺寸与启动欢迎窗一致（500x600），
         // WelcomeGuideView 的「开始使用」按钮经 @Environment(\.dismiss) 关闭 sheet。
         .sheet(isPresented: $showGuide) {
             WelcomeGuideView()
                 .frame(width: 500, height: 600)
         }
+    }
+
+    // MARK: - Sections
+
+    /// 使用引导：打开应用各功能的使用说明。
+    private var guideSection: some View {
+        AppSettingSection(title: "使用引导", titleAlignment: .leading) {
+            AppSettingRow(
+                title: "使用引导",
+                description: "查看应用各功能的使用说明",
+                icon: "book"
+            ) {
+                AppButton(
+                    "打开",
+                    systemImage: "book.pages",
+                    style: .secondary,
+                    size: .small
+                ) {
+                    showGuide = true
+                }
+            }
+        }
+    }
+
+    /// 应用信息：名称、Bundle ID、版本、构建与数据目录。
+    private var appSection: some View {
+        AppSettingSection(title: PersistenceConfig.appName, titleAlignment: .leading) {
+            VStack(spacing: 0) {
+                AppSettingRow(
+                    title: "名称",
+                    description: bundleInfo.name,
+                    icon: "app"
+                ) {
+                    EmptyView()
+                }
+
+                divider
+
+                AppSettingRow(
+                    title: "Bundle ID",
+                    description: bundleInfo.bundleIdentifier,
+                    icon: "number"
+                ) {
+                    EmptyView()
+                }
+
+                divider
+
+                AppSettingRow(
+                    title: "版本",
+                    description: bundleInfo.version ?? "—",
+                    icon: "info.circle"
+                ) {
+                    EmptyView()
+                }
+
+                divider
+
+                AppSettingRow(
+                    title: "构建",
+                    description: bundleInfo.build ?? "—",
+                    icon: "hammer"
+                ) {
+                    EmptyView()
+                }
+
+                divider
+
+                AppSettingRow(
+                    title: "数据目录",
+                    description: dataFolder.path,
+                    icon: "folder"
+                ) {
+                    AppButton(
+                        "打开",
+                        systemImage: "folder",
+                        style: .secondary,
+                        size: .small
+                    ) {
+                        NSWorkspace.shared.activateFileViewerSelecting([dataFolder])
+                    }
+                }
+            }
+        }
+    }
+
+    /// 系统扩展：跳转系统设置中的网络扩展页。
+    private var systemExtensionSection: some View {
+        AppSettingSection(title: "系统扩展", titleAlignment: .leading) {
+            AppSettingRow(
+                title: "网络扩展",
+                description: "打开系统设置中的网络扩展页",
+                icon: "puzzlepiece.extension"
+            ) {
+                AppButton(
+                    "打开",
+                    systemImage: "arrow.up.forward.app",
+                    style: .secondary,
+                    size: .small,
+                    action: openSystemSettings
+                )
+            }
+        }
+    }
+
+    private var divider: some View {
+        Divider()
+            .padding(.vertical, AppUI.Spacing.xs)
     }
 
     /// 打开 macOS 系统设置中的网络扩展页（旧 BtnSetting 行为）。
@@ -119,4 +173,5 @@ struct GeneralSettingsView: View {
 
 #Preview("通用设置") {
     GeneralSettingsView()
+        .frame(width: 640, height: 600)
 }
