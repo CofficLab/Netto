@@ -1,0 +1,77 @@
+import LumiUI
+import ProviderViewEnvironment
+import ProviderFirewall
+import SwiftUI
+
+/// 引导视图 —— 防火墙未就绪时覆盖在应用列表上的状态面板。
+///
+/// 按防火墙状态与升级状态选择对应的 `DashboardGuidePanel` 内容；遮罩使用
+/// 系统材质，面板本身由 LumiUI 主题表面渲染。
+struct GuideView: View {
+    @EnvironmentObject private var app: UIProvider
+    @Environment(\.firewallProvider) private var firewall: FirewallProviding?
+
+    var body: some View {
+        ZStack {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                // 升级引导优先于状态引导。
+                if app.shouldShowUpgradeGuide {
+                    UpgradeGuideView()
+                } else {
+                    switch firewall?.snapshot.state {
+                    case .disabled, .stopped, nil:
+                        StopView()
+                    case .unknown, .installing:
+                        UnknownView()
+                    case .running:
+                        RunningView()
+                    case .systemExtensionNotInstalled:
+                        SystemExtensionNotInstalledView()
+                    case .systemExtensionNeedsUpdate:
+                        SystemExtensionNeedUpdateView()
+                    case .filterNotInstalled:
+                        FilterNotInstalledView()
+                    case .systemExtensionApprovalNeeded, .filterApprovalNeeded, .permissionDenied:
+                        ApprovalView()
+                    case .waitingForApproval:
+                        DashboardGuidePanel(
+                            iconName: "hand.raised.fill",
+                            title: "等待系统批准",
+                            iconColor: .orange
+                        ) {
+                            Text("请在系统弹窗中点击「允许」以安装网络扩展。")
+                                .font(.appBody)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                    case .extensionNotActivated:
+                        ExtensionNotReady()
+                    case .notInApplicationsFolder:
+                        NotInApplicationsFolderView()
+                    case let .failed(failure):
+                        ErrorView(error: FirewallFailureError(failure: failure))
+                    }
+                }
+            }
+            .padding(AppUI.Spacing.lg)
+            .accessibilityIdentifier("netto.firewall.guide")
+        }
+    }
+}
+
+// MARK: - Preview
+#Preview("App") {
+    ContentView()
+        .dashboardPreviewRoot()
+        .frame(width: 600, height: 600)
+}
+
+#Preview("GuideView") {
+    GuideView()
+        .dashboardPreviewRoot()
+        .frame(width: 600, height: 800)
+}

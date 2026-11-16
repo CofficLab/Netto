@@ -1,0 +1,151 @@
+import Foundation
+import KernelCore
+import OSLog
+import ProviderShell
+import ProviderSettingView
+import ProviderStore
+import ProviderStoreKit
+import StoreKit
+import SwiftUI
+
+/// Store 插件：StoreService/StoreState/DTO/购买恢复订阅 UI 的装配点与唯一拥有者。
+///
+/// 生命周期：
+/// - onBoot：注册 `StoreProviding`（owner=self.id），向设置窗口贡献「商店」
+///   入口，并启动交易监听与权益校准（旧 `StoreService.bootstrap()` 语义）。
+/// - onShutdown：取消监听任务、撤销贡献（Kernel 随 owner 自动撤回 Provider）。
+///
+/// 线程/actor：`@MainActor`；StoreKit 调用在内部 Task 中串行执行；
+/// 权益变更经 `observeEntitlement()` AsyncStream 暴露（替代旧 Notification 消费路径）。
+@MainActor
+public final class PluginStore: SuperPlugin, StoreProviding {
+    public let id = "store"
+    public var order: Int { 40 }
+    public var dependencies: [String] { [] }
+    public let metadata = PluginMetadata(
+        id: "store",
+        name: "Store",
+        description: "StoreKit 商店：购买/恢复/订阅/权益快照",
+        version: "1.0",
+        policy: .enabledByDefault
+    )
+
+    /// 交易监听 + 权益校准任务句柄（onShutdown 取消，避免留下后台任务）。
+    private var storeTask: Task<Void, Never>?
+
+    /// 商店设置页的状态容器（插件级共享：设置页每次重建都读同一份状态）。
+    private var storeViewModel: StoreViewModel?
+
+    public init() {}
+
+    // MARK: - SuperPlugin
+
+    public func onBoot(kernel: KernelCoreContainer) throws {
+        try kernel.registerProvider(StoreProviding.self, self)
+        // 商店迁移到设置窗口：向 SettingViewProviding 注入「商店」入口
+        // （替代旧主窗口 StoreBtn + store-window 插件窗口）。
+        let viewModel = StoreViewModel()
+        storeViewModel = viewModel
+        kernel.resolveProvider(SettingViewProviding.self)?
+            .addEntries([
+                SettingEntryItem(id: "store", title: "商店", systemImage: "storefront", order: 30) {
+                    StoreSettingsView(viewModel: viewModel)
+                },
+            ])
+        // 启动监听 + 校准（幂等由 kernel 保证只 onBoot 一次）。
+        storeTask = Task { [weak self] in
+            await self?.runStoreServices()
+        }
+    }
+
+    public func onShutdown(kernel: KernelCoreContainer) throws {
+        // 停止交易监听 + 权益校准任务（不留下后台任务）。
+        storeTask?.cancel()
+        storeTask = nil
+        // 撤回设置入口（Kernel 随后按 owner 撤回 Provider）。
+        kernel.resolveProvider(SettingViewProviding.self)?
+            .removeEntries(ids: ["store"])
+        // 停止权益变更监听。
+        storeViewModel?.dispose()
+        storeViewModel = nil
+    }
+
+    // MARK: - StoreProviding
+
+    public var entitlement: StoreEntitlementSnapshot {
+        StoreState.cachedPurchaseInfo()
+    }
+
+    public func loadProducts() async throws -> [StoreProductSnapshot] {
+        let groups = try await StoreService.fetchAllProducts()
+        return Self.productSnapshots(from: groups)
+    }
+
+    public func purchase(_ productID: String) async throws {
+        _ = try await StoreService.purchase(productID: productID)
+    }
+
+    public func restore() async throws {
+        // 恢复走共享机制层的 AppStore.sync()，交易监听随后收到凭据并更新权益。
+        try await StoreService.restorePurchases()
+    }
+
+    public func observeEntitlement() -> AsyncStream<StoreEntitlementSnapshot> {
+        AsyncStream { continuation in
+            // 先推当前快照（订阅者立即可见），再订阅后续变更；避免订阅竞态。
+            continuation.yield(self.entitlement)
+            let observer = Task { @MainActor [weak self] in
+                // 显式 MainActor 订阅：保证与调用方同一执行器，杜绝订阅竞态。
+                for await _ in NotificationCenter.default.notifications(named: .storeEntitlementUpdated) {
+                    continuation.yield(self?.entitlement ?? .none)
+                }
+            }
+            continuation.onTermination = { _ in observer.cancel() }
+        }
+    }
+
+    // MARK: - Private
+
+    /// 纯逻辑：商品分组 → 中立商品快照列表（`loadProducts` 的映射内核）。
+    ///
+    /// 抽成独立方法的原因：拉取商品依赖真实 App Store 会话，单测不可达；
+    /// 映射本身不依赖 StoreKit，可直接用 `ProductGroupsDTO` 覆盖。
+    ///
+    /// - Note: 顺序与旧实现一致——一次性解锁/非续订/消耗型在前，自动续订订阅在后。
+    static func productSnapshots(from groups: ProductGroupsDTO) -> [StoreProductSnapshot] {
+        var result: [StoreProductSnapshot] = []
+        for dto in groups.cars + groups.nonRenewables + groups.fuel {
+            result.append(StoreProductSnapshot(
+                id: dto.id,
+                displayName: dto.displayName,
+                price: dto.displayPrice,
+                kind: .nonConsumable,
+                tier: NettoStoreCatalog.shared.tier(for: dto.id)
+            ))
+        }
+        for group in groups.subscriptionGroups {
+            for dto in group.subscriptions {
+                result.append(StoreProductSnapshot(
+                    id: dto.id,
+                    displayName: dto.displayName,
+                    price: dto.displayPrice,
+                    kind: .autoRenewable,
+                    tier: NettoStoreCatalog.shared.tier(for: dto.id)
+                ))
+            }
+        }
+        return result
+    }
+
+    /// 启动交易监听与权益校准（可取消；校准先于监听，恢复旧 bootstrap 语义）。
+    private func runStoreServices() async {
+        await StoreService.bootstrap()
+    }
+}
+
+// MARK: - Notification（模块内权益变更桥）
+
+extension Notification.Name {
+    /// 权益快照已更新（StoreState.update 后发出；observeEntitlement 桥接）。
+    static let storeEntitlementUpdated = Notification.Name("store.entitlement.updated")
+}

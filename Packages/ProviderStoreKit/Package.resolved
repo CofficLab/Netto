@@ -1,0 +1,51 @@
+{
+  "originHash": "284af46ddc4b5208fad166fceea8d513d083537dba3dbfe969a2d9d6d6046344",
+  "pins": [
+    {
+      "identity": "lumikernel",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/CofficLab/LumiKernel.git",
+      "state": {
+        "revision": "c0aace6a4b0b428f3b059020327a558c470538ed",
+        "version": "1.1.1"
+      }
+    },
+    {
+      "identity": "lumilocalization",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/CofficLab/LumiLocalization.git",
+      "state": {
+        "revision": "da8ca9d0cc77e9c1f979680f9cb79e87f79a3f87",
+        "version": "1.0.2"
+      }
+    },
+    {
+      "identity": "lumilogging",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/CofficLab/LumiLogging.git",
+      "state": {
+        "revision": "ed01ea8d6e95c627be241a01924c75999b6d8256",
+        "version": "1.0.2"
+      }
+    },
+    {
+      "identity": "lumiproviders",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/CofficLab/LumiProviders.git",
+      "state": {
+        "revision": "06272ae385bcad8993e199cbd4b957f4f65c2a6c",
+        "version": "1.25.0"
+      }
+    },
+    {
+      "identity": "lumiui",
+      "kind": "remoteSourceControl",
+      "location": "https://github.com/CofficLab/LumiUI.git",
+      "state": {
+        "revision": "c5f9d55551151154290a67b65b1d69f95ea3c1cc",
+        "version": "1.18.1"
+      }
+    }
+  ],
+  "version": 3
+}

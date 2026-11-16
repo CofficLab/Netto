@@ -8,4 +8,4 @@
 
 macOS 平台的 APP 联网控制。
 
-![Hero](./docs/feature-1x.png)
+![Hero](./docs/feature-1x.webp)
