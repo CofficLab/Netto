@@ -155,6 +155,35 @@ final class EventStoreTests: XCTestCase {
         XCTAssertEqual(result, 1)
     }
 
+    /// 批量删除与应用 ID 投影：多行数据下计数与去重结果保持正确。
+    func testBatchDeletePathsAndIdentifierProjection() async throws {
+        let store = try makeStore()
+        let base = Date()
+        for i in 0..<300 {
+            try await store.create(makeEvent(
+                id: "b\(i)",
+                appId: i.isMultiple(of: 3) ? "com.a" : "com.b",
+                time: base.addingTimeInterval(Double(i))
+            ))
+        }
+
+        let allIds = try await store.allAppIds()
+        XCTAssertEqual(allIds, ["com.a", "com.b"])
+        let recentIds = try await store.appIdsSince(base)
+        XCTAssertEqual(recentIds, ["com.a", "com.b"])
+
+        try await store.deleteByAppId("com.a")
+        let remainingA = try await store.count(FirewallEventCountQuery(appIdentifier: "com.a"))
+        XCTAssertEqual(remainingA, 0)
+        let totalBeforeClear = try await store.totalCount()
+        XCTAssertEqual(totalBeforeClear, 200)
+
+        let removed = try await store.deleteAll()
+        XCTAssertEqual(removed, 200)
+        let totalAfterClear = try await store.totalCount()
+        XCTAssertEqual(totalAfterClear, 0)
+    }
+
     // MARK: - 维护
 
     func testTriggerMaintenanceRemovesExpiredAndReportsHealth() async throws {

@@ -100,20 +100,15 @@ actor EventStoreActor: ModelActor {
         let predicate = #Predicate<FirewallEventModel> { item in
             item.sourceAppIdentifier == appId
         }
-        let events = try modelContext.fetch(FetchDescriptor(predicate: predicate))
-        for event in events {
-            modelContext.delete(event)
-        }
+        try modelContext.delete(model: FirewallEventModel.self, where: predicate)
         try modelContext.save()
     }
 
     func deleteAll() throws -> Int {
-        let events = try modelContext.fetch(FetchDescriptor<FirewallEventModel>())
-        let count = events.count
-        for event in events {
-            modelContext.delete(event)
-        }
-        if count > 0 { try modelContext.save() }
+        let count = try modelContext.fetchCount(FetchDescriptor<FirewallEventModel>())
+        guard count > 0 else { return 0 }
+        try modelContext.delete(model: FirewallEventModel.self, where: nil)
+        try modelContext.save()
         return count
     }
 
@@ -122,12 +117,10 @@ actor EventStoreActor: ModelActor {
         let predicate = #Predicate<FirewallEventModel> { item in
             item.time < cutoffDate
         }
-        let events = try modelContext.fetch(FetchDescriptor(predicate: predicate))
-        let count = events.count
-        for event in events {
-            modelContext.delete(event)
-        }
-        if count > 0 { try modelContext.save() }
+        let count = try modelContext.fetchCount(FetchDescriptor(predicate: predicate))
+        guard count > 0 else { return 0 }
+        try modelContext.delete(model: FirewallEventModel.self, where: predicate)
+        try modelContext.save()
         return count
     }
 
@@ -151,11 +144,11 @@ actor EventStoreActor: ModelActor {
     }
 
     func allAppIds() throws -> [String] {
-        let models = try modelContext.fetch(
-            FetchDescriptor<FirewallEventModel>(
-                sortBy: [SortDescriptor(\.sourceAppIdentifier, order: .forward)]
-            )
+        var descriptor = FetchDescriptor<FirewallEventModel>(
+            sortBy: [SortDescriptor(\.sourceAppIdentifier, order: .forward)]
         )
+        descriptor.propertiesToFetch = [\.sourceAppIdentifier]
+        let models = try modelContext.fetch(descriptor)
         return Array(Set(models.map(\.sourceAppIdentifier))).sorted()
     }
 
@@ -163,12 +156,12 @@ actor EventStoreActor: ModelActor {
         let predicate = #Predicate<FirewallEventModel> { item in
             item.time >= date
         }
-        let models = try modelContext.fetch(
-            FetchDescriptor<FirewallEventModel>(
-                predicate: predicate,
-                sortBy: [SortDescriptor(\.sourceAppIdentifier, order: .forward)]
-            )
+        var descriptor = FetchDescriptor<FirewallEventModel>(
+            predicate: predicate,
+            sortBy: [SortDescriptor(\.sourceAppIdentifier, order: .forward)]
         )
+        descriptor.propertiesToFetch = [\.sourceAppIdentifier]
+        let models = try modelContext.fetch(descriptor)
         return Array(Set(models.map(\.sourceAppIdentifier))).sorted()
     }
 
