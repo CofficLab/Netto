@@ -1,3 +1,4 @@
+import LumiUI
 import ProviderFirewallEvents
 import SwiftUI
 
@@ -10,7 +11,7 @@ struct EventTableView: View {
             if isLoading {
                 SkeletonLoadingView()
             } else if events.isEmpty {
-                EmptyStateView()
+                EmptyStateView(title: "暂无事件数据")
             } else {
                 Table(events, columns: {
                     TableColumn("Time", value: \.timeFormatted).width(150)

@@ -1,9 +1,10 @@
+import LumiUI
 import SwiftUI
 
 /**
  * 骨架屏加载视图
  *
- * 用于在数据加载时显示占位符，提升用户体验
+ * 用于在数据加载时显示占位符，占位条样式统一走 LumiUI `AppSkeleton`。
  */
 struct SkeletonLoadingView: View {
     /// 骨架屏行数，默认5行
@@ -14,32 +15,18 @@ struct SkeletonLoadingView: View {
     }
 
     var body: some View {
-        HStack {
-            Spacer()
-            VStack(spacing: 8) {
-                ForEach(0 ..< rowCount, id: \.self) { _ in
-                    HStack(spacing: 12) {
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(width: 150, height: 16)
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(width: 120, height: 16)
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(width: 60, height: 16)
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(width: 60, height: 16)
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(width: 60, height: 16)
-                    }
+        VStack(spacing: AppUI.Spacing.sm) {
+            ForEach(0 ..< rowCount, id: \.self) { _ in
+                HStack(spacing: AppUI.Spacing.md) {
+                    AppSkeletonBlock(width: 150, height: 12)
+                    AppSkeletonBlock(width: 120, height: 12)
+                    AppSkeletonBlock(width: 60, height: 12)
+                    AppSkeletonBlock(width: 60, height: 12)
+                    AppSkeletonBlock(width: 60, height: 12)
                 }
             }
-            .padding(.vertical, 8)
-            Spacer()
         }
+        .padding(.vertical, AppUI.Spacing.sm)
     }
 }
 

@@ -1,14 +1,15 @@
-import ProviderViewEnvironment
+import LumiUI
 import OSLog
-import ProviderShell
 import ProviderFirewallEvents
+import ProviderShell
+import ProviderViewEnvironment
 import SwiftUI
 
 /**
  * 事件详情视图
  *
  * 展示应用的网络事件详情，包括事件列表、筛选工具栏和分页控制
- * 使用 @Query 自动获取和更新数据，支持筛选和分页
+ * 使用 Provider 契约获取和更新数据，支持筛选和分页
  */
 struct EventDetailView: View {
     nonisolated static let emoji = "📋"
@@ -35,85 +36,36 @@ struct EventDetailView: View {
     @State private var directionFilter: DirectionFilter = .all
     @State private var isLoading: Bool = false
 
+    @LumiTheme private var theme
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("事件详情")
-                .font(.title2)
-                .fontWeight(.semibold)
+        AppCard(
+            style: .subtle,
+            cornerRadius: DesignTokens.Radius.md,
+            showShadow: false
+        ) {
+            VStack(alignment: .leading, spacing: AppUI.Spacing.sm) {
+                Text("事件详情")
+                    .font(.appSectionTitle)
+                    .foregroundStyle(theme.textPrimary)
 
-            // Filter Toolbar
-            HStack(spacing: 8) {
-                Picker("状态", selection: $statusFilter) {
-                    ForEach(StatusFilter.allCases, id: \.self) { filter in
-                        Text(filter.rawValue)
-                            .tag(filter)
-                            .accessibilityIdentifier("netto.events.status.\(filter.rawValue)")
-                    }
+                filterBar
+
+                EventTableView(events: events, isLoading: $isLoading)
+
+                if getTotalPages() > 1 {
+                    PaginationView(
+                        currentPage: $currentPage,
+                        totalPages: getTotalPages(),
+                        totalCount: totalEventCount,
+                        pageSize: perPage,
+                        isLoading: isLoading,
+                        onPreviousPage: {},
+                        onNextPage: {}
+                    )
                 }
-                .pickerStyle(SegmentedPickerStyle())
-                .frame(width: 180)
-                .accessibilityIdentifier("netto.events.status-filter")
-
-                Spacer()
-
-                Picker("方向", selection: $directionFilter) {
-                    ForEach(DirectionFilter.allCases, id: \.self) { filter in
-                        Text(filter.rawValue)
-                            .tag(filter)
-                            .accessibilityIdentifier("netto.events.direction.\(filter.rawValue)")
-                    }
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .frame(width: 180)
-                .accessibilityIdentifier("netto.events.direction-filter")
-
-                Button(action: {
-                    Task {
-                        await exportAllLogs()
-                        shell.post(ToastMessage(description: "已导出到下载目录"))
-                    }
-                }, label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "arrow.down.circle")
-                        Text("导出近期日志")
-                    }
-                })
-                .buttonStyle(.borderedProminent)
-                .accessibilityIdentifier("netto.events.export")
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(.controlBackgroundColor).opacity(0.7))
-                    .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-            )
-            .padding(.horizontal, 0)
-            .padding(.bottom, 8)
-
-            // Data Table
-            EventTableView(events: events, isLoading: $isLoading)
-
-            // Pagination
-            if getTotalPages() > 1 {
-                PaginationView(
-                    currentPage: $currentPage,
-                    totalPages: getTotalPages(),
-                    totalCount: totalEventCount,
-                    pageSize: perPage,
-                    isLoading: isLoading,
-                    onPreviousPage: {},
-                    onNextPage: {}
-                )
             }
         }
-        .padding(12)
-        .background(Color(.controlBackgroundColor))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("netto.events.detail")
         .onAppear {
@@ -130,6 +82,52 @@ struct EventDetailView: View {
         .onChange(of: currentPage) {
             updateDataSource()
         }
+    }
+
+    // MARK: - Filter Bar
+
+    private var filterBar: some View {
+        HStack(spacing: AppUI.Spacing.sm) {
+            AppSegmentedControl(
+                StatusFilter.allCases.map(\.rawValue),
+                selection: statusSelection,
+                maxWidth: 180,
+                accessibilityIdentifiers: StatusFilter.allCases.map { "netto.events.status.\($0.rawValue)" }
+            )
+            .accessibilityIdentifier("netto.events.status-filter")
+
+            Spacer(minLength: 0)
+
+            AppSegmentedControl(
+                DirectionFilter.allCases.map(\.rawValue),
+                selection: directionSelection,
+                maxWidth: 180,
+                accessibilityIdentifiers: DirectionFilter.allCases.map { "netto.events.direction.\($0.rawValue)" }
+            )
+            .accessibilityIdentifier("netto.events.direction-filter")
+
+            AppButton("导出近期日志", systemImage: "arrow.down.circle", style: .secondary, size: .small) {
+                Task {
+                    await exportAllLogs()
+                    shell.post(ToastMessage(description: "已导出到下载目录"))
+                }
+            }
+            .accessibilityIdentifier("netto.events.export")
+        }
+    }
+
+    private var statusSelection: Binding<Int> {
+        Binding(
+            get: { StatusFilter.allCases.firstIndex(of: statusFilter) ?? 0 },
+            set: { statusFilter = StatusFilter.allCases[$0] }
+        )
+    }
+
+    private var directionSelection: Binding<Int> {
+        Binding(
+            get: { DirectionFilter.allCases.firstIndex(of: directionFilter) ?? 0 },
+            set: { directionFilter = DirectionFilter.allCases[$0] }
+        )
     }
 }
 

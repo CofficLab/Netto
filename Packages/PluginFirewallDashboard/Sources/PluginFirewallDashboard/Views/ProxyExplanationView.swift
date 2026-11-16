@@ -1,3 +1,4 @@
+import LumiUI
 import SwiftUI
 
 /**
@@ -6,32 +7,31 @@ import SwiftUI
  */
 struct ProxyExplanationView: View {
     @State private var showAnimation = false
+    @LumiTheme private var theme
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: AppUI.Spacing.md) {
             Spacer()
-            
+
             // 标题
             Text("代理应用对网络监控的影响")
-                .font(.title2)
-                .fontWeight(.semibold)
-                .foregroundColor(.primary)
+                .font(.appSectionTitle)
+                .foregroundStyle(theme.textPrimary)
 
             // 说明文字
             Text("💡 当代理应用运行时，部分应用的网络流量会被代理应用接管，\n这些应用的网络活动将无法被本软件直接监控到。")
-                .font(.body)
-                .foregroundColor(.secondary)
+                .font(.appBody)
+                .foregroundStyle(theme.textSecondary)
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
-                .padding(.horizontal, 20)
 
             // 对比视图
             VStack(spacing: 0) {
                 // 标题行（对齐）
                 HStack {
                     Text("未开启代理")
-                        .font(.headline)
-                        .foregroundColor(.green)
+                        .font(.appCallout)
+                        .foregroundStyle(theme.success)
                         .frame(maxWidth: .infinity)
 
                     Rectangle()
@@ -40,21 +40,21 @@ struct ProxyExplanationView: View {
                         .frame(height: 36)
 
                     Text("开启代理")
-                        .font(.headline)
-                        .foregroundColor(.orange)
+                        .font(.appCallout)
+                        .foregroundStyle(theme.warning)
                         .frame(maxWidth: .infinity)
                 }
 
                 // 网络层级视图
-                VStack(spacing: 12) {
+                VStack(spacing: AppUI.Spacing.sm) {
                     // 应用层
-                    HStack(spacing: 30) {
+                    HStack(spacing: AppUI.Spacing.lg) {
                         // 左侧：正常应用
                         normalAppsView
 
                         // 分隔线
                         Rectangle()
-                            .fill(Color.gray.opacity(0.3))
+                            .fill(theme.appDivider)
                             .frame(width: 1)
                             .frame(maxHeight: .infinity)
 
@@ -65,45 +65,32 @@ struct ProxyExplanationView: View {
 
                     // 箭头指向操作系统
                     HStack {
-                        Image(systemName: "arrow.down")
-                            .foregroundColor(.gray)
-                            .font(.title2)
-                            .opacity(showAnimation ? 1 : 0.3)
-                            .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: showAnimation)
-                            .frame(maxWidth: .infinity)
-
-                        Image(systemName: "arrow.down")
-                            .foregroundColor(.gray)
-                            .font(.title2)
-                            .opacity(showAnimation ? 1 : 0.3)
-                            .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: showAnimation)
-                            .frame(maxWidth: .infinity)
+                        downwardArrow
+                        downwardArrow
                     }
 
                     // 操作系统层（底层）
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.blue.opacity(0.2))
+                    RoundedRectangle(cornerRadius: DesignTokens.Radius.md, style: .continuous)
+                        .fill(theme.info.opacity(0.16))
                         .frame(height: 50)
                         .overlay(
                             HStack {
                                 Image(systemName: "gear")
-                                    .foregroundColor(.blue)
+                                    .foregroundStyle(theme.info)
                                     .font(.title2)
                                 Text("操作系统 (macOS)")
-                                    .font(.headline)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.blue)
+                                    .font(.appCallout)
+                                    .foregroundStyle(theme.info)
                             }
                         )
                 }
             }
             .frame(maxWidth: 600, maxHeight: .infinity)
-            
+
             Spacer()
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 12)
-        .padding(.top, 12)
+        .padding(.horizontal, AppUI.Spacing.lg)
+        .padding(.vertical, AppUI.Spacing.md)
         .onAppear {
             withAnimation(.easeInOut(duration: 1.0)) {
                 showAnimation = true
@@ -111,17 +98,26 @@ struct ProxyExplanationView: View {
         }
     }
 
+    private var downwardArrow: some View {
+        Image(systemName: "arrow.down")
+            .foregroundStyle(theme.textTertiary)
+            .font(.title2)
+            .opacity(showAnimation ? 1 : 0.3)
+            .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: showAnimation)
+            .frame(maxWidth: .infinity)
+    }
+
     /**
      * 正常应用视图
      * 显示所有应用直接通过操作系统处理网络数据
      */
     private var normalAppsView: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: AppUI.Spacing.sm) {
             // 应用列表
-            VStack(spacing: 6) {
-                appRow(name: "Safari", icon: "safari", color: .blue, visible: true)
-                appRow(name: "Chrome", icon: "globe", color: .orange, visible: true)
-                appRow(name: "Xcode", icon: "hammer", color: .blue, visible: true)
+            VStack(spacing: AppUI.Spacing.xs) {
+                appRow(name: "Safari", icon: "safari", color: theme.info, visible: true)
+                appRow(name: "Chrome", icon: "globe", color: theme.warning, visible: true)
+                appRow(name: "Xcode", icon: "hammer", color: theme.info, visible: true)
             }
         }
         .frame(maxWidth: .infinity)
@@ -132,26 +128,25 @@ struct ProxyExplanationView: View {
      * 显示代理应用和被隐藏的应用情况
      */
     private var proxyAppsView: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: AppUI.Spacing.sm) {
             // 应用列表（部分隐藏）
-            VStack(spacing: 6) {
-                appRow(name: "Safari", icon: "safari", color: .gray, visible: false)
-                appRow(name: "Chrome", icon: "globe", color: .gray, visible: false)
-                appRow(name: "Xcode", icon: "hammer", color: .gray, visible: false)
+            VStack(spacing: AppUI.Spacing.xs) {
+                appRow(name: "Safari", icon: "safari", color: theme.textTertiary, visible: false)
+                appRow(name: "Chrome", icon: "globe", color: theme.textTertiary, visible: false)
+                appRow(name: "Xcode", icon: "hammer", color: theme.textTertiary, visible: false)
             }
 
             // 代理应用
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.orange.opacity(0.2))
+            RoundedRectangle(cornerRadius: DesignTokens.Radius.sm, style: .continuous)
+                .fill(theme.warning.opacity(0.16))
                 .frame(height: 30)
                 .overlay(
                     HStack {
                         Image(systemName: "shield.fill")
-                            .foregroundColor(.orange)
+                            .foregroundStyle(theme.warning)
                         Text("代理应用")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.orange)
+                            .font(.appCaptionEmphasized)
+                            .foregroundStyle(theme.warning)
                     }
                 )
         }
@@ -163,28 +158,28 @@ struct ProxyExplanationView: View {
      * 显示单个应用的状态
      */
     private func appRow(name: String, icon: String, color: Color, visible: Bool) -> some View {
-        HStack(spacing: 8) {
+        HStack(spacing: AppUI.Spacing.sm) {
             Image(systemName: icon)
-                .foregroundColor(color)
+                .foregroundStyle(color)
                 .frame(width: 16)
 
             Text(name)
-                .font(.caption)
-                .foregroundColor(visible ? .primary : .secondary)
+                .font(.appCaption)
+                .foregroundStyle(visible ? theme.textPrimary : theme.textSecondary)
 
             Spacer()
 
             if !visible {
                 Image(systemName: "eye.slash")
-                    .foregroundColor(.gray)
-                    .font(.caption2)
+                    .foregroundStyle(theme.textTertiary)
+                    .font(.appMicro)
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
+        .padding(.horizontal, AppUI.Spacing.sm)
+        .padding(.vertical, AppUI.Spacing.xs)
         .background(
-            RoundedRectangle(cornerRadius: 4)
-                .fill(visible ? Color.clear : Color.gray.opacity(0.1))
+            RoundedRectangle(cornerRadius: DesignTokens.Radius.sm - 4, style: .continuous)
+                .fill(visible ? Color.clear : theme.textSecondary.opacity(0.08))
         )
         .opacity(visible ? 1.0 : 0.6)
         .scaleEffect(showAnimation && visible ? 1.0 : 0.95)

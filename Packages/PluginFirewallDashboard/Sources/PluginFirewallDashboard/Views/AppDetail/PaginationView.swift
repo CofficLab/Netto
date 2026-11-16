@@ -1,8 +1,9 @@
+import LumiUI
 import SwiftUI
 
 /**
  * 分页控制视图
- * 
+ *
  * 提供统一的分页控制功能，包括上一页、下一页按钮和页码显示
  */
 struct PaginationView: View {
@@ -20,7 +21,9 @@ struct PaginationView: View {
     let onPreviousPage: () -> Void
     /// 下一页按钮点击回调
     let onNextPage: () -> Void
-    
+
+    @LumiTheme private var theme
+
     init(
         currentPage: Binding<Int>,
         totalPages: Int,
@@ -38,58 +41,38 @@ struct PaginationView: View {
         self.onPreviousPage = onPreviousPage
         self.onNextPage = onNextPage
     }
-    
+
     var body: some View {
-        HStack {
-            Button(action: {
-                if currentPage > 0 {
-                    currentPage -= 1
-                    onPreviousPage()
-                }
-            }) {
-                Image(systemName: "chevron.left")
-                    .foregroundColor((currentPage > 0 && !isLoading) ? .primary : .secondary)
+        HStack(spacing: AppUI.Spacing.md) {
+            AppButton(systemImage: "chevron.left", style: .ghost, size: .small) {
+                guard currentPage > 0 else { return }
+                currentPage -= 1
+                onPreviousPage()
             }
             .disabled(currentPage <= 0 || isLoading)
 
-            Spacer()
+            Spacer(minLength: 0)
 
             VStack(spacing: 2) {
                 Text("第 \(currentPage + 1) 页，共 \(totalPages) 页")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                
+                    .font(.appCaption)
+                    .foregroundStyle(theme.textSecondary)
+
                 Text("共 \(totalCount) 条事件")
-                    .font(.caption2)
-                    .foregroundColor(.secondary.opacity(0.8))
+                    .font(.appMicro)
+                    .foregroundStyle(theme.textTertiary)
             }
 
-            Spacer()
+            Spacer(minLength: 0)
 
-            Button(action: {
-                if currentPage < totalPages - 1 {
-                    currentPage += 1
-                    onNextPage()
-                }
-            }) {
-                Image(systemName: "chevron.right")
-                    .foregroundColor((currentPage < totalPages - 1 && !isLoading) ? .primary : .secondary)
+            AppButton(systemImage: "chevron.right", style: .ghost, size: .small) {
+                guard currentPage < totalPages - 1 else { return }
+                currentPage += 1
+                onNextPage()
             }
             .disabled(currentPage >= totalPages - 1 || isLoading)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(.controlBackgroundColor).opacity(0.6))
-                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.blue.opacity(0.15), lineWidth: 1)
-        )
-        .padding(.horizontal, 0)
-        .padding(.bottom, 8)
+        .padding(.vertical, AppUI.Spacing.sm)
     }
 }
 
@@ -106,7 +89,7 @@ struct PaginationView: View {
             onPreviousPage: {},
             onNextPage: {}
         )
-        
+
         PaginationView(
             currentPage: .constant(2),
             totalPages: 5,

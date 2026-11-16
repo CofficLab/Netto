@@ -1,9 +1,10 @@
+import LumiUI
 import SwiftUI
 
 /**
  * 空状态视图
  *
- * 用于在数据为空时显示提示信息，支持自定义图标、标题和描述
+ * 用于在数据为空时显示提示信息，统一走 LumiUI `AppEmptyState`。
  */
 struct EmptyStateView: View {
     /// 图标名称
@@ -12,46 +13,20 @@ struct EmptyStateView: View {
     let title: String
     /// 描述文本
     let description: String?
-    /// 图标大小
-    let iconSize: CGFloat
-    /// 图标颜色
-    let iconColor: Color
 
     init(
         iconName: String = "doc.text.magnifyingglass",
         title: String = "暂无数据",
-        description: String? = nil,
-        iconSize: CGFloat = 32,
-        iconColor: Color = .secondary
+        description: String? = nil
     ) {
         self.iconName = iconName
         self.title = title
         self.description = description
-        self.iconSize = iconSize
-        self.iconColor = iconColor
     }
 
     var body: some View {
-        HStack {
-            Spacer()
-            VStack(spacing: 8) {
-                Image(systemName: iconName)
-                    .font(.system(size: iconSize))
-                    .foregroundColor(iconColor)
-
-                Text(title)
-                    .font(.body)
-                    .foregroundColor(.secondary)
-
-                if let description = description {
-                    Text(description)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-            }
-            Spacer()
-        }
+        AppEmptyState(icon: iconName, title: title, description: description)
+            .frame(maxWidth: .infinity)
     }
 }
 
