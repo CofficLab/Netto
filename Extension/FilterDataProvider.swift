@@ -67,8 +67,7 @@ class FilterDataProvider: NEFilterDataProvider {
      * 当有入站数据需要过滤时调用
      */
     override func handleInboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        ipc.log("handleInboundData")
-
+        // 数据回调按块触发：这里不做日志与 IPC，保持数据面零额外开销。
         return .allow()
     }
 
@@ -77,8 +76,6 @@ class FilterDataProvider: NEFilterDataProvider {
      * 当有出站数据需要过滤时调用
      */
     override func handleOutboundData(from flow: NEFilterFlow, readBytesStartOffset offset: Int, readBytes: Data) -> NEFilterDataVerdict {
-        ipc.log("handleOutboundData")
-
         return .allow()
     }
 
@@ -87,8 +84,6 @@ class FilterDataProvider: NEFilterDataProvider {
      * 当入站数据传输完成时调用
      */
     override func handleInboundDataComplete(for flow: NEFilterFlow) -> NEFilterDataVerdict {
-        ipc.log("handleInboundDataComplete")
-
         return .allow()
     }
 
@@ -97,8 +92,6 @@ class FilterDataProvider: NEFilterDataProvider {
      * 当出站数据传输完成时调用
      */
     override func handleOutboundDataComplete(for flow: NEFilterFlow) -> NEFilterDataVerdict {
-        ipc.log("handleOutboundDataComplete")
-
         return .allow()
     }
 
