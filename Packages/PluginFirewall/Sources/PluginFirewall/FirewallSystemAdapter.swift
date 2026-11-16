@@ -183,7 +183,10 @@ final class SystemFirewallAdapter: FirewallSystemAdapting {
     }
 
     func disableFilter() async throws {
+        // 与其他路径一致：先加载磁盘配置，避免把进程内陈旧副本（含缺失的
+        // provider 配置）写回系统设置。
         let manager = NEFilterManager.shared()
+        try await manager.loadFromPreferences()
         manager.isEnabled = false
         try await manager.saveToPreferences()
     }
