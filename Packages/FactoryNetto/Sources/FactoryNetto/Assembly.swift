@@ -8,6 +8,7 @@ import PluginBrandLogo
 import PluginHostActions
 import PluginPersistence
 import PluginRootView
+import PluginSettingView
 import ProviderShell
 import PluginStore
 import PluginThemePack
@@ -89,6 +90,10 @@ public struct DefaultPluginAssembly: PluginAssembling {
             ),                        // order -1：先于全部内容/工具栏贡献者提供根视图
             BrandLogoPlugin(),        // order 20：向菜单栏贡献品牌图标（LogoProviding）
             PersistencePlugin(),      // order 1：db.sqlite / ModelContainer 唯一所有者
+            // 设置窗口外壳（与 Lumi / Wakey 同款）：替换默认
+            // `DefaultSettingViewProviding`，侧边栏顶部渲染 App 图标、
+            // 名称、版本与构建号，入口列表从标题栏下方开始。
+            PluginSettingView(id: "com.yueyi.TravelMode.plugin.setting-view"), // order 3
             PluginAppSettings(),      // order 10：依赖 persistence
             PluginEventStore(),       // order 10：依赖 persistence
             PluginFirewall(),         // order 30：网络过滤、系统扩展与 IPC

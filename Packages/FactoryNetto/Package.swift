@@ -24,6 +24,8 @@ let package = Package(
         .package(name: "ProviderFirewallEvents", path: "../ProviderFirewallEvents"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
         .package(url: "https://github.com/CofficLab/LumiSettings.git", from: "1.1.0"),
+        // 设置窗口外壳（与 Lumi / Wakey 同款：侧边栏顶部 App 图标 + 名称/版本）。
+        .package(url: "https://github.com/CofficLab/LumiPluginSettingView.git", from: "1.0.3"),
         .package(url: "https://github.com/CofficLab/LumiProviders.git", from: "1.19.0"),
         .package(name: "ProviderStoreKit", path: "../ProviderStoreKit"),
         .package(url: "https://github.com/CofficLab/LumiPluginThemePack.git", from: "1.2.1"),
@@ -56,6 +58,7 @@ let package = Package(
                 "ProviderFirewallEvents",
                 "ProviderShell",
                 .product(name: "ProviderSettingView", package: "LumiSettings"),
+                .product(name: "PluginSettingView", package: "LumiPluginSettingView"),
                 .product(name: "ProviderStore", package: "LumiProviders"),
                 "ProviderStoreKit",
                 .product(name: "ProviderTheme", package: "LumiProviders"),
