@@ -1,3 +1,4 @@
+import LumiUI
 import ProviderAppSettings
 import ProviderFirewallEvents
 import SwiftUI
@@ -11,6 +12,8 @@ import SwiftUI
 /// 线程/actor：`View`，数据加载在子视图 `.task` 内异步执行；本视图
 /// 无自身副作用。
 struct DBDatabaseDetailView: View {
+    @LumiTheme private var theme
+
     private let events: FirewallEventsProviding?
     private let settings: AppSettingsProviding?
 
@@ -21,23 +24,30 @@ struct DBDatabaseDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            VStack(alignment: .leading, spacing: 4) {
-                Label("数据库", systemImage: "cylinder.split.1x2")
-                    .font(.title3.weight(.semibold))
-                Text("本地 SwiftData 存储的防火墙事件与规则（DEBUG 调试）")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            HStack(spacing: AppUI.Spacing.sm) {
+                Image(systemName: "cylinder.split.1x2")
+                    .font(.appBody)
+                    .foregroundStyle(theme.primary)
+                Text("数据库")
+                    .font(.appTitle)
+                    .foregroundStyle(theme.textPrimary)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 14)
-            .padding(.bottom, 10)
+            .padding(.horizontal, AppUI.Spacing.md)
+            .padding(.top, AppUI.Spacing.md)
 
-            Divider()
+            Text("本地 SwiftData 存储的防火墙事件与规则（DEBUG 调试）")
+                .font(.appCaption)
+                .foregroundStyle(theme.textSecondary)
+                .padding(.horizontal, AppUI.Spacing.md)
+                .padding(.top, 2)
+                .padding(.bottom, AppUI.Spacing.sm)
+
+            AppSettingsDivider()
 
             ScrollView {
                 VStack(spacing: 0) {
                     DBEventView(events: events)
-                    Divider()
+                    AppSettingsDivider()
                     DBSettingView(settings: settings)
                 }
             }

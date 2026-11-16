@@ -1,4 +1,5 @@
 import AppKit
+import LumiUI
 import SwiftUI
 import ProviderAppSettings
 import ProviderPersistence
@@ -8,6 +9,8 @@ import OSLog
 /// 数据库设置视图（DEBUG）
 /// 阶段 6 迁移：经 `AppSettingsProviding` 契约读取规则（替代视图内 @Query）。
 struct DBSettingView: View {
+    @LumiTheme private var theme
+
     @Environment(\.settingsProvider) private var envSettings: AppSettingsProviding?
 
     /// 注入的设置契约（设置入口由插件在 onBoot 解析传入；nil 时回退环境）。
@@ -53,6 +56,17 @@ struct DBSettingView: View {
         return filtered
     }
 
+    /// 状态筛选的索引绑定（供 `AppSegmentedControl` 使用）
+    private var filterSelection: Binding<Int> {
+        Binding(
+            get: { DBFilterStatus.allCases.firstIndex(of: filterStatus) ?? 0 },
+            set: { index in
+                guard DBFilterStatus.allCases.indices.contains(index) else { return }
+                filterStatus = DBFilterStatus.allCases[index]
+            }
+        )
+    }
+
     /// 加载全部规则（契约路径）
     private func load() async {
         guard let settings else { return }
@@ -69,9 +83,9 @@ struct DBSettingView: View {
                 TableColumn("ID", value: \.appId)
                 TableColumn("Allowed") {
                     if $0.allowed {
-                        Text("Yes").foregroundStyle(.green)
+                        Text("Yes").foregroundStyle(theme.success)
                     } else {
-                        Text("No").foregroundStyle(.red)
+                        Text("No").foregroundStyle(theme.error)
                     }
                 }
                 TableColumn("Action") { item in
@@ -91,7 +105,7 @@ struct DBSettingView: View {
                         }
                     } label: {
                         Image(systemName: item.allowed ? "xmark.circle.fill" : "checkmark.circle.fill")
-                            .foregroundStyle(item.allowed ? .red : .green)
+                            .foregroundStyle(item.allowed ? theme.error : theme.success)
                     }
                     .buttonStyle(.plain)
                     .help(item.allowed ? "禁止此应用" : "允许此应用")
@@ -105,82 +119,43 @@ struct DBSettingView: View {
     
     /// 工具栏视图
     private var toolbarView: some View {
-        HStack(spacing: 12) {
-            // 搜索框
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(.secondary)
-                    .font(.system(size: 14))
-                
-                TextField("搜索应用ID", text: $searchText)
-                    .textFieldStyle(PlainTextFieldStyle())
-                    .font(.system(size: 14))
-                
-                if !searchText.isEmpty {
-                    Button(action: {
-                        searchText = ""
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.secondary)
-                            .font(.system(size: 12))
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(Color(.controlBackgroundColor))
-            .clipShape(RoundedRectangle(cornerRadius: 6))
-            .frame(maxWidth: 200)
-            
+        HStack(spacing: AppUI.Spacing.md) {
+            AppSearchBar(text: $searchText, placeholder: "搜索应用ID")
+                .frame(maxWidth: 220)
+
             Spacer()
-            
-            // 状态筛选器
-            HStack(spacing: 4) {
-                Text("状态:")
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
-                
-                Picker("筛选状态", selection: $filterStatus) {
-                    ForEach(DBFilterStatus.allCases, id: \.self) { status in
-                        Text(status.rawValue).tag(status)
-                    }
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .frame(width: 180)
-            }
-            
-            Button("Finder中显示") {
+
+            AppSegmentedControl(
+                DBFilterStatus.allCases.map(\.rawValue),
+                selection: filterSelection,
+                maxWidth: 200
+            )
+
+            AppButton("Finder中显示", systemImage: "folder", style: .secondary, size: .small) {
                 NSWorkspace.shared.open(PersistenceConfig.databaseFolder)
             }
-            
-            Spacer()
-            
+
             // 统计信息
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Text("总计: \(items.count)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                
+                    .font(.appCaption)
+                    .foregroundStyle(theme.textSecondary)
+
                 Text("显示: \(filteredItems.count)")
-                    .font(.caption)
-                    .foregroundColor(.primary)
+                    .font(.appMicroEmphasized)
+                    .foregroundStyle(theme.primary)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(Color.blue.opacity(0.1))
+                    .background(theme.primary.opacity(0.12))
                     .clipShape(Capsule())
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(Color(.windowBackgroundColor))
-        .overlay(
-            Rectangle()
-                .frame(height: 1)
-                .foregroundColor(Color(.separatorColor))
-                .opacity(0.5),
-            alignment: .bottom
-        )
+        .padding(.horizontal, AppUI.Spacing.md)
+        .padding(.vertical, AppUI.Spacing.sm)
+        .background(theme.background)
+        .overlay(alignment: .bottom) {
+            AppSettingsDivider()
+        }
     }
 }
 

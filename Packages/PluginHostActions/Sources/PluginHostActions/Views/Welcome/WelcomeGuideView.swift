@@ -1,3 +1,4 @@
+import LumiUI
 import SwiftUI
 
 /// 欢迎引导视图（启动欢迎窗与「设置-通用-使用引导」共用）。
@@ -7,6 +8,8 @@ import SwiftUI
 ///
 /// 线程/actor：`View`；body 求值无副作用；按钮动作在主线程执行。
 public struct WelcomeGuideView: View {
+    @LumiTheme private var theme
+
     @State private var currentStep = 0
     @AppStorage("hasShownWelcome") private var hasShownWelcome = false
     @Environment(\.dismiss) private var dismiss
@@ -14,9 +17,9 @@ public struct WelcomeGuideView: View {
     public init() {}
     
     public var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: AppUI.Spacing.lg) {
             // 头部
-            VStack(spacing: 16) {
+            VStack(spacing: AppUI.Spacing.md) {
                 // 无 bundle 参数时从 main bundle 加载（App 运行时的 Assets.xcassets/Logo）
                 Image("Logo")
                     .resizable()
@@ -24,23 +27,23 @@ public struct WelcomeGuideView: View {
                     .frame(width: 72, height: 72)
                 
                 Text("欢迎使用 \(WelcomeGuideAppName.name)")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .font(.appLargeTitle)
+                    .foregroundStyle(theme.textPrimary)
                 
                 Text("网络过滤与监控工具")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
+                    .font(.appBody)
+                    .foregroundStyle(theme.textSecondary)
             }
-            .padding(.top, 40)
+            .padding(.top, AppUI.Spacing.xl)
             
             // 内容区域
-            VStack(spacing: 24) {
+            VStack(spacing: AppUI.Spacing.lg) {
                 if currentStep == 0 {
                     stepView(
                         title: "菜单栏访问",
                         description: "应用运行后，您可以通过点击菜单栏中的网络图标来访问主界面。",
                         icon: "menubar.rectangle",
-                        color: .green,
+                        color: theme.success,
                         customContent: {
                             AnyView(MenuBarDiagramView())
                         }
@@ -50,7 +53,7 @@ public struct WelcomeGuideView: View {
                         title: "网络过滤",
                         description: "您可以查看所有网络连接请求，并选择允许或拒绝特定的应用访问网络。",
                         icon: "shield.checkered",
-                        color: .orange,
+                        color: theme.warning,
                         customContent: {
                             AnyView(NetworkFilterDiagramView())
                         }
@@ -60,7 +63,7 @@ public struct WelcomeGuideView: View {
                         title: "工具栏操作",
                         description: "应用顶部的工具栏提供了各种功能，更多高级操作都集中在右侧的更多菜单按钮中。",
                         icon: "menubar.rectangle",
-                        color: .purple,
+                        color: theme.primarySecondary,
                         customContent: {
                             AnyView(ToolbarDiagramView())
                         }
@@ -70,7 +73,7 @@ public struct WelcomeGuideView: View {
                         title: "工作原理",
                         description: "系统扩展负责网络过滤，应用程序提供用户界面。",
                         icon: "gearshape.2.fill",
-                        color: .blue
+                        color: theme.info
                     ) {
                         AnyView(WorkingPrincipleDiagramView())
                     }
@@ -79,45 +82,42 @@ public struct WelcomeGuideView: View {
             .frame(maxHeight: .infinity)
             
             // 底部
-            VStack(spacing: 16) {
+            VStack(spacing: AppUI.Spacing.md) {
                 // 进度指示器
-                HStack(spacing: 8) {
+                HStack(spacing: AppUI.Spacing.xs) {
                     ForEach(0..<4, id: \.self) { index in
                         Circle()
-                            .fill(index == currentStep ? Color.blue : Color.gray.opacity(0.3))
+                            .fill(index == currentStep ? theme.primary : theme.textSecondary.opacity(0.25))
                             .frame(width: 8, height: 8)
                     }
                 }
                 
                 // 按钮
-                HStack(spacing: 16) {
+                HStack(spacing: AppUI.Spacing.md) {
                     if currentStep > 0 {
-                        Button("上一步") {
+                        AppButton("上一步", style: .secondary) {
                             currentStep -= 1
                         }
-                        .buttonStyle(.bordered)
                     }
                     
                     Spacer()
                     
                     if currentStep < 3 {
-                        Button("下一步") {
+                        AppButton("下一步", style: .primary) {
                             currentStep += 1
                         }
-                        .buttonStyle(.borderedProminent)
                     } else {
-                        Button("开始使用") {
+                        AppButton("开始使用", style: .primary) {
                             closeWindow()
                         }
-                        .buttonStyle(.borderedProminent)
                     }
                 }
-                .padding(.horizontal, 40)
+                .padding(.horizontal, AppUI.Spacing.xl)
             }
-            .padding(.bottom, 40)
+            .padding(.bottom, AppUI.Spacing.xl)
         }
         .frame(width: 500, height: 600)
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(theme.background)
         .onAppear {
             resetToFirstStep()
         }
@@ -131,25 +131,25 @@ public struct WelcomeGuideView: View {
      * 单个步骤视图
      */
     private func stepView(title: String, description: String, icon: String, color: Color, customContent: (() -> AnyView)? = nil) -> some View {
-        VStack(spacing: 24) {
+        VStack(spacing: AppUI.Spacing.lg) {
             if let customContent = customContent {
                 customContent()
             } else {
                 Image(systemName: icon)
                     .font(.system(size: 64))
-                    .foregroundColor(color)
+                    .foregroundStyle(color)
             }
             
             Text(title)
-                .font(.title2)
-                .fontWeight(.semibold)
+                .font(.appTitle)
+                .foregroundStyle(theme.textPrimary)
                 .multilineTextAlignment(.center)
             
             Text(description)
-                .font(.body)
-                .foregroundColor(.secondary)
+                .font(.appBody)
+                .foregroundStyle(theme.textSecondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+                .padding(.horizontal, AppUI.Spacing.xl)
         }
     }
     

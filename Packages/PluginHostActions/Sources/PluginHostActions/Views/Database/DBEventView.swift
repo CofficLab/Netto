@@ -1,5 +1,6 @@
 import Combine
 import AppKit
+import LumiUI
 import ProviderFirewallEvents
 import ProviderPersistence
 import ProviderViewEnvironment
@@ -9,6 +10,8 @@ import SwiftUI
 /// 用于展示数据库中存储的所有防火墙事件记录
 /// 阶段 6 迁移：数据经 `FirewallEventsProviding` 契约读取（替代旧 EventRepo env）。
 struct DBEventView: View {
+    @LumiTheme private var theme
+
     @Environment(\.eventsProvider) private var envRepo: FirewallEventsProviding?
 
     /// 注入的事件契约（设置入口由插件在 onBoot 解析传入；nil 时回退环境）。
@@ -107,6 +110,26 @@ struct DBEventView: View {
         }
     }
 
+    /// 每页数量的索引绑定（供 `AppSegmentedControl` 使用）
+    private var pageSizeSelection: Binding<Int> {
+        let options = [10, 20, 50, 100]
+        return Binding(
+            get: { options.firstIndex(of: itemsPerPage) ?? 1 },
+            set: { index in
+                guard options.indices.contains(index) else { return }
+                itemsPerPage = options[index]
+                currentPage = 0
+                loadEvents()
+            }
+        )
+    }
+
+    /// 应用当前筛选条件
+    private func applyFilter() {
+        currentPage = 0
+        loadEvents()
+    }
+
     /// 清除筛选条件
     private func clearFilter() {
         filterAppId = ""
@@ -117,57 +140,48 @@ struct DBEventView: View {
     var body: some View {
         VStack {
             // 第一行工具栏：标题和基本操作
-            HStack {
+            HStack(spacing: AppUI.Spacing.sm) {
                 Text("防火墙事件记录")
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    .font(.appSectionTitle)
+                    .foregroundStyle(theme.textPrimary)
 
                 Spacer()
 
                 Text("共 \(totalCount) 条记录")
-                    .foregroundStyle(.secondary)
+                    .font(.appCaption)
+                    .foregroundStyle(theme.textSecondary)
 
-                Button("刷新") {
+                AppButton("刷新", systemImage: "arrow.clockwise", style: .secondary, size: .small) {
                     loadEvents()
                 }
 
-                Button("打开数据库文件夹") {
+                AppButton("打开数据库文件夹", systemImage: "folder", style: .secondary, size: .small) {
                     NSWorkspace.shared.open(PersistenceConfig.databaseFolder)
                 }
             }
-            .padding()
+            .padding(.horizontal, AppUI.Spacing.md)
+            .padding(.vertical, AppUI.Spacing.sm)
 
             // 第二行工具栏：筛选控制
-            HStack {
-                Text("应用ID筛选:")
-                    .foregroundStyle(.secondary)
+            HStack(spacing: AppUI.Spacing.sm) {
+                AppSearchBar(text: $filterAppId, placeholder: "输入应用ID", onSubmit: applyFilter)
+                    .frame(width: 220)
 
-                TextField("输入应用ID", text: $filterAppId)
-                    .textFieldStyle(.roundedBorder)
-                    .frame(width: 200)
-
-                Button("应用筛选") {
-                    currentPage = 0 // 重置到第一页
-                    loadEvents()
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(filterAppId.isEmpty)
+                AppButton("应用筛选", style: .primary, size: .small, action: applyFilter)
+                    .disabled(filterAppId.isEmpty)
 
                 if !filterAppId.isEmpty {
-                    Button("清除筛选") {
-                        clearFilter()
-                    }
-                    .buttonStyle(.bordered)
+                    AppButton("清除筛选", style: .secondary, size: .small, action: clearFilter)
                 }
 
                 Spacer()
 
                 Text("提示: 应用ID通常是应用的Bundle ID，例如 com.apple.Safari")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(.appCaption)
+                    .foregroundStyle(theme.textTertiary)
             }
-            .padding(.horizontal)
-            .padding(.bottom, 8)
+            .padding(.horizontal, AppUI.Spacing.md)
+            .padding(.bottom, AppUI.Spacing.sm)
 
             // 事件表格
             Table(events) {
@@ -200,11 +214,11 @@ struct DBEventView: View {
                 TableColumn("状态") { event in
                     HStack {
                         Circle()
-                            .fill(event.isAllowed ? .green : .red)
+                            .fill(event.isAllowed ? theme.success : theme.error)
                             .frame(width: 8, height: 8)
 
                         Text(event.statusDescription)
-                            .foregroundStyle(event.isAllowed ? .green : .red)
+                            .foregroundStyle(event.isAllowed ? theme.success : theme.error)
                     }
                 }
                 .width(min: 60, ideal: 80)
@@ -213,10 +227,10 @@ struct DBEventView: View {
                 TableColumn("方向") { event in
                     HStack {
                         Image(systemName: event.direction == .inbound ? "arrow.down.circle" : "arrow.up.circle")
-                            .foregroundStyle(event.direction == .inbound ? .blue : .orange)
+                            .foregroundStyle(event.direction == .inbound ? theme.info : theme.warning)
 
                         Text(event.direction == .inbound ? "入站" : "出站")
-                            .foregroundStyle(event.direction == .inbound ? .blue : .orange)
+                            .foregroundStyle(event.direction == .inbound ? theme.info : theme.warning)
                     }
                 }
                 .width(min: 60, ideal: 80)
@@ -231,73 +245,57 @@ struct DBEventView: View {
             }
             .overlay {
                 if isLoading {
-                    ProgressView("加载中...")
+                    AppLoadingOverlay(message: "加载中...")
                 }
             }
 
             // 分页控制
-            HStack {
-                // 每页显示数量选择器
-                HStack(spacing: 4) {
-                    Text("每页显示:")
-                        .foregroundStyle(.secondary)
+            HStack(spacing: AppUI.Spacing.md) {
+                // 每页显示数量
+                HStack(spacing: AppUI.Spacing.sm) {
+                    Text("每页显示")
+                        .font(.appCaption)
+                        .foregroundStyle(theme.textSecondary)
 
-                    Picker("", selection: $itemsPerPage) {
-                        Text("10").tag(10)
-                        Text("20").tag(20)
-                        Text("50").tag(50)
-                        Text("100").tag(100)
-                    }
-                    .pickerStyle(.menu)
-                    .frame(width: 70)
-                    .onChange(of: itemsPerPage) { _, _ in
-                        currentPage = 0 // 重置到第一页
-                        loadEvents()
-                    }
+                    AppSegmentedControl(["10", "20", "50", "100"], selection: pageSizeSelection, maxWidth: 180)
                 }
 
                 Spacer()
 
                 // 页码控制
-                HStack(spacing: 8) {
-                    Button(action: {
+                HStack(spacing: AppUI.Spacing.xs) {
+                    AppButton(systemImage: "backward.end.fill") {
                         currentPage = 0
                         loadEvents()
-                    }) {
-                        Image(systemName: "backward.end.fill")
                     }
                     .disabled(currentPage == 0 || isLoading)
 
-                    Button(action: {
+                    AppButton(systemImage: "chevron.backward") {
                         currentPage = max(0, currentPage - 1)
                         loadEvents()
-                    }) {
-                        Image(systemName: "chevron.backward")
                     }
                     .disabled(currentPage == 0 || isLoading)
 
                     Text("\(currentPage + 1) / \(totalPages)")
+                        .font(.appCaption)
+                        .foregroundStyle(theme.textSecondary)
                         .frame(minWidth: 60)
 
-                    Button(action: {
+                    AppButton(systemImage: "chevron.forward") {
                         currentPage = min(totalPages - 1, currentPage + 1)
                         loadEvents()
-                    }) {
-                        Image(systemName: "chevron.forward")
                     }
                     .disabled(currentPage >= totalPages - 1 || isLoading)
 
-                    Button(action: {
+                    AppButton(systemImage: "forward.end.fill") {
                         currentPage = totalPages - 1
                         loadEvents()
-                    }) {
-                        Image(systemName: "forward.end.fill")
                     }
                     .disabled(currentPage >= totalPages - 1 || isLoading)
                 }
             }
-            .padding(.horizontal)
-            .padding(.bottom, 8)
+            .padding(.horizontal, AppUI.Spacing.md)
+            .padding(.bottom, AppUI.Spacing.sm)
         }
         // 导航标题仅在明确开启时设置：SwiftUI 会把内容里的
         // `navigationTitle` 提升为宿主窗口标题，嵌入设置窗口时会改写
