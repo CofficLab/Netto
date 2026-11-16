@@ -1,9 +1,6 @@
 name: Pro Release
 
 on:
-  push:
-    tags:
-      - '*v'
   workflow_run:
     workflows:
       - 'Pro Bump'
@@ -13,43 +10,50 @@ on:
 permissions:
   contents: write
 
-env:
-  tag: '-'
-
 jobs:
   release:
-    if: github.event_name == 'push' || github.event.workflow_run.conclusion == 'success'
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
       - name: 读取版本号
         run: |
           # 读取配置文件路径（Xcode 16 工程格式：project.xcproj）
-          projectFile=$(find "$(pwd)" -type f -name "project.xcproj" | head -n 1)
+          projectFile=$(find "$(pwd)" ! -path "*Resources*" -type f -name "project.xcproj" | head -n 1)
           if [[ -z "$projectFile" ]]; then
             echo "未找到 project.xcproj"
             exit 1
           fi
 
-          # 读取文件中的版本号
-          version=$(grep -Eo '"MARKETING_VERSION": "[0-9]+\.[0-9]+\.[0-9]+"' "$projectFile" | head -n 1 | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+          version=$(grep -Eo '"MARKETING_VERSION": "[0-9]+\.[0-9]+\.[0-9]+"' "$projectFile" \
+            | head -n 1 | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
           if [[ -z "$version" ]]; then
             echo "未能解析 MARKETING_VERSION"
             exit 1
           fi
 
           echo "版本号->$version"
-
+          echo "version=$version" >> $GITHUB_ENV
           echo "tag=v$version" >> $GITHUB_ENV
-      - name: Generate Changelog
-        run: echo ""> ${{ github.workspace }}-CHANGELOG.txt
-      - uses: softprops/action-gh-release@v1
+      - name: 生成发布说明
+        run: |
+          # 上一个正式标签（排除本次刚创建的 v$version），用于生成变更说明与对比链接
+          previousTag=$(git tag -l 'v*' | grep -vx "v${{ env.version }}" | sort -V | tail -n 1 || true)
+          echo "上一个标签: ${previousTag:-无}"
+
+          bash .github/scripts/release-notes.sh "${previousTag:-}" "${{ env.version }}" > release-notes.md
+          echo "=== release-notes.md ==="
+          cat release-notes.md
+      - name: 创建 GitHub Release
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.tag }}
-          body_path: ${{ github.workspace }}-CHANGELOG.txt
+          name: ${{ env.tag }}
+          body_path: release-notes.md
           files: |
             ./**/*.dmg
             ./**/*.zip

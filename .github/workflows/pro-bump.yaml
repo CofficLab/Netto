@@ -8,16 +8,14 @@ on:
 permissions:
   contents: write
 
-env:
-  tag: ${{ github.event.head_commit.id }}
-
 jobs:
   bump:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
       - name: 更新版本号
         run: |
           # 读取配置文件路径（Xcode 16 工程格式：project.xcproj）
@@ -28,38 +26,28 @@ jobs:
           fi
           echo "项目文件: $projectFile"
 
-          # 显示当前版本号
-          echo "=== 当前版本号 ==="
-          grep -n "MARKETING_VERSION" "$projectFile"
+          oldVersion=$(grep -Eo '"MARKETING_VERSION": "[0-9]+\.[0-9]+\.[0-9]+"' "$projectFile" \
+            | head -n 1 | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+          # 根据自上一个 v* 标签以来的 Conventional Commits 决定 major/minor/patch
+          newVersion=$(bash .github/scripts/next-version.sh)
+          echo "版本号: $oldVersion -> $newVersion"
 
-          # 使用perl一次性更新所有MARKETING_VERSION，将patch版本+1
-          perl -i -pe '
-            if (/"MARKETING_VERSION": "(\d+)\.(\d+)\.(\d+)"/) {
-              $major = $1;
-              $minor = $2;
-              $patch = $3 + 1;
-              s/"MARKETING_VERSION": "\d+\.\d+\.\d+"/"MARKETING_VERSION": "$major.$minor.$patch"/;
-            }
-          ' "$projectFile"
+          NEW_VERSION="$newVersion" perl -i -pe \
+            's/"MARKETING_VERSION": "\d+\.\d+\.\d+"/"MARKETING_VERSION": "$ENV{NEW_VERSION}"/' \
+            "$projectFile"
 
           # 显示更新后的版本号
           echo "=== 更新后的版本号 ==="
           grep -n "MARKETING_VERSION" "$projectFile"
 
+          echo "version=$newVersion" >> $GITHUB_ENV
+
           git status
       - name: 生成标签
         run: |
-          # 读取配置文件路径（Xcode 16 工程格式：project.xcproj）
-          projectFile=$(find "$(pwd)" ! -path "*Resources*" -type f -name "project.xcproj" | head -n 1)
-          if [[ -z "$projectFile" ]]; then
-            echo "未找到 project.xcproj"
-            exit 1
-          fi
-
-          # 读取主应用版本号（第一个找到的版本号）
-          version=$(grep -Eo '"MARKETING_VERSION": "[0-9]+\.[0-9]+\.[0-9]+"' "$projectFile" | head -n 1 | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+          version="${{ env.version }}"
           if [[ -z "$version" ]]; then
-            echo "未能解析 MARKETING_VERSION"
+            echo "版本号为空"
             exit 1
           fi
 
