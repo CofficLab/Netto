@@ -20,8 +20,12 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: 更新版本号
         run: |
-          # 读取配置文件路径
-          projectFile=$(find $(pwd) ! -path "*Resources*" -type f -name "*.pbxproj" | head -n 1)
+          # 读取配置文件路径（Xcode 16 工程格式：project.xcproj）
+          projectFile=$(find "$(pwd)" ! -path "*Resources*" -type f -name "project.xcproj" | head -n 1)
+          if [[ -z "$projectFile" ]]; then
+            echo "未找到 project.xcproj"
+            exit 1
+          fi
           echo "项目文件: $projectFile"
 
           # 显示当前版本号
@@ -30,12 +34,11 @@ jobs:
 
           # 使用perl一次性更新所有MARKETING_VERSION，将patch版本+1
           perl -i -pe '
-            if (/^(\s*)MARKETING_VERSION = (\d+)\.(\d+)\.(\d+);/) {
-              $indent = $1;
-              $major = $2;
-              $minor = $3; 
-              $patch = $4 + 1;
-              $_ = "${indent}MARKETING_VERSION = $major.$minor.$patch;\n";
+            if (/"MARKETING_VERSION": "(\d+)\.(\d+)\.(\d+)"/) {
+              $major = $1;
+              $minor = $2;
+              $patch = $3 + 1;
+              s/"MARKETING_VERSION": "\d+\.\d+\.\d+"/"MARKETING_VERSION": "$major.$minor.$patch"/;
             }
           ' "$projectFile"
 
@@ -46,11 +49,19 @@ jobs:
           git status
       - name: 生成标签
         run: |
-          # 读取配置文件路径
-          projectFile=$(find $(pwd) ! -path "*Resources*" -type f -name "*.pbxproj" | head -n 1)
+          # 读取配置文件路径（Xcode 16 工程格式：project.xcproj）
+          projectFile=$(find "$(pwd)" ! -path "*Resources*" -type f -name "project.xcproj" | head -n 1)
+          if [[ -z "$projectFile" ]]; then
+            echo "未找到 project.xcproj"
+            exit 1
+          fi
 
           # 读取主应用版本号（第一个找到的版本号）
-          version=$(grep -o 'MARKETING_VERSION = [0-9]\+\.[0-9]\+\.[0-9]\+' "$projectFile" | head -n 1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+          version=$(grep -Eo '"MARKETING_VERSION": "[0-9]+\.[0-9]+\.[0-9]+"' "$projectFile" | head -n 1 | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
+          if [[ -z "$version" ]]; then
+            echo "未能解析 MARKETING_VERSION"
+            exit 1
+          fi
 
           echo "主应用版本号: $version"
           echo "tag=v$version" >> $GITHUB_ENV
