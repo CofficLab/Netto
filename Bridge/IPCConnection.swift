@@ -99,7 +99,7 @@ class IPCConnection: NSObject {
             fatalError("Failed to create a remote object proxy for the app")
         }
 
-        appProxy.promptUser(id: flow.getAppId(), hostname:flow.getHostname(), port: flow.getLocalPort(), direction: flow.direction, responseHandler: responseHandler)
+        appProxy.promptUser(id: flow.getAppId(), hostname:flow.getHostname(), port: flow.getRemotePort(), direction: flow.direction, responseHandler: responseHandler)
 
         return true
     }
