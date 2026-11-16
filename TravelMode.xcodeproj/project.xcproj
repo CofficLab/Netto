@@ -152,7 +152,8 @@
         },
       ],
       "package-product-members": [
-        {"package": "FactoryNetto",
+        {
+          "package": "FactoryNetto",
           "product-name": "FactoryNetto",
           "build-phase": { "build-phase": "frameworks" },
         }, {
@@ -171,7 +172,8 @@
           "package": "LumiUI",
           "product-name": "LumiUI",
           "build-phase": { "build-phase": "frameworks" },
-        }, {"package": "NettoIPCContracts",
+        }, {
+          "package": "NettoIPCContracts",
           "product-name": "NettoIPCContracts",
           "build-phase": { "build-phase": "frameworks" },
         }, {
@@ -237,7 +239,7 @@
           "@executable_path/../Frameworks",
         ],
         "MACOSX_DEPLOYMENT_TARGET": "15.0",
-        "MARKETING_VERSION": "2.3.13",
+        "MARKETING_VERSION": "3.0.0",
         "PRODUCT_BUNDLE_IDENTIFIER": "com.yueyi.TravelMode",
         "PRODUCT_NAME": "$(TARGET_NAME)",
         "PROVISIONING_PROFILE_SPECIFIER": "",

@@ -18,11 +18,18 @@ struct DashboardOpenSystemSettingsButton: View {
 struct DashboardInstallExtensionButton: View {
     @Environment(\.firewallProvider) private var service: FirewallProviding?
 
+    @State private var isBusy = false
+
     var body: some View {
-        AppButton("安装系统扩展", systemImage: "puzzlepiece.extension", style: .primary, fillsWidth: true) {
-            guard let service else { return }
-            Task { await service.installSystemExtension() }
+        AppButton(isBusy ? "安装中…" : "安装系统扩展", systemImage: "puzzlepiece.extension", style: .primary, fillsWidth: true) {
+            guard let service, !isBusy else { return }
+            isBusy = true
+            Task {
+                await service.installSystemExtension()
+                isBusy = false
+            }
         }
+        .disabled(isBusy)
         .frame(width: 150, height: 50)
         .accessibilityIdentifier("netto.extension.install")
     }

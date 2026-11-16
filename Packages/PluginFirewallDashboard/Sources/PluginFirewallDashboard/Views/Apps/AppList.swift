@@ -34,6 +34,9 @@ struct AppList: View {
     /// 被拒绝的应用ID列表
     @State private var deniedIds: [String] = []
 
+    /// 由 `FirewallProviding.observe()` 推送的最新状态；nil 时回落到一次性快照。
+    @State private var firewallState: FirewallState?
+
     /// 过滤后的应用列表
     ///
     /// 根据显示类型（全部/允许/拒绝）和隐藏状态进行过滤。
@@ -73,19 +76,25 @@ struct AppList: View {
             }
 
             if shouldShowGuide {
-                GuideView()
+                GuideView(state: resolvedState)
             }
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("netto.apps.list")
         .onAppear(perform: handleOnAppear)
+        .task { await observeFirewallState() }
     }
 
     /// 是否需要显示引导视图
     ///
     /// 当防火墙未运行或需要升级时显示引导视图。
     private var shouldShowGuide: Bool {
-        (firewall?.snapshot.state.isNotRunning() ?? true) || ui.shouldShowUpgradeGuide
+        (resolvedState?.isNotRunning() ?? true) || ui.shouldShowUpgradeGuide
+    }
+
+    /// 订阅状态后以推送值为准；订阅前先读一次当前快照，避免首帧闪烁。
+    private var resolvedState: FirewallState? {
+        firewallState ?? firewall?.snapshot.state
     }
 }
 
@@ -107,6 +116,15 @@ extension AppList {
 
 // MARK: - Event Handler
 extension AppList {
+    /// 订阅防火墙状态推送；视图消失时 `.task` 自动取消。
+    private func observeFirewallState() async {
+        guard let firewall else { return }
+        firewallState = firewall.snapshot.state
+        for await update in firewall.observe() {
+            firewallState = update.state
+        }
+    }
+
     /// 处理视图出现事件
     ///
     /// 当视图出现时，异步加载应用列表数据。

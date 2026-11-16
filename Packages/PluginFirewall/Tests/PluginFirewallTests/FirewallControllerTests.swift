@@ -400,6 +400,27 @@ final class FirewallControllerTests: XCTestCase {
         XCTAssertEqual(events.created.count, 1)
     }
 
+    /// 控制器已销毁时也必须回复默认裁决，否则扩展的流会一直暂停。
+    func testPromptBridgeRepliesDefaultWhenControllerMissing() async {
+        let bridge = PromptUserBridge(controller: nil)
+
+        let (stream, continuation) = AsyncStream<Bool>.makeStream()
+        bridge.promptUser(
+            id: "com.orphan",
+            hostname: "h",
+            port: "1",
+            direction: .outbound,
+            responseHandler: { continuation.yield($0) }
+        )
+        var decision: Bool?
+        for await value in stream {
+            decision = value
+            break
+        }
+        continuation.finish()
+        XCTAssertEqual(decision, true)
+    }
+
     // MARK: - 插件生命周期
 
     func testIPCRegistrationCompletionTimesOutAndIgnoresLateCallback() async {

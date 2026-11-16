@@ -28,6 +28,8 @@ struct ErrorView: View {
                     fillsWidth: true,
                     action: copyErrorToClipboard
                 )
+
+                BtnStart(title: "重试")
             }
         }
     }
@@ -60,5 +62,6 @@ struct ErrorView: View {
 
 #Preview {
     ErrorView(error: NSError(domain: "TestError", code: 1, userInfo: [NSLocalizedDescriptionKey: "This is a test error message"]))
+        .dashboardPreviewRoot()
         .frame(width: 400, height: 500)
 }

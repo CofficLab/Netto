@@ -66,10 +66,13 @@ class IPCConnection: NSObject {
         currentConnection = newConnection
         newConnection.resume()
 
-        guard let providerProxy = newConnection.remoteObjectProxyWithErrorHandler({ registerError in
+        guard let providerProxy = newConnection.remoteObjectProxyWithErrorHandler({ [weak self, weak newConnection] registerError in
             os_log(.error, "\(Self.logPrefix)Failed to register with the provider: \(registerError)")
-            self.currentConnection?.invalidate()
-            self.currentConnection = nil
+            // 只有当前连接仍是这个连接时才清理，避免旧连接的迟到错误清掉新连接。
+            if let self, self.currentConnection === newConnection {
+                self.currentConnection?.invalidate()
+                self.currentConnection = nil
+            }
             completionHandler(false)
         }) as? ProviderCommunication else {
             fatalError("Failed to create a remote object proxy for the provider")
@@ -91,15 +94,18 @@ class IPCConnection: NSObject {
             return false
         }
 
-        guard let appProxy = connection.remoteObjectProxyWithErrorHandler({ promptError in
+        guard let appProxy = connection.remoteObjectProxyWithErrorHandler({ [weak self] promptError in
             os_log("Failed to prompt the user: %@", promptError.localizedDescription)
-            self.currentConnection = nil
+            // 失败时放行（fail-open）；只清理出错的那个连接。
+            if self?.currentConnection === connection {
+                self?.currentConnection = nil
+            }
             responseHandler(true)
         }) as? AppCommunication else {
             fatalError("Failed to create a remote object proxy for the app")
         }
 
-        appProxy.promptUser(id: flow.getAppId(), hostname:flow.getHostname(), port: flow.getLocalPort(), direction: flow.direction, responseHandler: responseHandler)
+        appProxy.promptUser(id: flow.getAppId(), hostname:flow.getHostname(), port: flow.getRemotePort(), direction: flow.direction, responseHandler: responseHandler)
 
         return true
     }
@@ -133,11 +139,15 @@ extension IPCConnection: NSXPCListenerDelegate {
         // The remote object is the delegate of the app's IPCConnection instance.
         newConnection.remoteObjectInterface = NSXPCInterface(with: AppCommunication.self)
 
-        newConnection.invalidationHandler = {
+        // 失效/中断可能晚于新连接到达（App 重注册时），只在当前连接仍是
+        // 被失效的那个对象时清理，否则会把新连接一并丢掉并静默放行。
+        newConnection.invalidationHandler = { [weak self, weak newConnection] in
+            guard let self, let newConnection, self.currentConnection === newConnection else { return }
             self.currentConnection = nil
         }
 
-        newConnection.interruptionHandler = {
+        newConnection.interruptionHandler = { [weak self, weak newConnection] in
+            guard let self, let newConnection, self.currentConnection === newConnection else { return }
             self.currentConnection = nil
         }
 

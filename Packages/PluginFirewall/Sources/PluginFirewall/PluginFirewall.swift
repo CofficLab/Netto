@@ -85,7 +85,7 @@ public final class PluginFirewall: AsyncSuperPlugin {
 final class PromptUserBridge: NSObject, AppCommunication {
     private weak var controller: FirewallController?
 
-    init(controller: FirewallController) {
+    init(controller: FirewallController?) {
         self.controller = controller
     }
 
@@ -97,7 +97,13 @@ final class PromptUserBridge: NSObject, AppCommunication {
         responseHandler: @escaping @Sendable (Bool) -> Void
     ) {
         Task { @MainActor [weak controller] in
-            controller?.handlePrompt(
+            guard let controller else {
+                // 控制器已随插件关闭销毁：必须回复默认裁决，否则扩展会一直
+                // 暂停这条流（默认放行与应用默认策略保持一致）。
+                responseHandler(true)
+                return
+            }
+            controller.handlePrompt(
                 id: id,
                 hostname: hostname,
                 port: port,

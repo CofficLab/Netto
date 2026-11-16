@@ -4,7 +4,7 @@ import SwiftUI
 
 struct EventTableView: View {
     let events: [FirewallEventSnapshot]
-    @Binding var isLoading: Bool
+    let isLoading: Bool
 
     var body: some View {
         ZStack {
