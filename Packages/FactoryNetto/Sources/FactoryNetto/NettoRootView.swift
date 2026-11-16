@@ -1,4 +1,4 @@
-import AppKit
+import LumiUI
 import SwiftUI
 
 /// 主界面 Host 壳 —— 只保留启动态 / 失败态 / 运行态装配。
@@ -74,37 +74,25 @@ private struct RootEnvironmentHost<Content: View>: View {
 private struct RootFailureView: View {
     let message: String
 
+    @LumiTheme private var theme
+
     var body: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.largeTitle)
-                .foregroundStyle(.orange)
-            Text("初始化失败")
-                .font(.headline)
-            Text(message)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .textSelection(.enabled)
-                .padding(.horizontal, 24)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(NSColor.controlBackgroundColor))
+        AppStatusBanner(kind: .error, title: "初始化失败", message: message)
+            .frame(maxWidth: 420)
+            .padding(AppUI.Spacing.lg)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(theme.background)
     }
 }
 
 // MARK: - Loading View
 
 struct RootLoadingView: View {
+    @LumiTheme private var theme
+
     var body: some View {
-        VStack(spacing: 20) {
-            ProgressView()
-                .scaleEffect(1.5)
-            Text("正在初始化服务...")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(NSColor.controlBackgroundColor))
+        AppLoadingOverlay(message: "正在初始化服务...", size: .large)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(theme.background)
     }
 }
