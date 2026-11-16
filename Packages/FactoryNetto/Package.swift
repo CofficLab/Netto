@@ -37,7 +37,7 @@ let package = Package(
         .package(name: "PluginStore", path: "../PluginStore"),
         .package(name: "PluginHostActions", path: "../PluginHostActions"),
         .package(name: "ProviderViewEnvironment", path: "../ProviderViewEnvironment"),
-        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.12.0"),
+        .package(url: "https://github.com/CofficLab/LumiUI.git", from: "1.18.0"),
         // 共享根视图插件（与 Lumi / Wakey 同一套主窗口体系）。
         // 锁定 1.1.0：与 Wakey 使用的产品/API 一致（1.2 起产品改名为
         // `WorkbenchRootView`，主窗口布局契约不同）。
