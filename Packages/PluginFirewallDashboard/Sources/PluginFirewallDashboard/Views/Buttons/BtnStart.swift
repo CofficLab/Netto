@@ -15,16 +15,9 @@ public struct BtnStart: View {
 
     public var body: some View {
         if asToolbarItem {
-            Button {
+            AppIconButton(systemImage: "restart.circle") {
                 action()
-            } label: {
-                Label {
-                    Text("开始")
-                } icon: {
-                    Image(systemName: "restart.circle")
-                }
             }
-            .buttonStyle(.plain)
         } else {
             AppButton("开启", systemImage: "restart.circle", style: .primary, fillsWidth: true, action: {
                 action()

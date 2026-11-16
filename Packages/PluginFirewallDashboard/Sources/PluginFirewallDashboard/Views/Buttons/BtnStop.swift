@@ -18,16 +18,9 @@ public struct BtnStop: View {
 
     public var body: some View {
         if asToolbarItem {
-            Button {
+            AppIconButton(systemImage: icon) {
                 action()
-            } label: {
-                Label {
-                    Text("Stop")
-                } icon: {
-                    Image(systemName: icon)
-                }
             }
-            .buttonStyle(.plain)
         } else {
             AppButton("停止", systemImage: icon, style: .primary, fillsWidth: true, action: {
                 action()
