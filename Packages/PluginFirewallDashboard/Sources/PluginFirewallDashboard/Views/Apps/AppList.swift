@@ -63,14 +63,12 @@ struct AppList: View {
                 AppListEmptyView(displayType: ui.displayType)
             } else {
                 ScrollView {
-                    VStack(spacing: 0) {
-                        ForEach(Array((!filtedApps.isEmpty ? filtedApps : SmartApp.samples).enumerated()), id: \.element.id) { index, app in
+                    VStack(spacing: 4) {
+                        ForEach(!filtedApps.isEmpty ? filtedApps : SmartApp.samples, id: \.id) { app in
                             AppLine(app: app)
-                            if index < (!allApps.isEmpty ? allApps : SmartApp.samples).count - 1 {
-                                Divider()
-                            }
                         }
                     }
+                    .padding(8)
                 }
             }
 

@@ -1,48 +1,17 @@
+import LumiUI
 import SwiftUI
 
-/**
- * 停止监控视图
- * 使用Popview封装，显示监控已停止状态并提供启动按钮
- */
+/// 停止监控视图：状态提示 + 重新开启。
 struct StopView: View {
     var body: some View {
-        Popview(
+        DashboardGuidePanel(
             iconName: "stop.circle",
             title: "监控已停止",
-            iconColor: .red
+            iconColor: .orange
         ) {
-            VStack(spacing: 20) {
-                // 状态信息区域
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "stop.circle")
-                            .foregroundStyle(.orange)
-                            .font(.system(size: 14, weight: .medium))
-                            .frame(width: 20, alignment: .center)
-                        Text("当前网络监控已停止")
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(.primary)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(.orange.opacity(0.1))
-                    .cornerRadius(8)
-
-                    HStack(spacing: 8) {
-                        Image(systemName: "checkmark.shield")
-                            .foregroundStyle(.green)
-                            .font(.system(size: 14, weight: .medium))
-                            .frame(width: 20, alignment: .center)
-                        Text("所有应用可自由联网")
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(.primary)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(.green.opacity(0.1))
-                    .cornerRadius(8)
-                }
-
+            VStack(spacing: AppUI.Spacing.md) {
+                AppStatusBanner(kind: .warning, title: "当前网络监控已停止")
+                AppStatusBanner(kind: .info, title: "所有应用可自由联网")
                 BtnStart()
             }
         }

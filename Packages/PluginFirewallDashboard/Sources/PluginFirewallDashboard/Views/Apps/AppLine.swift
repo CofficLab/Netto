@@ -1,3 +1,4 @@
+import LumiUI
 import ProviderViewEnvironment
 import ProviderAppSettings
 import SwiftUI
@@ -6,6 +7,7 @@ import SwiftUI
 struct AppLine: View {
     @EnvironmentObject var ui: UIProvider
     @Environment(\.settingsProvider) private var repo: AppSettingsProviding?
+    @LumiTheme private var theme
 
     var app: SmartApp
 
@@ -25,28 +27,23 @@ struct AppLine: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // 主应用信息
+        AppListRow(accent: shouldAllow ? nil : theme.error) {
             HStack(spacing: 12) {
-                app.getIcon().frame(width: 40, height: 40)
+                app.getIcon().frame(width: 36, height: 36)
 
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text(app.name)
-                            .font(.body)
-                            .lineLimit(1)
-                    }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(app.name)
+                        .font(.appBodyEmphasized)
+                        .lineLimit(1)
 
-                    HStack(alignment: .top, spacing: 4) {
-                        Text(app.id)
-                            .font(.callout)
-                            .foregroundColor(app.isSystemApp ? .orange.opacity(0.7) : .primary)
-                            .lineLimit(1)
-                            .truncationMode(.tail)
-                    }
+                    Text(app.id)
+                        .font(.appCaption)
+                        .foregroundStyle(app.isSystemApp ? theme.warning : theme.textSecondary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 }
 
-                Spacer()
+                Spacer(minLength: 8)
 
                 if hovering && app.isNotSample {
                     AppAction(shouldAllow: $shouldAllow, appId: app.id)
@@ -59,63 +56,20 @@ struct AppLine: View {
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier("netto.app.row.\(app.id)")
             .onHover(perform: onHover)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .popover(isPresented: Binding(
-                get: { ui.shouldShowPopover(for: app.id) && !self.actionHovering },
-                set: { _ in }
-            ), arrowEdge: .leading) {
-                AppDetail(
-                    popoverHovering: $popoverHovering,
-                    app: app,
-                ).frame(width: 600)
-            }
-            .onChange(of: self.popoverHovering) {
-                handlePopoverHoverChange()
-            }
-            .onAppear(perform: onAppear)
-            .padding(.vertical, 5)
-            .padding(.horizontal, 10)
-            .background(background)
         }
-    }
-}
-
-// MARK: - View
-
-extension AppLine {
-    var background: some View {
-        Group {
-            if !shouldAllow {
-                if hovering {
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color.red.opacity(0.4),
-                            Color.mint.opacity(0.1),
-                        ]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                } else {
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color.red.opacity(0.2),
-                            Color.red.opacity(0.05),
-                        ]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                }
-            } else if hovering {
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.mint.opacity(0.2),
-                        Color.mint.opacity(0.05),
-                    ]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            }
+        .popover(isPresented: Binding(
+            get: { ui.shouldShowPopover(for: app.id) && !self.actionHovering },
+            set: { _ in }
+        ), arrowEdge: .leading) {
+            AppDetail(
+                popoverHovering: $popoverHovering,
+                app: app,
+            ).frame(width: 600)
         }
+        .onChange(of: self.popoverHovering) {
+            handlePopoverHoverChange()
+        }
+        .onAppear(perform: onAppear)
     }
 }
 

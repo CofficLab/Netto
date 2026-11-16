@@ -1,90 +1,28 @@
+import LumiUI
 import SwiftUI
 
+/// 运行中视图：按当前筛选维度提示列表将显示什么。
 struct RunningView: View {
     @EnvironmentObject var app: UIProvider
 
     var body: some View {
-        Popview(
+        DashboardGuidePanel(
             iconName: "inset.filled.rectangle.badge.record",
             title: "正在监控",
             iconColor: .green
         ) {
-            VStack(spacing: 20) {
-                // 状态信息区域
-                VStack(alignment: .leading, spacing: 12) {
-                    switch app.displayType {
-                    case .All:
-                        allTip
-                    case .Allowed:
-                        allowTip
-                    case .Rejected:
-                        denyTip
-                    }
+            VStack(spacing: AppUI.Spacing.sm) {
+                switch app.displayType {
+                case .All:
+                    AppStatusBanner(kind: .info, title: "联网的 APP 将显示在这里")
+                case .Allowed:
+                    AppStatusBanner(kind: .info, title: "被允许联网的 APP 将显示在这里")
+                case .Rejected:
+                    AppStatusBanner(kind: .info, title: "被禁止联网的 APP 将显示在这里")
+                    AppStatusBanner(kind: .warning, title: "当前没有出现被禁止联网的 APP")
                 }
             }
         }
-    }
-    
-    private var allTip: some View = HStack(spacing: 8) {
-        Image(systemName: "stop.circle")
-            .foregroundStyle(.blue)
-            .font(.system(size: 14, weight: .medium))
-            .frame(width: 20, alignment: .center)
-
-        Text("联网的 APP 将显示在这里")
-            .font(.system(size: 15, weight: .medium))
-            .foregroundStyle(.primary)
-    }
-    .padding(.horizontal, 12)
-    .padding(.vertical, 8)
-    .background(.orange.opacity(0.1))
-    .cornerRadius(8)
-    
-    private var allowTip: some View = HStack(spacing: 8) {
-        Image(systemName: "stop.circle")
-            .foregroundStyle(.green)
-            .font(.system(size: 14, weight: .medium))
-            .frame(width: 20, alignment: .center)
-
-        Text("被允许联网的 APP 将显示在这里")
-            .font(.system(size: 15, weight: .medium))
-            .foregroundStyle(.primary)
-    }
-    .padding(.horizontal, 12)
-    .padding(.vertical, 8)
-    .background(.orange.opacity(0.1))
-    .cornerRadius(8)
-    
-    private var denyTip: some View = VStack {
-        HStack(spacing: 8) {
-            Image(systemName: "stop.circle")
-                .foregroundStyle(.orange)
-                .font(.system(size: 14, weight: .medium))
-                .frame(width: 20, alignment: .center)
-
-            Text("被禁止联网的 APP 将显示在这里")
-                .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(.primary)
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(.orange.opacity(0.1))
-        .cornerRadius(8)
-        
-        HStack(spacing: 8) {
-            Image(systemName: "info.circle")
-                .foregroundStyle(.orange)
-                .font(.system(size: 14, weight: .medium))
-                .frame(width: 20, alignment: .center)
-
-            Text("当前没有出现被禁止联网的 APP")
-                .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(.primary)
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(.orange.opacity(0.1))
-        .cornerRadius(8)
     }
 }
 

@@ -5,59 +5,25 @@ import SwiftUI
 
 struct SystemExtensionNeedUpdateView: View {
     var body: some View {
-        Popview(
+        DashboardGuidePanel(
             iconName: "arrow.clockwise.circle",
             title: "需要更新系统扩展",
             iconColor: .orange
         ) {
-            VStack(spacing: 20) {
+            VStack(spacing: AppUI.Spacing.md) {
                 Text("检测到已安装旧版本的系统扩展，需要更新到当前版本")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
+                    .font(.appBody)
+                    .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, 20)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                VStack(spacing: 16) {
-                    Text("更新步骤：")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack(spacing: 8) {
-                            Text("1.")
-                                .font(.callout)
-                                .foregroundColor(.blue)
-                                .fontWeight(.medium)
-                            Text("点击下方按钮更新系统扩展")
-                                .font(.callout)
-                        }
-
-                        HStack(spacing: 8) {
-                            Text("2.")
-                                .font(.callout)
-                                .foregroundColor(.blue)
-                                .fontWeight(.medium)
-                            Text("系统会自动替换旧版本扩展")
-                                .font(.callout)
-                        }
-
-                        HStack(spacing: 8) {
-                            Text("3.")
-                                .font(.callout)
-                                .foregroundColor(.blue)
-                                .fontWeight(.medium)
-                            Text("等待更新完成，防火墙即可正常使用")
-                                .font(.callout)
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                }
-                .padding(.vertical, 16)
-                .background(Color.orange.opacity(0.1))
-                .cornerRadius(8)
+                DashboardGuideSteps("更新步骤", steps: [
+                    "点击下方按钮更新系统扩展",
+                    "系统会自动替换旧版本扩展",
+                    "等待更新完成，防火墙即可正常使用",
+                ])
 
                 DashboardInstallExtensionButton()
-                    .controlSize(.extraLarge)
             }
         }
     }

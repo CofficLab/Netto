@@ -1,3 +1,4 @@
+import LumiUI
 import ProviderFirewall
 import SwiftUI
 
@@ -23,38 +24,21 @@ struct FirewallMenuBarPopoverView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 10) {
-                Image(systemName: presentation.symbol)
-                    .font(.system(size: 18))
-                    .foregroundStyle(presentation.color)
-                    .frame(width: 22)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(presentation.title)
-                        .font(.system(size: 12, weight: .medium))
-
-                    Text(detailText)
-                        .font(.system(size: 10))
-                        .foregroundStyle(.secondary)
-                        .lineLimit(2)
-                }
-
-                Spacer(minLength: 8)
-
-                actionButton
-            }
-
+        StatusBarPopoverScaffold(
+            title: presentation.title,
+            systemImage: presentation.symbol,
+            systemImageColor: presentation.color,
+            subtitle: detailText,
+            showsHeaderDivider: errorMessage != nil
+        ) {
+            actionButton
+        } content: {
             if let errorMessage {
-                Text(errorMessage)
-                    .font(.system(size: 10))
-                    .foregroundStyle(.red)
-                    .lineLimit(2)
-                    .padding(.leading, 32)
+                AppStatusBanner(kind: .error, title: "操作失败", message: errorMessage)
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
+        .padding(.horizontal, AppUI.Spacing.md)
+        .padding(.vertical, AppUI.Spacing.sm)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("netto.menubar.firewall")
         .task {
@@ -73,15 +57,11 @@ struct FirewallMenuBarPopoverView: View {
     @ViewBuilder
     private var actionButton: some View {
         if snapshot.state.isRunning() {
-            Button("停止") { stop() }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
+            AppButton("停止", style: .secondary, size: .small, action: stop)
                 .disabled(isBusy || !snapshot.canStop)
                 .accessibilityIdentifier("netto.menubar.firewall.stop")
         } else {
-            Button("开启") { start() }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
+            AppButton("开启", style: .primary, size: .small, action: start)
                 .disabled(isBusy || !snapshot.canStart)
                 .accessibilityIdentifier("netto.menubar.firewall.start")
         }

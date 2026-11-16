@@ -5,59 +5,25 @@ import SwiftUI
 
 struct SystemExtensionNotInstalledView: View {
     var body: some View {
-        Popview(
+        DashboardGuidePanel(
             iconName: "exclamationmark.triangle",
             title: "系统扩展未安装",
             iconColor: .red
         ) {
-            VStack(spacing: 20) {
+            VStack(spacing: AppUI.Spacing.md) {
                 Text("系统扩展未安装，无法启动防火墙功能")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
+                    .font(.appBody)
+                    .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, 20)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                VStack(spacing: 16) {
-                    Text("解决方案：")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack(spacing: 8) {
-                            Text("1.")
-                                .font(.callout)
-                                .foregroundColor(.blue)
-                                .fontWeight(.medium)
-                            Text("点击下方按钮安装系统扩展")
-                                .font(.callout)
-                        }
-
-                        HStack(spacing: 8) {
-                            Text("2.")
-                                .font(.callout)
-                                .foregroundColor(.blue)
-                                .fontWeight(.medium)
-                            Text("在弹出的对话框中点击\"允许\"")
-                                .font(.callout)
-                        }
-
-                        HStack(spacing: 8) {
-                            Text("3.")
-                                .font(.callout)
-                                .foregroundColor(.blue)
-                                .fontWeight(.medium)
-                            Text("等待系统扩展安装完成")
-                                .font(.callout)
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                }
-                .padding(.vertical, 16)
-                .background(Color.red.opacity(0.1))
-                .cornerRadius(8)
+                DashboardGuideSteps("解决方案", steps: [
+                    "点击下方按钮安装系统扩展",
+                    "在弹出的对话框中点击「允许」",
+                    "等待系统扩展安装完成",
+                ])
 
                 DashboardInstallExtensionButton()
-                    .controlSize(.extraLarge)
             }
         }
     }

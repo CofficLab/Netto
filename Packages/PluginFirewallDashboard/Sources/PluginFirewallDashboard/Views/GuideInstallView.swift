@@ -3,15 +3,15 @@ import ProviderFirewall
 import ProviderViewEnvironment
 import SwiftUI
 
+/// 安装系统扩展引导。
 struct InstallView: View {
     var body: some View {
-        Popview(
+        DashboardGuidePanel(
             iconName: "gearshape.arrow.triangle.2.circlepath",
             title: "需要安装系统扩展",
-            iconColor: .blue
+            iconColor: .accentColor
         ) {
             DashboardInstallExtensionButton()
-                .controlSize(.extraLarge)
         }
     }
 }

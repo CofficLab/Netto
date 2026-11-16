@@ -1,7 +1,7 @@
-import SwiftUI
-import ProviderViewEnvironment
-import Charts
+import LumiUI
 import ProviderFirewallEvents
+import ProviderViewEnvironment
+import SwiftUI
 
 struct ChartView: View {
     /// 可选：指定应用ID时仅统计该应用
@@ -11,71 +11,57 @@ struct ChartView: View {
     @Environment(\.eventsProvider) private var eventRepo: FirewallEventsProviding?
     @State private var points: [DataPoint] = []
     @State private var smoothed: [DataPoint] = []
-    @State private var hoverIndex: Int? = nil
-    @State private var lockedIndex: Int? = nil
     @State private var range: RangeOption = .hour
+    @LumiTheme private var theme
+
+    private var total: Int {
+        points.reduce(0) { $0 + $1.count }
+    }
+
+    private var selection: Binding<Int> {
+        Binding(
+            get: { RangeOption.allCases.firstIndex(of: range) ?? 0 },
+            set: { range = RangeOption.allCases[$0] }
+        )
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(title ?? (appId == nil ? "联网次数" : "应用联网次数"))
-                    .font(.headline)
-                Spacer()
-                let total = points.reduce(0) { $0 + $1.count }
-                Text("合计 \(total)")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
+        AppCard(
+            style: .subtle,
+            cornerRadius: DesignTokens.Radius.md,
+            showShadow: false
+        ) {
+            VStack(alignment: .leading, spacing: AppUI.Spacing.sm) {
+                HStack {
+                    Text(title ?? (appId == nil ? "联网次数" : "应用联网次数"))
+                        .font(.appSectionTitle)
+                        .foregroundStyle(theme.textPrimary)
 
-            Picker("范围", selection: $range) {
-                ForEach(RangeOption.allCases) { opt in
-                    Text(opt.title).tag(opt)
-                }
-            }
-            .pickerStyle(.segmented)
-            .onChange(of: range) { _, _ in
-                Task { await loadData() }
-            }
+                    Spacer()
 
-            Chart {
-                ForEach(smoothed) { p in
-                    LineMark(
-                        x: .value("Time", p.time),
-                        y: .value("Count", p.count)
-                    )
-                    .interpolationMethod(.cardinal)
-                    .foregroundStyle(Color.accentColor)
-                    .lineStyle(StrokeStyle(lineWidth: 2))
+                    Text("合计 \(total)")
+                        .font(.appCaption)
+                        .foregroundStyle(theme.textSecondary)
                 }
 
-                ForEach(smoothed) { p in
-                    AreaMark(
-                        x: .value("Time", p.time),
-                        y: .value("Count", p.count)
-                    )
-                    .interpolationMethod(.cardinal)
-                    .foregroundStyle(LinearGradient(gradient: Gradient(colors: [Color.accentColor.opacity(0.4), Color.accentColor.opacity(0)]), startPoint: .top, endPoint: .bottom))
+                AppSegmentedControl(
+                    RangeOption.allCases.map(\.title),
+                    selection: selection,
+                    maxWidth: 240
+                )
+                .onChange(of: range) { _, _ in
+                    Task { await loadData() }
                 }
+
+                AppLineChart(
+                    points: smoothed.map { AppLineChartPoint(date: $0.time, value: Double($0.count)) },
+                    accessibilityLabel: "联网次数趋势",
+                    pointStyle: .automatic,
+                    showsArea: true
+                )
+                .frame(height: 160)
             }
-            .chartLegend(.hidden)
-            .chartXScale(domain: (smoothed.first?.time ?? Date())...(smoothed.last?.time ?? Date()))
-            .chartXAxis {
-                AxisMarks(values: .automatic(desiredCount: 6)) { value in
-                    AxisGridLine()
-                    AxisTick()
-                    AxisValueLabel() {
-                        if let date = value.as(Date.self) {
-                            formattedXLabel(for: date)
-                        }
-                    }
-                }
-            }
-            .chartYAxis {
-                AxisMarks(position: .leading)
-            }
-            .frame(height: 160)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .task(loadData)
     }
 }
@@ -145,11 +131,9 @@ extension ChartView {
             }
 
             // 输出
-            let formatter = DateFormatter()
-            formatter.dateFormat = range.dateFormat
             let sortedKeys = buckets.keys.sorted()
             let newPoints: [DataPoint] = sortedKeys.enumerated().map { idx, d in
-                DataPoint(index: idx, time: d, count: buckets[d] ?? 0, label: formatter.string(from: d))
+                DataPoint(index: idx, time: d, count: buckets[d] ?? 0)
             }
 
             setPoints(newPoints)
@@ -170,28 +154,6 @@ extension ChartView {
 
 // MARK: - Private Helpers
 extension ChartView {
-    private func colorForBar(index: Int) -> Color {
-        let isSelected = (lockedIndex ?? hoverIndex) == index
-        return isSelected ? Color.accentColor : Color.accentColor.opacity(0.7)
-    }
-
-    private func tooltipText(for index: Int) -> String {
-        guard smoothed.indices.contains(index) else { return "" }
-        let item = smoothed[index]
-        return "\(item.label) · \(item.count)"
-    }
-
-    private func nearestIndex(to date: Date) -> Int? {
-        guard !smoothed.isEmpty else { return nil }
-        var bestIdx = 0
-        var bestDist = abs(smoothed[0].time.timeIntervalSince(date))
-        for i in 1..<smoothed.count {
-            let d = abs(smoothed[i].time.timeIntervalSince(date))
-            if d < bestDist { bestDist = d; bestIdx = i }
-        }
-        return bestIdx
-    }
-
     private func movingAverage(_ input: [DataPoint], window: Int) -> [DataPoint] {
         guard window > 1, !input.isEmpty else { return input }
         var result: [DataPoint] = []
@@ -202,7 +164,7 @@ extension ChartView {
             queue.append(p.count)
             if queue.count > window { sum -= queue.removeFirst() }
             let avg = Double(sum) / Double(queue.count)
-            result.append(DataPoint(index: idx, time: p.time, count: Int(avg.rounded()), label: p.label))
+            result.append(DataPoint(index: idx, time: p.time, count: Int(avg.rounded())))
         }
         return result
     }
@@ -215,7 +177,6 @@ extension ChartView {
         let index: Int
         let time: Date
         let count: Int
-        let label: String
     }
     enum BucketUnit { case minute, hour, day }
     enum RangeOption: String, CaseIterable, Identifiable {
@@ -238,13 +199,6 @@ extension ChartView {
             case .last30: return .day
             }
         }
-        var dateFormat: String {
-            switch self {
-            case .hour: return "HH:mm"
-            case .last7: return "MM/dd HH"
-            case .last30: return "MM/dd"
-            }
-        }
         var smoothingWindow: Int {
             switch self {
             case .hour: return 5
@@ -262,23 +216,6 @@ extension ChartView {
             case .last30:
                 return calendar.date(byAdding: .day, value: -30, to: now) ?? now
             }
-        }
-    }
-}
-
-// MARK: - Label helpers
-private extension ChartView {
-    func formattedXLabel(for date: Date) -> Text {
-        switch range {
-        case .hour:
-            return Text(date, format: .dateTime.hour().minute())
-        case .last7:
-            // 月/日 小时
-            let f = DateFormatter(); f.dateFormat = "MM/dd HH"
-            return Text(f.string(from: date))
-        case .last30:
-            let f = DateFormatter(); f.dateFormat = "MM/dd"
-            return Text(f.string(from: date))
         }
     }
 }

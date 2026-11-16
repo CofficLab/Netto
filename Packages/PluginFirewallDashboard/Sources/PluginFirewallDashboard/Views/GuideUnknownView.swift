@@ -1,8 +1,10 @@
+import LumiUI
 import SwiftUI
 
+/// 未知状态引导。
 struct UnknownView: View {
     var body: some View {
-        Popview(
+        DashboardGuidePanel(
             iconName: "questionmark.circle",
             title: "当前状态未知"
         ) {

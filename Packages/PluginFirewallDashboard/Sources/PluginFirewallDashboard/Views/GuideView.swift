@@ -1,33 +1,27 @@
-import SwiftUI
+import LumiUI
 import ProviderViewEnvironment
 import ProviderFirewall
+import SwiftUI
 
-/**
- * 引导视图
- * 
- * 根据防火墙状态和升级状态显示相应的引导界面。
- * 包括升级引导、安装引导、状态引导等多种场景。
- */
+/// 引导视图 —— 防火墙未就绪时覆盖在应用列表上的状态面板。
+///
+/// 按防火墙状态与升级状态选择对应的 `DashboardGuidePanel` 内容；遮罩使用
+/// 系统材质，面板本身由 LumiUI 主题表面渲染。
 struct GuideView: View {
-    /// UI状态提供者
     @EnvironmentObject private var app: UIProvider
-    
-    /// 防火墙契约（nil = 未装配，按未运行处理）
     @Environment(\.firewallProvider) private var firewall: FirewallProviding?
 
-    /// 构建引导视图
     var body: some View {
         ZStack {
-            Color.black.opacity(0.3)
-            AppBackground.forest.opacity(0.3)
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // 优先显示升级引导界面：如果用户需要升级，优先显示升级引导
+                // 升级引导优先于状态引导。
                 if app.shouldShowUpgradeGuide {
                     UpgradeGuideView()
                 } else {
-                    // 根据防火墙状态显示对应的引导视图
-                    // 状态语义与旧 FilterStatus 一一对应；nil 视为未运行
                     switch firewall?.snapshot.state {
                     case .disabled, .stopped, nil:
                         StopView()
@@ -44,10 +38,16 @@ struct GuideView: View {
                     case .systemExtensionApprovalNeeded, .filterApprovalNeeded, .permissionDenied:
                         ApprovalView()
                     case .waitingForApproval:
-                        // 等待用户批准安装扩展
-                        Text("Click \"Allow\" to install extension")
-                            .font(.title)
-                        Image("Ask")
+                        DashboardGuidePanel(
+                            iconName: "hand.raised.fill",
+                            title: "等待系统批准",
+                            iconColor: .orange
+                        ) {
+                            Text("请在系统弹窗中点击「允许」以安装网络扩展。")
+                                .font(.appBody)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
                     case .extensionNotActivated:
                         ExtensionNotReady()
                     case .notInApplicationsFolder:
@@ -57,10 +57,7 @@ struct GuideView: View {
                     }
                 }
             }
-            .background(.background)
-            .cornerRadius(16)
-            .padding(20)
-            .shadow(color: Color.blue.opacity(0.2), radius: 10, x: 0, y: 2)
+            .padding(AppUI.Spacing.lg)
             .accessibilityIdentifier("netto.firewall.guide")
         }
     }

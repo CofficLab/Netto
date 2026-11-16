@@ -1,5 +1,6 @@
-import SwiftUI
+import LumiUI
 import ProviderSettingView
+import SwiftUI
 
 /**
  * 升级引导视图
@@ -7,65 +8,32 @@ import ProviderSettingView
  */
 struct UpgradeGuideView: View {
     @EnvironmentObject var ui: UIProvider
-    
+
     var body: some View {
-        Popview(
+        DashboardGuidePanel(
             iconName: "crown.fill",
             title: "升级到 Pro 版本",
             iconColor: .orange
         ) {
-            VStack(spacing: 20) {
-                // 限制提示区域
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundStyle(.orange)
-                            .font(.system(size: 14, weight: .medium))
-                            .frame(width: 20, alignment: .center)
-                        Text("已达到免费版限制")
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(.primary)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(.orange.opacity(0.1))
-                    .cornerRadius(8)
+            VStack(spacing: AppUI.Spacing.md) {
+                AppStatusBanner(kind: .warning, title: "已达到免费版限制")
+                AppStatusBanner(kind: .info, title: "Pro 版本可无限制禁止应用")
 
-                    HStack(spacing: 8) {
-                        Image(systemName: "infinity")
-                            .foregroundStyle(.green)
-                            .font(.system(size: 14, weight: .medium))
-                            .frame(width: 20, alignment: .center)
-                        Text("Pro 版本可无限制禁止应用")
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(.primary)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(.green.opacity(0.1))
-                    .cornerRadius(8)
-                }
-
-                // 按钮组
-                HStack(spacing: 12) {
-                    Button("稍后再说") {
+                HStack(spacing: AppUI.Spacing.sm) {
+                    AppButton("稍后再说", style: .secondary, fillsWidth: true) {
                         ui.hideUpgradeGuide()
                     }
-                    .buttonStyle(.bordered)
-                    
-                    Button("立即升级") {
+
+                    AppButton("立即升级", systemImage: "crown.fill", style: .primary, fillsWidth: true) {
                         openStoreWindow()
                     }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .font(.headline)
                 }
             }
         }
     }
-    
+
     // MARK: - Actions
-    
+
     private func openStoreWindow() {
         // 商店已迁入设置窗口：直接深链到「商店」入口，替代旧的独立商店窗口。
         NotificationCenter.default.post(

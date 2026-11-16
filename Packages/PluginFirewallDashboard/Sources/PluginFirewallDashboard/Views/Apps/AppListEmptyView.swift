@@ -1,38 +1,15 @@
+import LumiUI
 import SwiftUI
 
-/**
- * 应用列表空视图
- * 
- * 当应用列表为空时显示的空状态视图。
- * 根据显示类型（全部/允许/拒绝）显示相应的提示信息。
- */
+/// 应用列表空视图（按当前筛选维度给出不同文案）。
 struct AppListEmptyView: View {
-    /// 显示类型
     let displayType: DisplayType
-    
-    /// 构建空视图
+
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "app.badge")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
-            
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.primary)
-            
-            if let description = description {
-                Text(description)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        AppEmptyState(icon: "app.badge", title: title, description: description)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
-    /// 空状态标题
+
     private var title: String {
         switch displayType {
         case .All:
@@ -43,9 +20,8 @@ struct AppListEmptyView: View {
             return "暂无被拒绝的应用"
         }
     }
-    
-    /// 空状态描述
-    private var description: String? {
+
+    private var description: String {
         switch displayType {
         case .All:
             return "当前没有应用产生网络活动"
@@ -78,4 +54,3 @@ struct AppListEmptyView: View {
     AppListEmptyView(displayType: .Rejected)
         .frame(width: 600, height: 400)
 }
-
