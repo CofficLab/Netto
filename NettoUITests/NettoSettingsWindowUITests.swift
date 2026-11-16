@@ -114,6 +114,27 @@ final class NettoSettingsWindowUITests: NettoUITestBase {
         )
     }
 
+    // MARK: - 商店入口
+
+    /// 「商店」入口展示与兄弟项目同构的设置页（订阅信息 / 应用内购买 / 恢复购买）。
+    func testStoreEntryShowsStoreSettingsPage() {
+        let app = launchApp()
+        _ = openDashboard(in: app)
+
+        openSettingsWindow(in: app)
+
+        let storeEntry = sidebarEntry("商店", in: app)
+        XCTAssertTrue(storeEntry.waitForExistence(timeout: 5), "设置窗口缺少入口「商店」")
+        storeEntry.click()
+
+        for section in ["订阅信息", "应用内购买", "恢复购买"] {
+            XCTAssertTrue(
+                detailText(section, in: app).waitForExistence(timeout: 10),
+                "商店页缺少「\(section)」分组"
+            )
+        }
+    }
+
     // MARK: - 重复触发
 
     /// 重复触发不会创建第二个设置窗口（只前置）。

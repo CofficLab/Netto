@@ -11,8 +11,8 @@ import SwiftUI
 /// Store 插件：StoreService/StoreState/DTO/购买恢复订阅 UI 的装配点与唯一拥有者。
 ///
 /// 生命周期：
-/// - onBoot：注册 `StoreProviding`（owner=self.id），向 ShellCenter 贡献设置入口
-///   与商店窗口内容，并启动交易监听与权益校准（旧 `StoreService.bootstrap()` 语义）。
+/// - onBoot：注册 `StoreProviding`（owner=self.id），向设置窗口贡献「商店」
+///   入口，并启动交易监听与权益校准（旧 `StoreService.bootstrap()` 语义）。
 /// - onShutdown：取消监听任务、撤销贡献（Kernel 随 owner 自动撤回 Provider）。
 ///
 /// 线程/actor：`@MainActor`；StoreKit 调用在内部 Task 中串行执行；
@@ -33,6 +33,9 @@ public final class PluginStore: SuperPlugin, StoreProviding {
     /// 交易监听 + 权益校准任务句柄（onShutdown 取消，避免留下后台任务）。
     private var storeTask: Task<Void, Never>?
 
+    /// 商店设置页的状态容器（插件级共享：设置页每次重建都读同一份状态）。
+    private var storeViewModel: StoreViewModel?
+
     public init() {}
 
     // MARK: - SuperPlugin
@@ -41,10 +44,12 @@ public final class PluginStore: SuperPlugin, StoreProviding {
         try kernel.registerProvider(StoreProviding.self, self)
         // 商店迁移到设置窗口：向 SettingViewProviding 注入「商店」入口
         // （替代旧主窗口 StoreBtn + store-window 插件窗口）。
+        let viewModel = StoreViewModel()
+        storeViewModel = viewModel
         kernel.resolveProvider(SettingViewProviding.self)?
             .addEntries([
                 SettingEntryItem(id: "store", title: "商店", systemImage: "storefront", order: 30) {
-                    StoreWindowContent.windowView()
+                    StoreSettingsView(viewModel: viewModel)
                 },
             ])
         // 启动监听 + 校准（幂等由 kernel 保证只 onBoot 一次）。
@@ -60,6 +65,9 @@ public final class PluginStore: SuperPlugin, StoreProviding {
         // 撤回设置入口（Kernel 随后按 owner 撤回 Provider）。
         kernel.resolveProvider(SettingViewProviding.self)?
             .removeEntries(ids: ["store"])
+        // 停止权益变更监听。
+        storeViewModel?.dispose()
+        storeViewModel = nil
     }
 
     // MARK: - StoreProviding

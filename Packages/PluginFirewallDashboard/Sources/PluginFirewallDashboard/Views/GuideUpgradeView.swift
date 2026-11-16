@@ -1,5 +1,5 @@
 import SwiftUI
-import ProviderShell
+import ProviderSettingView
 
 /**
  * 升级引导视图
@@ -7,7 +7,6 @@ import ProviderShell
  */
 struct UpgradeGuideView: View {
     @EnvironmentObject var ui: UIProvider
-    @EnvironmentObject private var shell: ShellCenter
     
     var body: some View {
         Popview(
@@ -68,8 +67,12 @@ struct UpgradeGuideView: View {
     // MARK: - Actions
     
     private func openStoreWindow() {
-        // 通过 WindowProviding 请求打开商店窗口（替代旧通知机制）
-        shell.requestOpen(WindowRequest(windowID: "plugin-window", title: "Store - TravelMode"))
+        // 商店已迁入设置窗口：直接深链到「商店」入口，替代旧的独立商店窗口。
+        NotificationCenter.default.post(
+            name: SettingViewNavigation.openSettingsNotification,
+            object: nil,
+            userInfo: [SettingViewNavigation.entryIDUserInfoKey: "store"]
+        )
         // 关闭升级引导界面
         ui.hideUpgradeGuide()
     }

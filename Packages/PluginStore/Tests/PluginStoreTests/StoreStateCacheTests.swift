@@ -117,7 +117,7 @@ extension StoreStateTests {
             #expect(entry != nil)
             #expect(entry?.title == "商店")
 
-            // 触发入口的视图工厂（StoreWindowContent.windowView()）。
+            // 触发入口的视图工厂（StoreSettingsView(viewModel:)）。
             let detailView = entry?.makeDetailView()
             #expect(detailView != nil)
 
