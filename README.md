@@ -19,7 +19,7 @@ TravelMode is a per-app network access control app for macOS. It asks for a deci
 - **Connection timeline** — every new flow is recorded with its source app, direction, status, address, and time.
 - **App list** — every app seen this session, with blocked apps highlighted and filters for all / allowed / blocked.
 - **Event browser** — open an app to filter its events by status and direction, page through its history, and export as CSV.
-- **Menu bar dashboard** — firewall state, start / stop, app rules, and connection history all live in the menu bar popover; the settings window opens only when needed.
+- **Menu bar dashboard** — firewall state, start / stop, live per-app network speed, app rules, and connection history all live in the menu bar popover; the settings window opens only when needed.
 - **Local-first storage** — rules and events are stored locally; nothing is sent to a server.
 - **Built-in diagnostics** — browse the local database and recorded events from the settings window.
 

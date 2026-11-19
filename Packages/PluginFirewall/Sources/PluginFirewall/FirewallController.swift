@@ -194,8 +194,9 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
             logger.error("Boot 加载过滤器配置失败: \(error.localizedDescription)")
         }
 
-        let registered = await registerIPC()
-        logger.info("IPC 关联 \(registered ? "成功" : "失败")")
+        if await registerIPC() == false {
+            logger.error("与系统扩展建立 IPC 关联失败")
+        }
     }
 
     /// 与 Extension 建立 IPC 关联（旧 registerWithProvider）。

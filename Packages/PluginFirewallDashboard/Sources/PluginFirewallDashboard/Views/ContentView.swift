@@ -15,10 +15,12 @@ public struct ContentView: View {
     @Environment(\.settingsProvider) private var settingsRepo
     @Environment(\.eventsProvider) private var eventsRepo
     @Environment(\.firewallProvider) private var firewall
+    @Environment(\.networkSpeedProvider) private var networkSpeed
     @Environment(\.sessionStartDate) private var sessionStartDate
 
     @State private var model = MenuBarDashboardModel()
     @State private var firewallState: FirewallState?
+    @State private var speeds: [AppNetworkSpeed] = []
 
     public init() {}
 
@@ -43,6 +45,7 @@ public struct ContentView: View {
             refresh()
         }
         .task { await observeFirewallState() }
+        .task { await observeNetworkSpeeds() }
     }
 
     // MARK: - List
@@ -57,7 +60,11 @@ public struct ContentView: View {
                 ScrollView {
                     LazyVStack(spacing: 2) {
                         ForEach(filteredApps, id: \.id) { app in
-                            MenuBarAppRow(app: app, isDenied: model.isDenied(app.id)) {
+                            MenuBarAppRow(
+                                app: app,
+                                isDenied: model.isDenied(app.id),
+                                speed: speeds.first { $0.appId == app.id }
+                            ) {
                                 refresh()
                             }
                         }
@@ -86,7 +93,16 @@ public struct ContentView: View {
     // MARK: - Data
 
     private var filteredApps: [SmartApp] {
-        model.filteredApps(for: ui.displayType)
+        model.filteredApps(for: ui.displayType, includingLive: visibleSpeedEntries.map(\.app))
+    }
+
+    /// 实时应用与应用列表使用同一套可见性规则：隐藏的系统进程不进入榜单。
+    private var visibleSpeedEntries: [(speed: AppNetworkSpeed, app: SmartApp)] {
+        speeds.compactMap { speed in
+            let app = SmartApp.fromId(speed.appId)
+            guard app.hasId, !app.isSystemApp || !app.hidden else { return nil }
+            return (speed: speed, app: app)
+        }
     }
 
     private var selectedApp: SmartApp? {
@@ -117,6 +133,17 @@ public struct ContentView: View {
         firewallState = firewall.snapshot.state
         for await update in firewall.observe() {
             firewallState = update.state
+            if !update.state.isRunning() {
+                speeds = []
+            }
+        }
+    }
+
+    private func observeNetworkSpeeds() async {
+        guard let networkSpeed else { return }
+        speeds = networkSpeed.snapshot
+        for await update in networkSpeed.observe() {
+            speeds = update
         }
     }
 }

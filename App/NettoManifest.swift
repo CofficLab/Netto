@@ -153,9 +153,9 @@ enum NettoManifest {
     // MARK: - Status Bar Environment
 
     /// 向菜单栏弹窗注入宿主域环境：
-    /// shell / ui / appProvider / firewall / events / settings / store /
-    /// sessionStartDate —— 菜单栏弹窗里的防火墙开关、筛选控件与仪表盘内容
-    /// 都从这里取依赖。
+    /// shell / ui / appProvider / firewall / events / settings / networkSpeed /
+    /// store / sessionStartDate —— 菜单栏弹窗里的防火墙开关、筛选控件、
+    /// 实时网速与仪表盘内容都从这里取依赖。
     private static func injectEnvironment(
         _ content: AnyView,
         kernel: KernelCoreContainer
@@ -171,6 +171,7 @@ enum NettoManifest {
                 .environment(\.firewallProvider, kernel.resolveProvider(FirewallProviding.self))
                 .environment(\.eventsProvider, kernel.resolveProvider(FirewallEventsProviding.self))
                 .environment(\.settingsProvider, kernel.resolveProvider(AppSettingsProviding.self))
+                .environment(\.networkSpeedProvider, kernel.resolveProvider(NetworkSpeedProviding.self))
                 .environment(\.storeProvider, kernel.resolveProvider(StoreProviding.self))
                 .environment(\.sessionStartDate, NettoAssembly.sessionStartDate)
         )

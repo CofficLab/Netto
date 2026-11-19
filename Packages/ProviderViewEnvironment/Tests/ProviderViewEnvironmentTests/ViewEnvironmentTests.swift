@@ -56,6 +56,13 @@ private final class StubSettings: AppSettingsProviding {
     func observeChanges() -> AsyncStream<AppSettingsChange> { AsyncStream { $0.finish() } }
 }
 
+/// 最小网速契约 Mock。
+@MainActor
+private final class StubNetworkSpeed: NetworkSpeedProviding {
+    var snapshot: [AppNetworkSpeed] = []
+    func observe() -> AsyncStream<[AppNetworkSpeed]> { AsyncStream { $0.finish() } }
+}
+
 /// 最小 Store 契约 Mock。
 @MainActor
 private final class StubStore: StoreProviding {
@@ -78,12 +85,13 @@ struct ViewEnvironmentTests {
 
     // MARK: - 默认值
 
-    @Test("未装配时四个 Provider 均为 nil")
+    @Test("未装配时五个 Provider 均为 nil")
     func providersDefaultToNil() {
         let values = EnvironmentValues()
         #expect(values.firewallProvider == nil)
         #expect(values.eventsProvider == nil)
         #expect(values.settingsProvider == nil)
+        #expect(values.networkSpeedProvider == nil)
         #expect(values.storeProvider == nil)
     }
 
@@ -117,6 +125,14 @@ struct ViewEnvironmentTests {
         var values = EnvironmentValues()
         values.settingsProvider = stub
         #expect(values.settingsProvider === stub)
+    }
+
+    @Test("networkSpeedProvider 写入后可读回同一实例")
+    func networkSpeedRoundTrip() {
+        let stub = StubNetworkSpeed()
+        var values = EnvironmentValues()
+        values.networkSpeedProvider = stub
+        #expect(values.networkSpeedProvider === stub)
     }
 
     @Test("storeProvider 写入后可读回同一实例")

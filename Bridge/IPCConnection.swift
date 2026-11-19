@@ -124,6 +124,19 @@ class IPCConnection: NSObject {
         }
         appProxy.extensionLog(message)
     }
+
+    /// 把扩展侧按应用累计的字节增量上报给 App。
+    ///
+    /// 静默失败：每秒一次的高频数据不应在 App 未注册时刷错误日志。
+    func reportNetworkTraffic(_ samples: [[String: Any]]) {
+        guard let connection = currentConnection else { return }
+
+        guard let appProxy = connection.remoteObjectProxyWithErrorHandler({ _ in
+        }) as? AppCommunication else {
+            return
+        }
+        appProxy.reportNetworkTraffic(samples as NSArray)
+    }
 }
 
 extension IPCConnection: NSXPCListenerDelegate {

@@ -1,4 +1,5 @@
 import LumiUI
+import ProviderFirewall
 import ProviderViewEnvironment
 import SwiftUI
 
@@ -9,14 +10,21 @@ struct MenuBarAppRow: View {
 
     let app: SmartApp
     let isDenied: Bool
+    let speed: AppNetworkSpeed?
     let onRuleChange: () -> Void
 
     @State private var shouldAllow: Bool
     @State private var hovering = false
 
-    init(app: SmartApp, isDenied: Bool, onRuleChange: @escaping () -> Void) {
+    init(
+        app: SmartApp,
+        isDenied: Bool,
+        speed: AppNetworkSpeed? = nil,
+        onRuleChange: @escaping () -> Void
+    ) {
         self.app = app
         self.isDenied = isDenied
+        self.speed = speed
         self.onRuleChange = onRuleChange
         _shouldAllow = State(initialValue: !isDenied)
     }
@@ -57,7 +65,11 @@ struct MenuBarAppRow: View {
             .buttonStyle(.plain)
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier("netto.app.row.\(app.id)")
-            .accessibilityLabel("\(app.name)，\(isDenied ? "已阻止" : "允许联网")")
+            .accessibilityLabel(accessibilityText)
+
+            if let speed, speed.totalBytesPerSecond > 0 {
+                speedBadge(speed)
+            }
 
             if app.isNotSample {
                 AppAction(shouldAllow: $shouldAllow, appId: app.id, onRuleChange: onRuleChange)
@@ -74,5 +86,35 @@ struct MenuBarAppRow: View {
         .onChange(of: isDenied) {
             shouldAllow = !isDenied
         }
+    }
+
+    private func speedBadge(_ speed: AppNetworkSpeed) -> some View {
+        HStack(spacing: 4) {
+            if speed.downloadBytesPerSecond > 0 {
+                Text("↓\(NetworkSpeedFormatter.compactFormat(speed.downloadBytesPerSecond))")
+                    .foregroundStyle(theme.success)
+            }
+            if speed.uploadBytesPerSecond > 0 {
+                Text("↑\(NetworkSpeedFormatter.compactFormat(speed.uploadBytesPerSecond))")
+                    .foregroundStyle(theme.primary)
+            }
+        }
+        .font(.appMicro)
+        .lineLimit(1)
+        .fixedSize(horizontal: true, vertical: false)
+        .accessibilityHidden(true)
+    }
+
+    private var accessibilityText: String {
+        var parts = [app.name, isDenied ? "已阻止" : "允许联网"]
+        if let speed, speed.totalBytesPerSecond > 0 {
+            if speed.downloadBytesPerSecond > 0 {
+                parts.append("下载 \(NetworkSpeedFormatter.format(speed.downloadBytesPerSecond))")
+            }
+            if speed.uploadBytesPerSecond > 0 {
+                parts.append("上传 \(NetworkSpeedFormatter.format(speed.uploadBytesPerSecond))")
+            }
+        }
+        return parts.joined(separator: "，")
     }
 }

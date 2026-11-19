@@ -29,16 +29,8 @@ final class MenuBarDashboardModel {
         let resolved = appIds.map { SmartApp.fromId($0) }
             .filter { !$0.isSystemApp || !$0.hidden }
             .filter { $0.hasId }
-            .sorted { lhs, rhs in
-                let lhsDenied = deniedSet.contains(lhs.id)
-                let rhsDenied = deniedSet.contains(rhs.id)
-                if lhsDenied != rhsDenied {
-                    return lhsDenied
-                }
-                return lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
-            }
 
-        apps = resolved
+        apps = Self.sorted(resolved, deniedIds: deniedSet)
         deniedIds = deniedSet
     }
 
@@ -50,6 +42,50 @@ final class MenuBarDashboardModel {
             return apps.filter { !deniedIds.contains($0.id) }
         case .Rejected:
             return apps.filter { deniedIds.contains($0.id) }
+        }
+    }
+
+    /// 叠加实时有流量的应用：事件尚未落库时，列表仍应与实时网速一致。
+    ///
+    /// 实时应用只会出现在「全部 / 允许」；「禁止」只展示已拒绝的应用。
+    func filteredApps(for displayType: DisplayType, includingLive liveApps: [SmartApp]) -> [SmartApp] {
+        Self.merging(
+            filteredApps(for: displayType),
+            withLive: liveApps,
+            displayType: displayType,
+            deniedIds: deniedIds
+        )
+    }
+
+    static func merging(
+        _ base: [SmartApp],
+        withLive liveApps: [SmartApp],
+        displayType: DisplayType,
+        deniedIds: Set<String>
+    ) -> [SmartApp] {
+        guard displayType != .Rejected else { return base }
+
+        var seen = Set(base.map(\.id))
+        var merged = base
+        for app in liveApps where app.hasId && !seen.contains(app.id) {
+            if displayType == .Allowed, deniedIds.contains(app.id) {
+                continue
+            }
+            merged.append(app)
+            seen.insert(app.id)
+        }
+        return sorted(merged, deniedIds: deniedIds)
+    }
+
+    /// 被禁止的应用置顶，同组按名称排序；实时应用并入后保持同一顺序。
+    private static func sorted(_ apps: [SmartApp], deniedIds: Set<String>) -> [SmartApp] {
+        apps.sorted { lhs, rhs in
+            let lhsDenied = deniedIds.contains(lhs.id)
+            let rhsDenied = deniedIds.contains(rhs.id)
+            if lhsDenied != rhsDenied {
+                return lhsDenied
+            }
+            return lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
         }
     }
 
