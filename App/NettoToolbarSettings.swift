@@ -6,9 +6,10 @@ import SwiftUI
 
 /// 主窗口工具栏右侧的设置按钮（对齐 Lumi / Wakey）。
 ///
-/// 共享包只提供工具栏协议与渲染，按钮归属宿主，因此在装配期由 Factory
-/// 直接贡献一个 `ToolbarItem`：点击发出标准的「打开设置」通知，由常驻的
-/// `SettingsWindowRouter` 打开设置窗口 —— 插件与视图层都不持有窗口动作。
+/// 共享包只提供工具栏协议与渲染，按钮归属宿主，因此在装配期（`wireKernel`）
+/// 直接贡献一个 `ToolbarItem`：点击发出标准的「打开设置」通知
+/// （`lumi.openSettings`），由共享壳 `HostAppDelegate` 打开设置窗口 ——
+/// 插件与视图层都不持有窗口动作。
 @MainActor
 enum NettoToolbarSettings {
     /// 设置按钮的工具栏项。
