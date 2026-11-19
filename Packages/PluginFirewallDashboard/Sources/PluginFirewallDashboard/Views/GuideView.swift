@@ -11,7 +11,7 @@ struct GuideView: View {
     /// 由宿主订阅 `FirewallProviding.observe()` 后传入的最新状态。
     let state: FirewallState?
 
-    /// 主窗口形态使用材质遮罩；菜单栏弹窗内不需要遮罩，只渲染面板本身。
+    /// 外层展示形式使用材质遮罩；菜单栏弹窗内不需要遮罩，只渲染面板本身。
     var showsBackdrop = true
 
     @EnvironmentObject private var app: UIProvider
@@ -30,31 +30,36 @@ struct GuideView: View {
                     UpgradeGuideView()
                 } else {
                     switch state {
-                    case .disabled, .stopped, nil:
+                    case .stopped, nil:
                         StopView()
-                    case .unknown, .installing:
+                    case .disabled:
+                        SystemSettingsGuideView(
+                            title: "防火墙已禁用",
+                            message: "过滤器在系统设置中被禁用，启用后才能拦截未授权联网。",
+                            iconName: "shield.slash"
+                        )
+                    case .unknown:
                         UnknownView()
+                    case .installing:
+                        InstallingView()
                     case .running:
-                        RunningView()
+                        // 运行中不展示引导；ContentView 仅在未运行或升级时进入引导。
+                        EmptyView()
                     case .systemExtensionNotInstalled:
                         SystemExtensionNotInstalledView()
                     case .systemExtensionNeedsUpdate:
                         SystemExtensionNeedUpdateView()
                     case .filterNotInstalled:
                         FilterNotInstalledView()
-                    case .systemExtensionApprovalNeeded, .filterApprovalNeeded, .permissionDenied:
+                    case .systemExtensionApprovalNeeded, .filterApprovalNeeded, .waitingForApproval:
                         ApprovalView()
-                    case .waitingForApproval:
-                        DashboardGuidePanel(
-                            iconName: "hand.raised.fill",
-                            title: "等待系统批准",
-                            iconColor: .orange
-                        ) {
-                            Text("请在系统设置中启用网络扩展以完成安装。")
-                                .font(.appBody)
-                                .foregroundStyle(.secondary)
-                                .multilineTextAlignment(.center)
-                        }
+                    case .permissionDenied:
+                        SystemSettingsGuideView(
+                            title: "权限被拒绝",
+                            message: "请在系统设置中授予必要的权限后重试。",
+                            iconName: "exclamationmark.shield.fill",
+                            iconColor: .red
+                        )
                     case .extensionNotActivated:
                         ExtensionNotReady()
                     case .notInApplicationsFolder:

@@ -8,7 +8,10 @@ struct UnknownView: View {
             iconName: "questionmark.circle",
             title: "当前状态未知"
         ) {
-            EmptyView()
+            Text("暂时无法读取防火墙状态，请稍后重试。")
+                .font(.appBody)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
         }
     }
 }
