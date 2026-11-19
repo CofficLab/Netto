@@ -40,6 +40,8 @@ struct FirewallMenuBarPopoverView: View {
 
             ContentView()
         }
+        // 水平内边距只作用于头部与筛选控件；应用列表在 ContentView 里抵消，
+        // 与 Lumi 的菜单栏弹窗一样通栏。
         .padding(.horizontal, 8)
         .padding(.vertical, 8)
         .accessibilityElement(children: .contain)

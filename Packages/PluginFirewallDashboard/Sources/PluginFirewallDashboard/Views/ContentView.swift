@@ -67,6 +67,9 @@ public struct ContentView: View {
                     }
                     .padding(.vertical, 2)
                 }
+                // 抵消宿主根视图的 8pt 水平内边距，让列表与 Lumi 一样通栏，
+                // 行内 12pt 缩进保留。
+                .padding(.horizontal, -8)
             }
         }
         .padding(.vertical, 8)
