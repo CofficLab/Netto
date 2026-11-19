@@ -15,6 +15,7 @@ private struct AppActionContent: View, LogPrefixed {
     @Binding var shouldAllow: Bool
 
     var appId: String
+    var onRuleChange: (() -> Void)?
 
     private var iconName: String {
         if shouldAllow {
@@ -45,14 +46,20 @@ private struct AppActionContent: View, LogPrefixed {
 public struct AppAction: View {
     @Binding private var shouldAllow: Bool
     private let appId: String
+    private let onRuleChange: (() -> Void)?
 
-    public init(shouldAllow: Binding<Bool>, appId: String) {
+    public init(
+        shouldAllow: Binding<Bool>,
+        appId: String,
+        onRuleChange: (() -> Void)? = nil
+    ) {
         self._shouldAllow = shouldAllow
         self.appId = appId
+        self.onRuleChange = onRuleChange
     }
 
     public var body: some View {
-        AppActionContent(shouldAllow: $shouldAllow, appId: appId)
+        AppActionContent(shouldAllow: $shouldAllow, appId: appId, onRuleChange: onRuleChange)
     }
 }
 
@@ -82,6 +89,7 @@ extension AppActionContent {
                 
                 try await repo.setDeny(appId)
                 self.shouldAllow = false
+                self.onRuleChange?()
                 shell.post(ToastMessage(description: "已禁止"))
             } catch let error {
                 os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
@@ -96,6 +104,7 @@ extension AppActionContent {
             do {
                 try await repo.setAllow(appId)
                 self.shouldAllow = true
+                self.onRuleChange?()
                 shell.post(ToastMessage(description: "已允许"))
             } catch let error {
                 os_log("\(self.t)操作失败 -> \(error.localizedDescription)")

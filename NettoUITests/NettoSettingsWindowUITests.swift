@@ -13,13 +13,10 @@ final class NettoSettingsWindowUITests: NettoUITestBase {
         app.windows.matching(NSPredicate(format: "title == %@", settingsWindowTitle)).firstMatch
     }
 
-    /// 通过主窗口工具栏的「设置」按钮打开设置窗口并返回它。
+    /// 设置窗口由启动参数打开；这里只等待它就绪。
     @discardableResult
     private func openSettingsWindow(in app: XCUIApplication) -> XCUIElement {
-        let button = element(in: app, identifier: "netto.toolbar.settings")
-        XCTAssertTrue(button.waitForExistence(timeout: 10), "主窗口工具栏缺少「设置」按钮")
-        button.click()
-        return waitForSettingsWindow(in: app)
+        waitForSettingsWindow(in: app)
     }
 
     /// 等待设置窗口出现（不触发打开）。
@@ -44,24 +41,22 @@ final class NettoSettingsWindowUITests: NettoUITestBase {
 
     // MARK: - 入口可达性
 
-    /// 主窗口工具栏「设置」按钮能打开设置窗口。
-    func testToolbarSettingsButtonOpensTheSettingsWindow() {
+    /// 菜单栏弹窗的「设置…」入口能打开设置窗口。
+    func testMenuBarSettingsEntryOpensTheSettingsWindow() {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = openMenuBarPanel(in: app)
 
-        let settingsButton = element(in: app, identifier: "netto.toolbar.settings")
-        XCTAssertTrue(settingsButton.waitForExistence(timeout: 10), "「设置」按钮缺失")
-        settingsButton.click()
+        let entry = element(in: app, identifier: "netto.menubar.settings")
+        XCTAssertTrue(entry.waitForExistence(timeout: 10), "菜单栏弹窗缺少「设置…」入口")
+        entry.click()
 
         let window = waitForSettingsWindow(in: app)
-        XCTAssertTrue(window.exists, "点击「设置」后设置窗口未出现")
+        XCTAssertTrue(window.exists, "点击「设置…」后设置窗口未出现")
     }
 
     /// 设置窗口展示双栏结构与四个入口。
     func testSettingsWindowShowsSidebarEntries() {
         let app = launchApp()
-        _ = openDashboard(in: app)
-
         openSettingsWindow(in: app)
 
         for entry in ["外观", "通用", "商店", "数据库"] {
@@ -77,8 +72,6 @@ final class NettoSettingsWindowUITests: NettoUITestBase {
     /// 点击侧边栏入口后，右侧详情区切换到对应内容。
     func testSelectingSidebarEntrySwitchesDetailPane() {
         let app = launchApp()
-        _ = openDashboard(in: app)
-
         openSettingsWindow(in: app)
 
         // 切到「通用」：详情区应出现「数据目录」（通用入口的独有内容）。
@@ -97,8 +90,6 @@ final class NettoSettingsWindowUITests: NettoUITestBase {
     /// SwiftUI 提升为窗口标题，需要宿主守卫保持「设置」）。
     func testSwitchingEntryKeepsWindowTitle() {
         let app = launchApp()
-        _ = openDashboard(in: app)
-
         openSettingsWindow(in: app)
 
         // 「数据库」入口的详情曾带 `.navigationTitle("防火墙事件")`。
@@ -106,7 +97,7 @@ final class NettoSettingsWindowUITests: NettoUITestBase {
         XCTAssertTrue(databaseEntry.waitForExistence(timeout: 5))
         databaseEntry.click()
 
-        // 主窗口也在前台，不能直接读 `app.windows.firstMatch`；按标题断言
+        // 欢迎窗可能也在前台，不能直接读 `app.windows.firstMatch`；按标题断言
         // 设置窗口仍然存在（标题被改写时会变成 0 个匹配）。
         XCTAssertTrue(
             settingsWindow(in: app).waitForExistence(timeout: 5),
@@ -119,8 +110,6 @@ final class NettoSettingsWindowUITests: NettoUITestBase {
     /// 「商店」入口展示与兄弟项目同构的设置页（订阅信息 / 应用内购买 / 恢复购买）。
     func testStoreEntryShowsStoreSettingsPage() {
         let app = launchApp()
-        _ = openDashboard(in: app)
-
         openSettingsWindow(in: app)
 
         let storeEntry = sidebarEntry("商店", in: app)
@@ -143,8 +132,6 @@ final class NettoSettingsWindowUITests: NettoUITestBase {
     /// `⌘,` 始终可用 —— 正好覆盖「窗口已存在时只前置、不新建」这条语义。
     func testOpeningSettingsTwiceDoesNotDuplicateTheWindow() {
         let app = launchApp()
-        _ = openDashboard(in: app)
-
         openSettingsWindow(in: app)
 
         // 再次触发（⌘,）：窗口已存在，只应前置。

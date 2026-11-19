@@ -12,13 +12,13 @@ import SwiftUI
 /// 启动器、仪表盘 UI 状态、会话起始时间与欢迎窗口路由。
 @MainActor
 enum NettoAssembly {
-    /// 内核启动器（主窗口与设置窗口共享同一实例）。
+    /// 内核启动器（菜单栏弹窗与设置窗口共享同一实例）。
     static let bootstrapper = KernelBootstrapper(manifest: NettoManifest.manifest)
 
-    /// 仪表盘 UI 状态（主窗口与菜单栏面板共享同一份）。
+    /// 仪表盘 UI 状态（弹窗列表与详情共享同一份）。
     static let ui = UIProvider()
 
-    /// Store 等视图的兼容 UI 状态（主窗口与菜单栏面板共享同一份）。
+    /// Store 等视图的兼容 UI 状态（弹窗与设置窗口共享同一份）。
     static let appProvider = AppProvider()
 
     /// 会话起始时间（旧 `EventRepo.sessionStartDate` 语义：App 启动时固定）。

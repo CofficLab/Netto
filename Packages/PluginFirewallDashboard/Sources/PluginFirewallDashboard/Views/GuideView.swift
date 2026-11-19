@@ -8,16 +8,21 @@ import SwiftUI
 /// 按防火墙状态与升级状态选择对应的 `DashboardGuidePanel` 内容；遮罩使用
 /// 系统材质，面板本身由 LumiUI 主题表面渲染。
 struct GuideView: View {
-    /// 由宿主（`AppList`）订阅 `FirewallProviding.observe()` 后传入的最新状态。
+    /// 由宿主订阅 `FirewallProviding.observe()` 后传入的最新状态。
     let state: FirewallState?
+
+    /// 主窗口形态使用材质遮罩；菜单栏弹窗内不需要遮罩，只渲染面板本身。
+    var showsBackdrop = true
 
     @EnvironmentObject private var app: UIProvider
 
     var body: some View {
         ZStack {
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .ignoresSafeArea()
+            if showsBackdrop {
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .ignoresSafeArea()
+            }
 
             VStack(spacing: 0) {
                 // 升级引导优先于状态引导。
@@ -60,6 +65,7 @@ struct GuideView: View {
                 }
             }
             .padding(AppUI.Spacing.lg)
+            .frame(maxWidth: .infinity)
             .accessibilityIdentifier("netto.firewall.guide")
         }
     }

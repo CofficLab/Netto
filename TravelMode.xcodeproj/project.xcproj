@@ -179,11 +179,7 @@
         { "path": "NettoSettingsWindowUITests.swift", "target-membership": [ "NettoUITests/compile-sources" ] },
       ],
     },
-    {
-      "kind": "folder",
-      "path": "NettoTests",
-      "target-membership": [ "NettoTests" ],
-    },
+    { "kind": "folder", "path": "NettoTests", "target-membership": [ "NettoTests" ] },
   ],
   "targets": [
     {
@@ -211,6 +207,14 @@
           "product-name": "LumiFactory",
           "build-phase": { "build-phase": "frameworks" },
         }, {
+          "package": "LumiKernel",
+          "product-name": "KernelCore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiPluginAbout",
+          "product-name": "PluginAbout",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
           "package": "LumiPluginRootView",
           "product-name": "WorkbenchRootView",
           "build-phase": { "build-phase": "frameworks" },
@@ -223,8 +227,8 @@
           "product-name": "PluginThemePack",
           "build-phase": { "build-phase": "frameworks" },
         }, {
-          "package": "LumiPluginAbout",
-          "product-name": "PluginAbout",
+          "package": "LumiProviders",
+          "product-name": "MenuBarHostKit",
           "build-phase": { "build-phase": "frameworks" },
         }, {
           "package": "LumiProviders",
@@ -236,35 +240,11 @@
           "build-phase": { "build-phase": "frameworks" },
         }, {
           "package": "LumiProviders",
-          "product-name": "ProviderToolbar",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "LumiProviders",
           "product-name": "ProviderTheme",
           "build-phase": { "build-phase": "frameworks" },
         }, {
-          "package": "PluginFirewallDashboard",
-          "product-name": "PluginFirewallDashboard",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "PluginBrandLogo",
-          "product-name": "PluginBrandLogo",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "PluginHostActions",
-          "product-name": "PluginHostActions",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "ProviderViewEnvironment",
-          "product-name": "ProviderViewEnvironment",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
-          "package": "LumiKernel",
-          "product-name": "KernelCore",
-          "build-phase": { "build-phase": "frameworks" },
-        }, {
           "package": "LumiProviders",
-          "product-name": "MenuBarHostKit",
+          "product-name": "ProviderToolbar",
           "build-phase": { "build-phase": "frameworks" },
         }, {
           "package": "LumiSettings",
@@ -283,12 +263,24 @@
           "product-name": "PluginAppSettings",
           "build-phase": { "build-phase": "frameworks" },
         }, {
+          "package": "PluginBrandLogo",
+          "product-name": "PluginBrandLogo",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
           "package": "PluginEventStore",
           "product-name": "PluginEventStore",
           "build-phase": { "build-phase": "frameworks" },
         }, {
           "package": "PluginFirewall",
           "product-name": "PluginFirewall",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginFirewallDashboard",
+          "product-name": "PluginFirewallDashboard",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginHostActions",
+          "product-name": "PluginHostActions",
           "build-phase": { "build-phase": "frameworks" },
         }, {
           "package": "PluginPersistence",
@@ -321,6 +313,10 @@
         }, {
           "package": "ProviderStoreKit",
           "product-name": "ProviderStoreKit",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderViewEnvironment",
+          "product-name": "ProviderViewEnvironment",
           "build-phase": { "build-phase": "frameworks" },
         },
       ],
@@ -423,38 +419,135 @@
         "resources",
       ],
       "package-product-members": [
-        { "package": "LumiFactory", "product-name": "LumiFactory", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiPluginRootView", "product-name": "WorkbenchRootView", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiPluginSettingView", "product-name": "PluginSettingView", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiPluginThemePack", "product-name": "PluginThemePack", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiPluginAbout", "product-name": "PluginAbout", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiProviders", "product-name": "ProviderRootView", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiProviders", "product-name": "ProviderStore", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiProviders", "product-name": "ProviderToolbar", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiProviders", "product-name": "ProviderTheme", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiProviders", "product-name": "ProviderMenuBar", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiProviders", "product-name": "ProviderLogo", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiProviders", "product-name": "ProviderPluginManaging", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "PluginFirewallDashboard", "product-name": "PluginFirewallDashboard", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "PluginBrandLogo", "product-name": "PluginBrandLogo", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "PluginHostActions", "product-name": "PluginHostActions", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "ProviderViewEnvironment", "product-name": "ProviderViewEnvironment", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiKernel", "product-name": "KernelCore", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiProviders", "product-name": "MenuBarHostKit", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiSettings", "product-name": "ProviderSettingView", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "LumiUI", "product-name": "LumiUI", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "NettoIPCContracts", "product-name": "NettoIPCContracts", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "PluginAppSettings", "product-name": "PluginAppSettings", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "PluginEventStore", "product-name": "PluginEventStore", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "PluginFirewall", "product-name": "PluginFirewall", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "PluginPersistence", "product-name": "PluginPersistence", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "PluginStore", "product-name": "PluginStore", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "ProviderAppCatalog", "product-name": "ProviderAppCatalog", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "ProviderAppSettings", "product-name": "ProviderAppSettings", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "ProviderFirewall", "product-name": "ProviderFirewall", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "ProviderFirewallEvents", "product-name": "ProviderFirewallEvents", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "ProviderShell", "product-name": "ProviderShell", "build-phase": { "build-phase": "frameworks" } },
-        { "package": "ProviderStoreKit", "product-name": "ProviderStoreKit", "build-phase": { "build-phase": "frameworks" } },
+        {
+          "package": "LumiFactory",
+          "product-name": "LumiFactory",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiKernel",
+          "product-name": "KernelCore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiPluginAbout",
+          "product-name": "PluginAbout",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiPluginRootView",
+          "product-name": "WorkbenchRootView",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiPluginSettingView",
+          "product-name": "PluginSettingView",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiPluginThemePack",
+          "product-name": "PluginThemePack",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiProviders",
+          "product-name": "MenuBarHostKit",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiProviders",
+          "product-name": "ProviderLogo",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiProviders",
+          "product-name": "ProviderMenuBar",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiProviders",
+          "product-name": "ProviderPluginManaging",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiProviders",
+          "product-name": "ProviderRootView",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiProviders",
+          "product-name": "ProviderStore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiProviders",
+          "product-name": "ProviderTheme",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiProviders",
+          "product-name": "ProviderToolbar",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiSettings",
+          "product-name": "ProviderSettingView",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiUI",
+          "product-name": "LumiUI",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "NettoIPCContracts",
+          "product-name": "NettoIPCContracts",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginAppSettings",
+          "product-name": "PluginAppSettings",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginBrandLogo",
+          "product-name": "PluginBrandLogo",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginEventStore",
+          "product-name": "PluginEventStore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginFirewall",
+          "product-name": "PluginFirewall",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginFirewallDashboard",
+          "product-name": "PluginFirewallDashboard",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginHostActions",
+          "product-name": "PluginHostActions",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginPersistence",
+          "product-name": "PluginPersistence",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginStore",
+          "product-name": "PluginStore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderAppCatalog",
+          "product-name": "ProviderAppCatalog",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderAppSettings",
+          "product-name": "ProviderAppSettings",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderFirewall",
+          "product-name": "ProviderFirewall",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderFirewallEvents",
+          "product-name": "ProviderFirewallEvents",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderShell",
+          "product-name": "ProviderShell",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderStoreKit",
+          "product-name": "ProviderStoreKit",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderViewEnvironment",
+          "product-name": "ProviderViewEnvironment",
+          "build-phase": { "build-phase": "frameworks" },
+        },
       ],
       "build-settings": {
         "BUNDLE_LOADER": "$(TEST_HOST)",

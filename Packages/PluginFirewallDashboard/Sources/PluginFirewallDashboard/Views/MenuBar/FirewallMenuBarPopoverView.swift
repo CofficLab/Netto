@@ -2,9 +2,10 @@ import LumiUI
 import ProviderFirewall
 import SwiftUI
 
-/// 菜单栏弹出面板中由插件贡献的紧凑区块：当前状态 + 一键开启/停止。
+/// 菜单栏弹窗的主界面：防火墙状态与启停 + 筛选、应用列表与事件详情。
 ///
-/// 复杂界面（应用列表、事件详情）留在主窗口，这里只做状态与控制。
+/// Attached 作为弹窗里唯一的插件贡献项；共享宿主只保留品牌信息与
+/// 「设置 / 退出」菜单行。
 struct FirewallMenuBarPopoverView: View {
     let firewall: any FirewallProviding
     let deniedApps: MenuBarDeniedAppsModel
@@ -28,17 +29,19 @@ struct FirewallMenuBarPopoverView: View {
             title: presentation.title,
             systemImage: presentation.symbol,
             systemImageColor: presentation.color,
-            subtitle: detailText,
-            showsHeaderDivider: errorMessage != nil
+            subtitle: detailText
         ) {
             actionButton
         } content: {
             if let errorMessage {
                 AppStatusBanner(kind: .error, title: "操作失败", message: errorMessage)
+                    .padding(.horizontal, 8)
             }
+
+            ContentView()
         }
-        .padding(.horizontal, AppUI.Spacing.md)
-        .padding(.vertical, AppUI.Spacing.sm)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 8)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("netto.menubar.firewall")
         .task {
