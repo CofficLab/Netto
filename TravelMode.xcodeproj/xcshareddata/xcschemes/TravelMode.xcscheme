@@ -43,6 +43,17 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D10000000000000000000009"
+               BuildableName = "NettoTests.xctest"
+               BlueprintName = "NettoTests"
+               ReferencedContainer = "container:TravelMode.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "D10000000000000000000005"
                BuildableName = "NettoUITests.xctest"
                BlueprintName = "NettoUITests"

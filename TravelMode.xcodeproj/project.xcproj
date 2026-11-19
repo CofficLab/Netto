@@ -39,7 +39,16 @@
       "path": "Packages/NettoIPCContracts",
     }, {
       "kind": "local",
-      "path": "Packages/FactoryNetto",
+      "path": "Packages/PluginFirewallDashboard",
+    }, {
+      "kind": "local",
+      "path": "Packages/PluginBrandLogo",
+    }, {
+      "kind": "local",
+      "path": "Packages/PluginHostActions",
+    }, {
+      "kind": "local",
+      "path": "Packages/ProviderViewEnvironment",
     }, {
       "kind": "local",
       "path": "Packages/PluginPersistence",
@@ -56,22 +65,61 @@
       "kind": "local",
       "path": "Packages/PluginStore",
     }, {
+      "kind": "local",
+      "path": "Packages/ProviderStoreKit",
+    }, {
       "kind": "remote",
       "repository": "https://github.com/lumi-softworks/LumiProviders.git",
       "version": {
-        "up-to-next-major-version": "1.19.0",
+        "up-to-next-major-version": "1.26.0",
       },
     }, {
       "kind": "remote",
       "repository": "https://github.com/lumi-softworks/LumiSettings.git",
       "version": {
-        "up-to-next-major-version": "1.1.0",
+        "up-to-next-major-version": "1.1.2",
       },
     }, {
       "kind": "remote",
       "repository": "https://github.com/lumi-softworks/LumiUI.git",
       "version": {
-        "up-to-next-major-version": "1.12.0",
+        "up-to-next-major-version": "1.18.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiFactory.git",
+      "version": {
+        "up-to-next-major-version": "1.5.0",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiThemePack.git",
+      "version": {
+        "up-to-next-major-version": "1.0.12",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginRootView.git",
+      "version": {
+        "up-to-next-major-version": "1.3.2",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginSettingView.git",
+      "version": {
+        "up-to-next-major-version": "1.0.3",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginThemePack.git",
+      "version": {
+        "up-to-next-major-version": "1.2.1",
+      },
+    }, {
+      "kind": "remote",
+      "repository": "https://github.com/lumi-softworks/LumiPluginAbout.git",
+      "version": {
+        "up-to-next-major-version": "3.0.3",
       },
     },
   ],
@@ -114,6 +162,7 @@
         { "path": "<PRODUCTS>/TavelMode.app", "id": "C4B45DB522739FFF0050C59B", "type": "wrapper.application", "index": false },
         { "path": "<PRODUCTS>/com.yueyi.TravelMode.Extension.systemextension", "id": "C40A5C45229DD6A500627D50", "type": "wrapper.system-extension", "index": false, "target-membership": [ { "build-phase": "TavelMode/copy/Embed System Extensions", "header-preservation": "remove-on-copy" } ] },
         { "path": "<PRODUCTS>/NettoUITests.xctest", "id": "D10000000000000000000003", "type": "wrapper.cfbundle", "index": false },
+        { "path": "<PRODUCTS>/NettoTests.xctest", "id": "D10000000000000000000007", "type": "wrapper.cfbundle", "index": false },
       ],
     },
     { "path": "README.md" },
@@ -129,6 +178,11 @@
         { "path": "NettoSettingsUITests.swift", "target-membership": [ "NettoUITests/compile-sources" ] },
         { "path": "NettoSettingsWindowUITests.swift", "target-membership": [ "NettoUITests/compile-sources" ] },
       ],
+    },
+    {
+      "kind": "folder",
+      "path": "NettoTests",
+      "target-membership": [ "NettoTests" ],
     },
   ],
   "targets": [
@@ -153,8 +207,56 @@
       ],
       "package-product-members": [
         {
-          "package": "FactoryNetto",
-          "product-name": "FactoryNetto",
+          "package": "LumiFactory",
+          "product-name": "LumiFactory",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiPluginRootView",
+          "product-name": "WorkbenchRootView",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiPluginSettingView",
+          "product-name": "PluginSettingView",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiPluginThemePack",
+          "product-name": "PluginThemePack",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiPluginAbout",
+          "product-name": "PluginAbout",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiProviders",
+          "product-name": "ProviderRootView",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiProviders",
+          "product-name": "ProviderStore",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiProviders",
+          "product-name": "ProviderToolbar",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "LumiProviders",
+          "product-name": "ProviderTheme",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginFirewallDashboard",
+          "product-name": "PluginFirewallDashboard",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginBrandLogo",
+          "product-name": "PluginBrandLogo",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "PluginHostActions",
+          "product-name": "PluginHostActions",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderViewEnvironment",
+          "product-name": "ProviderViewEnvironment",
           "build-phase": { "build-phase": "frameworks" },
         }, {
           "package": "LumiKernel",
@@ -215,6 +317,10 @@
         }, {
           "package": "ProviderShell",
           "product-name": "ProviderShell",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "ProviderStoreKit",
+          "product-name": "ProviderStoreKit",
           "build-phase": { "build-phase": "frameworks" },
         },
       ],
@@ -300,6 +406,67 @@
         "PRODUCT_BUNDLE_IDENTIFIER": "com.yueyi.TravelMode.UITests",
         "PRODUCT_NAME": "$(TARGET_NAME)",
         "SWIFT_VERSION": "6.0",
+        "TEST_TARGET_NAME": "TavelMode",
+      },
+    }, {
+      "name": "NettoTests",
+      "id": "D10000000000000000000009",
+      "product": "Products/NettoTests.xctest",
+      "product-type": "bundle.unit-test",
+      "test-host-target": "TavelMode",
+      "dependencies": [
+        "TavelMode",
+      ],
+      "build-phases": [
+        "compile-sources",
+        "frameworks",
+        "resources",
+      ],
+      "package-product-members": [
+        { "package": "LumiFactory", "product-name": "LumiFactory", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiPluginRootView", "product-name": "WorkbenchRootView", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiPluginSettingView", "product-name": "PluginSettingView", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiPluginThemePack", "product-name": "PluginThemePack", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiPluginAbout", "product-name": "PluginAbout", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiProviders", "product-name": "ProviderRootView", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiProviders", "product-name": "ProviderStore", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiProviders", "product-name": "ProviderToolbar", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiProviders", "product-name": "ProviderTheme", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiProviders", "product-name": "ProviderMenuBar", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiProviders", "product-name": "ProviderLogo", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiProviders", "product-name": "ProviderPluginManaging", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "PluginFirewallDashboard", "product-name": "PluginFirewallDashboard", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "PluginBrandLogo", "product-name": "PluginBrandLogo", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "PluginHostActions", "product-name": "PluginHostActions", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "ProviderViewEnvironment", "product-name": "ProviderViewEnvironment", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiKernel", "product-name": "KernelCore", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiProviders", "product-name": "MenuBarHostKit", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiSettings", "product-name": "ProviderSettingView", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "LumiUI", "product-name": "LumiUI", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "NettoIPCContracts", "product-name": "NettoIPCContracts", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "PluginAppSettings", "product-name": "PluginAppSettings", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "PluginEventStore", "product-name": "PluginEventStore", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "PluginFirewall", "product-name": "PluginFirewall", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "PluginPersistence", "product-name": "PluginPersistence", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "PluginStore", "product-name": "PluginStore", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "ProviderAppCatalog", "product-name": "ProviderAppCatalog", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "ProviderAppSettings", "product-name": "ProviderAppSettings", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "ProviderFirewall", "product-name": "ProviderFirewall", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "ProviderFirewallEvents", "product-name": "ProviderFirewallEvents", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "ProviderShell", "product-name": "ProviderShell", "build-phase": { "build-phase": "frameworks" } },
+        { "package": "ProviderStoreKit", "product-name": "ProviderStoreKit", "build-phase": { "build-phase": "frameworks" } },
+      ],
+      "build-settings": {
+        "BUNDLE_LOADER": "$(TEST_HOST)",
+        "CODE_SIGN_STYLE": "Automatic",
+        "GENERATE_INFOPLIST_FILE": "YES",
+        "MACOSX_DEPLOYMENT_TARGET": "15.0",
+        "PRODUCT_BUNDLE_IDENTIFIER": "com.yueyi.TravelMode.Tests",
+        "PRODUCT_NAME": "$(TARGET_NAME)",
+        "SDKROOT": "macosx",
+        "SUPPORTED_PLATFORMS": "macosx",
+        "SWIFT_VERSION": "6.0",
+        "TEST_HOST": "$(BUILT_PRODUCTS_DIR)/TavelMode.app/Contents/MacOS/TavelMode",
         "TEST_TARGET_NAME": "TavelMode",
       },
     },
