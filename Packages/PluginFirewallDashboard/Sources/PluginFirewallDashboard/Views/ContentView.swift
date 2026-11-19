@@ -53,30 +53,50 @@ public struct ContentView: View {
     private var listContent: some View {
         VStack(spacing: 8) {
             filterPicker
+                .padding(.horizontal, 12)
 
             if filteredApps.isEmpty {
                 AppListEmptyView(displayType: ui.displayType)
+                    .padding(.horizontal, 12)
             } else {
                 ScrollView {
-                    LazyVStack(spacing: 2) {
+                    LazyVStack(spacing: 0) {
                         ForEach(filteredApps, id: \.id) { app in
-                            MenuBarAppRow(
-                                app: app,
-                                isDenied: model.isDenied(app.id),
-                                speed: speeds.first { $0.appId == app.id }
-                            ) {
-                                refresh()
-                            }
+                            appRow(app)
                         }
                     }
                     .padding(.vertical, 2)
                 }
             }
         }
-        .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("netto.apps.list")
+        .onDisappear {
+            HoverCoordinator.shared.closeAll()
+        }
+    }
+
+    private func appRow(_ app: SmartApp) -> some View {
+        let hoverID = "netto.app.hover.\(app.id)"
+        let isDenied = model.isDenied(app.id)
+        let speed = speeds.first { $0.appId == app.id }
+
+        return HoverDetailContainer(
+            id: hoverID,
+            detail: {
+                MenuBarAppHoverDetailView(
+                    app: app,
+                    isDenied: isDenied,
+                    speed: speed,
+                    hoverID: hoverID,
+                    onRuleChange: refresh
+                )
+            },
+            content: {
+                MenuBarAppRow(app: app, isDenied: isDenied, speed: speed)
+            }
+        )
     }
 
     private var filterPicker: some View {
