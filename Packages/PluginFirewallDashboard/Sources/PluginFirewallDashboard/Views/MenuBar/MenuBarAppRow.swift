@@ -22,24 +22,16 @@ struct MenuBarAppRow: View {
                 app.getIcon()
                     .frame(width: 28, height: 28)
 
-                VStack(alignment: .leading, spacing: 1) {
-                    HStack(spacing: 6) {
-                        Text(app.name)
-                            .font(.appBodyEmphasized)
-                            .lineLimit(1)
-
-                        if isDenied {
-                            Text("已阻止")
-                                .font(.appMicroEmphasized)
-                                .foregroundStyle(theme.error)
-                        }
-                    }
-
-                    Text(app.id)
-                        .font(.appCaption)
-                        .foregroundStyle(app.isSystemApp ? theme.warning : theme.textSecondary)
+                HStack(spacing: 6) {
+                    Text(app.name)
+                        .font(.appBodyEmphasized)
                         .lineLimit(1)
-                        .truncationMode(.middle)
+
+                    if isDenied {
+                        Text("已阻止")
+                            .font(.appMicroEmphasized)
+                            .foregroundStyle(theme.error)
+                    }
                 }
 
                 Spacer(minLength: 8)

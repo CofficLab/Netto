@@ -38,9 +38,6 @@ struct MenuBarAppHoverDetailView: View {
             Divider()
             speedSection
             ruleSection
-            Text("点击应用行查看连接记录")
-                .font(.appMicro)
-                .foregroundStyle(theme.textTertiary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .contain)
