@@ -18,9 +18,9 @@ struct SystemExtensionNotInstalledView: View {
                     .fixedSize(horizontal: false, vertical: true)
 
                 DashboardGuideSteps("解决方案", steps: [
-                    "点击下方按钮安装系统扩展",
-                    "在弹出的对话框中点击「允许」",
-                    "等待系统扩展安装完成",
+                    "点击下方按钮提交安装请求",
+                    "在系统设置中找到本应用的扩展",
+                    "打开扩展开关并等待安装完成",
                 ])
 
                 DashboardInstallExtensionButton()

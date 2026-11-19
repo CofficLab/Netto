@@ -50,7 +50,7 @@ struct GuideView: View {
                             title: "等待系统批准",
                             iconColor: .orange
                         ) {
-                            Text("请在系统弹窗中点击「允许」以安装网络扩展。")
+                            Text("请在系统设置中启用网络扩展以完成安装。")
                                 .font(.appBody)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.center)
@@ -66,6 +66,9 @@ struct GuideView: View {
             }
             .padding(AppUI.Spacing.lg)
             .frame(maxWidth: .infinity)
+            // 作为无障碍容器暴露引导标识，避免标识下发给子元素后覆盖
+            // 按钮自身的 accessibilityIdentifier。
+            .accessibilityElement(children: .contain)
             .accessibilityIdentifier("netto.firewall.guide")
         }
     }

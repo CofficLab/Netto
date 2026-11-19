@@ -26,7 +26,7 @@ final class NettoLaunchUITests: NettoUITestBase {
 
     func testStatusItemOpensDashboardPanel() {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = openMenuBarPanel(in: app)
 
         XCTAssertTrue(element(in: app, identifier: "netto.menubar.settings").exists)
         XCTAssertTrue(element(in: app, identifier: "netto.menubar.quit").exists)
@@ -34,7 +34,11 @@ final class NettoLaunchUITests: NettoUITestBase {
             element(in: app, identifier: "netto.menubar.open-main").exists,
             "Menu-bar-only build should not expose an open-main entry"
         )
-        XCTAssertTrue(element(in: app, identifier: "netto.dashboard.filter").exists)
+        // 扩展未就绪时列表被引导替代，两种状态都属于面板正常展开。
+        XCTAssertTrue(
+            element(in: app, identifier: "netto.dashboard.filter").exists
+                || element(in: app, identifier: "netto.firewall.guide").exists
+        )
     }
 
     func testStatusItemCanClosePanel() {

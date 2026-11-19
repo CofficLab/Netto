@@ -261,13 +261,10 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         }
 
         if let currentInstalled = currentVersionInstalled {
-            // 旧行为：保持现有状态；未激活/卸载中则覆盖。
+            // 旧行为：保持现有状态；未激活则覆盖。
             var nextState = state
             if currentInstalled.isEnabled == false {
                 nextState = .extensionNotActivated
-            }
-            if currentInstalled.isUninstalling {
-                nextState = .systemExtensionNotInstalled
             }
             updateState(nextState)
         } else {

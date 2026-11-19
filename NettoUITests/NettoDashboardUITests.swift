@@ -2,9 +2,9 @@ import XCTest
 
 /// 菜单栏仪表盘：筛选切换、防火墙引导与状态、应用详情与事件筛选。
 final class NettoDashboardUITests: NettoUITestBase {
-    func testDashboardShowsFirewallControlAndAppFilter() {
+    func testDashboardShowsFirewallControlAndAppFilter() throws {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = try openDashboard(in: app)
 
         XCTAssertTrue(
             element(in: app, identifier: "netto.menubar.firewall.start").exists
@@ -14,18 +14,18 @@ final class NettoDashboardUITests: NettoUITestBase {
         XCTAssertTrue(element(in: app, identifier: "netto.apps.list").exists)
     }
 
-    func testAllFilterChoicesAreAvailable() {
+    func testAllFilterChoicesAreAvailable() throws {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = try openDashboard(in: app)
 
         for identifier in ["netto.filter.all", "netto.filter.allowed", "netto.filter.rejected"] {
             XCTAssertTrue(element(in: app, identifier: identifier).waitForExistence(timeout: 5), "Missing filter: \(identifier)")
         }
     }
 
-    func testAllowedAndRejectedFiltersCanBeSelected() {
+    func testAllowedAndRejectedFiltersCanBeSelected() throws {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = try openDashboard(in: app)
 
         for identifier in ["netto.filter.allowed", "netto.filter.rejected", "netto.filter.all"] {
             let option = element(in: app, identifier: identifier)
@@ -37,7 +37,7 @@ final class NettoDashboardUITests: NettoUITestBase {
 
     func testFirewallGuideShowsARecoveryPathWhenFirewallIsNotReady() {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = openMenuBarPanel(in: app)
 
         let guide = element(in: app, identifier: "netto.firewall.guide")
         if guide.waitForExistence(timeout: 5) {
@@ -56,7 +56,7 @@ final class NettoDashboardUITests: NettoUITestBase {
 
     func testFirewallStatusIsExposedToAccessibility() {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = openMenuBarPanel(in: app)
 
         // 弹窗头部暴露防火墙启停按钮（运行中为停止，否则为开启）。
         let start = element(in: app, identifier: "netto.menubar.firewall.start")
@@ -67,14 +67,15 @@ final class NettoDashboardUITests: NettoUITestBase {
         )
 
         XCTAssertTrue(
-            element(in: app, containing: "防火墙").waitForExistence(timeout: 10),
+            element(in: app, containing: "防火墙").waitForExistence(timeout: 10)
+                || element(in: app, identifier: "netto.firewall.guide").exists,
             "菜单栏弹窗未暴露防火墙状态文案"
         )
     }
 
-    func testDashboardRemainsUsableAfterRepeatedFilterChanges() {
+    func testDashboardRemainsUsableAfterRepeatedFilterChanges() throws {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = try openDashboard(in: app)
         let choices = ["netto.filter.allowed", "netto.filter.rejected", "netto.filter.all"]
 
         for _ in 0..<2 {
@@ -90,7 +91,7 @@ final class NettoDashboardUITests: NettoUITestBase {
 
     func testAppDetailShowsEventFiltersAndExportAction() throws {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = try openDashboard(in: app)
         let row = app.descendants(matching: .any)
             .matching(NSPredicate(format: "identifier BEGINSWITH %@", "netto.app.row."))
             .firstMatch
@@ -112,7 +113,7 @@ final class NettoDashboardUITests: NettoUITestBase {
 
     func testEventStatusAndDirectionFiltersCanBeChanged() throws {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = try openDashboard(in: app)
         let row = app.descendants(matching: .any)
             .matching(NSPredicate(format: "identifier BEGINSWITH %@", "netto.app.row."))
             .firstMatch

@@ -41,7 +41,7 @@ struct FirewallStatusPresentation {
             symbol = "shield.lefthalf.filled"
             color = .orange
             title = "等待批准系统扩展"
-            detail = "请在系统弹窗中允许扩展"
+            detail = "请在系统设置中启用扩展"
         case .filterApprovalNeeded:
             symbol = "shield.lefthalf.filled"
             color = .orange

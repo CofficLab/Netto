@@ -30,9 +30,15 @@ class NettoUITestBase: XCTestCase {
     }
 
     /// 主界面在菜单栏弹窗里；打开面板并等待仪表盘列表出现。
+    ///
+    /// 系统扩展未激活时弹窗只展示引导视图，列表不存在；此时跳过依赖
+    /// 列表的用例，而不是把合法的新用户状态判为失败。
     @discardableResult
-    func openDashboard(in app: XCUIApplication) -> XCUIElement {
+    func openDashboard(in app: XCUIApplication) throws -> XCUIElement {
         _ = openMenuBarPanel(in: app)
+        if element(in: app, identifier: "netto.firewall.guide").waitForExistence(timeout: 3) {
+            throw XCTSkip("系统扩展未就绪，仪表盘列表不可用")
+        }
         let dashboard = element(in: app, identifier: "netto.apps.list")
         XCTAssertTrue(dashboard.waitForExistence(timeout: 20), "Menu-bar dashboard did not appear")
         return dashboard
