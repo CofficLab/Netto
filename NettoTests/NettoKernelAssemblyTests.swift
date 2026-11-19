@@ -10,7 +10,7 @@ import ProviderShell
 import ProviderToolbar
 import SwiftUI
 import XCTest
-@testable import TavelMode
+@testable import TravelMode
 
 /// 共享装配引擎解释 TravelMode 清单后的内核基线守卫（hosted 单测）。
 ///

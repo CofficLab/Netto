@@ -3,7 +3,7 @@ import KernelCore
 import LumiFactory
 import PluginPersistence
 import SwiftData
-@testable import TavelMode
+@testable import TravelMode
 
 /// hosted 单测装配助手：内存持久化容器 + 独立临时数据根，
 /// 不触碰用户真实 db.sqlite 与 Application Support，用例之间互不污染。

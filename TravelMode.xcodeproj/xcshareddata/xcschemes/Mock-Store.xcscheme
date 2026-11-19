@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
-               BuildableName = "TavelMode.app"
-               BlueprintName = "TavelMode"
+               BuildableName = "TravelMode.app"
+               BlueprintName = "TravelMode"
                ReferencedContainer = "container:TravelMode.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -53,8 +53,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
-            BuildableName = "TavelMode.app"
-            BlueprintName = "TavelMode"
+            BuildableName = "TravelMode.app"
+            BlueprintName = "TravelMode"
             ReferencedContainer = "container:TravelMode.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -73,8 +73,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
-            BuildableName = "TavelMode.app"
-            BlueprintName = "TavelMode"
+            BuildableName = "TravelMode.app"
+            BlueprintName = "TravelMode"
             ReferencedContainer = "container:TravelMode.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

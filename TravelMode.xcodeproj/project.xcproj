@@ -124,16 +124,16 @@
     },
   ],
   "files": [
-    { "kind": "folder", "path": "Bridge", "target-membership": [ "Extension", "TavelMode" ] },
+    { "kind": "folder", "path": "Bridge", "target-membership": [ "Extension", "TravelMode" ] },
     {
       "kind": "folder",
       "path": "App",
       "target-membership": [
-        "TavelMode",
+        "TravelMode",
       ],
       "membership-exceptions": [
         {
-          "target": "TavelMode",
+          "target": "TravelMode",
           "exclusions": [
             "Info.plist",
           ],
@@ -159,8 +159,8 @@
       "kind": "group",
       "name": "Products",
       "children": [
-        { "path": "<PRODUCTS>/TavelMode.app", "id": "C4B45DB522739FFF0050C59B", "type": "wrapper.application", "index": false },
-        { "path": "<PRODUCTS>/com.yueyi.TravelMode.Extension.systemextension", "id": "C40A5C45229DD6A500627D50", "type": "wrapper.system-extension", "index": false, "target-membership": [ { "build-phase": "TavelMode/copy/Embed System Extensions", "header-preservation": "remove-on-copy" } ] },
+        { "path": "<PRODUCTS>/TravelMode.app", "id": "C4B45DB522739FFF0050C59B", "type": "wrapper.application", "index": false },
+        { "path": "<PRODUCTS>/com.yueyi.TravelMode.Extension.systemextension", "id": "C40A5C45229DD6A500627D50", "type": "wrapper.system-extension", "index": false, "target-membership": [ { "build-phase": "TravelMode/copy/Embed System Extensions", "header-preservation": "remove-on-copy" } ] },
         { "path": "<PRODUCTS>/NettoUITests.xctest", "id": "D10000000000000000000003", "type": "wrapper.cfbundle", "index": false },
         { "path": "<PRODUCTS>/NettoTests.xctest", "id": "D10000000000000000000007", "type": "wrapper.cfbundle", "index": false },
       ],
@@ -183,9 +183,9 @@
   ],
   "targets": [
     {
-      "name": "TavelMode",
+      "name": "TravelMode",
       "id": "C4B45DB422739FFF0050C59B",
-      "product": "Products/TavelMode.app",
+      "product": "Products/TravelMode.app",
       "product-type": "application",
       "dependencies": [
         "Extension",
@@ -386,9 +386,9 @@
       "id": "D10000000000000000000005",
       "product": "Products/NettoUITests.xctest",
       "product-type": "bundle.ui-testing",
-      "test-host-target": "TavelMode",
+      "test-host-target": "TravelMode",
       "dependencies": [
-        "TavelMode",
+        "TravelMode",
       ],
       "build-phases": [
         "compile-sources",
@@ -402,16 +402,16 @@
         "PRODUCT_BUNDLE_IDENTIFIER": "com.yueyi.TravelMode.UITests",
         "PRODUCT_NAME": "$(TARGET_NAME)",
         "SWIFT_VERSION": "6.0",
-        "TEST_TARGET_NAME": "TavelMode",
+        "TEST_TARGET_NAME": "TravelMode",
       },
     }, {
       "name": "NettoTests",
       "id": "D10000000000000000000009",
       "product": "Products/NettoTests.xctest",
       "product-type": "bundle.unit-test",
-      "test-host-target": "TavelMode",
+      "test-host-target": "TravelMode",
       "dependencies": [
-        "TavelMode",
+        "TravelMode",
       ],
       "build-phases": [
         "compile-sources",
@@ -559,8 +559,8 @@
         "SDKROOT": "macosx",
         "SUPPORTED_PLATFORMS": "macosx",
         "SWIFT_VERSION": "6.0",
-        "TEST_HOST": "$(BUILT_PRODUCTS_DIR)/TavelMode.app/Contents/MacOS/TavelMode",
-        "TEST_TARGET_NAME": "TavelMode",
+        "TEST_HOST": "$(BUILT_PRODUCTS_DIR)/TravelMode.app/Contents/MacOS/TravelMode",
+        "TEST_TARGET_NAME": "TravelMode",
       },
     },
   ],

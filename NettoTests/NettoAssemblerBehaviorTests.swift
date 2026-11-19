@@ -8,7 +8,7 @@ import ProviderSettingView
 import ProviderShell
 import SwiftUI
 import XCTest
-@testable import TavelMode
+@testable import TravelMode
 
 /// 共享装配引擎（KernelAssembler）行为守卫：插件顺序 / 失败归因 / 异步生命周期 /
 /// 仪表盘贡献生命周期。由 FactoryNettoTests 迁移，改用 HostManifest 自定义清单。
