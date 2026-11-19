@@ -42,8 +42,9 @@ public final class BrandLogoPlugin: SuperPlugin {
 
 /// 品牌图标：与 Lumi/Wakey 的 Logo 插件一致，用 SwiftUI 矢量形状绘制而不是位图。
 ///
-/// 菜单栏场景恒为单色模板图（`LogoScene.statusBar` 约定，由系统着色），
-/// 其余场景使用品牌色（墨绿经纬网地球 + 橙红电源符号）。
+/// 图形与 App 图标同源的「盾牌 + 对勾」：盾牌代表按应用放行/拦截网络访问，
+/// 对勾代表允许。菜单栏场景恒为单色模板图（`LogoScene.statusBar` 约定，
+/// 由系统着色），其余场景使用品牌靛蓝 + 青色。
 public struct BrandLogoMark: View {
     private let scene: LogoScene
 
@@ -57,20 +58,15 @@ public struct BrandLogoMark: View {
             let palette = BrandPalette(scene: scene)
 
             ZStack {
-                GlobeOutline()
+                ShieldOutline()
                     .stroke(
-                        palette.globe,
-                        style: StrokeStyle(lineWidth: size * 0.07, lineCap: .round, lineJoin: .round)
+                        palette.shield,
+                        style: StrokeStyle(lineWidth: size * 0.09, lineCap: .round, lineJoin: .round)
                     )
-                GlobeGrid(showsEquator: !scene.isStatusBar)
+                CheckGlyph()
                     .stroke(
-                        palette.globe,
-                        style: StrokeStyle(lineWidth: size * 0.058, lineCap: .round, lineJoin: .round)
-                    )
-                PowerGlyph()
-                    .stroke(
-                        palette.power,
-                        style: StrokeStyle(lineWidth: size * 0.082, lineCap: .round)
+                        palette.check,
+                        style: StrokeStyle(lineWidth: size * 0.115, lineCap: .round, lineJoin: .round)
                     )
             }
             .frame(width: size, height: size)
@@ -79,100 +75,57 @@ public struct BrandLogoMark: View {
     }
 }
 
-private extension LogoScene {
-    var isStatusBar: Bool {
-        self == .statusBar || self == .statusBarHighlighted
-    }
-}
-
 private struct BrandPalette {
-    let globe: Color
-    let power: Color
+    let shield: Color
+    let check: Color
 
     init(scene: LogoScene) {
         switch scene {
-        case .statusBar:
-            globe = .primary
-            power = .primary
-        case .statusBarHighlighted, .appIcon, .about, .general:
-            globe = Color(red: 0.24, green: 0.49, blue: 0.25)
-            power = Color(red: 0.96, green: 0.33, blue: 0.18)
+        case .statusBar, .statusBarHighlighted:
+            shield = .primary
+            check = .primary
+        case .appIcon, .about, .general:
+            shield = Color(red: 0.31, green: 0.27, blue: 0.90)
+            check = Color(red: 0.03, green: 0.57, blue: 0.70)
         }
     }
 }
 
-private enum GlobeGeometry {
-    static let insetRatio: CGFloat = 0.075
-
-    static func bounds(in rect: CGRect) -> CGRect {
-        let size = min(rect.width, rect.height)
-        let inset = size * insetRatio
-        return CGRect(
-            x: rect.midX - size / 2 + inset,
-            y: rect.midY - size / 2 + inset,
-            width: size - inset * 2,
-            height: size - inset * 2
-        )
-    }
-}
-
-/// 地球外圈。
-private struct GlobeOutline: Shape {
+/// 盾牌轮廓，比例与 App 图标中的盾牌一致；18pt 下仍需保持足够笔画宽度。
+private struct ShieldOutline: Shape {
     func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.addEllipse(in: GlobeGeometry.bounds(in: rect))
-        return path
-    }
-}
-
-/// 地球经线椭圆 + 赤道线；菜单栏尺寸下省略赤道，避免 18pt 时线条糊在一起。
-private struct GlobeGrid: Shape {
-    let showsEquator: Bool
-
-    func path(in rect: CGRect) -> Path {
-        let size = min(rect.width, rect.height)
-        let bounds = GlobeGeometry.bounds(in: rect)
-
-        var path = Path()
-
-        let meridianWidth = bounds.width * 0.5
-        path.addEllipse(in: CGRect(
-            x: rect.midX - meridianWidth / 2,
-            y: bounds.minY,
-            width: meridianWidth,
-            height: bounds.height
-        ))
-
-        if showsEquator {
-            let gap = size * 0.24
-            path.move(to: CGPoint(x: bounds.minX, y: rect.midY))
-            path.addLine(to: CGPoint(x: rect.midX - gap, y: rect.midY))
-            path.move(to: CGPoint(x: rect.midX + gap, y: rect.midY))
-            path.addLine(to: CGPoint(x: bounds.maxX, y: rect.midY))
+        let w = rect.width
+        let h = rect.height
+        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            CGPoint(x: rect.minX + x * w, y: rect.minY + y * h)
         }
 
+        var path = Path()
+        path.move(to: p(0.16, 0.24))
+        path.addCurve(to: p(0.26, 0.13), control1: p(0.16, 0.19), control2: p(0.20, 0.13))
+        path.addLine(to: p(0.74, 0.13))
+        path.addCurve(to: p(0.84, 0.24), control1: p(0.80, 0.13), control2: p(0.84, 0.19))
+        path.addLine(to: p(0.84, 0.47))
+        path.addCurve(to: p(0.50, 0.91), control1: p(0.84, 0.69), control2: p(0.69, 0.83))
+        path.addCurve(to: p(0.16, 0.47), control1: p(0.31, 0.83), control2: p(0.16, 0.69))
+        path.closeSubpath()
         return path
     }
 }
 
-/// 电源符号：顶部留缺口的圆环 + 穿过缺口的竖线。
-private struct PowerGlyph: Shape {
+/// 对勾：起点与拐点抬高到盾牌视觉中心，菜单栏尺寸下不会被盾牌底尖挤压。
+private struct CheckGlyph: Shape {
     func path(in rect: CGRect) -> Path {
-        let size = min(rect.width, rect.height)
-        let center = CGPoint(x: rect.midX, y: rect.midY + size * 0.035)
-        let radius = size * 0.14
+        let w = rect.width
+        let h = rect.height
+        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            CGPoint(x: rect.minX + x * w, y: rect.minY + y * h)
+        }
 
         var path = Path()
-        path.addArc(
-            center: center,
-            radius: radius,
-            startAngle: .degrees(-52),
-            endAngle: .degrees(232),
-            clockwise: false
-        )
-        path.move(to: CGPoint(x: center.x, y: center.y))
-        path.addLine(to: CGPoint(x: center.x, y: center.y - radius - size * 0.105))
-
+        path.move(to: p(0.34, 0.50))
+        path.addLine(to: p(0.46, 0.62))
+        path.addLine(to: p(0.68, 0.36))
         return path
     }
 }

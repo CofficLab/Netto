@@ -41,7 +41,7 @@ struct FirewallStatusPresentation {
             symbol = "shield.lefthalf.filled"
             color = .orange
             title = "等待批准系统扩展"
-            detail = "请在系统弹窗中允许扩展"
+            detail = "请在系统设置中启用扩展"
         case .filterApprovalNeeded:
             symbol = "shield.lefthalf.filled"
             color = .orange
@@ -51,12 +51,12 @@ struct FirewallStatusPresentation {
             symbol = "shield.lefthalf.filled"
             color = .orange
             title = "系统扩展未就绪"
-            detail = "请在主窗口完成系统扩展安装"
+            detail = "请在下方引导中完成系统扩展安装"
         case .filterNotInstalled:
             symbol = "shield.lefthalf.filled"
             color = .orange
             title = "过滤器未安装"
-            detail = "请在主窗口安装过滤器"
+            detail = "请在下方引导中安装过滤器"
         case .notInApplicationsFolder:
             symbol = "exclamationmark.shield.fill"
             color = .orange

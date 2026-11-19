@@ -8,8 +8,18 @@ public final class UIProvider: ObservableObject {
     @Published public var displayType: DisplayType = .All
     @Published public var activePopoverAppId: String = ""
     @Published public var shouldShowUpgradeGuide: Bool = false
+    /// 菜单栏弹窗当前展开的应用；nil 表示显示应用列表。
+    @Published public var selectedAppId: String?
 
     public init() {}
+
+    public func selectApp(_ appId: String) {
+        selectedAppId = appId
+    }
+
+    public func clearSelectedApp() {
+        selectedAppId = nil
+    }
     
     /// 显示指定应用的popover，同时隐藏其他应用的popover
     /// - Parameter appId: 要显示popover的应用ID
@@ -45,6 +55,7 @@ public final class UIProvider: ObservableObject {
         displayType = .All
         activePopoverAppId = ""
         shouldShowUpgradeGuide = false
+        selectedAppId = nil
     }
 }
 

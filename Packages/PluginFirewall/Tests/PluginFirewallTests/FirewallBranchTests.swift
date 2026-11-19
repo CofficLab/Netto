@@ -389,6 +389,8 @@ final class StubAppCommunication: NSObject, AppCommunication {
     func needApproval() {}
 
     func extensionLog(_ words: String) {}
+
+    func reportNetworkTraffic(_ samples: NSArray) {}
 }
 
 /// 生产系统适配器的无副作用部分测试。

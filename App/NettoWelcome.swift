@@ -20,9 +20,9 @@ extension Notification.Name {
 
 /// 欢迎窗口路由宿主（常驻；生命周期 = App 生命周期）。
 ///
-/// 共享壳的 `HostWindowOpener` 已持有 SwiftUI 开窗动作（主窗口出现时捕获，
-/// 捕获前的请求排队补发），这里只负责欢迎窗口的两条触发来源：
-/// - 首次安装 / major/minor 升级（主窗口出现时 `checkVersionOnce`）；
+/// 共享壳的 `HostWindowOpener` 已持有 SwiftUI 开窗动作（由 `HostCommands`
+/// 在场景构建期捕获，捕获前的请求排队补发），这里只负责欢迎窗口的两条触发来源：
+/// - 首次安装 / major/minor 升级（`TheApp.init` 启动时 `checkVersionOnce`）；
 /// - 插件主动请求（`.shouldOpenWelcomeWindow` 通知，常驻监听）。
 @MainActor
 final class NettoWelcomeRouter: ObservableObject {

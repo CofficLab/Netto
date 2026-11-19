@@ -24,4 +24,8 @@ import NetworkExtension
     /// 用于传递扩展发出的日志
     /// - Parameter words: 日志内容
     func extensionLog(_ words: String)
+
+    /// 周期上报各应用的网络字节增量
+    /// - Parameter samples: 每项含 appId / bytesIn / bytesOut / elapsed（秒）
+    func reportNetworkTraffic(_ samples: NSArray)
 }

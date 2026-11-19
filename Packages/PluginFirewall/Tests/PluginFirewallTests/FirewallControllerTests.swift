@@ -458,6 +458,8 @@ final class FirewallControllerTests: XCTestCase {
         // onBoot：FirewallProviding 已注册。
         let firewall = kernel.resolveProvider(FirewallProviding.self)
         XCTAssertNotNil(firewall)
+        // 网速契约随防火墙插件一起注册。
+        XCTAssertNotNil(kernel.resolveProvider(NetworkSpeedProviding.self))
         // onReady：观察者已注册、IPC 已关联、状态已刷新（默认 stopped）。
         XCTAssertNotNil(system.observerHandler)
         XCTAssertTrue(system.workspaceRegistered)
@@ -471,6 +473,7 @@ final class FirewallControllerTests: XCTestCase {
         XCTAssertTrue(system.workspaceUnregistered)
         XCTAssertEqual(ipc.unregisterCount, 1)
         XCTAssertNil(kernel.resolveProvider(FirewallProviding.self))
+        XCTAssertNil(kernel.resolveProvider(NetworkSpeedProviding.self))
     }
 
     func testPluginFailsWithoutEventStoreDependency() {

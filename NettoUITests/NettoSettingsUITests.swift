@@ -1,52 +1,41 @@
 import XCTest
 
-/// 工具栏「设置」按钮：共享工具栏中的齿轮入口、打开设置窗口、
-/// 重复触发不新建窗口、应用菜单退出命令。
+/// 设置入口：菜单栏弹窗的「设置…」行、⌘, 命令、窗口去重与应用菜单退出。
 final class NettoSettingsUITests: NettoUITestBase {
     private let settingsWindowTitle = "设置"
-
-    /// 主窗口共享工具栏的「设置」按钮。
-    private func settingsButton(in app: XCUIApplication) -> XCUIElement {
-        element(in: app, identifier: "netto.toolbar.settings")
-    }
 
     /// 设置窗口（按标题匹配）。
     private func settingsWindow(in app: XCUIApplication) -> XCUIElement {
         app.windows.matching(NSPredicate(format: "title == %@", settingsWindowTitle)).firstMatch
     }
 
-    func testToolbarExposesSettingsButton() {
+    func testMenuBarPanelExposesSettingsEntry() {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = openMenuBarPanel(in: app)
 
         XCTAssertTrue(
-            settingsButton(in: app).waitForExistence(timeout: 10),
-            "主窗口工具栏缺少「设置」按钮"
+            element(in: app, identifier: "netto.menubar.settings").waitForExistence(timeout: 10),
+            "菜单栏弹窗缺少「设置…」入口"
         )
     }
 
-    func testSettingsButtonOpensSettingsWindow() {
+    func testSettingsWindowOpensFromMenuBarEntry() {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = openMenuBarPanel(in: app)
 
-        let button = settingsButton(in: app)
-        XCTAssertTrue(button.waitForExistence(timeout: 10), "「设置」按钮缺失")
-        button.click()
+        element(in: app, identifier: "netto.menubar.settings").click()
 
         XCTAssertTrue(
             settingsWindow(in: app).waitForExistence(timeout: 20),
-            "点击「设置」后设置窗口未出现"
+            "点击「设置…」后设置窗口未出现"
         )
     }
 
-    /// 重复触发（工具栏按钮 + ⌘,）不会创建第二个设置窗口。
+    /// 重复触发（菜单栏入口 + ⌘,）不会创建第二个设置窗口。
     func testRepeatedSettingsRequestsDoNotDuplicateWindow() {
         let app = launchApp()
-        _ = openDashboard(in: app)
-
-        let button = settingsButton(in: app)
-        XCTAssertTrue(button.waitForExistence(timeout: 10))
-        button.click()
+        _ = openMenuBarPanel(in: app)
+        element(in: app, identifier: "netto.menubar.settings").click()
         XCTAssertTrue(settingsWindow(in: app).waitForExistence(timeout: 20))
 
         app.typeKey(",", modifierFlags: .command)
@@ -61,7 +50,6 @@ final class NettoSettingsUITests: NettoUITestBase {
 
     func testQuitCommandTerminatesTheApp() {
         let app = launchApp()
-        _ = openDashboard(in: app)
 
         app.typeKey("q", modifierFlags: .command)
 

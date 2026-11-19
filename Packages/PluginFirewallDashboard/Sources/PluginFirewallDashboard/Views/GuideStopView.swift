@@ -1,19 +1,18 @@
 import LumiUI
 import SwiftUI
 
-/// 停止监控视图：状态提示 + 重新开启。
+/// 停止监控视图：说明当前放行状态，开启动作由弹窗头部承载。
 struct StopView: View {
     var body: some View {
         DashboardGuidePanel(
-            iconName: "stop.circle",
-            title: "监控已停止",
+            iconName: "shield.slash",
+            title: "所有应用可自由联网",
             iconColor: .orange
         ) {
-            VStack(spacing: AppUI.Spacing.md) {
-                AppStatusBanner(kind: .warning, title: "当前网络监控已停止")
-                AppStatusBanner(kind: .info, title: "所有应用可自由联网")
-                BtnStart()
-            }
+            Text("点击右上角「开启」开始拦截未授权联网。")
+                .font(.appBody)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
         }
     }
 }

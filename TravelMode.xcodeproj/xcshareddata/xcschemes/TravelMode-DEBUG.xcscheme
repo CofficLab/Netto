@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
-               BuildableName = "TavelMode.app"
-               BlueprintName = "TavelMode"
+               BuildableName = "TravelMode.app"
+               BlueprintName = "TravelMode"
                ReferencedContainer = "container:TravelMode.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -58,8 +58,8 @@
                   <BuildableReference
                      BuildableIdentifier = "primary"
                      BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
-                     BuildableName = "TavelMode.app"
-                     BlueprintName = "TavelMode"
+                     BuildableName = "TravelMode.app"
+                     BlueprintName = "TravelMode"
                      ReferencedContainer = "container:TravelMode.xcodeproj">
                   </BuildableReference>
                </EnvironmentBuildable>
@@ -68,14 +68,14 @@
       </PreActions>
       <PathRunnable
          runnableDebuggingMode = "0"
-         FilePath = "/Users/colorfy/Library/Developer/Xcode/DerivedData/TravelMode-geohnluglxxpibekvfaeossoqatl/Build/Products/Debug/TavelMode.app">
+         FilePath = "/Users/colorfy/Library/Developer/Xcode/DerivedData/TravelMode-geohnluglxxpibekvfaeossoqatl/Build/Products/Debug/TravelMode.app">
       </PathRunnable>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
-            BuildableName = "TavelMode.app"
-            BlueprintName = "TavelMode"
+            BuildableName = "TravelMode.app"
+            BlueprintName = "TravelMode"
             ReferencedContainer = "container:TravelMode.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -91,8 +91,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C4B45DB422739FFF0050C59B"
-            BuildableName = "TavelMode.app"
-            BlueprintName = "TavelMode"
+            BuildableName = "TravelMode.app"
+            BlueprintName = "TravelMode"
             ReferencedContainer = "container:TravelMode.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

@@ -17,9 +17,9 @@ TravelMode is a per-app network access control app for macOS. It asks for a deci
 
 - **Per-app rules** — allow or block network access per application. Apps without a rule are allowed by default.
 - **Connection timeline** — every new flow is recorded with its source app, direction, status, address, and time.
-- **App insights** — per-app totals, allow/deny breakdown, and connection charts in the dashboard.
-- **Event browser** — filter by status and direction, inspect a single app's history, and export all events as CSV.
-- **Menu bar control** — see the firewall state and start or stop it without opening the main window.
+- **App list** — every app seen this session, with blocked apps highlighted and filters for all / allowed / blocked.
+- **Event browser** — open an app to filter its events by status and direction, page through its history, and export as CSV.
+- **Menu bar dashboard** — firewall state, start / stop, live per-app network speed, app rules, and connection history all live in the menu bar popover; the settings window opens only when needed.
 - **Local-first storage** — rules and events are stored locally; nothing is sent to a server.
 - **Built-in diagnostics** — browse the local database and recorded events from the settings window.
 
@@ -63,7 +63,7 @@ Download the latest release from the [App Store](https://apps.apple.com/cn/app/t
 ## Development
 
 1. Open `TravelMode.xcodeproj` and select the `TravelMode` scheme.
-2. Build and run from Xcode, or install the built `TavelMode.app` into `/Applications` and approve the system extension in **System Settings → General → Login Items & Extensions**.
+2. Build and run from Xcode, or install the built `TravelMode.app` into `/Applications` and approve the system extension in **System Settings → General → Login Items & Extensions**.
 3. Debug builds keep their data under `~/Documents/debug`; release builds use the sandbox container.
 
 `README-DEV.md` covers the architecture, build products, and debugging notes in Chinese.

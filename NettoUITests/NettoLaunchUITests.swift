@@ -1,12 +1,20 @@
 import XCTest
 
-/// 启动与状态栏：主窗口启动即打开、菜单栏条目安装、面板展开/收起。
+/// 启动与状态栏：无主窗口、菜单栏条目安装、弹窗展开/收起。
 final class NettoLaunchUITests: NettoUITestBase {
-    func testLaunchOpensMainWindowDashboard() {
+    func testLaunchDoesNotOpenMainWindow() {
         let app = launchApp()
-        _ = openDashboard(in: app)
-        XCTAssertTrue(element(in: app, identifier: "netto.toolbar.settings").waitForExistence(timeout: 10))
-        XCTAssertTrue(element(in: app, identifier: "netto.apps.list").waitForExistence(timeout: 10))
+
+        XCTAssertFalse(
+            app.windows.matching(NSPredicate(format: "title == %@", "TravelMode")).firstMatch
+                .waitForExistence(timeout: 3),
+            "Menu-bar-only build should not open the TravelMode main window"
+        )
+        XCTAssertFalse(
+            element(in: app, identifier: "netto.apps.list").waitForExistence(timeout: 2),
+            "Dashboard should stay inside the menu-bar popover"
+        )
+        XCTAssertNotEqual(app.state, .notRunning)
     }
 
     func testLaunchInstallsMenuBarStatusItem() {
@@ -16,20 +24,21 @@ final class NettoLaunchUITests: NettoUITestBase {
         XCTAssertNotEqual(app.state, .notRunning)
     }
 
-    func testStatusItemOpensCompactPanel() {
+    func testStatusItemOpensDashboardPanel() {
         let app = launchApp()
         _ = openMenuBarPanel(in: app)
 
-        for identifier in [
-            "netto.menubar.open-main",
-            "netto.menubar.settings",
-            "netto.menubar.quit",
-        ] {
-            XCTAssertTrue(
-                element(in: app, identifier: identifier).exists,
-                "Menu-bar panel is missing \(identifier)"
-            )
-        }
+        XCTAssertTrue(element(in: app, identifier: "netto.menubar.settings").exists)
+        XCTAssertTrue(element(in: app, identifier: "netto.menubar.quit").exists)
+        XCTAssertFalse(
+            element(in: app, identifier: "netto.menubar.open-main").exists,
+            "Menu-bar-only build should not expose an open-main entry"
+        )
+        // 扩展未就绪时列表被引导替代，两种状态都属于面板正常展开。
+        XCTAssertTrue(
+            element(in: app, identifier: "netto.dashboard.filter").exists
+                || element(in: app, identifier: "netto.firewall.guide").exists
+        )
     }
 
     func testStatusItemCanClosePanel() {

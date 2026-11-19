@@ -34,6 +34,7 @@ public final class PluginFirewall: AsyncSuperPlugin {
     private let ipc: any FirewallIPCServing
     private var controller: FirewallController?
     private var promptBridge: PromptUserBridge?
+    private var speedMonitor: AppNetworkSpeedMonitor?
 
     /// 生产装配：使用真实系统与 NSXPC 适配器。
     public init() {
@@ -58,8 +59,13 @@ public final class PluginFirewall: AsyncSuperPlugin {
 
         try kernel.registerProvider(FirewallProviding.self, controller)
 
+        // 应用实时网速：Extension 每秒上报字节增量，监控器负责速率与平滑。
+        let speedMonitor = AppNetworkSpeedMonitor()
+        self.speedMonitor = speedMonitor
+        try kernel.registerProvider(NetworkSpeedProviding.self, speedMonitor)
+
         // NSXPC 导出的 AppCommunication 对象：决策请求经桥接跳回主线程。
-        let bridge = PromptUserBridge(controller: controller)
+        let bridge = PromptUserBridge(controller: controller, speedMonitor: speedMonitor)
         self.promptBridge = bridge
         ipc.exportedAppCommunication = bridge
     }
@@ -75,6 +81,7 @@ public final class PluginFirewall: AsyncSuperPlugin {
         controller?.shutdown()
         system.setRequestHandler(nil)
         promptBridge = nil
+        speedMonitor = nil
         controller = nil
     }
 }
@@ -84,9 +91,11 @@ public final class PluginFirewall: AsyncSuperPlugin {
 /// 线程/actor：普通 NSObject（非隔离）；所有方法立即跳转 MainActor。
 final class PromptUserBridge: NSObject, AppCommunication {
     private weak var controller: FirewallController?
+    private weak var speedMonitor: AppNetworkSpeedMonitor?
 
-    init(controller: FirewallController?) {
+    init(controller: FirewallController?, speedMonitor: AppNetworkSpeedMonitor? = nil) {
         self.controller = controller
+        self.speedMonitor = speedMonitor
     }
 
     nonisolated func promptUser(
@@ -121,6 +130,27 @@ final class PromptUserBridge: NSObject, AppCommunication {
     }
 
     nonisolated func extensionLog(_ words: String) {}
+
+    nonisolated func reportNetworkTraffic(_ samples: NSArray) {
+        // 先在本线程把 NSDictionary 转成 Sendable 值类型，再跳回 MainActor。
+        let parsed: [AppNetworkSpeedMonitor.Sample] = samples.compactMap { element in
+            guard let dict = element as? [String: Any],
+                  let appId = dict["appId"] as? String,
+                  !appId.isEmpty else { return nil }
+            let bytesIn = (dict["bytesIn"] as? NSNumber)?.doubleValue ?? 0
+            let bytesOut = (dict["bytesOut"] as? NSNumber)?.doubleValue ?? 0
+            let elapsed = (dict["elapsed"] as? NSNumber)?.doubleValue ?? 1
+            return AppNetworkSpeedMonitor.Sample(
+                appId: appId,
+                bytesIn: bytesIn,
+                bytesOut: bytesOut,
+                elapsed: elapsed
+            )
+        }
+        Task { @MainActor [weak speedMonitor] in
+            speedMonitor?.ingest(parsed)
+        }
+    }
 }
 
 /// 过渡期兼容：旧 App 侧 `.firewallNeedApproval` 通知名（Foundation 级）。

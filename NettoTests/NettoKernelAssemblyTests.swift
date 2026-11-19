@@ -10,7 +10,7 @@ import ProviderShell
 import ProviderToolbar
 import SwiftUI
 import XCTest
-@testable import TavelMode
+@testable import TravelMode
 
 /// 共享装配引擎解释 TravelMode 清单后的内核基线守卫（hosted 单测）。
 ///
@@ -19,8 +19,8 @@ import XCTest
 @MainActor
 final class NettoKernelAssemblyTests: XCTestCase {
 
-    /// 清单装配的内核：Shell 五契约 + 共享基线 Provider + 根视图接线就位。
-    func testManifestAssemblesKernelAndRootView() async throws {
+    /// 清单装配的内核：Shell 五契约 + 共享基线 Provider 就位（无主窗口接线）。
+    func testManifestAssemblesKernel() async throws {
         let kernel = try await NettoTestKernel.make()
 
         XCTAssertEqual(kernel.lifecycleState, .running)
@@ -30,12 +30,6 @@ final class NettoKernelAssemblyTests: XCTestCase {
         XCTAssertNotNil(kernel.resolveProvider(WindowRoutingProviding.self))
         XCTAssertNotNil(kernel.resolveProvider(ProviderShell.ToastProviding.self))
         XCTAssertNotNil(kernel.resolveProvider(MenuBarProviding.self))
-        XCTAssertNotNil(kernel.resolveProvider((any ToolbarProviding).self))
-
-        let root = try XCTUnwrap(kernel.resolveProvider((any RootViewProviding).self))
-        XCTAssertNotNil(root.view(for: .toolbar), "工具栏应已接入根视图")
-        XCTAssertNotNil(root.view(for: .content), "内容区应已注入仪表盘")
-        XCTAssertNotNil(root.makeRootView())
         // 根视图是 host provider（基线 FactoryRootViewProviding），不再经 RootViewPlugin 注册。
         XCTAssertFalse(kernel.isPluginRegistered(id: "com.yueyi.TravelMode.plugin.root-view"))
 
@@ -48,16 +42,15 @@ final class NettoKernelAssemblyTests: XCTestCase {
         XCTAssertNotNil(kernel.resolveProvider((any PluginManaging).self))
     }
 
-    /// 生产装配完成后，共享根视图工具栏含防火墙控件与宿主设置按钮，
-    /// 内容区已注入仪表盘 —— 主窗口与 Wakey / Lumi 走同一套体系。
-    func testToolbarWiringIncludesSettingsAndDashboardContributions() async throws {
+    /// 纯菜单栏形态：没有主窗口，因此不向共享工具栏贡献任何按钮。
+    ///
+    /// 基线根视图 Provider 仍由装配引擎注册（无主窗口场景展示它），
+    /// 但不承载任何插件内容。
+    func testMenuBarOnlyBuildContributesNoToolbarItems() async throws {
         let kernel = try await NettoTestKernel.make()
         let toolbar = try XCTUnwrap(kernel.resolveProvider((any ToolbarProviding).self))
-        let root = try XCTUnwrap(kernel.resolveProvider((any RootViewProviding).self))
 
-        XCTAssertEqual(toolbar.visibleToolbarItems.map(\.id), ["switcher", "filter", "settings"])
-        XCTAssertNotNil(root.view(for: .toolbar))
-        XCTAssertNotNil(root.view(for: .content))
+        XCTAssertTrue(toolbar.visibleToolbarItems.isEmpty)
     }
 
     /// 生产插件目录启动后，菜单栏品牌 Logo 由 `brand-logo` 插件提供。
@@ -67,11 +60,24 @@ final class NettoKernelAssemblyTests: XCTestCase {
         XCTAssertEqual(logo.highestPriorityLogoItem?.id, "brand-logo")
     }
 
-    /// 主视图组装钩子纯读取，返回非空视图（运行时由 App Host 呈现）。
-    func testMakeMainViewUsesResolvedShell() async throws {
-        let kernel = try await NettoTestKernel.make()
-        let view = NettoManifest.manifest.makeMainView?(kernel)
-        XCTAssertNotNil(view)
+    /// 纯菜单栏形态：清单不提供主视图钩子，启动/激活都不会打开主窗口。
+    func testManifestDoesNotProvideMainWindowHook() {
+        let manifest = NettoManifest.manifest
+
+        XCTAssertNil(manifest.makeMainView)
+        XCTAssertFalse(manifest.features.opensMainWindowOnLaunch)
+        XCTAssertFalse(manifest.features.reopensMainWindowOnActivate)
+    }
+
+    /// 状态栏弹窗是唯一主界面：菜单只剩「设置 / 退出」，宽度足以容纳列表。
+    func testStatusBarMenuItemsExcludeMainWindowEntry() throws {
+        let configuration = try XCTUnwrap(NettoManifest.manifest.features.statusBar)
+
+        XCTAssertEqual(configuration.popoverWidth, 360)
+        XCTAssertEqual(
+            configuration.menuItems?.compactMap(\.accessibilityIdentifier),
+            ["netto.menubar.settings", "netto.menubar.quit"]
+        )
     }
 
     func testMakeSettingsViewUsesResolvedSettings() async throws {
@@ -89,18 +95,6 @@ final class NettoKernelAssemblyTests: XCTestCase {
             }
         )
         XCTAssertEqual(shell.leftContributions.count, 1)
-    }
-
-    /// 工具栏设置按钮：宿主贡献的 `settings` 项位于 trailing，点击发出标准的
-    /// 「打开设置」通知（由共享 HostAppDelegate 打开设置窗口）。
-    func testToolbarSettingsItemRoutesToSettingsNotification() throws {
-        let item = NettoToolbarSettings.makeItem()
-
-        XCTAssertEqual(item.id, "settings")
-        XCTAssertEqual(item.placement, .trailing)
-        XCTAssertEqual(item.category, .global)
-        XCTAssertEqual(item.order, 300)
-        XCTAssertNotNil(item.makeView())
     }
 
     /// 宿主窗口路由：wireKernel 把 ShellCenter 的设置请求翻译成标准「打开设置」

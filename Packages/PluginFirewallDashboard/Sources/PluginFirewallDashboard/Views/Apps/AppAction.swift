@@ -15,6 +15,8 @@ private struct AppActionContent: View, LogPrefixed {
     @Binding var shouldAllow: Bool
 
     var appId: String
+    var showsTitle: Bool = false
+    var onRuleChange: (() -> Void)?
 
     private var iconName: String {
         if shouldAllow {
@@ -24,18 +26,43 @@ private struct AppActionContent: View, LogPrefixed {
         }
     }
 
+    private var title: String {
+        shouldAllow ? "禁止联网" : "允许联网"
+    }
+
+    private var tint: Color {
+        shouldAllow ? .red : .green
+    }
+
     var body: some View {
         Button {
             shouldAllow ? deny() : allow()
         } label: {
-            Image(systemName: iconName)
-                .font(.system(size: 14, weight: .semibold))
+            if showsTitle {
+                HStack(spacing: 6) {
+                    Image(systemName: iconName)
+                        .font(.system(size: 12, weight: .semibold))
+
+                    Text(title)
+                        .font(.appCaptionEmphasized)
+                }
                 .foregroundStyle(.white)
-                .frame(width: 30, height: 30)
+                .padding(.horizontal, 10)
+                .frame(height: 28)
                 .background(
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .fill(shouldAllow ? Color.red : Color.green)
+                        .fill(tint)
                 )
+            } else {
+                Image(systemName: iconName)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 30, height: 30)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(tint)
+                    )
+            }
         }
         .buttonStyle(.plain)
     }
@@ -45,14 +72,28 @@ private struct AppActionContent: View, LogPrefixed {
 public struct AppAction: View {
     @Binding private var shouldAllow: Bool
     private let appId: String
+    private let showsTitle: Bool
+    private let onRuleChange: (() -> Void)?
 
-    public init(shouldAllow: Binding<Bool>, appId: String) {
+    public init(
+        shouldAllow: Binding<Bool>,
+        appId: String,
+        showsTitle: Bool = false,
+        onRuleChange: (() -> Void)? = nil
+    ) {
         self._shouldAllow = shouldAllow
         self.appId = appId
+        self.showsTitle = showsTitle
+        self.onRuleChange = onRuleChange
     }
 
     public var body: some View {
-        AppActionContent(shouldAllow: $shouldAllow, appId: appId)
+        AppActionContent(
+            shouldAllow: $shouldAllow,
+            appId: appId,
+            showsTitle: showsTitle,
+            onRuleChange: onRuleChange
+        )
     }
 }
 
@@ -82,6 +123,7 @@ extension AppActionContent {
                 
                 try await repo.setDeny(appId)
                 self.shouldAllow = false
+                self.onRuleChange?()
                 shell.post(ToastMessage(description: "已禁止"))
             } catch let error {
                 os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
@@ -96,6 +138,7 @@ extension AppActionContent {
             do {
                 try await repo.setAllow(appId)
                 self.shouldAllow = true
+                self.onRuleChange?()
                 shell.post(ToastMessage(description: "已允许"))
             } catch let error {
                 os_log("\(self.t)操作失败 -> \(error.localizedDescription)")

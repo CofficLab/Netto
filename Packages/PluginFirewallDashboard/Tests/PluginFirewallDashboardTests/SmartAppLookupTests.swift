@@ -210,72 +210,57 @@ struct FirewallDashboardPluginTests {
         #expect(plugin.metadata.version == "1.0")
     }
 
-    @Test("kernel 启动插件后向菜单栏与工具栏贡献内容")
+    @Test("kernel 启动插件后向菜单栏弹窗贡献内容")
     func startContributes() throws {
         let (kernel, _) = try makeKernel()
         let menuBar = try #require(kernel.resolveProvider(MenuBarProviding.self))
-        let toolbar = try #require(kernel.resolveProvider((any ToolbarProviding).self))
 
         // 状态栏只由宿主的品牌 Logo 占位，插件只贡献 popover。
         #expect(menuBar.contentItems.isEmpty)
         #expect(menuBar.popupItems.map(\.id) == ["firewall-dashboard"])
-
-        let items = toolbar.visibleToolbarItems
-        #expect(items.map(\.id) == ["switcher", "filter"])
-        #expect(items.first { $0.id == "switcher" }?.placement == .leading)
-        #expect(items.first { $0.id == "filter" }?.placement == .center)
-        #expect(items.allSatisfy { $0.ownerPluginID == "firewall-dashboard" })
     }
 
     @Test("onEnable 重复贡献时不会产生重复条目")
     func onEnableIsIdempotent() async throws {
         let (kernel, plugin) = try makeKernel()
         let menuBar = try #require(kernel.resolveProvider(MenuBarProviding.self))
-        let toolbar = try #require(kernel.resolveProvider((any ToolbarProviding).self))
 
         try await plugin.onEnable(kernel: kernel)
 
         #expect(menuBar.contentItems.isEmpty)
         #expect(menuBar.popupItems.count == 1)
-        #expect(toolbar.visibleToolbarItems.count == 2)
     }
 
-    @Test("onDisable 撤回菜单栏与工具栏贡献")
+    @Test("onDisable 撤回菜单栏弹窗贡献")
     func onDisableRemovesContributions() async throws {
         let (kernel, plugin) = try makeKernel()
         let menuBar = try #require(kernel.resolveProvider(MenuBarProviding.self))
-        let toolbar = try #require(kernel.resolveProvider((any ToolbarProviding).self))
 
         try await plugin.onDisable(kernel: kernel)
 
         #expect(menuBar.contentItems.isEmpty)
         #expect(menuBar.popupItems.isEmpty)
-        #expect(toolbar.visibleToolbarItems.isEmpty)
     }
 
-    @Test("onShutdown 撤回菜单栏与工具栏贡献")
+    @Test("onShutdown 撤回菜单栏弹窗贡献")
     func onShutdownRemovesContributions() throws {
         let (kernel, plugin) = try makeKernel()
         let menuBar = try #require(kernel.resolveProvider(MenuBarProviding.self))
-        let toolbar = try #require(kernel.resolveProvider((any ToolbarProviding).self))
 
         try plugin.onShutdown(kernel: kernel)
 
         #expect(menuBar.contentItems.isEmpty)
         #expect(menuBar.popupItems.isEmpty)
-        #expect(toolbar.visibleToolbarItems.isEmpty)
     }
 
-    @Test("onUnregister 撤回菜单栏与工具栏贡献")
+    @Test("onUnregister 撤回菜单栏弹窗贡献")
     func onUnregisterRemovesContributions() throws {
         let (kernel, plugin) = try makeKernel()
         let menuBar = try #require(kernel.resolveProvider(MenuBarProviding.self))
-        let toolbar = try #require(kernel.resolveProvider((any ToolbarProviding).self))
 
         try plugin.onUnregister(kernel: kernel)
 
         #expect(menuBar.contentItems.isEmpty)
         #expect(menuBar.popupItems.isEmpty)
-        #expect(toolbar.visibleToolbarItems.isEmpty)
     }
 }

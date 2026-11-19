@@ -1,5 +1,6 @@
 import Foundation
 import NettoIPCContracts
+import OSLog
 
 /// 将 XPC 注册回调、连接失效和超时收敛到一个只能完成一次的结果。
 ///
@@ -62,19 +63,26 @@ final class IPCRegistrationCompletion {
     }
 }
 
+private let ipcLogger = Logger(subsystem: "com.yueyi.TravelMode.PluginFirewall", category: "ipc")
+
 /// 在非隔离上下文创建 NSXPC 回调，避免 Swift 把闭包隐式绑定到调用方的
 /// MainActor；回调线程必须经 `Task { @MainActor in }` 跳回主线程再解析
 /// 完成门闩（直接调用会在 Swift 6 隔离断言下崩溃）。
 private func makeIPCInvalidationHandler(
     _ registration: IPCRegistrationCompletion
 ) -> @Sendable () -> Void {
-    { Task { @MainActor in registration.finish(false) } }
+    {
+        Task { @MainActor in registration.finish(false) }
+    }
 }
 
 private func makeIPCErrorHandler(
     _ registration: IPCRegistrationCompletion
 ) -> (Error) -> Void {
-    { _ in Task { @MainActor in registration.finish(false) } }
+    { error in
+        ipcLogger.error("IPC register: 连接错误 \(error.localizedDescription, privacy: .public)")
+        Task { @MainActor in registration.finish(false) }
+    }
 }
 
 private func makeIPCRegisterReplyHandler(
@@ -109,6 +117,7 @@ final class NSXPCFirewallIPCAdapter: FirewallIPCServing {
     /// 系统扩展 Bundle；nil 表示宿主环境无扩展（非 App 宿主降级运行）。
     private let extensionBundle: Bundle?
     private var connection: NSXPCConnection?
+    private let logger = Logger(subsystem: "com.yueyi.TravelMode.PluginFirewall", category: "ipc")
     weak var exportedAppCommunication: (any AppCommunication)?
 
     init(extensionBundle: Bundle?) {
@@ -131,11 +140,15 @@ final class NSXPCFirewallIPCAdapter: FirewallIPCServing {
         unregister()
 
         guard let delegate = exportedAppCommunication else {
+            logger.error("IPC register: exportedAppCommunication 为空")
             return false
         }
 
         // 扩展 Bundle 缺失（非 App 宿主降级）：无法定位 Mach service，直接失败。
-        guard let extensionBundle else { return false }
+        guard let extensionBundle else {
+            logger.error("IPC register: 系统扩展 Bundle 缺失")
+            return false
+        }
 
         let machServiceName = extensionMachServiceName(from: extensionBundle)
         let newConnection = NSXPCConnection(machServiceName: machServiceName, options: [])
@@ -158,6 +171,7 @@ final class NSXPCFirewallIPCAdapter: FirewallIPCServing {
         guard let providerProxy = newConnection.remoteObjectProxyWithErrorHandler(
             makeIPCErrorHandler(registration)
         ) as? ProviderCommunication else {
+            logger.error("IPC register: 无法创建 ProviderCommunication 代理")
             newConnection.invalidate()
             if connection === newConnection { connection = nil }
             return false

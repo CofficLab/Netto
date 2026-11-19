@@ -1,31 +1,31 @@
 import XCTest
 
-/// 仪表盘：工具栏结构、筛选切换、防火墙引导与状态、应用详情与事件筛选。
+/// 菜单栏仪表盘：筛选切换、防火墙引导与状态、应用详情与事件筛选。
 final class NettoDashboardUITests: NettoUITestBase {
-    func testDashboardShowsFirewallControlAndAppFilter() {
+    func testDashboardShowsFirewallControlAndAppFilter() throws {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = try openDashboard(in: app)
 
-        // 防火墙状态（未就绪引导/就绪控制）由 testFirewallGuide… 与
-        // testFirewallStatus… 分别覆盖；本用例验证仪表盘核心结构，
-        // 避免在筛选切换后防火墙状态区渲染时机差异导致误报。
-        XCTAssertTrue(element(in: app, identifier: "netto.toolbar.settings").waitForExistence(timeout: 10))
+        XCTAssertTrue(
+            element(in: app, identifier: "netto.menubar.firewall.start").exists
+                || element(in: app, identifier: "netto.menubar.firewall.stop").exists
+        )
         XCTAssertTrue(element(in: app, identifier: "netto.filter.all").exists)
         XCTAssertTrue(element(in: app, identifier: "netto.apps.list").exists)
     }
 
-    func testAllFilterChoicesAreAvailable() {
+    func testAllFilterChoicesAreAvailable() throws {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = try openDashboard(in: app)
 
         for identifier in ["netto.filter.all", "netto.filter.allowed", "netto.filter.rejected"] {
             XCTAssertTrue(element(in: app, identifier: identifier).waitForExistence(timeout: 5), "Missing filter: \(identifier)")
         }
     }
 
-    func testAllowedAndRejectedFiltersCanBeSelected() {
+    func testAllowedAndRejectedFiltersCanBeSelected() throws {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = try openDashboard(in: app)
 
         for identifier in ["netto.filter.allowed", "netto.filter.rejected", "netto.filter.all"] {
             let option = element(in: app, identifier: identifier)
@@ -37,7 +37,7 @@ final class NettoDashboardUITests: NettoUITestBase {
 
     func testFirewallGuideShowsARecoveryPathWhenFirewallIsNotReady() {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = openMenuBarPanel(in: app)
 
         let guide = element(in: app, identifier: "netto.firewall.guide")
         if guide.waitForExistence(timeout: 5) {
@@ -47,7 +47,7 @@ final class NettoDashboardUITests: NettoUITestBase {
             XCTAssertTrue(found, "Firewall guide is visible without an explanation or recovery action")
         } else {
             XCTAssertTrue(
-                element(in: app, identifier: "netto.firewall.stop").exists
+                element(in: app, identifier: "netto.menubar.firewall.stop").exists
                     || element(in: app, containing: "防火墙状态").exists,
                 "A running firewall should show its stop control or status when the guide is hidden"
             )
@@ -56,27 +56,26 @@ final class NettoDashboardUITests: NettoUITestBase {
 
     func testFirewallStatusIsExposedToAccessibility() {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = openMenuBarPanel(in: app)
 
-        // 主窗口共享工具栏暴露防火墙开关（运行中为停止按钮，否则为开始按钮）。
-        let start = element(in: app, identifier: "netto.firewall.start")
-        let stop = element(in: app, identifier: "netto.firewall.stop")
+        // 弹窗头部暴露防火墙启停按钮（运行中为停止，否则为开启）。
+        let start = element(in: app, identifier: "netto.menubar.firewall.start")
+        let stop = element(in: app, identifier: "netto.menubar.firewall.stop")
         XCTAssertTrue(
             start.waitForExistence(timeout: 10) || stop.exists,
-            "主窗口工具栏未暴露防火墙开关状态"
+            "菜单栏弹窗未暴露防火墙开关状态"
         )
 
-        // 菜单栏面板暴露状态文案（「防火墙已停止」/「防火墙运行中」等）。
-        _ = openMenuBarPanel(in: app)
         XCTAssertTrue(
-            element(in: app, containing: "防火墙").waitForExistence(timeout: 10),
-            "菜单栏面板未暴露防火墙状态文案"
+            element(in: app, containing: "防火墙").waitForExistence(timeout: 10)
+                || element(in: app, identifier: "netto.firewall.guide").exists,
+            "菜单栏弹窗未暴露防火墙状态文案"
         )
     }
 
-    func testDashboardRemainsUsableAfterRepeatedFilterChanges() {
+    func testDashboardRemainsUsableAfterRepeatedFilterChanges() throws {
         let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = try openDashboard(in: app)
         let choices = ["netto.filter.allowed", "netto.filter.rejected", "netto.filter.all"]
 
         for _ in 0..<2 {
@@ -87,40 +86,12 @@ final class NettoDashboardUITests: NettoUITestBase {
             }
         }
 
-        XCTAssertTrue(element(in: app, identifier: "netto.toolbar.settings").waitForExistence(timeout: 10))
         XCTAssertTrue(element(in: app, identifier: "netto.apps.list").exists)
     }
 
     func testAppDetailShowsEventFiltersAndExportAction() throws {
         let app = launchApp()
-        _ = openDashboard(in: app)
-        let rows = app.descendants(matching: .any)
-            .matching(NSPredicate(format: "identifier BEGINSWITH %@", "netto.app.row."))
-        let row = rows.firstMatch
-        guard row.waitForExistence(timeout: 10) else {
-            throw XCTSkip("No app rows are visible in the current dashboard state")
-        }
-
-        // 详情弹出层依赖鼠标悬停，XCUI 的 hover 在部分构建中不可靠；
-        // detail 未出现时退回验证行本身，避免环境差异导致误报。
-        row.hover()
-        let detail = element(in: app, identifier: "netto.app.detail")
-        if !detail.waitForExistence(timeout: 3) {
-            row.click()
-        }
-        if detail.waitForExistence(timeout: 8) {
-            XCTAssertTrue(element(in: app, identifier: "netto.events.detail").exists)
-            XCTAssertTrue(element(in: app, identifier: "netto.events.status-filter").exists)
-            XCTAssertTrue(element(in: app, identifier: "netto.events.direction-filter").exists)
-            XCTAssertTrue(element(in: app, identifier: "netto.events.export").exists)
-        } else {
-            XCTAssertTrue(row.exists, "App row should remain usable when detail popover is unavailable")
-        }
-    }
-
-    func testEventStatusAndDirectionFiltersCanBeChanged() throws {
-        let app = launchApp()
-        _ = openDashboard(in: app)
+        _ = try openDashboard(in: app)
         let row = app.descendants(matching: .any)
             .matching(NSPredicate(format: "identifier BEGINSWITH %@", "netto.app.row."))
             .firstMatch
@@ -128,13 +99,32 @@ final class NettoDashboardUITests: NettoUITestBase {
             throw XCTSkip("No app rows are visible in the current dashboard state")
         }
 
-        row.hover()
+        row.click()
         let detail = element(in: app, identifier: "netto.app.detail")
-        if !detail.waitForExistence(timeout: 3) {
-            row.click()
+        XCTAssertTrue(detail.waitForExistence(timeout: 8), "Clicking an app row did not open its detail")
+        XCTAssertTrue(element(in: app, identifier: "netto.events.detail").exists)
+        XCTAssertTrue(element(in: app, identifier: "netto.events.status-filter").exists)
+        XCTAssertTrue(element(in: app, identifier: "netto.events.direction-filter").exists)
+        XCTAssertTrue(element(in: app, identifier: "netto.events.export").exists)
+
+        element(in: app, identifier: "netto.app.detail.back").click()
+        XCTAssertTrue(element(in: app, identifier: "netto.apps.list").waitForExistence(timeout: 5))
+    }
+
+    func testEventStatusAndDirectionFiltersCanBeChanged() throws {
+        let app = launchApp()
+        _ = try openDashboard(in: app)
+        let row = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "identifier BEGINSWITH %@", "netto.app.row."))
+            .firstMatch
+        guard row.waitForExistence(timeout: 10) else {
+            throw XCTSkip("No app rows are visible in the current dashboard state")
         }
+
+        row.click()
+        let detail = element(in: app, identifier: "netto.app.detail")
         guard detail.waitForExistence(timeout: 8) else {
-            throw XCTSkip("Detail popover is unavailable in this environment; hover simulation is limited")
+            throw XCTSkip("App detail is unavailable in this environment")
         }
 
         for identifier in [

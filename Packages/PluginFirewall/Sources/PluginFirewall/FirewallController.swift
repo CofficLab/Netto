@@ -194,8 +194,9 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
             logger.error("Boot 加载过滤器配置失败: \(error.localizedDescription)")
         }
 
-        let registered = await registerIPC()
-        logger.info("IPC 关联 \(registered ? "成功" : "失败")")
+        if await registerIPC() == false {
+            logger.error("与系统扩展建立 IPC 关联失败")
+        }
     }
 
     /// 与 Extension 建立 IPC 关联（旧 registerWithProvider）。
@@ -260,13 +261,10 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         }
 
         if let currentInstalled = currentVersionInstalled {
-            // 旧行为：保持现有状态；未激活/卸载中则覆盖。
+            // 旧行为：保持现有状态；未激活则覆盖。
             var nextState = state
             if currentInstalled.isEnabled == false {
                 nextState = .extensionNotActivated
-            }
-            if currentInstalled.isUninstalling {
-                nextState = .systemExtensionNotInstalled
             }
             updateState(nextState)
         } else {

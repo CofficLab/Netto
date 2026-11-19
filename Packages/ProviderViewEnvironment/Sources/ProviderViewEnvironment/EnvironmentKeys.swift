@@ -23,6 +23,11 @@ private struct SettingsProviderKey: EnvironmentKey {
     static let defaultValue: AppSettingsProviding? = nil
 }
 
+/// 应用实时网速契约环境键。
+private struct NetworkSpeedProviderKey: EnvironmentKey {
+    static let defaultValue: NetworkSpeedProviding? = nil
+}
+
 /// Store 契约环境键（nil = 未装配；由 PluginStore 在启动期注册）。
 private struct StoreProviderKey: EnvironmentKey {
     static let defaultValue: StoreProviding? = nil
@@ -50,6 +55,12 @@ public extension EnvironmentValues {
     var settingsProvider: AppSettingsProviding? {
         get { self[SettingsProviderKey.self] }
         set { self[SettingsProviderKey.self] = newValue }
+    }
+
+    /// 应用实时网速契约（nil = 未装配；弹窗隐藏网速区块）。
+    var networkSpeedProvider: NetworkSpeedProviding? {
+        get { self[NetworkSpeedProviderKey.self] }
+        set { self[NetworkSpeedProviderKey.self] = newValue }
     }
 
     /// Store 契约（nil = 未装配；AppAction 等跨插件消费方使用）。
