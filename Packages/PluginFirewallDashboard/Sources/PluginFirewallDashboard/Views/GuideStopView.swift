@@ -10,7 +10,6 @@ struct StopView: View {
             iconColor: .orange
         ) {
             VStack(spacing: AppUI.Spacing.md) {
-                AppStatusBanner(kind: .warning, title: "当前网络监控已停止")
                 AppStatusBanner(kind: .info, title: "所有应用可自由联网")
                 BtnStart()
             }

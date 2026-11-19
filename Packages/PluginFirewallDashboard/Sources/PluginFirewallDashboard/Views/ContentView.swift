@@ -26,11 +26,9 @@ public struct ContentView: View {
 
     public var body: some View {
         Group {
-            if ui.selectedAppId == nil && shouldShowGuide {
-                ScrollView {
-                    GuideView(state: resolvedState, showsBackdrop: false)
-                        .padding(.vertical, 8)
-                }
+            if isShowingGuide {
+                GuideView(state: resolvedState, showsBackdrop: false)
+                    .padding(.vertical, 8)
             } else if let app = selectedApp {
                 MenuBarAppDetailView(app: app) {
                     ui.clearSelectedApp()
@@ -39,7 +37,9 @@ public struct ContentView: View {
                 listContent
             }
         }
-        .frame(height: 360, alignment: .top)
+        // 列表与详情固定高度避免切换时弹窗跳动；引导内容按自然高度完整展示，
+        // 不出现滚动条。
+        .frame(height: isShowingGuide ? nil : 360, alignment: .top)
         .onAppear(perform: refresh)
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
             refresh()
@@ -131,6 +131,10 @@ public struct ContentView: View {
     private var selectedApp: SmartApp? {
         guard let id = ui.selectedAppId else { return nil }
         return model.apps.first { $0.id == id } ?? SmartApp.fromId(id)
+    }
+
+    private var isShowingGuide: Bool {
+        ui.selectedAppId == nil && shouldShowGuide
     }
 
     private var shouldShowGuide: Bool {
