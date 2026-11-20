@@ -80,7 +80,11 @@ protocol FirewallSystemAdapting: AnyObject {
     func disableFilter() async throws
 
     /// 注册过滤器配置变更观察者；回调在主线程执行，返回 token。
-    func addFilterConfigurationObserver(_ handler: @escaping @MainActor @Sendable (Bool) -> Void) -> Any
+    ///
+    /// 回调只表示「配置变了」：`NEFilterManager` 的属性是进程内副本，
+    /// 观察者不得直接读 `isEnabled`（会拿到陈旧值）；调用方必须重新
+    /// 走 `loadFilterEnabled()` 这类「先加载再读」的路径。
+    func addFilterConfigurationObserver(_ handler: @escaping @MainActor @Sendable () -> Void) -> Any
 
     /// 移除过滤器配置变更观察者。
     func removeFilterConfigurationObserver(_ token: Any)
@@ -194,16 +198,13 @@ final class SystemFirewallAdapter: FirewallSystemAdapting {
 
     // MARK: - 过滤器配置变更观察（旧 setObserver）
 
-    func addFilterConfigurationObserver(_ handler: @escaping @MainActor @Sendable (Bool) -> Void) -> Any {
+    func addFilterConfigurationObserver(_ handler: @escaping @MainActor @Sendable () -> Void) -> Any {
         let token = NotificationCenter.default.addObserver(
             forName: .NEFilterConfigurationDidChange,
             object: nil,
             queue: .main
         ) { _ in
-            let enabled = NEFilterManager.shared().isEnabled
-            Task { @MainActor in
-                handler(enabled)
-            }
+            Task { @MainActor in handler() }
         }
         filterObserver = token
         return token

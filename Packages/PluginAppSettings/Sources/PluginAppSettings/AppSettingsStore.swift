@@ -17,7 +17,7 @@ import SwiftData
 public final class AppSettingsStore: AppSettingsProviding {
     private let actor: AppSettingActor
     private let container: ModelContainer
-    private var changeContinuation: AsyncStream<AppSettingsChange>.Continuation?
+    private var changeContinuations: [UUID: AsyncStream<AppSettingsChange>.Continuation] = [:]
 
     /// 使用共享容器初始化。
     public init(container: ModelContainer) {
@@ -67,26 +67,34 @@ public final class AppSettingsStore: AppSettingsProviding {
 
     public func setAllow(_ appId: String) async throws {
         try await actor.upsert(id: appId, allowed: true)
-        changeContinuation?.yield(.didAllow(appId: appId))
+        notify(.didAllow(appId: appId))
     }
 
     public func setDeny(_ appId: String) async throws {
         try await actor.upsert(id: appId, allowed: false)
-        changeContinuation?.yield(.didDeny(appId: appId))
+        notify(.didDeny(appId: appId))
     }
 
     public func delete(_ appId: String) async throws {
         try await actor.delete(id: appId)
+        // 规则被删除后等价于「允许」，观察者必须同步刷新。
+        notify(.didAllow(appId: appId))
     }
 
     public func observeChanges() -> AsyncStream<AppSettingsChange> {
-        AsyncStream { continuation in
-            changeContinuation = continuation
+        let id = UUID()
+        return AsyncStream { continuation in
+            changeContinuations[id] = continuation
             continuation.onTermination = { [weak self] _ in
                 MainActor.assumeIsolated {
-                    self?.changeContinuation = nil
+                    self?.changeContinuations[id] = nil
                 }
             }
         }
+    }
+
+    /// 向所有观察者广播规则变更（多订阅者，订阅之间互不顶替）。
+    private func notify(_ change: AppSettingsChange) {
+        changeContinuations.values.forEach { $0.yield(change) }
     }
 }

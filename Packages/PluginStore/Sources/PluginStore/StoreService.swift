@@ -281,14 +281,26 @@ public enum StoreService: LogPrefixed {
         try await purchase(productID: product.id)
     }
 
+    /// 与 App Store 同步凭据的动作（默认 `AppStore.sync()`）。
+    ///
+    /// 抽成可替换入口：回归测试需要在没有商店会话的进程里验证
+    /// 「恢复确实触发了同步」这一行为。
+    @MainActor
+    static var appStoreSync: () async throws -> Void = { try await AppStore.sync() }
+
     /// 恢复购买。
     ///
     /// StoreKit 2 没有独立的 restore API：恢复走 `AppStore.sync()` 把商店端的
-    /// 凭据推回本机。但在无有效 App Store 会话的环境（如单元测试进程），
-    /// `sync()` 会抛错，因此这里只重放权益校准——校准读取的是同一份
-    /// `Transaction.currentEntitlements`，效果等价且不会失败。
+    /// 凭据推回本机，然后校准本地权益缓存。只做校准在重装或换机后读到的
+    /// 仍是空缓存，恢复按钮会形同虚设。
+    ///
+    /// 用户取消 App Store 登录不算失败。
+    @MainActor
     public static func restorePurchases() async throws {
-        await sharedService.calibrateFromCurrentEntitlements()
+        _ = try await StoreRestoreRunner.run(dependencies: StoreRestoreDependencies(
+            sync: { try await appStoreSync() },
+            calibrate: { await sharedService.calibrateFromCurrentEntitlements() }
+        ))
     }
 
     // MARK: - Subscription Status

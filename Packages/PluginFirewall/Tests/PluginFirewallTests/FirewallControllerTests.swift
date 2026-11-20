@@ -24,7 +24,7 @@ final class MockSystemAdapter: FirewallSystemAdapting {
     private(set) var enableCount = 0
     private(set) var disableCount = 0
     private(set) var submittedRequests: [SystemExtensionRequestKind] = []
-    var observerHandler: (@MainActor @Sendable (Bool) -> Void)?
+    var observerHandler: (@MainActor @Sendable () -> Void)?
     var workspaceHandler: (@MainActor @Sendable (Bool) -> Void)?
     private(set) var workspaceRegistered = false
     private(set) var workspaceUnregistered = false
@@ -56,7 +56,7 @@ final class MockSystemAdapter: FirewallSystemAdapting {
         filterEnabled = false
     }
 
-    func addFilterConfigurationObserver(_ handler: @escaping @MainActor @Sendable (Bool) -> Void) -> Any {
+    func addFilterConfigurationObserver(_ handler: @escaping @MainActor @Sendable () -> Void) -> Any {
         observerHandler = handler
         return NSObject()
     }
@@ -87,6 +87,7 @@ final class MockIPCAdapter: FirewallIPCServing {
     private(set) var registerCount = 0
     private(set) var unregisterCount = 0
     var exportedAppCommunication: (any AppCommunication)?
+    var connectionLossHandler: (@MainActor () -> Void)?
 
     func register() async -> Bool {
         registerCount += 1
@@ -95,6 +96,11 @@ final class MockIPCAdapter: FirewallIPCServing {
 
     func unregister() {
         unregisterCount += 1
+    }
+
+    /// 模拟注册成功后的连接意外断开（扩展进程退出/连接失效）。
+    func simulateConnectionLoss() {
+        connectionLossHandler?()
     }
 }
 
@@ -348,10 +354,29 @@ final class FirewallControllerTests: XCTestCase {
     func testFilterObserverUpdateDrivesState() async throws {
         let (controller, system, _, _, _) = makeController()
         controller.startObserving()
-        system.observerHandler?(false)
+        // 观察者只报告「配置变了」，状态由控制器重新加载后得出（异步）。
+        system.observerHandler?()
+        try await waitUntilState(controller, equals: .stopped)
         XCTAssertEqual(controller.snapshot.state, .stopped)
-        system.observerHandler?(true)
+
+        system.filterEnabled = true
+        system.observerHandler?()
+        try await waitUntilState(controller, equals: .running)
         XCTAssertEqual(controller.snapshot.state, .running)
+    }
+
+    /// 等待控制器状态变为期望值（观察者回调经 Task 异步派发）。
+    private func waitUntilState(
+        _ controller: FirewallController,
+        equals expected: FirewallState,
+        timeout: TimeInterval = 3
+    ) async throws {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if controller.snapshot.state == expected { return }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        XCTFail("等待状态 \(String(describing: expected)) 超时，实际为 \(String(describing: controller.snapshot.state))")
     }
 
     // MARK: - 观察流

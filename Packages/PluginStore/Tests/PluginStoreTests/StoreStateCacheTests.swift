@@ -89,10 +89,23 @@ extension StoreStateTests {
             }
         }
 
-        @Test("restore 触发权益校准并落盘为 none")
+        @Test("restore 在单测进程内抛错（无有效 App Store 会话，同步失败）")
+        func restoreThrowsWithoutStoreSession() async {
+            let plugin = PluginStore()
+            await #expect(throws: (any Error).self) {
+                try await plugin.restore()
+            }
+        }
+
+        @Test("restore 同步成功后落盘为 none")
         func restoreCalibratesEntitlement() async throws {
             let plugin = PluginStore()
             UserDefaults.standard.removeObject(forKey: "store.purchase")
+
+            // 单测进程没有商店会话：替换同步动作，只验证校准与落盘。
+            let original = StoreService.appStoreSync
+            defer { StoreService.appStoreSync = original }
+            StoreService.appStoreSync = {}
 
             try await plugin.restore()
 

@@ -3,14 +3,14 @@ import Observation
 import ProviderAppSettings
 import ProviderFirewallEvents
 
-/// 菜单栏仪表盘的应用列表数据源。
+/// 仪表盘应用列表的数据源。
 ///
 /// 数据来自两条契约：会话开始以来产生过事件的应用 + 当前被禁止的应用；
-/// 合并去重后按「被禁止优先、同组按名称」排序。弹窗是常驻视图，
+/// 合并去重后按「被禁止优先、同组按名称」排序。菜单栏弹窗是常驻视图，
 /// 列表在每次弹窗重新成为 key window 与规则变更后刷新。
 @MainActor
 @Observable
-final class MenuBarDashboardModel {
+final class AppListModel {
     private(set) var apps: [SmartApp] = []
     private(set) var deniedIds: Set<String> = []
 
@@ -91,5 +91,20 @@ final class MenuBarDashboardModel {
 
     func isDenied(_ appId: String) -> Bool {
         deniedIds.contains(appId)
+    }
+
+    /// 订阅规则变更：任一允许/禁止变化后立即重载列表。
+    ///
+    /// 规则变更后不重载会让「允许/禁止」筛选与置顶排序停留在旧快照，
+    /// 与行内已更新的规则颜色互相矛盾。
+    func observeChanges(
+        settings: (any AppSettingsProviding)?,
+        events: (any FirewallEventsProviding)?,
+        since: Date
+    ) async {
+        guard let settings else { return }
+        for await _ in settings.observeChanges() {
+            await load(settings: settings, events: events, since: since)
+        }
     }
 }

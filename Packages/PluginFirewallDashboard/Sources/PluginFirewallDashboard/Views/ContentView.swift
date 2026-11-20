@@ -18,10 +18,13 @@ public struct ContentView: View {
     @Environment(\.networkSpeedProvider) private var networkSpeed
     @Environment(\.sessionStartDate) private var sessionStartDate
 
-    @State private var model = MenuBarDashboardModel()
+    @State private var model = AppListModel()
     @State private var firewallState: FirewallState?
     @State private var speeds: [AppNetworkSpeed] = []
+    /// 菜单栏弹窗的呈现会话：弹窗关闭时复位选中的应用。
+    @State private var presentationSession = PopoverPresentationSession()
 
+    @MainActor
     public init() {}
 
     public var body: some View {
@@ -30,17 +33,37 @@ public struct ContentView: View {
                 GuideView(state: resolvedState, showsBackdrop: false)
                     .padding(.vertical, 8)
             } else if let app = selectedApp {
-                MenuBarAppDetailView(app: app) {
-                    ui.clearSelectedApp()
-                }
+                MenuBarAppDetailView(
+                    app: app,
+                    onBack: { ui.clearSelectedApp() },
+                    onRuleChange: refresh
+                )
             } else {
                 listContent
             }
+        }
+        // 升级引导覆盖在当前子视图之上：达到免费版限制时提示必须立刻可见，
+        // 不能因为停留在应用详情页而被隐藏。
+        .overlay {
+            // 升级引导覆盖在当前子视图之上：达到免费版限制时提示必须立刻可见，
+            // 不能因为停留在应用详情页而被隐藏。
+            UpgradeGuideOverlay(state: resolvedState)
         }
         // 列表与详情固定高度避免切换时弹窗跳动；引导内容按自然高度完整展示，
         // 不出现滚动条。
         .frame(height: isShowingGuide ? nil : 360, alignment: .top)
         .onAppear(perform: refresh)
+        .onAppear {
+            // 选中的应用属于「本次弹窗呈现」：弹窗关闭时复位，
+            // 否则下次打开会停在上一次的应用详情。
+            let provider = ui
+            presentationSession.onEnd = { provider.clearSelectedApp() }
+        }
+        .background(
+            WindowAccessor { window in
+                presentationSession.attach(window: window)
+            }
+        )
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
             refresh()
         }

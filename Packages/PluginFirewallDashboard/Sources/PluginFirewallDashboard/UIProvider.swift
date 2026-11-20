@@ -20,6 +20,18 @@ public final class UIProvider: ObservableObject {
     public func clearSelectedApp() {
         selectedAppId = nil
     }
+
+    /// 升级引导是否需要覆盖在当前子视图之上。
+    ///
+    /// 停留在应用详情页时达到免费版限制，引导必须覆盖在详情之上才可见。
+    public var showsUpgradeOverlay: Bool {
+        shouldShowUpgradeGuide && selectedAppId != nil
+    }
+
+    /// 达到免费版限制时的处理：显示升级引导。
+    public func presentUpgradeLimit() {
+        shouldShowUpgradeGuide = true
+    }
     
     /// 显示指定应用的popover，同时隐藏其他应用的popover
     /// - Parameter appId: 要显示popover的应用ID
