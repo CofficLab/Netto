@@ -220,8 +220,9 @@ public final class StoreViewModel: ObservableObject {
         entitlement = StoreService.cachedPurchaseInfo()
     }
 
-    private func refreshPurchasedProducts() async {
-        guard let groups = try? await StoreService.fetchAllProducts() else { return }
+    /// 刷新已购商品集合；失败向上抛出，调用方决定如何呈现。
+    private func refreshPurchasedProducts() async throws {
+        let groups = try await StoreService.fetchAllProducts()
         purchasedProductIDs = await purchasedProductIDs(in: groups)
     }
 
@@ -245,7 +246,8 @@ public final class StoreViewModel: ObservableObject {
             // 购买后用全量校准纠正持有集合，再同步已购标记与权益。
             await StoreService.calibrateFromCurrentEntitlements()
             refreshEntitlement()
-            await refreshPurchasedProducts()
+            // 购买本身已经成功，已购集合刷新失败不应把结果改写成「购买失败」。
+            try? await refreshPurchasedProducts()
             return true
         } catch {
             purchaseError = error
@@ -255,25 +257,35 @@ public final class StoreViewModel: ObservableObject {
 
     // MARK: - Restore
 
-    /// 恢复购买：比较恢复前后的持有集合判定结果。
+    /// 恢复购买：结果由恢复后的账户状态决定。
     public func restore() async {
         guard restoreState != .restoring else { return }
 
         restoreState = .restoring
         restoreError = nil
 
-        let before = purchasedProductIDs
+        let result = await StoreRestoreFlow(
+            sync: { try await StoreService.restorePurchases() },
+            refreshEntitlement: { [weak self] in self?.refreshEntitlement() },
+            refreshPurchasedProducts: { [weak self] in
+                guard let self else { return }
+                try await self.refreshPurchasedProducts()
+            },
+            accountState: { [weak self] in
+                StoreRestoreFlow.AccountState(
+                    hasActiveEntitlement: (self?.entitlement.effectiveTier ?? .none) != .none,
+                    hasPurchasedProducts: !(self?.purchasedProductIDs.isEmpty ?? true)
+                )
+            },
+            reloadProducts: { [weak self] in await self?.loadProducts() }
+        ).run()
 
-        do {
-            try await StoreService.restorePurchases()
-
-            refreshEntitlement()
-            await refreshPurchasedProducts()
-
-            restoreState = purchasedProductIDs != before ? .success : .nothingFound
-
-            await loadProducts()
-        } catch {
+        switch result {
+        case .success:
+            restoreState = .success
+        case .nothingFound:
+            restoreState = .nothingFound
+        case .failed(let error):
             restoreError = error
             restoreState = .failed
         }

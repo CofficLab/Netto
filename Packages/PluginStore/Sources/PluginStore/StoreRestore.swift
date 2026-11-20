@@ -51,3 +51,64 @@ enum StoreRestoreRunner {
         return false
     }
 }
+
+/// 恢复购买在界面层的执行流程。
+///
+/// 结果由**恢复后的账户状态**决定，而不是恢复前后的差值：权益本来就有效的
+/// 用户恢复后差值为零，但恢复确实成功，报「没有购买记录」与事实相反。
+@MainActor
+struct StoreRestoreFlow {
+
+    /// 恢复后的账户状态。
+    struct AccountState: Equatable {
+        /// 存在生效的付费权益。
+        var hasActiveEntitlement: Bool
+        /// 存在已购买的商品。
+        var hasPurchasedProducts: Bool
+
+        /// 账户上是否存在可识别的购买。
+        var hasAnyPurchase: Bool { hasActiveEntitlement || hasPurchasedProducts }
+    }
+
+    /// 流程结果。
+    enum Result {
+        /// 恢复成功，账户上确实有购买。
+        case success
+        /// 恢复完成，但账户上没有任何购买。
+        case nothingFound
+        /// 恢复失败。
+        case failed(Error)
+    }
+
+    /// 与 App Store 同步凭据。
+    let sync: () async throws -> Void
+    /// 刷新权益快照。
+    let refreshEntitlement: () -> Void
+    /// 刷新已购商品集合；失败必须上报，不能静默吞掉。
+    let refreshPurchasedProducts: () async throws -> Void
+    /// 读取恢复后的账户状态。
+    let accountState: () -> AccountState
+    /// 重新加载商品列表。
+    let reloadProducts: () async -> Void
+
+    func run() async -> Result {
+        do {
+            try await sync()
+        } catch {
+            return .failed(error)
+        }
+
+        refreshEntitlement()
+
+        do {
+            try await refreshPurchasedProducts()
+        } catch {
+            return .failed(error)
+        }
+
+        let state = accountState()
+        await reloadProducts()
+
+        return state.hasAnyPurchase ? .success : .nothingFound
+    }
+}
