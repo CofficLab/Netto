@@ -1,36 +1,94 @@
 import Foundation
 import KernelCore
 import ProviderPersistence
+import ProviderStorage
 import SwiftData
 import XCTest
 @testable import PluginPersistence
 
-/// 持久化 schema 测试：模型属性与旧版一致、内存容器可用、服务注册。
+/// 持久化插件测试：独立容器注册、按插件目录建库、schema 往返。
 @MainActor
 final class PersistenceTests: XCTestCase {
 
-    private func makeContainer() throws -> ModelContainer {
-        try PersistenceService.inMemoryContainer()
+    private func makeTempRoot() -> URL {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("NettoPersistenceTests-\(UUID().uuidString)", isDirectory: true)
+        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        return url
     }
 
-    func testSchemaStoresAppSetting() throws {
-        let container = try makeContainer()
+    func testInjectedContainersRegisterSeparateProviders() throws {
+        let kernel = KernelCoreContainer()
+        let eventStoreContainer = try PersistenceContainers.inMemoryEventStore()
+        let appSettingsContainer = try PersistenceContainers.inMemoryAppSettings()
+        let plugin = PersistencePlugin(
+            eventStoreContainer: eventStoreContainer,
+            appSettingsContainer: appSettingsContainer
+        )
+
+        try kernel.start(plugins: [plugin])
+
+        let eventService = kernel.resolveProvider(EventStorePersistenceProviding.self)
+        let settingsService = kernel.resolveProvider(AppSettingsPersistenceProviding.self)
+        XCTAssertTrue(eventService?.container === eventStoreContainer)
+        XCTAssertTrue(settingsService?.container === appSettingsContainer)
+
+        try kernel.stop()
+        XCTAssertNil(kernel.resolveProvider(EventStorePersistenceProviding.self))
+        XCTAssertNil(kernel.resolveProvider(AppSettingsPersistenceProviding.self))
+    }
+
+    func testProductionCreatesOneDatabasePerPluginDirectory() throws {
+        let root = makeTempRoot()
+        let kernel = KernelCoreContainer()
+        try kernel.registerProvider(
+            (any StorageProviding).self,
+            DefaultStorageProvider(dataRootDirectory: root)
+        )
+        // 不存在的旧库路径：避免测试进程读取开发者真实 Documents 数据。
+        let plugin = PersistencePlugin(
+            legacyDatabaseURL: root.appendingPathComponent("missing-legacy.sqlite")
+        )
+
+        try kernel.start(plugins: [plugin])
+
+        let fileManager = FileManager.default
+        let eventsURL = root
+            .appendingPathComponent(PersistenceConfig.eventsPluginID, isDirectory: true)
+            .appendingPathComponent(PersistenceConfig.eventsFileName)
+        let settingsURL = root
+            .appendingPathComponent(PersistenceConfig.settingsPluginID, isDirectory: true)
+            .appendingPathComponent(PersistenceConfig.settingsFileName)
+        XCTAssertTrue(fileManager.fileExists(atPath: eventsURL.path))
+        XCTAssertTrue(fileManager.fileExists(atPath: settingsURL.path))
+        XCTAssertNotNil(kernel.resolveProvider(EventStorePersistenceProviding.self))
+        XCTAssertNotNil(kernel.resolveProvider(AppSettingsPersistenceProviding.self))
+
+        try kernel.stop()
+    }
+
+    func testProductionFailsWithoutStorageProvider() {
+        let kernel = KernelCoreContainer()
+        XCTAssertThrowsError(try kernel.start(plugins: [PersistencePlugin()]))
+        XCTAssertEqual(kernel.lifecycleState, .failed)
+    }
+
+    func testSchemaStoresAppSettingInSettingsContainer() throws {
+        let container = try PersistenceContainers.inMemoryAppSettings()
         let context = ModelContext(container)
-        let setting = AppSetting(appId: "com.example", allowed: false)
-        context.insert(setting)
+        context.insert(AppSetting(appId: "com.example", allowed: false))
         try context.save()
 
-        let fetch = FetchDescriptor<AppSetting>()
-        let all = try context.fetch(fetch)
+        let all = try context.fetch(FetchDescriptor<AppSetting>())
         XCTAssertEqual(all.count, 1)
         XCTAssertEqual(all.first?.appId, "com.example")
         XCTAssertEqual(all.first?.allowed, false)
     }
 
     func testSchemaStoresFirewallEventWithLegacyRawValues() throws {
-        let container = try makeContainer()
+        let container = try PersistenceContainers.inMemoryEventStore()
         let context = ModelContext(container)
-        let event = FirewallEventModel(
+        context.insert(FirewallEventModel(
             id: "e1",
             time: Date(timeIntervalSince1970: 1_700_000_000),
             address: "example.com",
@@ -38,42 +96,14 @@ final class PersistenceTests: XCTestCase {
             sourceAppIdentifier: "com.example",
             statusRawValue: 1,
             directionRawValue: 2
-        )
-        context.insert(event)
+        ))
         try context.save()
 
-        let fetch = FetchDescriptor<FirewallEventModel>()
-        let all = try context.fetch(fetch)
+        let all = try context.fetch(FetchDescriptor<FirewallEventModel>())
         XCTAssertEqual(all.count, 1)
         XCTAssertEqual(all.first?.id, "e1")
         XCTAssertEqual(all.first?.statusRawValue, 1)   // rejected
         XCTAssertEqual(all.first?.directionRawValue, 2) // outbound
         XCTAssertEqual(all.first?.isAllowed, false)
-    }
-
-    func testMultipleSettingsCoexist() throws {
-        let container = try makeContainer()
-        let context = ModelContext(container)
-        context.insert(AppSetting(appId: "a", allowed: true))
-        context.insert(AppSetting(appId: "b", allowed: false))
-        try context.save()
-
-        let fetch = FetchDescriptor<AppSetting>()
-        let all = try context.fetch(fetch)
-        XCTAssertEqual(Set(all.map(\.appId)), ["a", "b"])
-    }
-
-    func testPersistencePluginRegistersService() throws {
-        let kernel = KernelCoreContainer()
-        // 注入内存容器：生产路径依赖 App 沙箱容器（~/Documents/debug/db.sqlite），
-        // 单元测试进程拿不到该容器会在创建 ModelContainer 时 fatalError。
-        let plugin = PersistencePlugin(container: try makeContainer())
-        try kernel.start(plugins: [plugin])
-        XCTAssertNotNil(kernel.resolveProvider(PersistenceProviding.self))
-        // PersistenceProviding 的 container 与生产 schema 一致。
-        let service = kernel.resolveProvider(PersistenceProviding.self)
-        XCTAssertNotNil(service?.container)
-        try kernel.stop()
-        XCTAssertNil(kernel.resolveProvider(PersistenceProviding.self))
     }
 }

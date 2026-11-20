@@ -22,8 +22,9 @@ import SwiftUI
 /// 依赖约束：
 /// - 依赖持久化路径配置、LumiUI 组件与系统框架（AppKit），
 ///   不依赖任何 Provider 契约注入 —— entry 视图由 KernelCore 解析链提供。
-/// - 不创建任何核心服务；数据目录口径由 PersistenceConfig 统一维护
-///   （Debug `~/Documents/debug`，Release 沙盒容器内 production）。
+/// - 数据目录由 `HostSettingsPlugin` 从 `StorageProviding` 注入
+///   （`<App Support>/<bundleID>/db_<debug|production>_v<主版本>/`），
+///   不再自行拼接 Documents 路径。
 ///
 /// 线程/actor：`View`，body 求值无副作用；按钮动作在主线程执行。
 struct GeneralSettingsView: View {
@@ -33,8 +34,12 @@ struct GeneralSettingsView: View {
     /// App bundle 元数据（名称 / 包名 / 版本 / 构建）。
     private let bundleInfo = AppBundleInfo()
 
-    /// 数据目录（与持久化插件使用同一配置）。
-    private var dataFolder: URL { PersistenceConfig.databaseFolder }
+    /// 数据根目录（由插件从 `StorageProviding` 注入；nil 时显示占位）。
+    private let dataRootDirectory: URL?
+
+    init(dataRootDirectory: URL? = nil) {
+        self.dataRootDirectory = dataRootDirectory
+    }
 
     var body: some View {
         AppSettingsContentScaffold(maxContentWidth: nil) {
@@ -121,7 +126,7 @@ struct GeneralSettingsView: View {
 
                 AppSettingRow(
                     title: "数据目录",
-                    description: dataFolder.path,
+                    description: dataRootDirectory?.path ?? "—",
                     icon: "folder"
                 ) {
                     AppButton(
@@ -130,7 +135,8 @@ struct GeneralSettingsView: View {
                         style: .secondary,
                         size: .small
                     ) {
-                        NSWorkspace.shared.activateFileViewerSelecting([dataFolder])
+                        guard let dataRootDirectory else { return }
+                        NSWorkspace.shared.activateFileViewerSelecting([dataRootDirectory])
                     }
                 }
             }

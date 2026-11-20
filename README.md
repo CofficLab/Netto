@@ -64,6 +64,6 @@ Download the latest release from the [App Store](https://apps.apple.com/cn/app/t
 
 1. Open `TravelMode.xcodeproj` and select the `TravelMode` scheme.
 2. Build and run from Xcode, or install the built `TravelMode.app` into `/Applications` and approve the system extension in **System Settings → General → Login Items & Extensions**.
-3. Debug builds keep their data under `~/Documents/debug`; release builds use the sandbox container.
+3. Debug builds keep their data under `~/Library/Application Support/com.yueyi.TravelMode/db_debug_v3/`; release builds use `db_production_v3/`. Each data plugin owns its own SQLite file (`eventstore/events.sqlite`, `appsettings/settings.sqlite`).
 
 `README-DEV.md` covers the architecture, build products, and debugging notes in Chinese.

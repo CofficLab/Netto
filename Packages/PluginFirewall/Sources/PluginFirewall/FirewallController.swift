@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import NetworkExtension
 import OSLog
@@ -26,6 +27,7 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     private let logger = Logger(subsystem: "com.yueyi.TravelMode.PluginFirewall", category: "firewall")
 
     private var filterObserverToken: Any?
+    private var appActivationObserverToken: Any?
     private var snapshotContinuations: [UUID: AsyncStream<FirewallSnapshot>.Continuation] = [:]
     private var awaitingApproval = false
 
@@ -71,6 +73,8 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
 
         do {
             let enabled = try await system.loadFilterEnabled()
+            // 扩展未就绪时保留引导状态，避免与异步属性回调竞争后被过滤器结果覆盖。
+            guard !Self.isExtensionGateState(state) else { return }
             updateState(enabled ? .running : .stopped)
         } catch {
             updateState(failure(error))
@@ -168,11 +172,23 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
 
     // MARK: - 观察者与 daemon（onReady/onShutdown 生命周期）
 
-    /// 注册过滤器配置变更观察者（旧 setObserver）。
+    /// 注册过滤器配置变更观察者（旧 setObserver）与应用激活观察者。
+    ///
+    /// 应用激活时必须重算状态：用户可能刚从系统设置里启用/禁用了扩展，
+    /// 仅靠系统扩展事件会在启用完成前触发查询而读到旧值。
     func startObserving() {
         guard filterObserverToken == nil else { return }
         filterObserverToken = system.addFilterConfigurationObserver { [weak self] enabled in
             self?.updateState(enabled ? .running : .stopped)
+        }
+        appActivationObserverToken = NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                await self?.refresh()
+            }
         }
     }
 
@@ -181,10 +197,14 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     /// 2. 加载过滤器配置（失败仅记录，不阻断）。
     /// 3. 与 Extension 建立 IPC 关联。
     func startDaemon() async {
-        system.registerWorkspaceObserver { [weak self] in
+        system.registerWorkspaceObserver { [weak self] isBecomingEnabled in
             guard let self else { return }
             Task { @MainActor in
-                _ = await self.registerIPC()
+                if isBecomingEnabled {
+                    _ = await self.registerIPC()
+                }
+                // 启用/禁用/删除都必须重算状态，否则引导会停留在过期状态。
+                await self.refresh()
             }
         }
 
@@ -210,6 +230,10 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
             system.removeFilterConfigurationObserver(token)
             filterObserverToken = nil
         }
+        if let token = appActivationObserverToken {
+            NotificationCenter.default.removeObserver(token)
+            appActivationObserverToken = nil
+        }
         system.unregisterWorkspaceObserver()
         ipc.unregister()
         snapshotContinuations.values.forEach { $0.finish() }
@@ -220,11 +244,22 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
 
     func systemExtensionActivationCompleted() {
         awaitingApproval = false
-        // 旧行为：未就绪态（未安装/需更新/待审批）回落 stopped。
-        if state == .systemExtensionNotInstalled
-            || state == .systemExtensionNeedsUpdate
-            || state == .systemExtensionApprovalNeeded {
+        // 旧行为：未就绪态（未安装/需更新/待审批/未激活）回落 stopped。
+        if Self.isExtensionGateState(state) {
             updateState(.stopped)
+        }
+    }
+
+    /// 仅由「系统扩展未就绪」推导出的状态；扩展确认已启用后必须清除。
+    private static func isExtensionGateState(_ state: FirewallState) -> Bool {
+        switch state {
+        case .extensionNotActivated,
+             .systemExtensionNotInstalled,
+             .systemExtensionNeedsUpdate,
+             .systemExtensionApprovalNeeded:
+            return true
+        default:
+            return false
         }
     }
 
@@ -246,25 +281,27 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         // 旧行为：跳过正在卸载的扩展参与当前/最新版本判断。
         let active = properties.filter { !$0.isUninstalling }
 
-        var currentVersionInstalled: SystemExtensionPropertyInfo?
+        // 同一版本可能残留多份拷贝（替换 App 后待重启清理），优先采用已启用的一份；
+        // 否则会把「已激活」误判为「未激活」。
+        let matching = active.filter { $0.bundleVersion == currentVersion.version }
+        let currentVersionInstalled = matching.first(where: { $0.isEnabled }) ?? matching.first
+
         var latestVersion: String = ""
         var latestProperty: SystemExtensionPropertyInfo?
 
-        for property in active {
-            if property.bundleVersion == currentVersion.version {
-                currentVersionInstalled = property
-            }
-            if property.bundleVersion > latestVersion {
-                latestVersion = property.bundleVersion
-                latestProperty = property
-            }
+        for property in active where property.bundleVersion > latestVersion {
+            latestVersion = property.bundleVersion
+            latestProperty = property
         }
 
         if let currentInstalled = currentVersionInstalled {
-            // 旧行为：保持现有状态；未激活则覆盖。
             var nextState = state
             if currentInstalled.isEnabled == false {
                 nextState = .extensionNotActivated
+            } else if Self.isExtensionGateState(state) {
+                // 扩展确认已启用：清除仅由「扩展未就绪」推导出的状态，
+                // 运行/停止交由 refresh 的过滤器读取决定。
+                nextState = .stopped
             }
             updateState(nextState)
         } else {

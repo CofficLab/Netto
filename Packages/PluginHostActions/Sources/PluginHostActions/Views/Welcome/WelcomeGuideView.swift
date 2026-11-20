@@ -41,7 +41,7 @@ public struct WelcomeGuideView: View {
                 if currentStep == 0 {
                     stepView(
                         title: "菜单栏访问",
-                        description: "应用运行后，您可以通过点击菜单栏中的网络图标来访问主界面。",
+                        description: "应用运行后，您可以通过点击菜单栏中的应用图标来访问主界面。",
                         icon: "menubar.rectangle",
                         color: theme.success,
                         customContent: {

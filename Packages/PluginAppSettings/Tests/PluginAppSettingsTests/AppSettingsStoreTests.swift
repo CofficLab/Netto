@@ -11,7 +11,7 @@ import XCTest
 final class AppSettingsStoreTests: XCTestCase {
 
     private func makeStore() throws -> (AppSettingsStore, ModelContainer) {
-        let container = try PersistenceService.inMemoryContainer()
+        let container = try PersistenceContainers.inMemoryAppSettings()
         return (AppSettingsStore(container: container), container)
     }
 
@@ -84,9 +84,11 @@ final class AppSettingsStoreTests: XCTestCase {
 
     func testPluginRegistersProvider() throws {
         let kernel = KernelCoreContainer()
-        // 注入内存容器：生产路径依赖 App 沙箱容器（~/Documents/debug/db.sqlite），
-        // 单元测试进程没有该容器会在 ModelContainer 创建时 fatalError。
-        let persistence = PersistencePlugin(container: try PersistenceService.inMemoryContainer())
+        // 注入内存容器：生产模式会从 StorageProviding 解析插件目录并写盘。
+        let persistence = PersistencePlugin(
+            eventStoreContainer: try PersistenceContainers.inMemoryEventStore(),
+            appSettingsContainer: try PersistenceContainers.inMemoryAppSettings()
+        )
         try kernel.start(plugins: [persistence, PluginAppSettings()])
         XCTAssertNotNil(kernel.resolveProvider(AppSettingsProviding.self))
         let store = kernel.resolveProvider(AppSettingsProviding.self)

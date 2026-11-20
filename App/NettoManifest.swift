@@ -187,7 +187,7 @@ enum NettoManifest {
     static func makePlugins() -> [any SuperPlugin] {
         [
             BrandLogoPlugin(),        // order 20：向菜单栏贡献品牌图标（LogoProviding）
-            PersistencePlugin(),      // order 1：db.sqlite / ModelContainer 唯一所有者
+            PersistencePlugin(),      // order 1：各数据插件独立 SQLite 容器的唯一创建者
             // 设置窗口外壳（与 Lumi / Wakey 同款）：替换默认
             // DefaultSettingViewProviding，侧边栏顶部渲染 App 图标、名称、版本与构建号。
             PluginSettingView(id: "com.yueyi.TravelMode.plugin.setting-view"), // order 3

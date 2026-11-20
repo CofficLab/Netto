@@ -175,12 +175,39 @@ final class FirewallControllerBranchTests: XCTestCase {
         XCTAssertEqual(ipc.registerCount, 1)
 
         // 工作区观察者回调（扩展即将启用）应重新建立 IPC 关联。
-        system.workspaceHandler?()
+        system.workspaceHandler?(true)
 
         // 回调经 Task { @MainActor } 跳转，留出一次让出即可完成。
         await Task.yield()
         await Task.yield()
         XCTAssertEqual(ipc.registerCount, 2)
+    }
+
+    func testWorkspaceCallbackReevaluatesExtensionState() async {
+        let (controller, system, _, _, _) = makeController()
+        await controller.startDaemon()
+
+        // 用户在系统设置中启用扩展：需要重新查询属性并重算状态，
+        // 否则引导会一直停在「需要激活系统扩展」。
+        system.workspaceHandler?(true)
+        await Task.yield()
+        await Task.yield()
+
+        XCTAssertEqual(system.submittedRequests, [.properties])
+    }
+
+    func testWorkspaceDisableCallbackReevaluatesWithoutIPCReregister() async {
+        let (controller, system, ipc, _, _) = makeController()
+        await controller.startDaemon()
+        XCTAssertEqual(ipc.registerCount, 1)
+
+        // 扩展被禁用/删除：只需重算状态，不再尝试重建 IPC。
+        system.workspaceHandler?(false)
+        await Task.yield()
+        await Task.yield()
+
+        XCTAssertEqual(ipc.registerCount, 1)
+        XCTAssertEqual(system.submittedRequests, [.properties])
     }
 
     func testStartDaemonLoadFailureIsNotFatal() async {
@@ -606,7 +633,27 @@ final class WorkspaceObserverBridgeTests: XCTestCase {
 
     func testInitStoresHandler() {
         guard #available(macOS 15.1, *) else { return }
-        let bridge = WorkspaceObserverBridge(handler: {})
+        let bridge = WorkspaceObserverBridge(handler: { _ in })
         XCTAssertNotNil(bridge)
+    }
+
+    func testDisableAndInactiveReportFalse() async {
+        guard #available(macOS 15.1, *) else { return }
+        let exp = expectation(description: "handler")
+        exp.expectedFulfillmentCount = 2
+        let box = ValueBox()
+        let bridge = WorkspaceObserverBridge(handler: { box.values.append($0); exp.fulfill() })
+
+        let info = OSSystemExtensionInfo()
+        bridge.systemExtensionWillBecomeDisabled(info)
+        bridge.systemExtensionWillBecomeInactive(info)
+
+        await fulfillment(of: [exp], timeout: 2)
+        XCTAssertEqual(box.values, [false, false])
+    }
+
+    /// 跨隔离回调结果收集盒。
+    private final class ValueBox: @unchecked Sendable {
+        var values: [Bool] = []
     }
 }

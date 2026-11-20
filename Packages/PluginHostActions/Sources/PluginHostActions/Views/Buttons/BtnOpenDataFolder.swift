@@ -1,12 +1,15 @@
+import AppKit
 import LumiUI
-import ProviderPersistence
 import SwiftUI
 
 struct BtnOpenDataFolder: View {
+    /// 数据根目录（由 `HostDataFolderPlugin` 从 `StorageProviding` 注入）。
+    let directory: URL?
+
     var body: some View {
         AppButton("打开数据目录", systemImage: "gearshape", style: .primary, fillsWidth: true, action: {
-            let folder = PersistenceConfig.databaseFolder
-            NSWorkspace.shared.open(folder)
+            guard let directory else { return }
+            NSWorkspace.shared.open(directory)
         })
         .frame(width: 150)
         .frame(height: 50)
@@ -14,5 +17,5 @@ struct BtnOpenDataFolder: View {
 }
 
 #Preview {
-    BtnOpenDataFolder()
+    BtnOpenDataFolder(directory: nil)
 }

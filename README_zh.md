@@ -64,6 +64,6 @@ Extension/ + Bridge/         独立的 Network Extension 进程与 IPC 边界
 
 1. 打开 `TravelMode.xcodeproj`，选择 `TravelMode` scheme。
 2. 在 Xcode 中直接运行，或把构建出的 `TravelMode.app` 放入 `/Applications`，并在**系统设置 → 通用 → 登录项与扩展**中批准系统扩展。
-3. Debug 构建的数据目录为 `~/Documents/debug`；Release 构建使用沙盒容器。
+3. Debug 构建的数据目录为 `~/Library/Application Support/com.yueyi.TravelMode/db_debug_v3/`；Release 构建使用 `db_production_v3/`。每个数据插件使用自己的 SQLite 文件（`eventstore/events.sqlite`、`appsettings/settings.sqlite`）。
 
 构建产物、架构与调试细节见 [README-DEV.md](README-DEV.md)。

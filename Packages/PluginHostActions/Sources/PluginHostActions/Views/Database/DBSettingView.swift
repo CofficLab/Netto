@@ -2,7 +2,6 @@ import AppKit
 import LumiUI
 import SwiftUI
 import ProviderAppSettings
-import ProviderPersistence
 import ProviderViewEnvironment
 import OSLog
 
@@ -19,8 +18,12 @@ struct DBSettingView: View {
     /// 设置契约来源：注入优先，其次环境。
     private var settings: AppSettingsProviding? { injectedSettings ?? envSettings }
 
-    init(settings: AppSettingsProviding? = nil) {
+    /// 设置库所在目录（由插件从 `StorageProviding` 注入；nil 时按钮不可用）。
+    private let settingsDirectory: URL?
+
+    init(settings: AppSettingsProviding? = nil, settingsDirectory: URL? = nil) {
         self.injectedSettings = settings
+        self.settingsDirectory = settingsDirectory
     }
 
     /// 规则快照（契约 DTO）
@@ -132,7 +135,8 @@ struct DBSettingView: View {
             )
 
             AppButton("Finder中显示", systemImage: "folder", style: .secondary, size: .small) {
-                NSWorkspace.shared.open(PersistenceConfig.databaseFolder)
+                guard let settingsDirectory else { return }
+                NSWorkspace.shared.open(settingsDirectory)
             }
 
             // 统计信息

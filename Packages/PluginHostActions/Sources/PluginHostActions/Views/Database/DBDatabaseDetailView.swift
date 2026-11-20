@@ -16,10 +16,19 @@ struct DBDatabaseDetailView: View {
 
     private let events: FirewallEventsProviding?
     private let settings: AppSettingsProviding?
+    private let eventsDirectory: URL?
+    private let settingsDirectory: URL?
 
-    init(events: FirewallEventsProviding?, settings: AppSettingsProviding?) {
+    init(
+        events: FirewallEventsProviding?,
+        settings: AppSettingsProviding?,
+        eventsDirectory: URL? = nil,
+        settingsDirectory: URL? = nil
+    ) {
         self.events = events
         self.settings = settings
+        self.eventsDirectory = eventsDirectory
+        self.settingsDirectory = settingsDirectory
     }
 
     var body: some View {
@@ -44,12 +53,16 @@ struct DBDatabaseDetailView: View {
 
             AppSettingsDivider()
 
-            ScrollView {
-                VStack(spacing: 0) {
-                    DBEventView(events: events)
-                    AppSettingsDivider()
-                    DBSettingView(settings: settings)
-                }
+            // 不使用外层 ScrollView：`Table` 自带滚动，嵌在 ScrollView 中
+            // 拿不到固有高度会被压成 0 高度（列头与行都不渲染）。
+            VStack(spacing: 0) {
+                DBEventView(events: events, eventsDirectory: eventsDirectory)
+                    .frame(maxHeight: .infinity)
+
+                AppSettingsDivider()
+
+                DBSettingView(settings: settings, settingsDirectory: settingsDirectory)
+                    .frame(height: 300)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

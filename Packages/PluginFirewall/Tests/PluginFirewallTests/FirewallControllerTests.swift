@@ -25,7 +25,7 @@ final class MockSystemAdapter: FirewallSystemAdapting {
     private(set) var disableCount = 0
     private(set) var submittedRequests: [SystemExtensionRequestKind] = []
     var observerHandler: (@MainActor @Sendable (Bool) -> Void)?
-    var workspaceHandler: (@MainActor @Sendable () -> Void)?
+    var workspaceHandler: (@MainActor @Sendable (Bool) -> Void)?
     private(set) var workspaceRegistered = false
     private(set) var workspaceUnregistered = false
 
@@ -69,7 +69,7 @@ final class MockSystemAdapter: FirewallSystemAdapting {
         submittedRequests.append(kind)
     }
 
-    func registerWorkspaceObserver(handler: @escaping @MainActor @Sendable () -> Void) {
+    func registerWorkspaceObserver(handler: @escaping @MainActor @Sendable (Bool) -> Void) {
         workspaceHandler = handler
         workspaceRegistered = true
     }
@@ -215,6 +215,42 @@ final class FirewallControllerTests: XCTestCase {
         XCTAssertEqual(controller.snapshot.state, .systemExtensionNotInstalled)
     }
 
+    func testExtensionGateClearsWhenCurrentVersionBecomesEnabled() async {
+        let (controller, _, _, _, _) = makeController()
+        let disabled = SystemExtensionPropertyInfo(
+            bundleIdentifier: "ext", bundleVersion: "1.0", bundleShortVersion: "1.0",
+            urlPath: "/x", isEnabled: false, isAwaitingUserApproval: false, isUninstalling: false
+        )
+        let enabled = SystemExtensionPropertyInfo(
+            bundleIdentifier: "ext", bundleVersion: "1.0", bundleShortVersion: "1.0",
+            urlPath: "/x", isEnabled: true, isAwaitingUserApproval: false, isUninstalling: false
+        )
+        controller.systemExtensionProperties([disabled])
+        XCTAssertEqual(controller.snapshot.state, .extensionNotActivated)
+
+        // 用户在系统设置中启用后重新查询属性：未激活状态必须清除。
+        controller.systemExtensionProperties([enabled])
+        XCTAssertEqual(controller.snapshot.state, .stopped)
+    }
+
+    func testDuplicateCurrentVersionCopiesPreferEnabledOne() async {
+        let (controller, _, _, _, _) = makeController()
+        let disabled = SystemExtensionPropertyInfo(
+            bundleIdentifier: "ext", bundleVersion: "1.0", bundleShortVersion: "1.0",
+            urlPath: "/stale", isEnabled: false, isAwaitingUserApproval: false, isUninstalling: false
+        )
+        let enabled = SystemExtensionPropertyInfo(
+            bundleIdentifier: "ext", bundleVersion: "1.0", bundleShortVersion: "1.0",
+            urlPath: "/active", isEnabled: true, isAwaitingUserApproval: false, isUninstalling: false
+        )
+        controller.systemExtensionProperties([disabled])
+        XCTAssertEqual(controller.snapshot.state, .extensionNotActivated)
+
+        // 待重启清理的旧拷贝排在后面时，不能再覆盖「已启用」的判定。
+        controller.systemExtensionProperties([enabled, disabled])
+        XCTAssertEqual(controller.snapshot.state, .stopped)
+    }
+
     func testNeedsUserApprovalState() async {
         let (controller, _, _, _, _) = makeController()
         controller.systemExtensionNeedsUserApproval()
@@ -292,6 +328,21 @@ final class FirewallControllerTests: XCTestCase {
         await controller.refresh()
         XCTAssertEqual(system.submittedRequests, [.properties])
         XCTAssertEqual(controller.snapshot.state, .running)
+    }
+
+    func testRefreshDoesNotOverrideExtensionGateState() async {
+        let (controller, system, _, _, _) = makeController()
+        let disabled = SystemExtensionPropertyInfo(
+            bundleIdentifier: "ext", bundleVersion: "1.0", bundleShortVersion: "1.0",
+            urlPath: "/x", isEnabled: false, isAwaitingUserApproval: false, isUninstalling: false
+        )
+        controller.systemExtensionProperties([disabled])
+        XCTAssertEqual(controller.snapshot.state, .extensionNotActivated)
+
+        // 扩展未激活时，过滤器读取结果不能把引导状态覆盖成运行/停止。
+        system.filterEnabled = true
+        await controller.refresh()
+        XCTAssertEqual(controller.snapshot.state, .extensionNotActivated)
     }
 
     func testFilterObserverUpdateDrivesState() async throws {
