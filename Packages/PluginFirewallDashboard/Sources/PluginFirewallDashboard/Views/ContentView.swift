@@ -33,12 +33,21 @@ public struct ContentView: View {
                 GuideView(state: resolvedState, showsBackdrop: false)
                     .padding(.vertical, 8)
             } else if let app = selectedApp {
-                MenuBarAppDetailView(app: app) {
-                    ui.clearSelectedApp()
-                }
+                MenuBarAppDetailView(
+                    app: app,
+                    onBack: { ui.clearSelectedApp() },
+                    onRuleChange: refresh
+                )
             } else {
                 listContent
             }
+        }
+        // 升级引导覆盖在当前子视图之上：达到免费版限制时提示必须立刻可见，
+        // 不能因为停留在应用详情页而被隐藏。
+        .overlay {
+            // 升级引导覆盖在当前子视图之上：达到免费版限制时提示必须立刻可见，
+            // 不能因为停留在应用详情页而被隐藏。
+            UpgradeGuideOverlay(state: resolvedState)
         }
         // 列表与详情固定高度避免切换时弹窗跳动；引导内容按自然高度完整展示，
         // 不出现滚动条。

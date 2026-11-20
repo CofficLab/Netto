@@ -102,29 +102,20 @@ public struct AppAction: View {
 extension AppActionContent {
     private func deny() {
         guard let repo else { return }
+        let entitlement = store?.entitlement ?? .none
         Task {
             do {
-                // 阶段 7：经 StoreProviding 契约读取权益快照（替代 StoreService 静态访问）
-                let entitlement = store?.entitlement ?? .none
-
-                os_log("\(self.t)🔐 当前权限 tier -> \(entitlement.tier.rawValue)")
-                os_log("\(self.t)⏰ 过期时间 -> \(String(describing: entitlement.expiresAt))")
-
-                // 如果不是 Pro，检查禁止数量限制
-                if !entitlement.isProOrHigher {
-                    let deniedCount = try await repo.deniedAppsCount()
-                    if deniedCount >= 5 {
-                        await MainActor.run {
-                            self.showUpgradeGuide()
-                        }
-                        return
-                    }
+                let outcome = try await DenyOperation(
+                    repo: repo,
+                    entitlement: entitlement,
+                    ui: ui,
+                    shell: shell,
+                    appId: appId,
+                    onRuleChange: onRuleChange
+                ).run()
+                if outcome == .denied {
+                    self.shouldAllow = false
                 }
-                
-                try await repo.setDeny(appId)
-                self.shouldAllow = false
-                self.onRuleChange?()
-                shell.post(ToastMessage(description: "已禁止"))
             } catch let error {
                 os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
                 shell.postError(error.localizedDescription)
@@ -147,10 +138,6 @@ extension AppActionContent {
         }
     }
     
-    private func showUpgradeGuide() {
-        // 显示升级引导界面
-        ui.showUpgradeGuide()
-    }
 }
 
 #Preview("APP") {

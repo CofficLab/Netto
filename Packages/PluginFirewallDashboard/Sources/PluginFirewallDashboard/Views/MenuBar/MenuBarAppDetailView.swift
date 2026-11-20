@@ -17,6 +17,8 @@ struct MenuBarAppDetailView: View {
 
     let app: SmartApp
     let onBack: () -> Void
+    /// 规则变更后回调（列表需要重新加载以反映最新状态）。
+    var onRuleChange: (() -> Void)?
 
     @State private var model = EventDetailModel()
     @State private var currentPage = 0
@@ -62,7 +64,7 @@ struct MenuBarAppDetailView: View {
 
                 Spacer(minLength: 4)
 
-                AppAction(shouldAllow: $shouldAllow, appId: app.id)
+                AppAction(shouldAllow: $shouldAllow, appId: app.id, onRuleChange: onRuleChange)
                     .accessibilityIdentifier("netto.app.detail.rule")
             }
 
