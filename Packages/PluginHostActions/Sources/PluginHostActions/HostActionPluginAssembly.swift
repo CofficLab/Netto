@@ -1,9 +1,11 @@
 import Foundation
 import KernelCore
+import ProviderPersistence
 import ProviderShell
 import ProviderAppSettings
 import ProviderFirewallEvents
 import ProviderSettingView
+import ProviderStorage
 import LumiUI
 import SwiftUI
 
@@ -99,9 +101,17 @@ final class HostDBPlugin: SuperPlugin {
         }
         let events = kernel.resolveProvider(FirewallEventsProviding.self)
         let settings = kernel.resolveProvider(AppSettingsProviding.self)
+        let storage = kernel.resolveProvider((any StorageProviding).self)
+        let eventsDirectory = storage?.pluginDataDirectory(for: PersistenceConfig.eventsPluginID)
+        let settingsDirectory = storage?.pluginDataDirectory(for: PersistenceConfig.settingsPluginID)
         settingsView.addEntries([
             SettingEntryItem(id: "database", title: "数据库", systemImage: "cylinder.split.1x2", order: 40) {
-                DBDatabaseDetailView(events: events, settings: settings)
+                DBDatabaseDetailView(
+                    events: events,
+                    settings: settings,
+                    eventsDirectory: eventsDirectory,
+                    settingsDirectory: settingsDirectory
+                )
             },
         ])
     }
@@ -134,9 +144,10 @@ final class HostSettingsPlugin: SuperPlugin {
         // 向 SettingViewProviding 注入 SettingEntryItem，Factory 装配的设置
         // 窗口渲染「左侧入口列表 + 右侧详情视图」）。
         if let settingsView = kernel.resolveProvider(SettingViewProviding.self) {
+            let dataRootDirectory = kernel.resolveProvider((any StorageProviding).self)?.dataRootDirectory
             settingsView.addEntries([
                 SettingEntryItem(id: "general", title: "通用", systemImage: "gearshape", order: 5) {
-                    GeneralSettingsView()
+                    GeneralSettingsView(dataRootDirectory: dataRootDirectory)
                 },
             ])
         }
@@ -194,16 +205,17 @@ final class HostDataFolderPlugin: SuperPlugin {
     func onBoot(kernel: KernelCoreContainer) throws {
         let shell = try kernel.requireProvider(SettingsProviding.self) as? ShellCenter
         guard let shell else { throw KernelCoreError.providerNotFound(type: SettingsProviding.self) }
-        contribute(into: shell)
+        let directory = kernel.resolveProvider((any StorageProviding).self)?.dataRootDirectory
+        contribute(into: shell, directory: directory)
     }
 
-    func contribute(into shell: ShellCenter) {
+    func contribute(into shell: ShellCenter, directory: URL? = nil) {
         shell.registerEntry(SettingsEntry(
             id: "datafolder",
             order: 50,
             ownerPluginID: id
         ) {
-            AnyView(BtnOpenDataFolder())
+            AnyView(BtnOpenDataFolder(directory: directory))
         })
     }
 }

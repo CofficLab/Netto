@@ -2,7 +2,6 @@ import Combine
 import AppKit
 import LumiUI
 import ProviderFirewallEvents
-import ProviderPersistence
 import ProviderViewEnvironment
 import SwiftUI
 
@@ -28,8 +27,12 @@ struct DBEventView: View {
     /// 标题时才开启。
     private let showsNavigationTitle: Bool
 
-    init(events: FirewallEventsProviding? = nil, showsNavigationTitle: Bool = false) {
+    /// 事件库所在目录（由插件从 `StorageProviding` 注入；nil 时按钮不可用）。
+    private let eventsDirectory: URL?
+
+    init(events: FirewallEventsProviding? = nil, eventsDirectory: URL? = nil, showsNavigationTitle: Bool = false) {
         self.injectedRepo = events
+        self.eventsDirectory = eventsDirectory
         self.showsNavigationTitle = showsNavigationTitle
     }
 
@@ -156,7 +159,8 @@ struct DBEventView: View {
                 }
 
                 AppButton("打开数据库文件夹", systemImage: "folder", style: .secondary, size: .small) {
-                    NSWorkspace.shared.open(PersistenceConfig.databaseFolder)
+                    guard let eventsDirectory else { return }
+                    NSWorkspace.shared.open(eventsDirectory)
                 }
             }
             .padding(.horizontal, AppUI.Spacing.md)

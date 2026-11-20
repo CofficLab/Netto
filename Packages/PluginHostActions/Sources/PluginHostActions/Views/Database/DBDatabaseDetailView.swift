@@ -16,10 +16,19 @@ struct DBDatabaseDetailView: View {
 
     private let events: FirewallEventsProviding?
     private let settings: AppSettingsProviding?
+    private let eventsDirectory: URL?
+    private let settingsDirectory: URL?
 
-    init(events: FirewallEventsProviding?, settings: AppSettingsProviding?) {
+    init(
+        events: FirewallEventsProviding?,
+        settings: AppSettingsProviding?,
+        eventsDirectory: URL? = nil,
+        settingsDirectory: URL? = nil
+    ) {
         self.events = events
         self.settings = settings
+        self.eventsDirectory = eventsDirectory
+        self.settingsDirectory = settingsDirectory
     }
 
     var body: some View {
@@ -46,9 +55,9 @@ struct DBDatabaseDetailView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    DBEventView(events: events)
+                    DBEventView(events: events, eventsDirectory: eventsDirectory)
                     AppSettingsDivider()
-                    DBSettingView(settings: settings)
+                    DBSettingView(settings: settings, settingsDirectory: settingsDirectory)
                 }
             }
         }

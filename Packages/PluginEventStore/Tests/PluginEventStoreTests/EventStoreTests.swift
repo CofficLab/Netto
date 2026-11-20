@@ -13,7 +13,7 @@ import XCTest
 final class EventStoreTests: XCTestCase {
 
     private func makeStore() throws -> EventStore {
-        let container = try PersistenceService.inMemoryContainer()
+        let container = try PersistenceContainers.inMemoryEventStore()
         return EventStore(container: container)
     }
 
@@ -231,9 +231,11 @@ final class EventStoreTests: XCTestCase {
 
     func testPluginRegistersAndMaintains() async throws {
         let kernel = KernelCoreContainer()
-        // 注入内存容器：生产路径依赖 App 沙箱容器（~/Documents/debug/db.sqlite），
-        // 单元测试进程没有该容器会在 ModelContainer 创建时 fatalError。
-        let persistence = PersistencePlugin(container: try PersistenceService.inMemoryContainer())
+        // 注入内存容器：生产模式会从 StorageProviding 解析插件目录并写盘。
+        let persistence = PersistencePlugin(
+            eventStoreContainer: try PersistenceContainers.inMemoryEventStore(),
+            appSettingsContainer: try PersistenceContainers.inMemoryAppSettings()
+        )
         try await kernel.startAsync(plugins: [persistence, PluginAppSettingsPluginForTest(), PluginEventStore()])
         XCTAssertNotNil(kernel.resolveProvider(FirewallEventsProviding.self))
         let store = kernel.resolveProvider(FirewallEventsProviding.self) as? EventStore
@@ -286,7 +288,7 @@ private final class PluginAppSettingsPluginForTest: SuperPlugin {
     let metadata = PluginMetadata(id: "appsettings-test", name: "AppSettings-Test", version: "1.0", policy: .required)
 
     func onBoot(kernel: KernelCoreContainer) throws {
-        let persistence = try kernel.requireProvider(PersistenceProviding.self)
+        let persistence = try kernel.requireProvider(AppSettingsPersistenceProviding.self)
         _ = persistence.container
     }
 }
