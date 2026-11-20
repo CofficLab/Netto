@@ -21,7 +21,10 @@ public struct ContentView: View {
     @State private var model = AppListModel()
     @State private var firewallState: FirewallState?
     @State private var speeds: [AppNetworkSpeed] = []
+    /// 菜单栏弹窗的呈现会话：弹窗关闭时复位选中的应用。
+    @State private var presentationSession = PopoverPresentationSession()
 
+    @MainActor
     public init() {}
 
     public var body: some View {
@@ -41,6 +44,17 @@ public struct ContentView: View {
         // 不出现滚动条。
         .frame(height: isShowingGuide ? nil : 360, alignment: .top)
         .onAppear(perform: refresh)
+        .onAppear {
+            // 选中的应用属于「本次弹窗呈现」：弹窗关闭时复位，
+            // 否则下次打开会停在上一次的应用详情。
+            let provider = ui
+            presentationSession.onEnd = { provider.clearSelectedApp() }
+        }
+        .background(
+            WindowAccessor { window in
+                presentationSession.attach(window: window)
+            }
+        )
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
             refresh()
         }
