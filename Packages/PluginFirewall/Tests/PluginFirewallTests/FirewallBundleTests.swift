@@ -112,16 +112,16 @@ final class FilterConfigurationObserverTests: XCTestCase {
         let box = FilterEnabledBox()
         let received = expectation(description: "observerHandler")
 
-        adapter.addFilterConfigurationObserver { enabled in
-            box.value = enabled
+        adapter.addFilterConfigurationObserver {
+            box.value = true
             received.fulfill()
         }
 
         NotificationCenter.default.post(name: .NEFilterConfigurationDidChange, object: nil)
 
         await fulfillment(of: [received], timeout: 5)
-        // 单测进程里没有启用过滤器，读取到的是系统的真实当前值。
-        XCTAssertEqual(box.value, NEFilterManager.shared().isEnabled)
+        // 观察者只发信号，不自己读 NEFilterManager（会拿到陈旧副本）。
+        XCTAssertEqual(box.value, true)
     }
 }
 

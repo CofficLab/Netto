@@ -448,7 +448,7 @@ final class SystemFirewallAdapterTests: XCTestCase {
     func testFilterConfigurationObserverCanBeRegisteredAndRemoved() {
         let adapter = SystemFirewallAdapter(extensionBundle: nil)
 
-        let token = adapter.addFilterConfigurationObserver { _ in }
+        let token = adapter.addFilterConfigurationObserver { }
         XCTAssertNotNil(token)
 
         adapter.removeFilterConfigurationObserver(token)

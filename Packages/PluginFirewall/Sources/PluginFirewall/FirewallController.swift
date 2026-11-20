@@ -184,8 +184,12 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     /// 仅靠系统扩展事件会在启用完成前触发查询而读到旧值。
     func startObserving() {
         guard filterObserverToken == nil else { return }
-        filterObserverToken = system.addFilterConfigurationObserver { [weak self] enabled in
-            self?.updateState(enabled ? .running : .stopped)
+        filterObserverToken = system.addFilterConfigurationObserver { [weak self] in
+            // 配置变了必须重新加载偏好再判断：`NEFilterManager` 的属性是
+            // 进程内副本，直接读会拿到上一次的旧值。
+            Task { @MainActor in
+                await self?.refresh()
+            }
         }
         appActivationObserverToken = NotificationCenter.default.addObserver(
             forName: NSApplication.didBecomeActiveNotification,
