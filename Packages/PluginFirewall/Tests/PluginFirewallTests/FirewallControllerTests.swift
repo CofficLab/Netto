@@ -87,6 +87,7 @@ final class MockIPCAdapter: FirewallIPCServing {
     private(set) var registerCount = 0
     private(set) var unregisterCount = 0
     var exportedAppCommunication: (any AppCommunication)?
+    var connectionLossHandler: (@MainActor () -> Void)?
 
     func register() async -> Bool {
         registerCount += 1
@@ -95,6 +96,11 @@ final class MockIPCAdapter: FirewallIPCServing {
 
     func unregister() {
         unregisterCount += 1
+    }
+
+    /// 模拟注册成功后的连接意外断开（扩展进程退出/连接失效）。
+    func simulateConnectionLoss() {
+        connectionLossHandler?()
     }
 }
 

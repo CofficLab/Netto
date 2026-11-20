@@ -30,6 +30,7 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     private var appActivationObserverToken: Any?
     private var snapshotContinuations: [UUID: AsyncStream<FirewallSnapshot>.Continuation] = [:]
     private var awaitingApproval = false
+    private var ipcRecoveryTask: Task<Void, Never>?
 
     private(set) var snapshot: FirewallSnapshot
     private var state: FirewallState
@@ -47,6 +48,11 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         self.events = events
         self.state = initialState
         self.snapshot = FirewallSnapshot(state: initialState)
+
+        // 注册成功后的 IPC 意外断开：必须重连，否则扩展侧放行一切流量。
+        ipc.connectionLossHandler = { [weak self] in
+            self?.recoverIPCConnection()
+        }
     }
 
     // MARK: - 状态更新
@@ -224,8 +230,41 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         await ipc.register()
     }
 
+    /// IPC 注册成功后的意外断开（扩展进程退出/连接失效）后的恢复流程。
+    ///
+    /// 扩展侧在无 App 连接时会放行一切流量，因此必须重连；重连失败时把
+    /// 状态切到 failed，避免界面继续显示「运行中」而实际已失效。
+    private func recoverIPCConnection() {
+        guard ipcRecoveryTask == nil else { return }
+        ipcRecoveryTask = Task { [weak self] in
+            guard let self else { return }
+            for attempt in 1...Self.ipcRecoveryAttempts {
+                if attempt > 1 {
+                    try? await Task.sleep(for: .milliseconds(300 * attempt))
+                }
+                if await self.registerIPC() {
+                    await self.refresh()
+                    self.ipcRecoveryTask = nil
+                    return
+                }
+            }
+            self.updateState(.failed(FirewallFailure(
+                domain: "com.yueyi.TravelMode.ipc",
+                code: -1,
+                message: "与系统扩展的连接已断开且重连失败，防火墙规则可能未生效"
+            )))
+            self.ipcRecoveryTask = nil
+        }
+    }
+
+    /// IPC 重连尝试次数。
+    private static let ipcRecoveryAttempts = 3
+
     /// 停止全部外部资源（onShutdown 调用）。
     func shutdown() {
+        ipcRecoveryTask?.cancel()
+        ipcRecoveryTask = nil
+        ipc.connectionLossHandler = nil
         if let token = filterObserverToken {
             system.removeFilterConfigurationObserver(token)
             filterObserverToken = nil
