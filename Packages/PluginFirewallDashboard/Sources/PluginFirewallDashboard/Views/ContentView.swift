@@ -18,7 +18,7 @@ public struct ContentView: View {
     @Environment(\.networkSpeedProvider) private var networkSpeed
     @Environment(\.sessionStartDate) private var sessionStartDate
 
-    @State private var model = MenuBarDashboardModel()
+    @State private var model = AppListModel()
     @State private var firewallState: FirewallState?
     @State private var speeds: [AppNetworkSpeed] = []
 

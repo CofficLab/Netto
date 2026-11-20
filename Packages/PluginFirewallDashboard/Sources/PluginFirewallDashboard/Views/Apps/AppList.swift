@@ -28,11 +28,8 @@ struct AppList: View {
     /// 会话起始时间（App 启动期固定；旧 EventRepo.sessionStartDate 语义）
     @Environment(\.sessionStartDate) private var sessionStartDate: Date
 
-    /// 应用列表
-    @State private var allApps: [SmartApp] = []
-
-    /// 被拒绝的应用ID列表
-    @State private var deniedIds: [String] = []
+    /// 应用列表模型（持有全部应用与被拒绝集合）
+    @State private var model = AppListModel()
 
     /// 由 `FirewallProviding.observe()` 推送的最新状态；nil 时回落到一次性快照。
     @State private var firewallState: FirewallState?
@@ -41,18 +38,7 @@ struct AppList: View {
     ///
     /// 根据显示类型（全部/允许/拒绝）和隐藏状态进行过滤。
     var filtedApps: [SmartApp] {
-        let base: [SmartApp] = {
-            switch ui.displayType {
-            case .All:
-                return allApps
-            case .Allowed:
-                return allApps.filter({ self.deniedIds.contains($0.id) == false })
-            case .Rejected:
-                return allApps.filter({ self.deniedIds.contains($0.id) })
-            }
-        }()
-
-        return base.filter { $0.hidden == false }
+        model.filteredApps(for: ui.displayType).filter { $0.hidden == false }
     }
 
     /// 日志表情符号
@@ -83,6 +69,7 @@ struct AppList: View {
         .accessibilityIdentifier("netto.apps.list")
         .onAppear(perform: handleOnAppear)
         .task { await observeFirewallState() }
+        .task { await observeRuleChanges() }
     }
 
     /// 是否需要显示引导视图
@@ -100,17 +87,13 @@ struct AppList: View {
 
 // MARK: - Setter
 extension AppList {
-    /// 更新应用列表状态
-    ///
-    /// 在主线程上更新应用列表和被拒绝的应用ID列表。
-    ///
-    /// - Parameters:
-    ///   - apps: 应用列表
-    ///   - deniedIds: 被拒绝的应用ID列表
-    @MainActor
-    private func setApps(_ apps: [SmartApp], deniedIds: [String]) {
-        self.allApps = apps
-        self.deniedIds = deniedIds
+    /// 重新加载应用列表与被拒绝集合。
+    private func reload() async {
+        await model.load(
+            settings: repo,
+            events: eventRepo,
+            since: sessionStartDate
+        )
     }
 }
 
@@ -130,50 +113,17 @@ extension AppList {
     /// 当视图出现时，异步加载应用列表数据。
     private func handleOnAppear() {
         Task {
-            await loadData()
+            await reload()
         }
     }
 
-    /// 加载应用列表数据
-    ///
-    /// 从事件仓库获取产生过事件的应用ID，从应用设置仓库获取被拒绝的应用ID，
-    /// 合并去重后创建应用实例并排序更新状态。
-    private func loadData() async {
-        // 提取环境对象引用以避免数据竞争
-        guard let repo, let eventRepo else { return }
-
-        // 获取"自会话开始以来产生过事件的应用ID"
-        let since = sessionStartDate
-        let eventAppIds = (try? await eventRepo.appIdsSince(since)) ?? []
-
-        // 获取"被禁止的应用ID"
-        let deniedIds: [String] = (try? await repo.deniedApps().map(\.appId)) ?? []
-
-        // 合并并去重：将事件应用ID和被拒绝应用ID合并
-        let mergedIds: [String] = Array(Set(eventAppIds).union(deniedIds))
-
-        let apps = mergedIds.map({ SmartApp.fromId($0) })
-
-        // 过滤系统应用：仅保留非系统应用或未隐藏的系统应用
-        let baseApps = apps
-            .filter { !$0.isSystemApp || ($0.isSystemApp && $0.hidden == false) }
-            .filter { $0.hasId }
-            .sorted { app1, app2 in
-                let isApp1Denied = deniedIds.contains(app1.id)
-                let isApp2Denied = deniedIds.contains(app2.id)
-
-                // 被禁止的应用优先显示
-                if isApp1Denied && !isApp2Denied {
-                    return true
-                } else if !isApp1Denied && isApp2Denied {
-                    return false
-                } else {
-                    // 同类型内按名称排序
-                    return app1.name < app2.name
-                }
-            }
-
-        setApps(baseApps, deniedIds: deniedIds)
+    /// 订阅规则变更：允许/禁止变化后重载列表，保持筛选、计数与置顶排序一致。
+    private func observeRuleChanges() async {
+        await model.observeChanges(
+            settings: repo,
+            events: eventRepo,
+            since: sessionStartDate
+        )
     }
 }
 

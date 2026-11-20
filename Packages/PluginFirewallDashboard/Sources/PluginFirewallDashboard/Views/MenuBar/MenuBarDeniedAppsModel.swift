@@ -3,8 +3,8 @@ import ProviderAppSettings
 
 /// 菜单栏共享的「被拒绝应用数量」状态。
 ///
-/// `AppSettingsProviding.observeChanges()` 是单消费者 AsyncStream（每次订阅会
-/// 替换上一个续体），因此状态栏图标与弹出面板必须共享**同一个**观察者。
+/// `AppSettingsProviding.observeChanges()` 支持多个订阅者（广播），
+/// 因此状态栏图标、弹出面板与主窗口应用列表可以各自订阅。
 @MainActor
 final class MenuBarDeniedAppsModel: ObservableObject {
     @Published private(set) var deniedCount: Int = 0

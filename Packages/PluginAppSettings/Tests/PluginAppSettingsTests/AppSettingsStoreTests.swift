@@ -82,6 +82,41 @@ final class AppSettingsStoreTests: XCTestCase {
         XCTAssertEqual(received, [.didDeny(appId: "a"), .didAllow(appId: "a")])
     }
 
+    func testMultipleObserversAllReceiveChanges() async throws {
+        let (store, _) = try makeStore()
+        let first = Task { await self.firstChange(in: store.observeChanges()) }
+        let second = Task { await self.firstChange(in: store.observeChanges()) }
+        try? await Task.sleep(for: .milliseconds(100))
+        try await store.setDeny("a")
+        let firstChange = await first.value
+        let secondChange = await second.value
+        // 多个订阅者必须同时收到变更：新订阅不能顶掉旧订阅。
+        XCTAssertEqual(firstChange, .didDeny(appId: "a"))
+        XCTAssertEqual(secondChange, .didDeny(appId: "a"))
+    }
+
+    /// 等待变更流的首个事件（超时返回 nil，避免用例挂死）。
+    private func firstChange(
+        in stream: AsyncStream<AppSettingsChange>,
+        timeout: Duration = .seconds(3)
+    ) async -> AppSettingsChange? {
+        await withTaskGroup(of: AppSettingsChange?.self) { group in
+            group.addTask {
+                for await change in stream {
+                    return change
+                }
+                return nil
+            }
+            group.addTask {
+                try? await Task.sleep(for: timeout)
+                return nil
+            }
+            let result = await group.next() ?? nil
+            group.cancelAll()
+            return result
+        }
+    }
+
     func testPluginRegistersProvider() throws {
         let kernel = KernelCoreContainer()
         // 注入内存容器：生产模式会从 StorageProviding 解析插件目录并写盘。
