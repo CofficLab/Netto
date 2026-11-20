@@ -8,7 +8,8 @@ import SwiftUI
 /// 「设置 / 退出」菜单行。
 struct FirewallMenuBarPopoverView: View {
     let firewall: any FirewallProviding
-    let deniedApps: MenuBarDeniedAppsModel
+    /// 被阻止应用数量会随规则变化实时更新，弹窗必须观察该模型。
+    @ObservedObject private var deniedApps: MenuBarDeniedAppsModel
 
     @State private var snapshot: FirewallSnapshot
     @State private var isBusy = false
@@ -16,7 +17,7 @@ struct FirewallMenuBarPopoverView: View {
 
     init(firewall: any FirewallProviding, deniedApps: MenuBarDeniedAppsModel) {
         self.firewall = firewall
-        self.deniedApps = deniedApps
+        _deniedApps = ObservedObject(wrappedValue: deniedApps)
         _snapshot = State(initialValue: firewall.snapshot)
     }
 
