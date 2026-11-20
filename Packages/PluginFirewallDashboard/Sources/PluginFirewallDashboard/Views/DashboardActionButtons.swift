@@ -16,12 +16,16 @@ struct DashboardOpenSystemSettingsButton: View {
 }
 
 struct DashboardInstallExtensionButton: View {
+    var title = "安装系统扩展"
+    var busyTitle = "安装中…"
+    var style: AppButton.Style = .primary
+
     @Environment(\.firewallProvider) private var service: FirewallProviding?
 
     @State private var isBusy = false
 
     var body: some View {
-        AppButton(isBusy ? "安装中…" : "安装系统扩展", systemImage: "puzzlepiece.extension", style: .primary, fillsWidth: true) {
+        AppButton(isBusy ? busyTitle : title, systemImage: "puzzlepiece.extension", style: style, fillsWidth: true) {
             guard let service, !isBusy else { return }
             isBusy = true
             Task {

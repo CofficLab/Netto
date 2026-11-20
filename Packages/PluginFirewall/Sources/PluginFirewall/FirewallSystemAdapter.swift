@@ -89,7 +89,8 @@ protocol FirewallSystemAdapting: AnyObject {
     func submitSystemExtensionRequest(_ kind: SystemExtensionRequestKind)
 
     /// 注册 OSSystemExtensionsWorkspace 观察者（macOS 15.1+；失败静默）。
-    func registerWorkspaceObserver(handler: @escaping @MainActor @Sendable () -> Void)
+    /// 回调参数为 true 表示扩展即将启用，false 表示即将禁用/失效。
+    func registerWorkspaceObserver(handler: @escaping @MainActor @Sendable (Bool) -> Void)
 
     /// 注销 OSSystemExtensionsWorkspace 观察者。
     func unregisterWorkspaceObserver()
@@ -239,7 +240,7 @@ final class SystemFirewallAdapter: FirewallSystemAdapting {
 
     // MARK: - OSSystemExtensionsWorkspaceObserver（迁移自 FirewallService+SystemExt）
 
-    func registerWorkspaceObserver(handler: @escaping @MainActor @Sendable () -> Void) {
+    func registerWorkspaceObserver(handler: @escaping @MainActor @Sendable (Bool) -> Void) {
         guard #available(macOS 15.1, *), !workspaceObserverRegistered else { return }
         let bridge = WorkspaceObserverBridge(handler: handler)
         do {
@@ -357,22 +358,31 @@ final class SystemExtensionRequestBridge: NSObject, OSSystemExtensionRequestDele
 /// 将 `OSSystemExtensionsWorkspaceObserver` 回调桥接为闭包。
 ///
 /// 线程/actor：普通 NSObject（非隔离）；回调到达后跳回 MainActor 再执行 handler。
+/// 启用/禁用/失效三种变化统一上报，供上层重算状态（删除扩展也走失效路径）。
 @available(macOS 15.1, *)
 final class WorkspaceObserverBridge: NSObject, OSSystemExtensionsWorkspaceObserver {
-    private let handler: @MainActor @Sendable () -> Void
+    private let handler: @MainActor @Sendable (Bool) -> Void
 
-    init(handler: @escaping @MainActor @Sendable () -> Void) {
+    init(handler: @escaping @MainActor @Sendable (Bool) -> Void) {
         self.handler = handler
     }
 
     func systemExtensionWillBecomeEnabled(_ systemExtensionInfo: OSSystemExtensionInfo) {
-        let action = handler
-        Task { @MainActor in
-            action()
-        }
+        notify(true)
     }
 
-    func systemExtensionWillBecomeDisabled(_ systemExtensionInfo: OSSystemExtensionInfo) {}
+    func systemExtensionWillBecomeDisabled(_ systemExtensionInfo: OSSystemExtensionInfo) {
+        notify(false)
+    }
 
-    func systemExtensionWillBecomeInactive(_ systemExtensionInfo: OSSystemExtensionInfo) {}
+    func systemExtensionWillBecomeInactive(_ systemExtensionInfo: OSSystemExtensionInfo) {
+        notify(false)
+    }
+
+    private func notify(_ isBecomingEnabled: Bool) {
+        let action = handler
+        Task { @MainActor in
+            action(isBecomingEnabled)
+        }
+    }
 }
