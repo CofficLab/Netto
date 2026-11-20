@@ -1,8 +1,9 @@
+import PluginBrandLogo
 import SwiftUI
 
 /**
  * 菜单栏示意图视图
- * 绘制macOS菜单栏并突出显示网络图标，用于引导用户了解应用访问入口
+ * 绘制macOS菜单栏并突出显示本应用实际使用的菜单栏图标，用于引导用户了解应用访问入口
  */
 struct MenuBarDiagramView: View {
     var body: some View {
@@ -18,7 +19,7 @@ struct MenuBarDiagramView: View {
                 HStack(spacing: 12) {
                     Spacer()
 
-                    // 突出显示的网络图标
+                    // 突出显示的应用图标（与菜单栏实际渲染一致：statusBar 场景模板图）
                     ZStack {
                         Circle()
                             .fill(Color.green.opacity(0.2))
@@ -30,9 +31,8 @@ struct MenuBarDiagramView: View {
                                     .opacity(0.8)
                             )
 
-                        Image(systemName: "network")
-                            .foregroundColor(.green)
-                            .font(.system(size: 16, weight: .semibold))
+                        BrandLogoMark(scene: .statusBar)
+                            .frame(width: 16, height: 16)
                     }
                     .padding(.horizontal, 4)
 

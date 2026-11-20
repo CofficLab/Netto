@@ -17,6 +17,7 @@ let package = Package(
         .package(url: "https://github.com/lumi-softworks/LumiSettings.git", from: "1.1.0"),
         .package(name: "ProviderShell", path: "../ProviderShell"),
         .package(name: "ProviderViewEnvironment", path: "../ProviderViewEnvironment"),
+        .package(name: "PluginBrandLogo", path: "../PluginBrandLogo"),
         .package(url: "https://github.com/lumi-softworks/LumiUI.git", from: "1.18.0"),
     ],
     targets: [
@@ -31,6 +32,7 @@ let package = Package(
                 .product(name: "ProviderSettingView", package: "LumiSettings"),
                 "ProviderShell",
                 "ProviderViewEnvironment",
+                "PluginBrandLogo",
                 "LumiUI",
             ]
         ),
