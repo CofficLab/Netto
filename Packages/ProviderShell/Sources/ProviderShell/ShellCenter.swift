@@ -41,8 +41,8 @@ public final class ShellCenter: ObservableObject,
     /// Host 注入的窗口打开回调（App 侧在装配时设置）。
     public var onRequestOpen: (@MainActor (WindowRequest) -> Void)?
 
-    /// Toast 观察续流。
-    private var toastContinuation: AsyncStream<ToastMessage>.Continuation?
+    /// Toast 观察续流（每个订阅者一条独立流）。
+    private var toastContinuations: [UUID: AsyncStream<ToastMessage>.Continuation] = [:]
 
     public init() {}
 
@@ -141,16 +141,19 @@ public final class ShellCenter: ObservableObject,
 
     public func post(_ message: ToastMessage) {
         lastToast = message
-        toastContinuation?.yield(message)
+        for continuation in toastContinuations.values {
+            continuation.yield(message)
+        }
     }
 
-    /// 观察 Toast 流（每订阅一个独立 AsyncStream，退订自动结束）。
+    /// 观察 Toast 流（每个订阅者一条独立流，退订自动结束）。
     public func observeToasts() -> AsyncStream<ToastMessage> {
         AsyncStream { continuation in
-            toastContinuation = continuation
+            let id = UUID()
+            toastContinuations[id] = continuation
             continuation.onTermination = { [weak self] _ in
                 MainActor.assumeIsolated {
-                    self?.toastContinuation = nil
+                    self?.toastContinuations[id] = nil
                 }
             }
         }

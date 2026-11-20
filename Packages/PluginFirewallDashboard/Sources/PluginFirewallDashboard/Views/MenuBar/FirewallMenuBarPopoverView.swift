@@ -1,5 +1,6 @@
 import LumiUI
 import ProviderFirewall
+import ProviderShell
 import SwiftUI
 
 /// 菜单栏弹窗的主界面：防火墙状态与启停 + 筛选、应用列表与事件详情。
@@ -11,6 +12,8 @@ struct FirewallMenuBarPopoverView: View {
     /// 被阻止应用数量会随规则变化实时更新，弹窗必须观察该模型。
     @ObservedObject private var deniedApps: MenuBarDeniedAppsModel
 
+    @EnvironmentObject private var shell: ShellCenter
+    @StateObject private var toastPresenter = ToastPresenter()
     @State private var snapshot: FirewallSnapshot
     @State private var isBusy = false
     @State private var errorMessage: String?
@@ -47,11 +50,20 @@ struct FirewallMenuBarPopoverView: View {
         .padding(.vertical, 8)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("netto.menubar.firewall")
+        .overlay(alignment: .bottom) {
+            // 操作反馈（规则变更、导出结果、失败原因）在弹窗内直接可见。
+            MenuBarToastOverlay(presenter: toastPresenter)
+                .padding(.horizontal, 8)
+                .padding(.bottom, 8)
+        }
         .task {
             deniedApps.start()
             for await update in firewall.observe() {
                 snapshot = update
             }
+        }
+        .task {
+            await toastPresenter.observe(shell.observeToasts())
         }
     }
 
