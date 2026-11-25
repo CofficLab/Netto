@@ -11,6 +11,9 @@ struct GuideView: View {
     /// 由宿主订阅 `FirewallProviding.observe()` 后传入的最新状态。
     let state: FirewallState?
 
+    /// 运行中过滤器是否仍有扩展心跳；false 时提示未生效并提供修复入口。
+    var isFilterResponding = true
+
     /// 外层展示形式使用材质遮罩；菜单栏弹窗内不需要遮罩，只渲染面板本身。
     var showsBackdrop = true
 
@@ -43,8 +46,13 @@ struct GuideView: View {
                     case .installing:
                         InstallingView()
                     case .running:
-                        // 运行中不展示引导；ContentView 仅在未运行或升级时进入引导。
-                        EmptyView()
+                        // 运行中一般不展示引导；配置启用但扩展没有心跳时
+                        // 必须提示「未生效」，否则空列表会被误读为没有流量。
+                        if isFilterResponding {
+                            EmptyView()
+                        } else {
+                            FilterUnresponsiveView()
+                        }
                     case .systemExtensionNotInstalled:
                         SystemExtensionNotInstalledView()
                     case .systemExtensionNeedsUpdate:

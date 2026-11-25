@@ -114,6 +114,7 @@ struct FirewallDashboardPluginTests {
         func installFilter() async throws {}
         func start() async throws {}
         func stop() async throws {}
+        func repairFilter() async throws {}
         func observe() -> AsyncStream<FirewallSnapshot> { AsyncStream { $0.finish() } }
     }
 

@@ -89,6 +89,7 @@ final class TestFirewallProvider: FirewallProviding {
     func installFilter() async throws {}
     func start() async throws {}
     func stop() async throws {}
+    func repairFilter() async throws {}
     func observe() -> AsyncStream<FirewallSnapshot> {
         AsyncStream { continuation in
             continuation.yield(snapshot)

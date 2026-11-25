@@ -114,6 +114,11 @@ enum NettoManifest {
                     accessibilityIdentifier: "netto.menubar.settings"
                 ),
                 HostStatusMenuItem(
+                    title: "修复防火墙过滤器",
+                    accessibilityIdentifier: "netto.menubar.firewall.repair",
+                    action: repairFirewallFilter
+                ),
+                HostStatusMenuItem(
                     title: "退出 TravelMode",
                     accessibilityIdentifier: "netto.menubar.quit",
                     isDestructive: true,
@@ -125,9 +130,25 @@ enum NettoManifest {
 
     // MARK: - Post-start Wiring
 
+    /// 菜单栏「修复防火墙过滤器」的目标（wireKernel 注入；弱引用跟随 provider 生命周期）。
+    private static weak var firewallRepairTarget: (any FirewallProviding)?
+
+    /// 手动修复过滤器：删除并重建过滤器配置（Dev / TestFlight 签名切换后
+    /// 旧配置可能绑定过期签名，导致「运行中」却不拦截）。
+    ///
+    /// 失败不打扰用户：控制器会把状态切到 failed / filterApprovalNeeded，
+    /// 弹窗与引导会展示对应原因。
+    private static func repairFirewallFilter() {
+        guard let firewall = firewallRepairTarget else { return }
+        Task {
+            try? await firewall.repairFilter()
+        }
+    }
+
     /// 启动完成后的宿主域接线（装配期调用一次，贡献字段是 @Published，
     /// 必须在 SwiftUI body 求值期之外写入）。
     private static func wireKernel(_ kernel: KernelCoreContainer) {
+        firewallRepairTarget = kernel.resolveProvider(FirewallProviding.self)
         // 插件 / UI 的窗口请求（ShellCenter.requestOpen）统一路由：
         // 设置窗口走标准「打开设置」通知（共享代理负责深链选中 + 开窗），
         // 其余窗口经共享开窗器打开。

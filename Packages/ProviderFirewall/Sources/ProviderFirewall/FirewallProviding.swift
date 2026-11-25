@@ -27,6 +27,12 @@ public protocol FirewallProviding: AnyObject, Sendable {
     /// 停止防火墙。
     func stop() async throws
 
+    /// 修复过滤器配置：删除现有配置并用当前 App 重建，重新启用。
+    ///
+    /// 用于 Dev/TestFlight 签名切换后旧配置绑定了过期签名、扩展无法
+    /// 启动（运行中却不拦截）的场景。
+    func repairFilter() async throws
+
     /// 观察状态快照更新（AsyncStream；订阅方负责消费与取消）。
     func observe() -> AsyncStream<FirewallSnapshot>
 }
