@@ -6,6 +6,7 @@ import SwiftUI
 struct DashboardPreviewHost<Content: View>: View {
     @StateObject private var ui: UIProvider
     @StateObject private var shell: ShellCenter
+    @State private var catalog = AppCatalog()
     private let content: Content
 
     init(@ViewBuilder content: () -> Content) {
@@ -18,6 +19,7 @@ struct DashboardPreviewHost<Content: View>: View {
         content
             .environmentObject(ui)
             .environmentObject(shell)
+            .environment(\.appCatalog, catalog)
     }
 }
 

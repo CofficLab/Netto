@@ -128,6 +128,68 @@ final class EventStoreTests: XCTestCase {
         XCTAssertEqual(old, [])
     }
 
+    // MARK: - 会话应用集合
+
+    /// 会话集合在写入时增量维护，不依赖落库/回查。
+    func testSessionAppIdsTrackCreatesAndDeletes() async throws {
+        let store = try makeStore()
+        XCTAssertEqual(store.sessionAppIds, [])
+
+        try await store.create(makeEvent(id: "1", appId: "com.a"))
+        try await store.create(makeEvent(id: "2", appId: "com.b"))
+        XCTAssertEqual(store.sessionAppIds, ["com.a", "com.b"])
+
+        try await store.deleteByAppId("com.a")
+        XCTAssertEqual(store.sessionAppIds, ["com.b"])
+
+        _ = try await store.deleteAll()
+        XCTAssertEqual(store.sessionAppIds, [])
+    }
+
+    /// 过期清理只移除「最新事件已过期」的应用。
+    func testCleanupPrunesExpiredSessionApps() async throws {
+        let store = try makeStore()
+        try await store.create(makeEvent(
+            id: "old",
+            appId: "com.old",
+            time: Date().addingTimeInterval(-40 * 24 * 3600)
+        ))
+        try await store.create(makeEvent(id: "new", appId: "com.new", time: Date()))
+
+        _ = try await store.cleanupOlderThan(days: 30)
+
+        XCTAssertEqual(store.sessionAppIds, ["com.new"])
+    }
+
+    /// 订阅立即回放当前集合，后续写入实时推送；多订阅者互不影响。
+    func testObserveSessionAppIdsReplaysAndPushes() async throws {
+        let store = try makeStore()
+        let first = Task { await self.collectSessionSnapshots(from: store, count: 3) }
+        let second = Task { await self.collectSessionSnapshots(from: store, count: 3) }
+        try? await Task.sleep(for: .milliseconds(100))
+
+        try await store.create(makeEvent(id: "1", appId: "com.a"))
+        try await store.create(makeEvent(id: "2", appId: "com.b"))
+
+        let firstSnapshots = await first.value
+        let secondSnapshots = await second.value
+        XCTAssertEqual(firstSnapshots.first, [])
+        XCTAssertEqual(firstSnapshots.last, ["com.a", "com.b"])
+        XCTAssertEqual(secondSnapshots, firstSnapshots)
+    }
+
+    private func collectSessionSnapshots(
+        from store: EventStore,
+        count: Int
+    ) async -> [[String]] {
+        var received: [[String]] = []
+        for await ids in store.observeSessionAppIds() {
+            received.append(ids)
+            if received.count == count { return received }
+        }
+        return received
+    }
+
     // MARK: - 删除 / 清理
 
     func testDeleteByAppAndAll() async throws {

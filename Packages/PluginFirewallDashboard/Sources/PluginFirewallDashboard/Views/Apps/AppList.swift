@@ -25,11 +25,11 @@ struct AppList: View {
     /// 防火墙契约
     @Environment(\.firewallProvider) private var firewall: FirewallProviding?
 
-    /// 会话起始时间（App 启动期固定；旧 EventRepo.sessionStartDate 语义）
-    @Environment(\.sessionStartDate) private var sessionStartDate: Date
-
     /// 应用列表模型（持有全部应用与被拒绝集合）
     @State private var model = AppListModel()
+
+    /// 应用/图标缓存：注入环境供行视图取图标。
+    @State private var catalog = AppCatalog()
 
     /// 由 `FirewallProviding.observe()` 推送的最新状态；nil 时回落到一次性快照。
     @State private var firewallState: FirewallState?
@@ -67,9 +67,9 @@ struct AppList: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("netto.apps.list")
-        .onAppear(perform: handleOnAppear)
+        .environment(\.appCatalog, catalog)
         .task { await observeFirewallState() }
-        .task { await observeRuleChanges() }
+        .task { await model.run(catalog: catalog, settings: repo, events: eventRepo) }
     }
 
     /// 是否需要显示引导视图
@@ -85,18 +85,6 @@ struct AppList: View {
     }
 }
 
-// MARK: - Setter
-extension AppList {
-    /// 重新加载应用列表与被拒绝集合。
-    private func reload() async {
-        await model.load(
-            settings: repo,
-            events: eventRepo,
-            since: sessionStartDate
-        )
-    }
-}
-
 // MARK: - Event Handler
 extension AppList {
     /// 订阅防火墙状态推送；视图消失时 `.task` 自动取消。
@@ -106,24 +94,6 @@ extension AppList {
         for await update in firewall.observe() {
             firewallState = update.state
         }
-    }
-
-    /// 处理视图出现事件
-    ///
-    /// 当视图出现时，异步加载应用列表数据。
-    private func handleOnAppear() {
-        Task {
-            await reload()
-        }
-    }
-
-    /// 订阅规则变更：允许/禁止变化后重载列表，保持筛选、计数与置顶排序一致。
-    private func observeRuleChanges() async {
-        await model.observeChanges(
-            settings: repo,
-            events: eventRepo,
-            since: sessionStartDate
-        )
     }
 }
 

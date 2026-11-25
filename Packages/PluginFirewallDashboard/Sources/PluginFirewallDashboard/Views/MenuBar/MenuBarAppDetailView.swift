@@ -69,7 +69,7 @@ struct MenuBarAppDetailView: View {
             }
 
             HStack(spacing: 8) {
-                app.getIcon()
+                AppIcon(app: app)
                     .frame(width: 28, height: 28)
 
                 VStack(alignment: .leading, spacing: 1) {

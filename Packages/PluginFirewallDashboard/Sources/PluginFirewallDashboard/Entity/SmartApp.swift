@@ -42,26 +42,6 @@ public struct SmartApp: Identifiable, Sendable, Equatable {
     }
 }
 
-// MARK: - Instance Methods
-
-extension SmartApp {
-    /// 获取应用图标
-    /// - Returns: 应用图标视图
-    public func getIcon() -> some View {
-        // 优先检查系统应用图标
-        if isSystemApp, let systemIcon = Self.getSystemAppIcon(self.id) {
-            return AnyView(systemIcon)
-        }
-        
-        // 检查运行中的应用图标
-        if let runningApp = Self.getApp(self.id), let icon = runningApp.icon {
-            return AnyView(Image(nsImage: icon))
-        }
-        
-        return AnyView(SmartApp.getDefaultIcon())
-    }
-}
-
 // MARK: - Factory Methods
 
 extension SmartApp {

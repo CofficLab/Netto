@@ -3,32 +3,46 @@ import Observation
 import ProviderAppSettings
 import ProviderFirewallEvents
 
-/// 仪表盘应用列表的数据源。
+/// 仪表盘应用列表的数据源（设置窗口内的常驻列表）。
 ///
-/// 数据来自两条契约：会话开始以来产生过事件的应用 + 当前被禁止的应用；
-/// 合并去重后按「被禁止优先、同组按名称」排序。菜单栏弹窗是常驻视图，
-/// 列表在每次弹窗重新成为 key window 与规则变更后刷新。
+/// 数据来自两条契约：会话内产生过事件的应用（纯内存增量集）与当前被禁止的
+/// 应用；应用名与图标经 `AppCatalog` 缓存。列表由会话/规则/应用启停推送驱动，
+/// 不再依赖「窗口成为 key window」触发全量重载。
 @MainActor
 @Observable
 final class AppListModel {
     private(set) var apps: [SmartApp] = []
     private(set) var deniedIds: Set<String> = []
 
-    func load(
-        settings: (any AppSettingsProviding)?,
-        events: (any FirewallEventsProviding)?,
-        since: Date
-    ) async {
-        guard let settings, let events else { return }
+    /// 解析能力与数据源；`load`/`observeChanges` 入口写入，订阅循环只读。
+    private var catalog: (any AppResolving)?
+    private var settings: (any AppSettingsProviding)?
+    private var events: (any FirewallEventsProviding)?
 
-        let eventAppIds = (try? await events.appIdsSince(since)) ?? []
+    /// 拉取一次快照（两者都是内存读取，不触达 SwiftData）。
+    func load(
+        catalog: any AppResolving,
+        settings: (any AppSettingsProviding)?,
+        events: (any FirewallEventsProviding)?
+    ) async {
+        self.catalog = catalog
+        self.settings = settings
+        self.events = events
+        await reload()
+    }
+
+    private func reload() async {
+        guard let catalog, let settings else { return }
+
+        let eventAppIds = events?.sessionAppIds ?? []
         let denied = (try? await settings.deniedApps().map(\.appId)) ?? []
         let deniedSet = Set(denied)
 
-        let appIds = Set(eventAppIds).union(denied)
-        let resolved = appIds.map { SmartApp.fromId($0) }
-            .filter { !$0.isSystemApp || !$0.hidden }
-            .filter { $0.hasId }
+        let resolved = Set(eventAppIds).union(denied).compactMap { id -> SmartApp? in
+            let app = catalog.app(for: id)
+            guard app.hasId, !app.isSystemApp || !app.hidden else { return nil }
+            return app
+        }
 
         apps = Self.sorted(resolved, deniedIds: deniedSet)
         deniedIds = deniedSet
@@ -45,39 +59,7 @@ final class AppListModel {
         }
     }
 
-    /// 叠加实时有流量的应用：事件尚未落库时，列表仍应与实时网速一致。
-    ///
-    /// 实时应用只会出现在「全部 / 允许」；「禁止」只展示已拒绝的应用。
-    func filteredApps(for displayType: DisplayType, includingLive liveApps: [SmartApp]) -> [SmartApp] {
-        Self.merging(
-            filteredApps(for: displayType),
-            withLive: liveApps,
-            displayType: displayType,
-            deniedIds: deniedIds
-        )
-    }
-
-    static func merging(
-        _ base: [SmartApp],
-        withLive liveApps: [SmartApp],
-        displayType: DisplayType,
-        deniedIds: Set<String>
-    ) -> [SmartApp] {
-        guard displayType != .Rejected else { return base }
-
-        var seen = Set(base.map(\.id))
-        var merged = base
-        for app in liveApps where app.hasId && !seen.contains(app.id) {
-            if displayType == .Allowed, deniedIds.contains(app.id) {
-                continue
-            }
-            merged.append(app)
-            seen.insert(app.id)
-        }
-        return sorted(merged, deniedIds: deniedIds)
-    }
-
-    /// 被禁止的应用置顶，同组按名称排序；实时应用并入后保持同一顺序。
+    /// 被禁止的应用置顶，同组按名称排序。
     private static func sorted(_ apps: [SmartApp], deniedIds: Set<String>) -> [SmartApp] {
         apps.sorted { lhs, rhs in
             let lhsDenied = deniedIds.contains(lhs.id)
@@ -93,18 +75,49 @@ final class AppListModel {
         deniedIds.contains(appId)
     }
 
-    /// 订阅规则变更：任一允许/禁止变化后立即重载列表。
-    ///
-    /// 规则变更后不重载会让「允许/禁止」筛选与置顶排序停留在旧快照，
-    /// 与行内已更新的规则颜色互相矛盾。
+    /// 订阅会话应用、规则变更与应用启停；取消即取消全部订阅。
     func observeChanges(
+        catalog: any AppResolving,
         settings: (any AppSettingsProviding)?,
-        events: (any FirewallEventsProviding)?,
-        since: Date
+        events: (any FirewallEventsProviding)?
     ) async {
+        self.catalog = catalog
+        self.settings = settings
+        self.events = events
         guard let settings else { return }
+
+        async let ruleUpdates: Void = observeRules(settings)
+        async let sessionUpdates: Void = observeSession()
+        async let catalogUpdates: Void = observeCatalog()
+        _ = await (ruleUpdates, sessionUpdates, catalogUpdates)
+    }
+
+    func run(
+        catalog: any AppResolving,
+        settings: (any AppSettingsProviding)?,
+        events: (any FirewallEventsProviding)?
+    ) async {
+        await load(catalog: catalog, settings: settings, events: events)
+        await observeChanges(catalog: catalog, settings: settings, events: events)
+    }
+
+    private func observeRules(_ settings: any AppSettingsProviding) async {
         for await _ in settings.observeChanges() {
-            await load(settings: settings, events: events, since: since)
+            await reload()
+        }
+    }
+
+    private func observeSession() async {
+        guard let events else { return }
+        for await _ in events.observeSessionAppIds() {
+            await reload()
+        }
+    }
+
+    private func observeCatalog() async {
+        guard let catalog else { return }
+        for await _ in catalog.observeChanges() {
+            await reload()
         }
     }
 }

@@ -5,44 +5,41 @@ import SwiftUI
 /// 应用行悬停后展示的详情面板：应用信息、实时网速与联网规则。
 ///
 /// 规则按钮放在这里而不是列表行内，让列表保持干净的整行布局；
-/// 点击行本身仍会进入该应用的连接记录。
+/// 点击行本身仍会进入该应用的连接记录。面板内容绑定行模型，
+/// 网速与规则变化在面板打开期间也能实时反映。
 struct MenuBarAppHoverDetailView: View {
     @LumiTheme private var theme
 
-    let app: SmartApp
-    let isDenied: Bool
-    let speed: AppNetworkSpeed?
+    let row: MenuBarAppRowModel
     let hoverID: String
     let onRuleChange: () -> Void
 
     @State private var shouldAllow: Bool
 
     init(
-        app: SmartApp,
-        isDenied: Bool,
-        speed: AppNetworkSpeed?,
+        row: MenuBarAppRowModel,
         hoverID: String,
         onRuleChange: @escaping () -> Void
     ) {
-        self.app = app
-        self.isDenied = isDenied
-        self.speed = speed
+        self.row = row
         self.hoverID = hoverID
         self.onRuleChange = onRuleChange
-        _shouldAllow = State(initialValue: !isDenied)
+        _shouldAllow = State(initialValue: !row.isDenied)
     }
+
+    private var app: SmartApp { row.app }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             header
             Divider()
-            speedSection
-            ruleSection
+            speedSection(row.speed)
+            ruleSection(isDenied: row.isDenied)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("netto.app.hover.\(app.id)")
-        .onChange(of: isDenied) { _, newValue in
+        .onChange(of: row.isDenied) { _, newValue in
             shouldAllow = !newValue
         }
     }
@@ -51,7 +48,7 @@ struct MenuBarAppHoverDetailView: View {
 
     private var header: some View {
         HStack(alignment: .center, spacing: 10) {
-            app.getIcon()
+            AppIcon(app: app)
                 .frame(width: 36, height: 36)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -73,7 +70,7 @@ struct MenuBarAppHoverDetailView: View {
     // MARK: - Speed
 
     @ViewBuilder
-    private var speedSection: some View {
+    private func speedSection(_ speed: AppNetworkSpeed?) -> some View {
         if let speed, speed.totalBytesPerSecond > 0 {
             HStack(spacing: 24) {
                 metric(
@@ -110,7 +107,7 @@ struct MenuBarAppHoverDetailView: View {
 
     // MARK: - Rule
 
-    private var ruleSection: some View {
+    private func ruleSection(isDenied: Bool) -> some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
                 Text("联网权限")

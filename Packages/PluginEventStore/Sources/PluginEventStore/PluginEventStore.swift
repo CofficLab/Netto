@@ -42,6 +42,8 @@ public final class PluginEventStore: AsyncSuperPlugin {
         guard let store = kernel.resolveProvider(FirewallEventsProviding.self) as? EventStore else {
             return
         }
+        // 先提交写缓冲，再停止维护，避免退出时丢事件。
+        try? await store.flush()
         store.stopMaintenance()
     }
 }

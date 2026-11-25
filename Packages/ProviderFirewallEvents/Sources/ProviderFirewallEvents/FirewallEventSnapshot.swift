@@ -29,6 +29,8 @@ public enum FirewallEventChange: Sendable, Equatable {
     case created(FirewallEventSnapshot)
     /// 单个事件已删除。
     case deleted(eventID: String)
+    /// 指定应用的全部事件已删除。
+    case appCleared(appId: String)
     /// 全部事件已清空。
     case cleared
 }
