@@ -29,7 +29,7 @@ struct AppLine: View {
     var body: some View {
         AppListRow(accent: shouldAllow ? nil : theme.error) {
             HStack(spacing: 12) {
-                app.getIcon().frame(width: 36, height: 36)
+                AppIcon(app: app).frame(width: 36, height: 36)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(app.name)

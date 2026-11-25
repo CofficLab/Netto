@@ -1,4 +1,3 @@
-import AppKit
 import LumiUI
 import ProviderAppSettings
 import ProviderFirewall
@@ -10,17 +9,21 @@ import SwiftUI
 ///
 /// 固定 360pt 高度，保证 NSPopover 的内容高度在列表与详情之间切换时不跳动；
 /// 内部滚动由各区域自己的 `ScrollView` 承担。
+///
+/// 数据全部由推送驱动：会话应用集合、规则变更、实时网速、应用启停各自
+/// 走订阅，列表只在应用集合/规则变化时重排；网速更新落到行级模型，
+/// 不再触发整表重算。
 public struct ContentView: View {
     @EnvironmentObject private var ui: UIProvider
     @Environment(\.settingsProvider) private var settingsRepo
     @Environment(\.eventsProvider) private var eventsRepo
     @Environment(\.firewallProvider) private var firewall
     @Environment(\.networkSpeedProvider) private var networkSpeed
-    @Environment(\.sessionStartDate) private var sessionStartDate
 
-    @State private var model = AppListModel()
+    @State private var model = MenuBarAppsModel()
+    /// 应用/图标缓存：注入环境供行与详情视图取图标。
+    @State private var catalog = AppCatalog()
     @State private var firewallState: FirewallState?
-    @State private var speeds: [AppNetworkSpeed] = []
     /// 菜单栏弹窗的呈现会话：弹窗关闭时复位选中的应用。
     @State private var presentationSession = PopoverPresentationSession()
 
@@ -35,8 +38,7 @@ public struct ContentView: View {
             } else if let app = selectedApp {
                 MenuBarAppDetailView(
                     app: app,
-                    onBack: { ui.clearSelectedApp() },
-                    onRuleChange: refresh
+                    onBack: { ui.clearSelectedApp() }
                 )
             } else {
                 listContent
@@ -45,14 +47,11 @@ public struct ContentView: View {
         // 升级引导覆盖在当前子视图之上：达到免费版限制时提示必须立刻可见，
         // 不能因为停留在应用详情页而被隐藏。
         .overlay {
-            // 升级引导覆盖在当前子视图之上：达到免费版限制时提示必须立刻可见，
-            // 不能因为停留在应用详情页而被隐藏。
             UpgradeGuideOverlay(state: resolvedState)
         }
         // 列表与详情固定高度避免切换时弹窗跳动；引导内容按自然高度完整展示，
         // 不出现滚动条。
         .frame(height: isShowingGuide ? nil : 360, alignment: .top)
-        .onAppear(perform: refresh)
         .onAppear {
             // 选中的应用属于「本次弹窗呈现」：弹窗关闭时复位，
             // 否则下次打开会停在上一次的应用详情。
@@ -64,11 +63,16 @@ public struct ContentView: View {
                 presentationSession.attach(window: window)
             }
         )
-        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
-            refresh()
+        .environment(\.appCatalog, catalog)
+        .task {
+            await model.run(
+                catalog: catalog,
+                settings: settingsRepo,
+                events: eventsRepo,
+                speeds: networkSpeed
+            )
         }
         .task { await observeFirewallState() }
-        .task { await observeNetworkSpeeds() }
     }
 
     // MARK: - List
@@ -84,8 +88,8 @@ public struct ContentView: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {
-                        ForEach(filteredApps, id: \.id) { app in
-                            appRow(app)
+                        ForEach(filteredApps) { row in
+                            appRow(row)
                         }
                     }
                     .padding(.vertical, 2)
@@ -103,24 +107,20 @@ public struct ContentView: View {
         }
     }
 
-    private func appRow(_ app: SmartApp) -> some View {
-        let hoverID = "netto.app.hover.\(app.id)"
-        let isDenied = model.isDenied(app.id)
-        let speed = speeds.first { $0.appId == app.id }
+    private func appRow(_ row: MenuBarAppRowModel) -> some View {
+        let hoverID = "netto.app.hover.\(row.id)"
 
         return HoverDetailContainer(
             id: hoverID,
             detail: {
                 MenuBarAppHoverDetailView(
-                    app: app,
-                    isDenied: isDenied,
-                    speed: speed,
+                    row: row,
                     hoverID: hoverID,
-                    onRuleChange: refresh
+                    onRuleChange: {}
                 )
             },
             content: {
-                MenuBarAppRow(app: app, isDenied: isDenied, speed: speed)
+                MenuBarAppRow(row: row)
             }
         )
     }
@@ -138,22 +138,13 @@ public struct ContentView: View {
 
     // MARK: - Data
 
-    private var filteredApps: [SmartApp] {
-        model.filteredApps(for: ui.displayType, includingLive: visibleSpeedEntries.map(\.app))
-    }
-
-    /// 实时应用与应用列表使用同一套可见性规则：隐藏的系统进程不进入榜单。
-    private var visibleSpeedEntries: [(speed: AppNetworkSpeed, app: SmartApp)] {
-        speeds.compactMap { speed in
-            let app = SmartApp.fromId(speed.appId)
-            guard app.hasId, !app.isSystemApp || !app.hidden else { return nil }
-            return (speed: speed, app: app)
-        }
+    private var filteredApps: [MenuBarAppRowModel] {
+        model.rows(for: ui.displayType)
     }
 
     private var selectedApp: SmartApp? {
         guard let id = ui.selectedAppId else { return nil }
-        return model.apps.first { $0.id == id } ?? SmartApp.fromId(id)
+        return model.row(id: id)?.app ?? catalog.app(for: id)
     }
 
     private var isShowingGuide: Bool {
@@ -168,32 +159,11 @@ public struct ContentView: View {
         firewallState ?? firewall?.snapshot.state
     }
 
-    private func refresh() {
-        Task {
-            await model.load(
-                settings: settingsRepo,
-                events: eventsRepo,
-                since: sessionStartDate
-            )
-        }
-    }
-
     private func observeFirewallState() async {
         guard let firewall else { return }
         firewallState = firewall.snapshot.state
         for await update in firewall.observe() {
             firewallState = update.state
-            if !update.state.isRunning() {
-                speeds = []
-            }
-        }
-    }
-
-    private func observeNetworkSpeeds() async {
-        guard let networkSpeed else { return }
-        speeds = networkSpeed.snapshot
-        for await update in networkSpeed.observe() {
-            speeds = update
         }
     }
 }

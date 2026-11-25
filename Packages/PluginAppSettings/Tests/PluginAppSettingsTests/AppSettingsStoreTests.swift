@@ -10,13 +10,15 @@ import XCTest
 @MainActor
 final class AppSettingsStoreTests: XCTestCase {
 
-    private func makeStore() throws -> (AppSettingsStore, ModelContainer) {
+    private func makeStore() async throws -> (AppSettingsStore, ModelContainer) {
         let container = try PersistenceContainers.inMemoryAppSettings()
-        return (AppSettingsStore(container: container), container)
+        let store = AppSettingsStore(container: container)
+        try await store.prepare()
+        return (store, container)
     }
 
     func testUpsertCreatesAndUpdates() async throws {
-        let (store, _) = try makeStore()
+        let (store, _) = try await makeStore()
         try await store.setDeny("com.example")
         var snapshot = try await store.find("com.example")
         XCTAssertEqual(snapshot?.allowed, false)
@@ -27,14 +29,14 @@ final class AppSettingsStoreTests: XCTestCase {
     }
 
     func testShouldAllowDefaultsToTrueWhenNoRule() async throws {
-        let (store, _) = try makeStore()
+        let (store, _) = try await makeStore()
         let allowed = await store.shouldAllow("unknown.app")
         XCTAssertTrue(allowed)
         XCTAssertTrue(store.shouldAllowSync("unknown.app"))
     }
 
     func testShouldAllowRespectsRule() async throws {
-        let (store, _) = try makeStore()
+        let (store, _) = try await makeStore()
         try await store.setDeny("blocked.app")
         let allowed = await store.shouldAllow("blocked.app")
         XCTAssertFalse(allowed)
@@ -42,7 +44,7 @@ final class AppSettingsStoreTests: XCTestCase {
     }
 
     func testDeniedAppsAndCount() async throws {
-        let (store, _) = try makeStore()
+        let (store, _) = try await makeStore()
         try await store.setDeny("a")
         try await store.setAllow("b")
         try await store.setDeny("c")
@@ -56,7 +58,7 @@ final class AppSettingsStoreTests: XCTestCase {
     }
 
     func testDeleteRemovesRule() async throws {
-        let (store, _) = try makeStore()
+        let (store, _) = try await makeStore()
         try await store.setDeny("x")
         try await store.delete("x")
         let removed = try await store.find("x")
@@ -65,8 +67,21 @@ final class AppSettingsStoreTests: XCTestCase {
         XCTAssertTrue(allowed)
     }
 
+    func testPrepareHydratesRulesFromDisk() async throws {
+        let container = try PersistenceContainers.inMemoryAppSettings()
+        let writer = AppSettingsStore(container: container)
+        try await writer.prepare()
+        try await writer.setDeny("blocked.app")
+
+        // 新实例模拟应用重启：prepare() 之后决策必须立刻命中规则。
+        let reader = AppSettingsStore(container: container)
+        try await reader.prepare()
+        XCTAssertFalse(reader.shouldAllowSync("blocked.app"))
+        XCTAssertTrue(reader.shouldAllowSync("unknown.app"))
+    }
+
     func testChangeStreamEmitsAllowDeny() async throws {
-        let (store, _) = try makeStore()
+        let (store, _) = try await makeStore()
         let task = Task {
             var changes: [AppSettingsChange] = []
             for await change in store.observeChanges() {
@@ -83,7 +98,7 @@ final class AppSettingsStoreTests: XCTestCase {
     }
 
     func testMultipleObserversAllReceiveChanges() async throws {
-        let (store, _) = try makeStore()
+        let (store, _) = try await makeStore()
         let first = Task { await self.firstChange(in: store.observeChanges()) }
         let second = Task { await self.firstChange(in: store.observeChanges()) }
         try? await Task.sleep(for: .milliseconds(100))
@@ -117,18 +132,18 @@ final class AppSettingsStoreTests: XCTestCase {
         }
     }
 
-    func testPluginRegistersProvider() throws {
+    func testPluginRegistersProvider() async throws {
         let kernel = KernelCoreContainer()
         // 注入内存容器：生产模式会从 StorageProviding 解析插件目录并写盘。
         let persistence = PersistencePlugin(
             eventStoreContainer: try PersistenceContainers.inMemoryEventStore(),
             appSettingsContainer: try PersistenceContainers.inMemoryAppSettings()
         )
-        try kernel.start(plugins: [persistence, PluginAppSettings()])
+        try await kernel.startAsync(plugins: [persistence, PluginAppSettings()])
         XCTAssertNotNil(kernel.resolveProvider(AppSettingsProviding.self))
         let store = kernel.resolveProvider(AppSettingsProviding.self)
         XCTAssertNotNil(store)
-        try kernel.stop()
+        try await kernel.stopAsync()
         XCTAssertNil(kernel.resolveProvider(AppSettingsProviding.self))
     }
 

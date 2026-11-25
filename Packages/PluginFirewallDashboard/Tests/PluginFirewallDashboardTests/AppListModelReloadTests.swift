@@ -13,14 +13,15 @@ struct AppListModelReloadTests {
     func reloadsAfterDeny() async throws {
         let settings = MockSettings()
         let events = MockEvents(appIdsSince: ["com.alpha"])
+        let catalog = StubCatalog()
         let model = AppListModel()
 
-        await model.load(settings: settings, events: events, since: Date())
+        await model.load(catalog: catalog, settings: settings, events: events)
         #expect(model.filteredApps(for: .Allowed).map(\.id) == ["com.alpha"])
         #expect(model.filteredApps(for: .Rejected).isEmpty)
 
         let observer = Task {
-            await model.observeChanges(settings: settings, events: events, since: Date())
+            await model.observeChanges(catalog: catalog, settings: settings, events: events)
         }
         try await waitUntil { settings.subscriberCount == 1 }
         try await settings.setDeny("com.alpha")
@@ -35,15 +36,16 @@ struct AppListModelReloadTests {
     func reloadsAfterAllow() async throws {
         let settings = MockSettings()
         let events = MockEvents(appIdsSince: ["com.alpha"])
+        let catalog = StubCatalog()
         let model = AppListModel()
 
-        await model.load(settings: settings, events: events, since: Date())
+        await model.load(catalog: catalog, settings: settings, events: events)
         try await settings.setDeny("com.alpha")
-        await model.load(settings: settings, events: events, since: Date())
+        await model.load(catalog: catalog, settings: settings, events: events)
         #expect(model.filteredApps(for: .Rejected).map(\.id) == ["com.alpha"])
 
         let observer = Task {
-            await model.observeChanges(settings: settings, events: events, since: Date())
+            await model.observeChanges(catalog: catalog, settings: settings, events: events)
         }
         try await waitUntil { settings.subscriberCount == 1 }
         try await settings.setAllow("com.alpha")
@@ -58,11 +60,12 @@ struct AppListModelReloadTests {
     func deniedAppsComeFirst() async throws {
         let settings = MockSettings()
         let events = MockEvents(appIdsSince: ["com.alpha", "com.beta"])
+        let catalog = StubCatalog()
         let model = AppListModel()
 
-        await model.load(settings: settings, events: events, since: Date())
+        await model.load(catalog: catalog, settings: settings, events: events)
         try await settings.setDeny("com.beta")
-        await model.load(settings: settings, events: events, since: Date())
+        await model.load(catalog: catalog, settings: settings, events: events)
 
         #expect(model.filteredApps(for: .All).map(\.id).first == "com.beta")
     }
@@ -140,12 +143,22 @@ final class MockSettings: AppSettingsProviding {
     }
 }
 
-/// 事件存储 Mock：只提供会话开始后产生过事件的应用 ID。
+/// 事件存储 Mock：提供本次会话中出现过事件的应用 ID。
+@MainActor
 final class MockEvents: FirewallEventsProviding {
     private let appIds: [String]
 
     init(appIdsSince: [String]) {
         self.appIds = appIdsSince
+    }
+
+    var sessionAppIds: [String] { appIds }
+
+    func observeSessionAppIds() -> AsyncStream<[String]> {
+        AsyncStream { continuation in
+            continuation.yield(appIds)
+            continuation.finish()
+        }
     }
 
     func fetchPage(_ query: FirewallEventQuery) async throws -> FirewallEventPage {

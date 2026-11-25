@@ -5,21 +5,23 @@ import SwiftUI
 
 /// 菜单栏弹窗里的应用行：整行占满宽度，悬停由上层容器展开详情面板，
 /// 点击进入该应用的连接记录。
+///
+/// 行内直接绑定 `MenuBarAppRowModel`：网速逐秒变化只失效本行，
+/// 不会让整个列表随 1Hz 刷新重建。
 struct MenuBarAppRow: View {
     @EnvironmentObject private var ui: UIProvider
     @LumiTheme private var theme
 
-    let app: SmartApp
-    let isDenied: Bool
-    let speed: AppNetworkSpeed?
+    let row: MenuBarAppRowModel
 
     var body: some View {
+        let app = row.app
         Button {
             HoverCoordinator.shared.closeAll()
             ui.selectApp(app.id)
         } label: {
             HStack(spacing: 10) {
-                app.getIcon()
+                AppIcon(app: app)
                     .frame(width: 28, height: 28)
 
                 HStack(spacing: 6) {
@@ -27,7 +29,7 @@ struct MenuBarAppRow: View {
                         .font(.appBodyEmphasized)
                         .lineLimit(1)
 
-                    if isDenied {
+                    if row.isDenied {
                         Text("已阻止")
                             .font(.appMicroEmphasized)
                             .foregroundStyle(theme.error)
@@ -36,7 +38,7 @@ struct MenuBarAppRow: View {
 
                 Spacer(minLength: 8)
 
-                if let speed, speed.totalBytesPerSecond > 0 {
+                if let speed = row.speed, speed.totalBytesPerSecond > 0 {
                     speedBadge(speed)
                 }
             }
@@ -69,8 +71,8 @@ struct MenuBarAppRow: View {
     }
 
     private var accessibilityText: String {
-        var parts = [app.name, isDenied ? "已阻止" : "允许联网"]
-        if let speed, speed.totalBytesPerSecond > 0 {
+        var parts = [row.app.name, row.isDenied ? "已阻止" : "允许联网"]
+        if let speed = row.speed, speed.totalBytesPerSecond > 0 {
             if speed.downloadBytesPerSecond > 0 {
                 parts.append("下载 \(NetworkSpeedFormatter.format(speed.downloadBytesPerSecond))")
             }

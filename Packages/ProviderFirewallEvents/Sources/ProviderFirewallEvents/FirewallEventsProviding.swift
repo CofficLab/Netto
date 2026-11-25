@@ -30,6 +30,15 @@ public protocol FirewallEventsProviding: AnyObject, Sendable {
     /// 自指定时间起产生事件的应用 ID（去重升序）。
     func appIdsSince(_ date: Date) async throws -> [String]
 
+    /// 本次会话中出现过事件的应用 ID（去重升序）。
+    ///
+    /// 纯内存读取，不触库；实现应在写入/删除事件时增量维护该集合，
+    /// 不得为了得到它而扫描历史事件。
+    var sessionAppIds: [String] { get }
+
+    /// 观察会话应用集合变化（订阅时立即推送当前快照）。
+    func observeSessionAppIds() -> AsyncStream<[String]>
+
     /// 创建事件（旧 `createFromDTO` 语义）。
     func create(_ event: FirewallEventSnapshot) async throws
 
@@ -47,4 +56,13 @@ public protocol FirewallEventsProviding: AnyObject, Sendable {
 
     /// 观察事件变更（替代 NotificationCenter 事件）。
     func observeChanges() -> AsyncStream<FirewallEventChange>
+}
+
+public extension FirewallEventsProviding {
+    // Mock / 预览实现无需维护会话集合；真实实现必须覆盖这两个成员。
+    var sessionAppIds: [String] { [] }
+
+    func observeSessionAppIds() -> AsyncStream<[String]> {
+        AsyncStream { $0.finish() }
+    }
 }

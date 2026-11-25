@@ -9,6 +9,13 @@ import SwiftData
 /// 与旧 `Core/Model/FirewallEventModel.swift` 完全一致，保证旧 db.sqlite 直接可读。
 @Model
 public final class FirewallEventModel {
+    /// 历史查询按时间倒序分页、按应用过滤；会话集合与清理按时间范围扫描。
+    #Index<FirewallEventModel>(
+        [\.time],
+        [\.sourceAppIdentifier],
+        [\.time, \.sourceAppIdentifier]
+    )
+
     @Attribute(.unique)
     public var id: String
     public var time: Date

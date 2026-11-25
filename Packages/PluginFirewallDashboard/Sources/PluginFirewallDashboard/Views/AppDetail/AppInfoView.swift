@@ -59,7 +59,7 @@ struct AppInfoView: View {
 
     private var header: some View {
         HStack(spacing: AppUI.Spacing.md) {
-            app.getIcon()
+            AppIcon(app: app)
                 .frame(width: 44, height: 44)
                 .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.sm, style: .continuous))
 
