@@ -24,6 +24,8 @@ public struct ContentView: View {
     /// 应用/图标缓存：注入环境供行与详情视图取图标。
     @State private var catalog = AppCatalog()
     @State private var firewallState: FirewallState?
+    /// 运行中过滤器是否仍有扩展心跳（false 时列表不可信，改为提示未生效）。
+    @State private var isFilterResponding = true
     /// 菜单栏弹窗的呈现会话：弹窗关闭时复位选中的应用。
     @State private var presentationSession = PopoverPresentationSession()
 
@@ -33,7 +35,11 @@ public struct ContentView: View {
     public var body: some View {
         Group {
             if isShowingGuide {
-                GuideView(state: resolvedState, showsBackdrop: false)
+                GuideView(
+                    state: resolvedState,
+                    isFilterResponding: isFilterResponding,
+                    showsBackdrop: false
+                )
                     .padding(.vertical, 8)
             } else if let app = selectedApp {
                 MenuBarAppDetailView(
@@ -152,7 +158,11 @@ public struct ContentView: View {
     }
 
     private var shouldShowGuide: Bool {
-        (resolvedState?.isNotRunning() ?? true) || ui.shouldShowUpgradeGuide
+        if ui.shouldShowUpgradeGuide { return true }
+        guard let resolvedState else { return true }
+        // 运行中但过滤器没有响应：列表多半是空的（扩展没起来），
+        // 不能停留在应用列表误导用户。
+        return resolvedState.isNotRunning() || !isFilterResponding
     }
 
     private var resolvedState: FirewallState? {
@@ -162,8 +172,10 @@ public struct ContentView: View {
     private func observeFirewallState() async {
         guard let firewall else { return }
         firewallState = firewall.snapshot.state
+        isFilterResponding = firewall.snapshot.isFilterResponding
         for await update in firewall.observe() {
             firewallState = update.state
+            isFilterResponding = update.isFilterResponding
         }
     }
 }

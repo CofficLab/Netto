@@ -17,10 +17,12 @@ final class MockSystemAdapter: FirewallSystemAdapting {
     var filterEnabled = false
     var loadError: Error?
     var installError: Error?
+    var removeError: Error?
     var enableError: Error?
     var disableError: Error?
 
     private(set) var installCount = 0
+    private(set) var removeCount = 0
     private(set) var enableCount = 0
     private(set) var disableCount = 0
     private(set) var submittedRequests: [SystemExtensionRequestKind] = []
@@ -41,6 +43,12 @@ final class MockSystemAdapter: FirewallSystemAdapting {
     func installFilterConfiguration() async throws {
         installCount += 1
         if let installError { throw installError }
+        filterEnabled = false
+    }
+
+    func removeFilterConfiguration() async throws {
+        removeCount += 1
+        if let removeError { throw removeError }
         filterEnabled = false
     }
 

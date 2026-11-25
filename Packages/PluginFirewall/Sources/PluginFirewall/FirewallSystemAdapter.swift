@@ -73,6 +73,11 @@ protocol FirewallSystemAdapting: AnyObject {
     /// 约定：调用前已确认过滤器未启用。
     func installFilterConfiguration() async throws
 
+    /// 删除过滤器配置（系统会把过滤器一并禁用；无配置时直接返回）。
+    ///
+    /// 删除后重新安装，系统才会按当前 App 重新推导 DataProvider 签名要求。
+    func removeFilterConfiguration() async throws
+
     /// 启用过滤器（isEnabled=true + saveToPreferences）。
     func enableFilter() async throws
 
@@ -185,6 +190,13 @@ final class SystemFirewallAdapter: FirewallSystemAdapting {
         try await manager.loadFromPreferences()
         manager.isEnabled = true
         try await manager.saveToPreferences()
+    }
+
+    func removeFilterConfiguration() async throws {
+        let manager = NEFilterManager.shared()
+        try await manager.loadFromPreferences()
+        guard manager.providerConfiguration != nil else { return }
+        try await manager.removeFromPreferences()
     }
 
     func disableFilter() async throws {

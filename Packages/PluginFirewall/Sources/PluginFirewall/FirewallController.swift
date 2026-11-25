@@ -32,6 +32,14 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     private var awaitingApproval = false
     private var ipcRecoveryTask: Task<Void, Never>?
 
+    /// 最近一次扩展心跳（流量上报）时间；nil 表示本次运行尚未收到。
+    private var lastHeartbeatAt: Date?
+    /// 进入运行态的时间：扩展会话建立需要时间，用于心跳宽限。
+    private var runningSince: Date?
+    /// 过滤器是否在响应（扩展心跳存活）；由心跳与健康检查共同维护。
+    private var isFilterResponding = true
+    private var healthTask: Task<Void, Never>?
+
     private(set) var snapshot: FirewallSnapshot
     private var state: FirewallState
 
@@ -61,9 +69,85 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         guard newState != state else { return }
         let oldValue = state
         state = newState
-        snapshot = FirewallSnapshot(state: state, lastUpdated: Date())
+        if newState == .running {
+            resetFilterHealth()
+        } else {
+            runningSince = nil
+            lastHeartbeatAt = nil
+            isFilterResponding = true
+        }
+        publishSnapshot()
         logger.info("状态 \(String(describing: oldValue)) -> \(String(describing: newState))")
+    }
+
+    /// 用当前状态重建快照并推送给所有观察者。
+    ///
+    /// 状态不变但健康标记变化（心跳超时/恢复）时也要走这条路径，
+    /// 因此不能复用 `updateState` 的状态去重。
+    private func publishSnapshot() {
+        snapshot = FirewallSnapshot(
+            state: state,
+            lastUpdated: Date(),
+            isFilterResponding: isFilterResponding
+        )
         snapshotContinuations.values.forEach { $0.yield(snapshot) }
+    }
+
+    // MARK: - 过滤器健康（扩展心跳）
+
+    /// 运行中超过该时长没有扩展流量上报，即视为过滤器未生效。
+    private static let heartbeatTimeout: TimeInterval = 15
+    /// 启用后的宽限期：扩展会话建立需要时间，宽限期内不做未响应判定。
+    private static let heartbeatGracePeriod: TimeInterval = 20
+    /// 健康检查周期。
+    private static let healthCheckInterval: TimeInterval = 5
+
+    /// Extension 上报流量（每个上报周期一次，空闲时也会发空数组）。
+    func noteExtensionHeartbeat(at now: Date = Date()) {
+        lastHeartbeatAt = now
+        setFilterResponding(true)
+    }
+
+    /// 判定过滤器是否仍在响应；由周期任务调用，测试可直接驱动。
+    func evaluateFilterHealth(now: Date = Date()) {
+        guard state == .running else { return }
+        if let lastHeartbeatAt, now.timeIntervalSince(lastHeartbeatAt) <= Self.heartbeatTimeout {
+            return
+        }
+        if let runningSince, now.timeIntervalSince(runningSince) <= Self.heartbeatGracePeriod {
+            return
+        }
+        setFilterResponding(false)
+    }
+
+    private func setFilterResponding(_ responding: Bool) {
+        guard isFilterResponding != responding else { return }
+        isFilterResponding = responding
+        publishSnapshot()
+        if responding {
+            logger.info("收到扩展心跳，过滤器恢复响应")
+        } else {
+            logger.warning("运行中长时间未收到扩展心跳，过滤器可能未生效")
+        }
+    }
+
+    /// 进入运行态或重建配置后复位健康判定，重新给扩展留出建立会话的宽限。
+    private func resetFilterHealth() {
+        runningSince = Date()
+        lastHeartbeatAt = nil
+        isFilterResponding = true
+    }
+
+    private func startFilterHealthMonitoring() {
+        guard healthTask == nil else { return }
+        healthTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(Self.healthCheckInterval))
+                if Task.isCancelled { return }
+                guard let self else { return }
+                self.evaluateFilterHealth()
+            }
+        }
     }
 
     private func failure(_ error: Error) -> FirewallState {
@@ -81,7 +165,13 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
             let enabled = try await system.loadFilterEnabled()
             // 扩展未就绪时保留引导状态，避免与异步属性回调竞争后被过滤器结果覆盖。
             guard !Self.isExtensionGateState(state) else { return }
-            updateState(enabled ? .running : .stopped)
+            if enabled, state == .running {
+                // 运行态下重新确认（激活/配置变更/休眠唤醒）：重置心跳窗口，
+                // 避免把休眠或短暂断连误判为未生效；已判定的未生效不在此清除。
+                runningSince = Date()
+            } else {
+                updateState(enabled ? .running : .stopped)
+            }
         } catch {
             updateState(failure(error))
         }
@@ -159,6 +249,41 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         updateState(.stopped)
     }
 
+    /// 删除旧过滤器配置并用当前 App 重建后重新启用。
+    ///
+    /// 旧配置保存了安装时的 DataProvider 签名要求；Dev 与 TestFlight 构建
+    /// 切换后该要求不再匹配已安装扩展，系统会拒绝启动扩展（表现为
+    /// 「运行中」却收不到任何流量）。删除重建让系统按当前签名重新推导。
+    func repairFilter() async throws {
+        do {
+            try await system.removeFilterConfiguration()
+        } catch {
+            updateState(failure(error))
+            throw error
+        }
+
+        do {
+            try await system.installFilterConfiguration()
+        } catch {
+            // 与 installFilter 一致：保存失败通常是用户拒绝了授权。
+            updateState(.filterApprovalNeeded)
+            throw error
+        }
+
+        do {
+            try await system.enableFilter()
+        } catch {
+            updateState(failure(error))
+            throw error
+        }
+
+        // 配置重建后状态可能仍是 running（旧配置启用但未生效），
+        // updateState 会因状态去重被跳过，因此显式发布复位后的快照。
+        resetFilterHealth()
+        updateState(.running)
+        publishSnapshot()
+    }
+
     func observe() -> AsyncStream<FirewallSnapshot> {
         let observerID = UUID()
         return AsyncStream { [weak self] continuation in
@@ -184,6 +309,7 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     /// 仅靠系统扩展事件会在启用完成前触发查询而读到旧值。
     func startObserving() {
         guard filterObserverToken == nil else { return }
+        startFilterHealthMonitoring()
         filterObserverToken = system.addFilterConfigurationObserver { [weak self] in
             // 配置变了必须重新加载偏好再判断：`NEFilterManager` 的属性是
             // 进程内副本，直接读会拿到上一次的旧值。
@@ -268,6 +394,8 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     func shutdown() {
         ipcRecoveryTask?.cancel()
         ipcRecoveryTask = nil
+        healthTask?.cancel()
+        healthTask = nil
         ipc.connectionLossHandler = nil
         if let token = filterObserverToken {
             system.removeFilterConfigurationObserver(token)

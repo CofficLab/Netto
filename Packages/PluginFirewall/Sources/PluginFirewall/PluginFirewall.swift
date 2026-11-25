@@ -147,7 +147,10 @@ final class PromptUserBridge: NSObject, AppCommunication {
                 elapsed: elapsed
             )
         }
-        Task { @MainActor [weak speedMonitor] in
+        Task { @MainActor [weak controller, weak speedMonitor] in
+            // 周期上报（空闲时为空数组）是扩展存活的唯一可靠信号：
+            // 运行中收不到上报说明过滤器会话没有起来。
+            controller?.noteExtensionHeartbeat()
             speedMonitor?.ingest(parsed)
         }
     }

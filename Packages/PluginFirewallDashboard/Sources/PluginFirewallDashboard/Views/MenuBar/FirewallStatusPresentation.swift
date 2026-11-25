@@ -10,7 +10,16 @@ struct FirewallStatusPresentation {
     let title: String
     let detail: String
 
-    init(state: FirewallState) {
+    init(state: FirewallState, isFilterResponding: Bool = true) {
+        // 配置启用但扩展没有心跳：系统里过滤器是「开启」的，实际却不在拦截。
+        if state == .running, isFilterResponding == false {
+            symbol = "exclamationmark.shield.fill"
+            color = .orange
+            title = "防火墙未生效"
+            detail = "过滤器没有响应，可能未在拦截"
+            return
+        }
+
         switch state {
         case .running:
             symbol = "shield.fill"

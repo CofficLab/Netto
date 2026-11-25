@@ -69,14 +69,14 @@ final class NettoKernelAssemblyTests: XCTestCase {
         XCTAssertFalse(manifest.features.reopensMainWindowOnActivate)
     }
 
-    /// 状态栏弹窗是唯一主界面：菜单只剩「设置 / 退出」，宽度足以容纳列表。
+    /// 状态栏弹窗是唯一主界面：菜单只有「设置 / 修复过滤器 / 退出」，宽度足以容纳列表。
     func testStatusBarMenuItemsExcludeMainWindowEntry() throws {
         let configuration = try XCTUnwrap(NettoManifest.manifest.features.statusBar)
 
         XCTAssertEqual(configuration.popoverWidth, 360)
         XCTAssertEqual(
             configuration.menuItems?.compactMap(\.accessibilityIdentifier),
-            ["netto.menubar.settings", "netto.menubar.quit"]
+            ["netto.menubar.settings", "netto.menubar.firewall.repair", "netto.menubar.quit"]
         )
     }
 
