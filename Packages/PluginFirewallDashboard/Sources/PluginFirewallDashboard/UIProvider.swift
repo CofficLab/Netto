@@ -8,25 +8,8 @@ public final class UIProvider: ObservableObject {
     @Published public var displayType: DisplayType = .All
     @Published public var activePopoverAppId: String = ""
     @Published public var shouldShowUpgradeGuide: Bool = false
-    /// 菜单栏弹窗当前展开的应用；nil 表示显示应用列表。
-    @Published public var selectedAppId: String?
 
     public init() {}
-
-    public func selectApp(_ appId: String) {
-        selectedAppId = appId
-    }
-
-    public func clearSelectedApp() {
-        selectedAppId = nil
-    }
-
-    /// 升级引导是否需要覆盖在当前子视图之上。
-    ///
-    /// 停留在应用详情页时达到免费版限制，引导必须覆盖在详情之上才可见。
-    public var showsUpgradeOverlay: Bool {
-        shouldShowUpgradeGuide && selectedAppId != nil
-    }
 
     /// 达到免费版限制时的处理：显示升级引导。
     public func presentUpgradeLimit() {
@@ -67,7 +50,6 @@ public final class UIProvider: ObservableObject {
         displayType = .All
         activePopoverAppId = ""
         shouldShowUpgradeGuide = false
-        selectedAppId = nil
     }
 }
 

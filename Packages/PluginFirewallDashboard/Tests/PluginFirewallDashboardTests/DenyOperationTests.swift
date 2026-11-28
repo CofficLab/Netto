@@ -14,7 +14,6 @@ struct DenyOperationTests {
     func atLimitDoesNotWriteRule() async throws {
         let settings = RecordingAppSettings(deniedCount: 5)
         let ui = UIProvider()
-        ui.selectApp("com.example.app")
         let shell = ShellCenter()
 
         let outcome = try await DenyOperation(
@@ -30,7 +29,7 @@ struct DenyOperationTests {
             return
         }
         #expect(settings.deniedAppIds.isEmpty)
-        #expect(ui.showsUpgradeOverlay)
+        #expect(ui.shouldShowUpgradeGuide)
         #expect(shell.lastToast?.isError == true)
         #expect(shell.lastToast?.description == message)
     }
@@ -39,7 +38,6 @@ struct DenyOperationTests {
     func belowLimitWritesRule() async throws {
         let settings = RecordingAppSettings(deniedCount: 1)
         let ui = UIProvider()
-        ui.selectApp("com.example.app")
         let shell = ShellCenter()
         var reloadCount = 0
 
@@ -55,7 +53,7 @@ struct DenyOperationTests {
         #expect(outcome == .denied)
         #expect(settings.deniedAppIds == ["com.example.app"])
         #expect(reloadCount == 1)
-        #expect(ui.showsUpgradeOverlay == false)
+        #expect(ui.shouldShowUpgradeGuide == false)
         #expect(shell.lastToast?.isError == false)
     }
 

@@ -5,10 +5,11 @@ import ProviderFirewallEvents
 import ProviderViewEnvironment
 import SwiftUI
 
-/// 菜单栏弹窗的主体：筛选 + 应用列表，或单个应用的事件详情。
+/// 菜单栏弹窗的主体：筛选 + 应用列表。
 ///
-/// 固定 360pt 高度，保证 NSPopover 的内容高度在列表与详情之间切换时不跳动；
-/// 内部滚动由各区域自己的 `ScrollView` 承担。
+/// 固定 360pt 高度，保证 NSPopover 的内容高度在引导与列表之间切换时不跳动；
+/// 内部滚动由列表自己的 `ScrollView` 承担。应用联网日志不在这里展示，
+/// 规则开关由行悬停面板提供。
 ///
 /// 数据全部由推送驱动：会话应用集合、规则变更、实时网速、应用启停各自
 /// 走订阅，列表只在应用集合/规则变化时重排；网速更新落到行级模型，
@@ -21,22 +22,20 @@ public struct ContentView: View {
     @Environment(\.networkSpeedProvider) private var networkSpeed
 
     @State private var model = MenuBarAppsModel()
-    /// 应用/图标缓存：注入环境供行与详情视图取图标。
+    /// 应用/图标缓存：注入环境供行与悬停面板取图标。
     @State private var catalog = AppCatalog()
     @State private var firewallState: FirewallState?
     /// 运行中过滤器是否仍有扩展心跳（false 时列表不可信，改为提示未生效）。
     @State private var isFilterResponding = true
     /// App 与系统扩展的 IPC 是否已建立（断开时列表与决策都不可信）。
     @State private var isIPCConnected = true
-    /// 菜单栏弹窗的呈现会话：弹窗关闭时复位选中的应用。
-    @State private var presentationSession = PopoverPresentationSession()
 
     @MainActor
     public init() {}
 
     public var body: some View {
         Group {
-            if isShowingGuide {
+            if shouldShowGuide {
                 GuideView(
                     state: resolvedState,
                     isFilterResponding: isFilterResponding,
@@ -44,34 +43,13 @@ public struct ContentView: View {
                     showsBackdrop: false
                 )
                     .padding(.vertical, 8)
-            } else if let app = selectedApp {
-                MenuBarAppDetailView(
-                    app: app,
-                    onBack: { ui.clearSelectedApp() }
-                )
             } else {
                 listContent
             }
         }
-        // 升级引导覆盖在当前子视图之上：达到免费版限制时提示必须立刻可见，
-        // 不能因为停留在应用详情页而被隐藏。
-        .overlay {
-            UpgradeGuideOverlay(state: resolvedState)
-        }
-        // 列表与详情固定高度避免切换时弹窗跳动；引导内容按自然高度完整展示，
+        // 列表固定高度避免与引导切换时弹窗跳动；引导内容按自然高度完整展示，
         // 不出现滚动条。
-        .frame(height: isShowingGuide ? nil : 360, alignment: .top)
-        .onAppear {
-            // 选中的应用属于「本次弹窗呈现」：弹窗关闭时复位，
-            // 否则下次打开会停在上一次的应用详情。
-            let provider = ui
-            presentationSession.onEnd = { provider.clearSelectedApp() }
-        }
-        .background(
-            WindowAccessor { window in
-                presentationSession.attach(window: window)
-            }
-        )
+        .frame(height: shouldShowGuide ? nil : 360, alignment: .top)
         .environment(\.appCatalog, catalog)
         .task {
             await model.run(
@@ -149,15 +127,6 @@ public struct ContentView: View {
 
     private var filteredApps: [MenuBarAppRowModel] {
         model.rows(for: ui.displayType)
-    }
-
-    private var selectedApp: SmartApp? {
-        guard let id = ui.selectedAppId else { return nil }
-        return model.row(id: id)?.app ?? catalog.app(for: id)
-    }
-
-    private var isShowingGuide: Bool {
-        ui.selectedAppId == nil && shouldShowGuide
     }
 
     private var shouldShowGuide: Bool {

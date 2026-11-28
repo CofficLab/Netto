@@ -89,7 +89,7 @@ final class NetpauseDashboardUITests: NetpauseUITestBase {
         XCTAssertTrue(element(in: app, identifier: "netpause.apps.list").exists)
     }
 
-    func testAppDetailShowsEventFiltersAndExportAction() throws {
+    func testAppRowDoesNotOpenEventLog() throws {
         let app = launchApp()
         _ = try openDashboard(in: app)
         let row = app.descendants(matching: .any)
@@ -100,45 +100,9 @@ final class NetpauseDashboardUITests: NetpauseUITestBase {
         }
 
         row.click()
-        let detail = element(in: app, identifier: "netpause.app.detail")
-        XCTAssertTrue(detail.waitForExistence(timeout: 8), "Clicking an app row did not open its detail")
-        XCTAssertTrue(element(in: app, identifier: "netpause.events.detail").exists)
-        XCTAssertTrue(element(in: app, identifier: "netpause.events.status-filter").exists)
-        XCTAssertTrue(element(in: app, identifier: "netpause.events.direction-filter").exists)
-        XCTAssertTrue(element(in: app, identifier: "netpause.events.export").exists)
-
-        element(in: app, identifier: "netpause.app.detail.back").click()
-        XCTAssertTrue(element(in: app, identifier: "netpause.apps.list").waitForExistence(timeout: 5))
-    }
-
-    func testEventStatusAndDirectionFiltersCanBeChanged() throws {
-        let app = launchApp()
-        _ = try openDashboard(in: app)
-        let row = app.descendants(matching: .any)
-            .matching(NSPredicate(format: "identifier BEGINSWITH %@", "netpause.app.row."))
-            .firstMatch
-        guard row.waitForExistence(timeout: 10) else {
-            throw XCTSkip("No app rows are visible in the current dashboard state")
-        }
-
-        row.click()
-        let detail = element(in: app, identifier: "netpause.app.detail")
-        guard detail.waitForExistence(timeout: 8) else {
-            throw XCTSkip("App detail is unavailable in this environment")
-        }
-
-        for identifier in [
-            "netpause.events.status.允许",
-            "netpause.events.status.阻止",
-            "netpause.events.status.全部",
-            "netpause.events.direction.入",
-            "netpause.events.direction.出",
-            "netpause.events.direction.全部",
-        ] {
-            let option = element(in: app, identifier: identifier)
-            XCTAssertTrue(option.waitForExistence(timeout: 5), "Missing event filter: \(identifier)")
-            option.click()
-            XCTAssertTrue(element(in: app, identifier: "netpause.events.detail").exists)
-        }
+        // 应用联网日志已从弹窗移除：点击行不应离开应用列表。
+        XCTAssertTrue(element(in: app, identifier: "netpause.apps.list").waitForExistence(timeout: 3))
+        XCTAssertFalse(element(in: app, identifier: "netpause.app.detail").exists)
+        XCTAssertFalse(element(in: app, identifier: "netpause.events.detail").exists)
     }
 }
