@@ -128,10 +128,10 @@ struct ViewCompatTests {
         #expect(event.description == "example.com:443")
     }
 
-    @Test("statusDescription 输出中文状态文案")
+    @Test("statusDescription 输出状态文案")
     func eventStatusDescription() {
-        #expect(makeEvent(status: .allowed).statusDescription == "允许")
-        #expect(makeEvent(status: .rejected).statusDescription == "阻止")
+        #expect(makeEvent(status: .allowed).statusDescription == "Allow")
+        #expect(makeEvent(status: .rejected).statusDescription == "Block")
     }
 
     private func makeEvent(status: FirewallEventDecision) -> FirewallEventSnapshot {

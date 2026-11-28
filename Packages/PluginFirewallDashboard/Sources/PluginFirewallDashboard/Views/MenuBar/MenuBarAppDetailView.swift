@@ -55,7 +55,7 @@ struct MenuBarAppDetailView: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 6) {
                 AppButton(systemImage: "chevron.left", style: .ghost, size: .small, action: onBack)
-                    .accessibilityLabel("返回应用列表")
+                    .accessibilityLabel("Back to App List")
                     .accessibilityIdentifier("netpause.app.detail.back")
 
                 Text(app.name)
@@ -79,7 +79,7 @@ struct MenuBarAppDetailView: View {
                         .lineLimit(1)
                         .truncationMode(.middle)
 
-                    Text(shouldAllow ? "允许联网" : "已阻止联网")
+                    Text(shouldAllow ? String(localized: "Network access allowed") : String(localized: "Network access blocked"))
                         .font(.appMicro)
                         .foregroundStyle(shouldAllow ? theme.textSecondary : theme.error)
                 }
@@ -94,7 +94,7 @@ struct MenuBarAppDetailView: View {
     private var eventFilters: some View {
         HStack(spacing: 6) {
             AppSegmentedControl(
-                StatusFilter.allCases.map(\.rawValue),
+                StatusFilter.allCases.map(\.title),
                 selection: statusSelection,
                 maxWidth: 150,
                 accessibilityIdentifiers: StatusFilter.allCases.map { "netpause.events.status.\($0.rawValue)" }
@@ -102,7 +102,7 @@ struct MenuBarAppDetailView: View {
             .accessibilityIdentifier("netpause.events.status-filter")
 
             AppSegmentedControl(
-                DirectionFilter.allCases.map(\.rawValue),
+                DirectionFilter.allCases.map(\.title),
                 selection: directionSelection,
                 maxWidth: 96,
                 accessibilityIdentifiers: DirectionFilter.allCases.map { "netpause.events.direction.\($0.rawValue)" }
@@ -114,8 +114,8 @@ struct MenuBarAppDetailView: View {
             AppButton(systemImage: "square.and.arrow.down", style: .ghost, size: .small) {
                 Task { await exportRecentLogs() }
             }
-            .help("导出近期日志")
-            .accessibilityLabel("导出近期日志")
+            .help("Export Recent Logs")
+            .accessibilityLabel("Export Recent Logs")
             .accessibilityIdentifier("netpause.events.export")
         }
     }
@@ -131,7 +131,7 @@ struct MenuBarAppDetailView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.top, 16)
                 } else if model.events.isEmpty {
-                    Text("暂无事件数据")
+                    Text("No Event Data")
                         .font(.appCaption)
                         .foregroundStyle(theme.textSecondary)
                         .frame(maxWidth: .infinity)
@@ -189,12 +189,12 @@ struct MenuBarAppDetailView: View {
                 currentPage -= 1
             }
             .disabled(currentPage <= 0 || model.isLoading)
-            .accessibilityLabel("上一页")
+            .accessibilityLabel("Previous Page")
             .accessibilityIdentifier("netpause.events.prev")
 
             Spacer(minLength: 0)
 
-            Text("第 \(currentPage + 1)/\(totalPages) 页 · 共 \(model.totalCount) 条")
+            Text("Page \(currentPage + 1) of \(totalPages) · \(model.totalCount) events")
                 .font(.appMicro)
                 .foregroundStyle(theme.textSecondary)
 
@@ -205,7 +205,7 @@ struct MenuBarAppDetailView: View {
                 currentPage += 1
             }
             .disabled(currentPage >= totalPages - 1 || model.isLoading)
-            .accessibilityLabel("下一页")
+            .accessibilityLabel("Next Page")
             .accessibilityIdentifier("netpause.events.next")
         }
     }
@@ -289,7 +289,7 @@ struct MenuBarAppDetailView: View {
                 direction: directionValue,
                 directory: directory
             )
-            shell.post(ToastMessage(description: "已导出到下载目录"))
+            shell.post(ToastMessage(description: String(localized: "Exported to Downloads")))
         } catch {
             shell.postError(error.localizedDescription)
         }

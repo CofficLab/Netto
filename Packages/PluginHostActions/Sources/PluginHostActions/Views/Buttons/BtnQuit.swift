@@ -5,7 +5,7 @@ struct BtnQuit: View {
     
     private var asToolbarItem: Bool = false
     private var icon: String = "xmark.circle"
-    private var title: String = "退出"
+    private var title: String = String(localized: "Quit")
     
     init(asToolbarItem: Bool = false) {
         self.asToolbarItem = asToolbarItem

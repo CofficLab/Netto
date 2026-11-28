@@ -16,7 +16,7 @@ struct EmptyStateView: View {
 
     init(
         iconName: String = "doc.text.magnifyingglass",
-        title: String = "暂无数据",
+        title: String = String(localized: "No data"),
         description: String? = nil
     ) {
         self.iconName = iconName
@@ -40,8 +40,8 @@ struct EmptyStateView: View {
 
     #Preview("Empty - Small") {
         EmptyStateView(
-            title: "暂无事件数据",
-            description: "当前筛选条件下没有找到相关事件"
+            title: String(localized: "No event data"),
+            description: String(localized: "No events match the current filters")
         )
         .frame(width: 400, height: 150)
     }

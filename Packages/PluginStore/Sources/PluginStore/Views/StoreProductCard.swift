@@ -73,7 +73,7 @@ struct StoreProductCard: View {
                 .font(.system(size: 10))
                 .accessibilityHidden(true)
 
-            Text("已购买")
+            Text("Purchased")
                 .font(AppUI.Typography.caption2)
         }
         .foregroundStyle(theme.success)
@@ -91,7 +91,7 @@ struct StoreProductCard: View {
                 .font(.system(size: 10))
                 .accessibilityHidden(true)
 
-            Text(offer.paymentMode == "FreeTrial" ? "含免费试用" : "首期优惠 \(offer.displayPrice)")
+            Text(offer.paymentMode == "FreeTrial" ? String(localized: "Free trial included") : String(localized: "Introductory offer \(offer.displayPrice)"))
                 .font(AppUI.Typography.caption1)
         }
         .foregroundStyle(theme.primary)
@@ -104,12 +104,12 @@ struct StoreProductCard: View {
                 .controlSize(.small)
                 .frame(width: 72, height: 22)
         } else if isPurchased {
-            Text("已订阅")
+            Text("Subscribed")
                 .font(AppUI.Typography.bodyEmphasized)
                 .foregroundStyle(theme.success)
                 .frame(minWidth: 72)
         } else {
-            AppButton("订阅", systemImage: "crown.fill", style: .primary, size: .small) {
+            AppButton("Subscribe", systemImage: "crown.fill", style: .primary, size: .small) {
                 onPurchase()
             }
         }
@@ -123,16 +123,18 @@ struct StoreProductCard: View {
     private var periodLabel: String? {
         guard let period = product.subscription?.subscriptionPeriod else { return nil }
 
-        let unit: String
         switch period.unit {
-        case "day": unit = "天"
-        case "week": unit = "周"
-        case "month": unit = "月"
-        case "year": unit = "年"
-        default: return nil
+        case "day":
+            return period.value > 1 ? String(localized: "Every \(period.value) days") : String(localized: "Per day")
+        case "week":
+            return period.value > 1 ? String(localized: "Every \(period.value) weeks") : String(localized: "Per week")
+        case "month":
+            return period.value > 1 ? String(localized: "Every \(period.value) months") : String(localized: "Per month")
+        case "year":
+            return period.value > 1 ? String(localized: "Every \(period.value) years") : String(localized: "Per year")
+        default:
+            return nil
         }
-
-        return period.value > 1 ? "每 \(period.value) \(unit)" : "每\(unit)"
     }
 }
 
@@ -182,6 +184,6 @@ struct StoreProductGroupSection: View {
 private extension SubscriptionGroupDTO {
     /// 组名：StoreKit 未给出显示名时回退为「订阅」，避免中文界面冒出组 ID。
     var displayName: String {
-        name.isEmpty || name == id ? "订阅" : name
+        name.isEmpty || name == id ? String(localized: "Subscription") : name
     }
 }

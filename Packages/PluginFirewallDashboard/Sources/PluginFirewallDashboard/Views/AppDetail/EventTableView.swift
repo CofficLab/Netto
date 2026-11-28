@@ -11,18 +11,18 @@ struct EventTableView: View {
             if isLoading {
                 SkeletonLoadingView()
             } else if events.isEmpty {
-                EmptyStateView(title: "暂无事件数据")
+                EmptyStateView(title: String(localized: "No event data"))
             } else {
                 Table(events, columns: {
                     TableColumn("Time", value: \.timeFormatted).width(150)
                     TableColumn("Address", value: \.address)
                     TableColumn("Port", value: \.port).width(60)
                     TableColumn("Direction") { event in
-                        Text(event.direction == .inbound ? "入" : "出")
+                        Text(event.direction == .inbound ? String(localized: "In") : String(localized: "Out"))
                             .foregroundStyle(event.isAllowed ? .green : .red)
                     }.width(60)
                     TableColumn("Status") { event in
-                        Text(event.status == .allowed ? "允许" : "拒绝")
+                        Text(event.status == .allowed ? String(localized: "Allow") : String(localized: "Deny"))
                             .foregroundStyle(event.isAllowed ? .green : .red)
                     }.width(60)
                 })

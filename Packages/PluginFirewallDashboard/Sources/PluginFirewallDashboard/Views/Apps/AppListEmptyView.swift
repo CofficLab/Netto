@@ -13,22 +13,22 @@ struct AppListEmptyView: View {
     private var title: String {
         switch displayType {
         case .All:
-            return "暂无应用"
+            return String(localized: "No apps")
         case .Allowed:
-            return "暂无网络活动"
+            return String(localized: "No network activity")
         case .Rejected:
-            return "暂无被拒绝的应用"
+            return String(localized: "No denied apps")
         }
     }
 
     private var description: String {
         switch displayType {
         case .All:
-            return "当前没有应用产生网络活动"
+            return String(localized: "No apps currently have network activity")
         case .Allowed:
-            return "当前没有网络活动"
+            return String(localized: "No network activity right now")
         case .Rejected:
-            return "当前没有拒绝访问网络的应用"
+            return String(localized: "No apps are currently denied network access")
         }
     }
 }

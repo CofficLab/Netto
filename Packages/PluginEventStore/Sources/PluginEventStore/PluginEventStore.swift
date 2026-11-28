@@ -18,7 +18,7 @@ public final class PluginEventStore: AsyncSuperPlugin {
     public let metadata = PluginMetadata(
         id: PersistenceConfig.eventsPluginID,
         name: "EventStore",
-        description: "防火墙事件存储（SwiftData + 定期维护）",
+        description: String(localized: "Firewall event storage (SwiftData with periodic maintenance)"),
         version: "1.0",
         policy: .required
     )

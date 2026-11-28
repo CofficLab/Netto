@@ -13,7 +13,7 @@ struct ProductsConsumable: View {
     @ViewBuilder
     private func productList(items: [ProductDTO]) -> some View {
         if items.isEmpty {
-            Text("暂无消耗品").foregroundStyle(.secondary)
+            Text("No consumables").foregroundStyle(.secondary)
         } else {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 10) {

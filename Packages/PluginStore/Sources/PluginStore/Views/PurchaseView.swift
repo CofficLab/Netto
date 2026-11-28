@@ -64,22 +64,22 @@ struct PurchaseView: View {
             TabView {
                 if showSubscription {
                     ProductsSubscription()
-                        .tabItem { Label("订阅", systemImage: "repeat") }
+                        .tabItem { Label("Subscriptions", systemImage: "repeat") }
                 }
                 
                 if showOneTime {
                     ProductsOfOneTime()
-                        .tabItem { Label("一次性购买", systemImage: "car") }
+                        .tabItem { Label("One-Time Purchases", systemImage: "car") }
                 }
 
                 if showNonRenewable {
                     ProductsNonRenewable()
-                        .tabItem { Label("非续订", systemImage: "clock") }
+                        .tabItem { Label("Non-Renewing", systemImage: "clock") }
                 }
 
                 if showConsumable {
                     ProductsConsumable()
-                        .tabItem { Label("消耗品", systemImage: "drop") }
+                        .tabItem { Label("Consumables", systemImage: "drop") }
                 }
             }
             .padding()
@@ -99,8 +99,8 @@ struct PurchaseView: View {
     private var footerView: some View {
         HStack {
             Spacer()
-            Link("隐私政策", destination: URL(string: "https://www.kuaiyizhi.cn/privacy")!)
-            Link("许可协议", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+            Link("Privacy Policy", destination: URL(string: "https://www.kuaiyizhi.cn/privacy")!)
+            Link("License Agreement", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
             Spacer()
         }
         .foregroundStyle(

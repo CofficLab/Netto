@@ -7,7 +7,7 @@ struct OneTimeView: View {
     @State private var purchasedSubscriptions: [ProductDTO] = []
     
     var body: some View {
-        Section("一次性订阅") {
+        Section("One-Time Purchases") {
             ForEach(products) { product in
                 ProductCell(product: product, purchasingEnabled: purchasedSubscriptions.isEmpty)
             }

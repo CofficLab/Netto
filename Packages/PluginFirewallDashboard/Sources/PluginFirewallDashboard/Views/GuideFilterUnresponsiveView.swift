@@ -16,28 +16,28 @@ struct FilterUnresponsiveView: View {
     var body: some View {
         DashboardGuidePanel(
             iconName: "exclamationmark.shield.fill",
-            title: "防火墙未生效",
+            title: "Firewall Not Active",
             iconColor: .orange
         ) {
             VStack(spacing: AppUI.Spacing.md) {
-                Text("过滤器没有响应，网络流量可能没有被拦截。")
+                Text("The filter is not responding. Network traffic may not be blocked.")
                     .font(.appBody)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("修复后会重新创建过滤器配置；如果仍然无效，请重启 Netpause 或电脑。")
+                Text("Repairing recreates the filter configuration. If that does not help, restart Netpause or your Mac.")
                     .font(.appCaption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if let errorMessage {
-                    AppStatusBanner(kind: .error, title: "修复失败", message: errorMessage)
+                    AppStatusBanner(kind: .error, title: "Repair Failed", message: errorMessage)
                 }
 
                 AppButton(
-                    isBusy ? "修复中…" : "修复过滤器",
+                    isBusy ? String(localized: "Repairing…") : String(localized: "Repair Filter"),
                     systemImage: "wrench.and.screwdriver",
                     style: .primary,
                     fillsWidth: true,

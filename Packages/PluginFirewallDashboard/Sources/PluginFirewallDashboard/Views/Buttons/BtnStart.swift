@@ -11,9 +11,9 @@ public struct BtnStart: View {
     @State private var isBusy = false
 
     private var asToolbarItem: Bool = false
-    private var title: String = "开启"
+    private var title: String = String(localized: "Start")
 
-    public init(asToolbarItem: Bool = false, title: String = "开启") {
+    public init(asToolbarItem: Bool = false, title: String = String(localized: "Start")) {
         self.asToolbarItem = asToolbarItem
         self.title = title
     }
@@ -25,11 +25,11 @@ public struct BtnStart: View {
             }
             .disabled(isBusy)
         } else {
-            AppButton(isBusy ? "开启中…" : title, systemImage: "restart.circle", style: .primary, fillsWidth: true, action: {
+            AppButton(isBusy ? String(localized: "Starting…") : title, systemImage: "restart.circle", style: .primary, fillsWidth: true, action: {
                 action()
             })
             .disabled(isBusy || firewall?.snapshot.state.isRunning() == true)
-            .help(isBusy ? "正在开启…" : (firewall?.snapshot.state.isRunning() == true ? "已开启" : ""))
+            .help(isBusy ? String(localized: "Starting…") : (firewall?.snapshot.state.isRunning() == true ? String(localized: "Started") : ""))
             .frame(width: 150)
             .frame(height: 50)
         }
@@ -42,7 +42,7 @@ public struct BtnStart: View {
             do {
                 try await firewall.start()
             } catch {
-                shell.postError("开启防火墙失败：\(error.localizedDescription)")
+                shell.postError(String(localized: "Failed to start firewall: \(error.localizedDescription)"))
             }
             isBusy = false
         }

@@ -6,10 +6,13 @@
     "Release",
   ],
   "localizations": {
-    "development": "zh-Hans",
+    "development": "en",
     "supported": [
       "Base",
-      "en",
+      "zh-HK",
+      "zh-Hans",
+      "zh-Hant",
+      "zh-TW",
     ],
   },
   "packages": [
@@ -626,7 +629,7 @@
     "MTL_FAST_MATH": "YES",
     "ONLY_ACTIVE_ARCH[config=Debug]": "YES",
     "SDKROOT": "macosx",
-    "STRING_CATALOG_GENERATE_SYMBOLS": "YES",
+    "STRING_CATALOG_GENERATE_SYMBOLS": "NO",
     "SWIFT_ACTIVE_COMPILATION_CONDITIONS[config=Debug]": "DEBUG",
     "SWIFT_COMPILATION_MODE[config=Release]": "wholemodule",
     "SWIFT_EMIT_LOC_STRINGS": "YES",

@@ -136,7 +136,7 @@ struct HostPluginSettingViewTests {
 
         let entry = settingView.entries.first { $0.id == "general" }
         #expect(entry != nil)
-        #expect(entry?.title == "通用")
+        #expect(entry?.title == "General")
         #expect(entry?.systemImage == "gearshape")
         #expect(entry?.order == 5)
     }
@@ -149,7 +149,7 @@ struct HostPluginSettingViewTests {
 
         let entry = settingView.entries.first { $0.id == "database" }
         #expect(entry != nil)
-        #expect(entry?.title == "数据库")
+        #expect(entry?.title == "Database")
         #expect(entry?.order == 40)
     }
 

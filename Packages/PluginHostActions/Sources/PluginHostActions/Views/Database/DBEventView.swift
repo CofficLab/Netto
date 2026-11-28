@@ -144,21 +144,21 @@ struct DBEventView: View {
         VStack {
             // 第一行工具栏：标题和基本操作
             HStack(spacing: AppUI.Spacing.sm) {
-                Text("防火墙事件记录")
+                Text("Firewall Event Log")
                     .font(.appSectionTitle)
                     .foregroundStyle(theme.textPrimary)
 
                 Spacer()
 
-                Text("共 \(totalCount) 条记录")
+                Text("\(totalCount) records")
                     .font(.appCaption)
                     .foregroundStyle(theme.textSecondary)
 
-                AppButton("刷新", systemImage: "arrow.clockwise", style: .secondary, size: .small) {
+                AppButton("Refresh", systemImage: "arrow.clockwise", style: .secondary, size: .small) {
                     loadEvents()
                 }
 
-                AppButton("打开数据库文件夹", systemImage: "folder", style: .secondary, size: .small) {
+                AppButton("Open Database Folder", systemImage: "folder", style: .secondary, size: .small) {
                     guard let eventsDirectory else { return }
                     NSWorkspace.shared.open(eventsDirectory)
                 }
@@ -168,19 +168,19 @@ struct DBEventView: View {
 
             // 第二行工具栏：筛选控制
             HStack(spacing: AppUI.Spacing.sm) {
-                AppSearchBar(text: $filterAppId, placeholder: "输入应用ID", onSubmit: applyFilter)
+                AppSearchBar(text: $filterAppId, placeholder: "Enter an app ID", onSubmit: applyFilter)
                     .frame(width: 220)
 
-                AppButton("应用筛选", style: .primary, size: .small, action: applyFilter)
+                AppButton("Apply Filter", style: .primary, size: .small, action: applyFilter)
                     .disabled(filterAppId.isEmpty)
 
                 if !filterAppId.isEmpty {
-                    AppButton("清除筛选", style: .secondary, size: .small, action: clearFilter)
+                    AppButton("Clear Filter", style: .secondary, size: .small, action: clearFilter)
                 }
 
                 Spacer()
 
-                Text("提示: 应用ID通常是应用的Bundle ID，例如 com.apple.Safari")
+                Text("Tip: an app ID is usually the bundle ID, for example com.apple.Safari")
                     .font(.appCaption)
                     .foregroundStyle(theme.textTertiary)
             }
@@ -190,32 +190,32 @@ struct DBEventView: View {
             // 事件表格
             Table(events) {
                 // 时间列
-                TableColumn("时间", value: \.timeFormatted)
+                TableColumn("Time", value: \.timeFormatted)
                     .width(min: 120, ideal: 150)
 
                 // 地址列
-                TableColumn("地址") { event in
+                TableColumn("Address") { event in
                     Text(event.address)
                         .font(.system(.body, design: .monospaced))
                 }
                 .width(min: 120, ideal: 200)
 
                 // 端口列
-                TableColumn("端口") { event in
+                TableColumn("Port") { event in
                     Text(event.port)
                         .font(.system(.body, design: .monospaced))
                 }
                 .width(min: 60, ideal: 80)
 
                 // 应用程序列
-                TableColumn("应用程序") { event in
-                    Text(event.sourceAppIdentifier.isEmpty ? "未知" : event.sourceAppIdentifier)
+                TableColumn("App") { event in
+                    Text(event.sourceAppIdentifier.isEmpty ? String(localized: "Unknown") : event.sourceAppIdentifier)
                         .foregroundStyle(event.sourceAppIdentifier.isEmpty ? .secondary : .primary)
                 }
                 .width(min: 100, ideal: 150)
 
                 // 状态列
-                TableColumn("状态") { event in
+                TableColumn("Status") { event in
                     HStack {
                         Circle()
                             .fill(event.isAllowed ? theme.success : theme.error)
@@ -228,19 +228,19 @@ struct DBEventView: View {
                 .width(min: 60, ideal: 80)
 
                 // 方向列
-                TableColumn("方向") { event in
+                TableColumn("Direction") { event in
                     HStack {
                         Image(systemName: event.direction == .inbound ? "arrow.down.circle" : "arrow.up.circle")
                             .foregroundStyle(event.direction == .inbound ? theme.info : theme.warning)
 
-                        Text(event.direction == .inbound ? "入站" : "出站")
+                        Text(event.direction == .inbound ? String(localized: "Inbound") : String(localized: "Outbound"))
                             .foregroundStyle(event.direction == .inbound ? theme.info : theme.warning)
                     }
                 }
                 .width(min: 60, ideal: 80)
 
                 // 描述列
-                TableColumn("描述") { event in
+                TableColumn("Description") { event in
                     Text(event.description)
                         .font(.system(.caption, design: .monospaced))
                         .foregroundStyle(.secondary)
@@ -249,7 +249,7 @@ struct DBEventView: View {
             }
             .overlay {
                 if isLoading {
-                    AppLoadingOverlay(message: "加载中...")
+                    AppLoadingOverlay(message: "Loading…")
                 }
             }
 
@@ -257,7 +257,7 @@ struct DBEventView: View {
             HStack(spacing: AppUI.Spacing.md) {
                 // 每页显示数量
                 HStack(spacing: AppUI.Spacing.sm) {
-                    Text("每页显示")
+                    Text("Rows per page")
                         .font(.appCaption)
                         .foregroundStyle(theme.textSecondary)
 
@@ -304,7 +304,7 @@ struct DBEventView: View {
         // 导航标题仅在明确开启时设置：SwiftUI 会把内容里的
         // `navigationTitle` 提升为宿主窗口标题，嵌入设置窗口时会改写
         // 「设置」窗口标题，因此默认不设置。
-        .modifier(OptInNavigationTitle(isEnabled: showsNavigationTitle, title: "防火墙事件"))
+        .modifier(OptInNavigationTitle(isEnabled: showsNavigationTitle, title: String(localized: "Firewall Events")))
         .onAppear {
             // 视图出现时加载数据
             loadEvents()
@@ -339,8 +339,8 @@ private extension FirewallEventSnapshot {
 
     var statusDescription: String {
         switch status {
-        case .allowed: "允许"
-        case .rejected: "阻止"
+        case .allowed: String(localized: "Allowed")
+        case .rejected: String(localized: "Blocked")
         }
     }
 }

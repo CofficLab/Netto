@@ -128,7 +128,7 @@ extension StoreStateTests {
 
             let entry = settingsView.entries.first { $0.id == "store" }
             #expect(entry != nil)
-            #expect(entry?.title == "商店")
+            #expect(entry?.title == "Store")
 
             // 触发入口的视图工厂（StoreSettingsView(viewModel:)）。
             let detailView = entry?.makeDetailView()

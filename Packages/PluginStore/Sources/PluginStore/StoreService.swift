@@ -459,9 +459,9 @@ public enum StoreError: Error, LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .failedVerification:
-            return "failedVerification"
+            return String(localized: "App Store verification failed")
         case .canNotGetProducts:
-            return "发生错误：无法获取产品"
+            return String(localized: "Failed to load products")
         }
     }
 }

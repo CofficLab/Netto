@@ -6,14 +6,14 @@ struct InstallingView: View {
     var body: some View {
         DashboardGuidePanel(
             iconName: "gearshape.arrow.triangle.2.circlepath",
-            title: "正在安装系统扩展",
+            title: "Installing System Extension",
             iconColor: .orange
         ) {
             VStack(spacing: AppUI.Spacing.sm) {
                 ProgressView()
                     .controlSize(.small)
 
-                Text("请稍候，安装完成后这里会自动更新。")
+                Text("Please wait. This view updates automatically when installation completes.")
                     .font(.appBody)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

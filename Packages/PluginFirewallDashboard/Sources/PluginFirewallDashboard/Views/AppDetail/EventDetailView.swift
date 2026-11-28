@@ -43,7 +43,7 @@ struct EventDetailView: View {
             showShadow: false
         ) {
             VStack(alignment: .leading, spacing: AppUI.Spacing.sm) {
-                Text("事件详情")
+                Text("Event Details")
                     .font(.appSectionTitle)
                     .foregroundStyle(theme.textPrimary)
 
@@ -88,7 +88,7 @@ struct EventDetailView: View {
     private var filterBar: some View {
         HStack(spacing: AppUI.Spacing.sm) {
             AppSegmentedControl(
-                StatusFilter.allCases.map(\.rawValue),
+                StatusFilter.allCases.map(\.title),
                 selection: statusSelection,
                 maxWidth: 180,
                 accessibilityIdentifiers: StatusFilter.allCases.map { "netpause.events.status.\($0.rawValue)" }
@@ -98,14 +98,14 @@ struct EventDetailView: View {
             Spacer(minLength: 0)
 
             AppSegmentedControl(
-                DirectionFilter.allCases.map(\.rawValue),
+                DirectionFilter.allCases.map(\.title),
                 selection: directionSelection,
                 maxWidth: 180,
                 accessibilityIdentifiers: DirectionFilter.allCases.map { "netpause.events.direction.\($0.rawValue)" }
             )
             .accessibilityIdentifier("netpause.events.direction-filter")
 
-            AppButton("导出近期日志", systemImage: "arrow.down.circle", style: .secondary, size: .small) {
+            AppButton("Export Recent Logs", systemImage: "arrow.down.circle", style: .secondary, size: .small) {
                 Task {
                     await exportRecentLogs()
                 }
@@ -200,7 +200,7 @@ extension EventDetailView {
                 direction: directionValue,
                 directory: directory
             )
-            shell.post(ToastMessage(description: "已导出到下载目录"))
+            shell.post(ToastMessage(description: String(localized: "Exported to Downloads")))
         } catch {
             shell.postError(error.localizedDescription)
         }

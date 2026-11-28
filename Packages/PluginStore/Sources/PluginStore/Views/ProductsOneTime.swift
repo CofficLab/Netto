@@ -14,7 +14,7 @@ struct ProductsOfOneTime: View {
     @ViewBuilder
     private func productList(items: [ProductDTO]) -> some View {
         if items.isEmpty {
-            Text("暂无一次性购买商品").foregroundStyle(.secondary)
+            Text("No one-time purchases").foregroundStyle(.secondary)
         } else {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 10) {

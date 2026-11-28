@@ -133,9 +133,9 @@ public struct ContentView: View {
 
     private var filterPicker: some View {
         Picker("", selection: $ui.displayType) {
-            Text("全部").tag(DisplayType.All).accessibilityIdentifier("netpause.filter.all")
-            Text("允许").tag(DisplayType.Allowed).accessibilityIdentifier("netpause.filter.allowed")
-            Text("禁止").tag(DisplayType.Rejected).accessibilityIdentifier("netpause.filter.rejected")
+            Text("All").tag(DisplayType.All).accessibilityIdentifier("netpause.filter.all")
+            Text("Allowed").tag(DisplayType.Allowed).accessibilityIdentifier("netpause.filter.allowed")
+            Text("Blocked").tag(DisplayType.Rejected).accessibilityIdentifier("netpause.filter.rejected")
         }
         .pickerStyle(.segmented)
         .accessibilityIdentifier("netpause.dashboard.filter")

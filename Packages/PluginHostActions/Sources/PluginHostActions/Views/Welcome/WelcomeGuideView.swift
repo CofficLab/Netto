@@ -26,11 +26,11 @@ public struct WelcomeGuideView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 72, height: 72)
                 
-                Text("欢迎使用 \(WelcomeGuideAppName.name)")
+                Text("Welcome to \(WelcomeGuideAppName.name)")
                     .font(.appLargeTitle)
                     .foregroundStyle(theme.textPrimary)
                 
-                Text("网络过滤与监控工具")
+                Text("Network Filtering and Monitoring Tool")
                     .font(.appBody)
                     .foregroundStyle(theme.textSecondary)
             }
@@ -40,8 +40,8 @@ public struct WelcomeGuideView: View {
             VStack(spacing: AppUI.Spacing.lg) {
                 if currentStep == 0 {
                     stepView(
-                        title: "菜单栏访问",
-                        description: "应用运行后，您可以通过点击菜单栏中的应用图标来访问主界面。",
+                        title: "Menu Bar Access",
+                        description: "After the app starts, click the app icon in the menu bar to open the main window.",
                         icon: "menubar.rectangle",
                         color: theme.success,
                         customContent: {
@@ -50,8 +50,8 @@ public struct WelcomeGuideView: View {
                     )
                 } else if currentStep == 1 {
                     stepView(
-                        title: "网络过滤",
-                        description: "您可以查看所有网络连接请求，并选择允许或拒绝特定的应用访问网络。",
+                        title: "Network Filtering",
+                        description: "Review every network connection request and choose whether to allow or deny each app.",
                         icon: "shield.checkered",
                         color: theme.warning,
                         customContent: {
@@ -60,8 +60,8 @@ public struct WelcomeGuideView: View {
                     )
                 } else if currentStep == 2 {
                     stepView(
-                        title: "工具栏操作",
-                        description: "应用顶部的工具栏提供了各种功能，更多高级操作都集中在右侧的更多菜单按钮中。",
+                        title: "Toolbar Actions",
+                        description: "The toolbar at the top provides common actions. More advanced options are in the overflow menu on the right.",
                         icon: "menubar.rectangle",
                         color: theme.primarySecondary,
                         customContent: {
@@ -70,8 +70,8 @@ public struct WelcomeGuideView: View {
                     )
                 } else {
                     stepView(
-                        title: "工作原理",
-                        description: "系统扩展负责网络过滤，应用程序提供用户界面。",
+                        title: "How It Works",
+                        description: "The system extension handles network filtering, and the app provides the user interface.",
                         icon: "gearshape.2.fill",
                         color: theme.info
                     ) {
@@ -95,7 +95,7 @@ public struct WelcomeGuideView: View {
                 // 按钮
                 HStack(spacing: AppUI.Spacing.md) {
                     if currentStep > 0 {
-                        AppButton("上一步", style: .secondary) {
+                        AppButton("Back", style: .secondary) {
                             currentStep -= 1
                         }
                     }
@@ -103,11 +103,11 @@ public struct WelcomeGuideView: View {
                     Spacer()
                     
                     if currentStep < 3 {
-                        AppButton("下一步", style: .primary) {
+                        AppButton("Next", style: .primary) {
                             currentStep += 1
                         }
                     } else {
-                        AppButton("开始使用", style: .primary) {
+                        AppButton("Get Started", style: .primary) {
                             closeWindow()
                         }
                     }
@@ -130,7 +130,7 @@ public struct WelcomeGuideView: View {
     /**
      * 单个步骤视图
      */
-    private func stepView(title: String, description: String, icon: String, color: Color, customContent: (() -> AnyView)? = nil) -> some View {
+    private func stepView(title: LocalizedStringKey, description: LocalizedStringKey, icon: String, color: Color, customContent: (() -> AnyView)? = nil) -> some View {
         VStack(spacing: AppUI.Spacing.lg) {
             if let customContent = customContent {
                 customContent()

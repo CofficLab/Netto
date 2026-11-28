@@ -25,7 +25,7 @@ public final class PluginFirewall: AsyncSuperPlugin {
     public let metadata = PluginMetadata(
         id: "firewall",
         name: "Firewall",
-        description: "网络过滤器 / 系统扩展 / IPC 生命周期所有者",
+        description: String(localized: "Owns the network filter, system extension, and IPC lifecycle"),
         version: "1.0",
         policy: .enabledByDefault
     )

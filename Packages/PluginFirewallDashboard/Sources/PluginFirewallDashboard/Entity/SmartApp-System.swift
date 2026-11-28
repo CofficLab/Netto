@@ -17,7 +17,7 @@ extension SmartApp {
         if id.hasPrefix(".") {
             return SmartApp(
                 id: id,
-                name: "未知系统应用",
+                name: String(localized: "Unknown System App"),
                 isSystemApp: true,
                 hidden: true
             )
@@ -31,7 +31,7 @@ extension SmartApp {
         // DNS服务
         SmartApp(
             id: ".com.apple.mDNSResponder",
-            name: "DNS服务",
+            name: String(localized: "DNS Service"),
             isSystemApp: true,
             hidden: true
         ),
@@ -39,7 +39,7 @@ extension SmartApp {
         // 设备发现代理
         SmartApp(
             id: ".com.apple.AMPDeviceDiscoveryAgent",
-            name: "设备发现代理",
+            name: String(localized: "Device Discovery Agent"),
             isSystemApp: true,
             hidden: true
         ),
@@ -47,7 +47,7 @@ extension SmartApp {
         // AI 代理
         SmartApp(
             id: ".ai-agent",
-            name: "AI 代理",
+            name: String(localized: "AI Agent"),
             isSystemApp: true,
             hidden: true
         ),
@@ -55,7 +55,7 @@ extension SmartApp {
         // 地理位置服务
         SmartApp(
             id: ".com.apple.geod",
-            name: "地理位置服务",
+            name: String(localized: "Location Services"),
             isSystemApp: true,
             hidden: true
         ),
@@ -63,7 +63,7 @@ extension SmartApp {
         // AirPlay 助手
         SmartApp(
             id: ".com.apple.AirPlayXPCHelper",
-            name: "AirPlay 助手",
+            name: String(localized: "AirPlay Helper"),
             isSystemApp: true,
             hidden: true
         ),
@@ -71,7 +71,7 @@ extension SmartApp {
         // Git 远程助手
         SmartApp(
             id: ".com.apple.git-remote-http",
-            name: "Git 远程助手",
+            name: String(localized: "Git Remote Helper"),
             isSystemApp: true,
             hidden: true
         ),
@@ -79,7 +79,7 @@ extension SmartApp {
         // USB多路复用守护进程
         SmartApp(
             id: ".com.apple.usbmuxd",
-            name: "USB多路复用守护进程",
+            name: String(localized: "USB Multiplexing Daemon"),
             isSystemApp: true,
             hidden: true
         ),
@@ -87,7 +87,7 @@ extension SmartApp {
         // iCloud守护进程
         SmartApp(
             id: ".com.apple.cloudd",
-            name: "iCloud守护进程",
+            name: String(localized: "iCloud Daemon"),
             isSystemApp: true,
             hidden: false
         ),
@@ -95,7 +95,7 @@ extension SmartApp {
         // 快捷指令
         SmartApp(
             id: ".com.apple.shortcuts",
-            name: "快捷指令",
+            name: String(localized: "Shortcuts"),
             isSystemApp: true,
             hidden: true
         ),
@@ -103,7 +103,7 @@ extension SmartApp {
         // iCloud 数据同步和文件系统管理
         SmartApp(
             id: ".com.apple.bird",
-            name: "iCloud 数据同步和文件系统管理",
+            name: String(localized: "iCloud Data Sync and File System Management"),
             isSystemApp: true,
             hidden: false
         ),
@@ -111,7 +111,7 @@ extension SmartApp {
         // 帮助守护进程
         SmartApp(
             id: ".com.apple.helpd",
-            name: "帮助守护进程",
+            name: String(localized: "Help Daemon"),
             isSystemApp: true,
             hidden: true
         ),
@@ -119,7 +119,7 @@ extension SmartApp {
         // Git远程HTTP
         SmartApp(
             id: ".git-remote-http",
-            name: "Git远程HTTP",
+            name: String(localized: "Git Remote HTTP"),
             isSystemApp: true,
             hidden: true
         ),
@@ -127,7 +127,7 @@ extension SmartApp {
         // SSH服务
         SmartApp(
             id: ".com.apple.ssh",
-            name: "SSH服务",
+            name: String(localized: "SSH Service"),
             isSystemApp: true,
             hidden: true
         ),
@@ -135,7 +135,7 @@ extension SmartApp {
         // 时间守护进程
         SmartApp(
             id: ".com.apple.timed",
-            name: "时间守护进程",
+            name: String(localized: "Time Daemon"),
             isSystemApp: true,
             hidden: true
         ),
@@ -143,7 +143,7 @@ extension SmartApp {
         // NetBIOS守护进程
         SmartApp(
             id: ".com.apple.netbiosd",
-            name: "NetBIOS守护进程",
+            name: String(localized: "NetBIOS Daemon"),
             isSystemApp: true,
             hidden: true
         ),
@@ -151,7 +151,7 @@ extension SmartApp {
         // CKG服务器
         SmartApp(
             id: ".ckg_server",
-            name: "CKG服务器",
+            name: String(localized: "CKG Server"),
             isSystemApp: true,
             hidden: true
         ),
@@ -159,7 +159,7 @@ extension SmartApp {
         // Apple账户守护进程
         SmartApp(
             id: ".com.apple.appleaccountd",
-            name: "Apple账户守护进程",
+            name: String(localized: "Apple Account Daemon"),
             isSystemApp: true,
             hidden: true
         ),
@@ -167,7 +167,7 @@ extension SmartApp {
         // Node.js进程
         SmartApp(
             id: ".node",
-            name: "Node.js进程",
+            name: String(localized: "Node.js Process"),
             isSystemApp: true,
             hidden: true
         ),
@@ -175,7 +175,7 @@ extension SmartApp {
         // 控制中心
         SmartApp(
             id: ".com.apple.controlcenter",
-            name: "控制中心",
+            name: String(localized: "Control Center"),
             isSystemApp: true,
             hidden: true
         ),
@@ -183,7 +183,7 @@ extension SmartApp {
         // 备忘录
         SmartApp(
             id: ".com.apple.Notes",
-            name: "备忘录",
+            name: String(localized: "Notes"),
             isSystemApp: true,
             hidden: false
         ),
@@ -191,7 +191,7 @@ extension SmartApp {
         // 远程配对守护进程
         SmartApp(
             id: ".com.apple.CoreDevice.remotepairingd",
-            name: "远程配对守护进程",
+            name: String(localized: "Remote Pairing Daemon"),
             isSystemApp: true,
             hidden: true
         ),
@@ -199,7 +199,7 @@ extension SmartApp {
         // AppKit XPC 打开和保存面板服务
         SmartApp(
             id: ".com.apple.appkit.xpc.openAndSavePanelService",
-            name: "AppKit XPC 打开和保存面板服务",
+            name: String(localized: "AppKit XPC Open and Save Panel Service"),
             isSystemApp: true,
             hidden: true
         ),
@@ -207,7 +207,7 @@ extension SmartApp {
         // 系统策略守护进程
         SmartApp(
             id: ".com.apple.syspolicyd",
-            name: "系统策略守护进程",
+            name: String(localized: "System Policy Daemon"),
             isSystemApp: true,
             hidden: true
         ),
@@ -215,7 +215,7 @@ extension SmartApp {
         // Apple推送服务守护进程
         SmartApp(
             id: ".com.apple.apsd",
-            name: "Apple推送服务守护进程",
+            name: String(localized: "Apple Push Service Daemon"),
             isSystemApp: true,
             hidden: true
         ),
@@ -223,7 +223,7 @@ extension SmartApp {
         // 配置守护进程
         SmartApp(
             id: ".com.apple.configd",
-            name: "配置守护进程",
+            name: String(localized: "Configuration Daemon"),
             isSystemApp: true,
             hidden: true
         ),
@@ -239,7 +239,7 @@ extension SmartApp {
         // 屏幕使用时间小组件
         SmartApp(
             id: ".com.apple.ScreenTimeWidgetApplication.ScreenTimeWidgetExtension",
-            name: "屏幕使用时间（小组件）",
+            name: String(localized: "Screen Time (Widget)"),
             isSystemApp: true,
             hidden: true
         )
@@ -428,7 +428,7 @@ struct SystemAppGridView: View {
             .padding()
         }
         .background(Color(.windowBackgroundColor))
-        .navigationTitle("系统应用列表")
+        .navigationTitle("System App List")
     }
 }
 

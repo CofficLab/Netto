@@ -54,11 +54,11 @@ struct PaginationView: View {
             Spacer(minLength: 0)
 
             VStack(spacing: 2) {
-                Text("第 \(currentPage + 1) 页，共 \(totalPages) 页")
+                Text("Page \(currentPage + 1) of \(totalPages)")
                     .font(.appCaption)
                     .foregroundStyle(theme.textSecondary)
 
-                Text("共 \(totalCount) 条事件")
+                Text("\(totalCount) events")
                     .font(.appMicro)
                     .foregroundStyle(theme.textTertiary)
             }

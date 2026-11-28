@@ -80,7 +80,7 @@ struct AppInfoView: View {
                         size: .small,
                         action: copyAppID
                     )
-                    .help(isCopied ? "已复制!" : "复制 App ID")
+                    .help(isCopied ? String(localized: "Copied!") : String(localized: "Copy App ID"))
                 }
             }
 
@@ -93,15 +93,15 @@ struct AppInfoView: View {
         if showsTypeRow || app.bundleURL != nil {
             AppMetadataCard {
                 if app.isSystemApp {
-                    AppMetadataRow(title: "类型", systemImage: "checkmark.seal") {
-                        Label("系统应用", systemImage: "checkmark.circle.fill")
+                    AppMetadataRow(title: String(localized: "Type"), systemImage: "checkmark.seal") {
+                        Label("System App", systemImage: "checkmark.circle.fill")
                             .font(.appCaption)
                             .foregroundStyle(theme.success)
                     }
                 } else if isProxyApp {
-                    AppMetadataRow(title: "类型", systemImage: "shield") {
+                    AppMetadataRow(title: String(localized: "Type"), systemImage: "shield") {
                         HStack(spacing: AppUI.Spacing.xs) {
-                            Label("代理应用", systemImage: "shield.fill")
+                            Label("Proxy App", systemImage: "shield.fill")
                                 .font(.appCaption)
                                 .foregroundStyle(theme.warning)
 
@@ -114,7 +114,7 @@ struct AppInfoView: View {
                                     showProxyExplanation.toggle()
                                 }
                             }
-                            .help(showProxyExplanation ? "收起代理应用说明" : "了解代理应用对网络监控的影响")
+                            .help(showProxyExplanation ? String(localized: "Collapse Proxy App Description") : String(localized: "Understanding the Impact of Proxy Apps on Network Monitoring"))
                         }
                     }
                 }
@@ -124,7 +124,7 @@ struct AppInfoView: View {
                 }
 
                 if let bundleURL = app.bundleURL {
-                    AppMetadataRow(title: "路径", systemImage: "folder") {
+                    AppMetadataRow(title: String(localized: "Path"), systemImage: "folder") {
                         HStack(spacing: AppUI.Spacing.xs) {
                             Text(bundleURL.path)
                                 .font(.appMicro)
@@ -136,7 +136,7 @@ struct AppInfoView: View {
                             AppButton(systemImage: "doc.viewfinder", style: .ghost, size: .small) {
                                 NSWorkspace.shared.activateFileViewerSelecting([bundleURL])
                             }
-                            .help("在 Finder 中显示")
+                            .help("Show in Finder")
                         }
                     }
                 }

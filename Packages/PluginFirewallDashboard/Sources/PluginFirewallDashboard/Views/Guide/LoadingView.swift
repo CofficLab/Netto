@@ -6,9 +6,9 @@ import SwiftUI
  */
 public struct LoadingView: View {
     @Binding public var isPresented: Bool
-    public let message: String
+    public let message: LocalizedStringKey
 
-    public init(isPresented: Binding<Bool>, message: String) {
+    public init(isPresented: Binding<Bool>, message: LocalizedStringKey) {
         self._isPresented = isPresented
         self.message = message
     }
@@ -45,5 +45,5 @@ public struct LoadingView: View {
 }
 
 #Preview {
-    LoadingView(isPresented: .constant(true), message: "正在启动...")
+    LoadingView(isPresented: .constant(true), message: "Starting…")
 }

@@ -16,14 +16,14 @@ struct AllSubscriptions: View, LogPrefixed {
         GroupBox {
             VStack {
                 ZStack {
-                    Text("订阅方案").font(.title3)
+                    Text("Subscription Plans").font(.title3)
                     refreshButton
                 }
 
                 Divider()
 
                 if refreshing == false && subscriptions.isEmpty {
-                    Text("🏃 暂无")
+                    Text("🏃 None yet")
                 } else {
                     VStack {
                         ForEach(subscriptions) { product in
@@ -56,7 +56,7 @@ struct AllSubscriptions: View, LogPrefixed {
                             getProducts("点击了重试按钮")
                         }
                     }, label: {
-                        Label("重试", systemImage: "arrow.clockwise")
+                        Label("Retry", systemImage: "arrow.clockwise")
                             .labelStyle(.iconOnly)
                     }).buttonStyle(.plain)
                 }
@@ -89,8 +89,8 @@ struct AllSubscriptions: View, LogPrefixed {
     private var footerView: some View {
         HStack {
             Spacer()
-            Link("隐私政策", destination: URL(string: "https://www.kuaiyizhi.cn/privacy")!)
-            Link("许可协议", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+            Link("Privacy Policy", destination: URL(string: "https://www.kuaiyizhi.cn/privacy")!)
+            Link("License Agreement", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
             Spacer()
         }
         .foregroundStyle(

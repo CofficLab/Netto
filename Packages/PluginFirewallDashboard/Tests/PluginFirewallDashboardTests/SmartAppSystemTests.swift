@@ -41,7 +41,7 @@ struct SmartAppSystemTests {
     func getSystemAppUnknownDotted() throws {
         let app = try #require(SmartApp.getSystemApp(".com.not.registered.agent"))
         #expect(app.id == ".com.not.registered.agent")
-        #expect(app.name == "未知系统应用")
+        #expect(app.name == "Unknown System App")
         #expect(app.isSystemApp)
         #expect(app.hidden, "未知系统应用应隐藏，不进入常规列表")
     }

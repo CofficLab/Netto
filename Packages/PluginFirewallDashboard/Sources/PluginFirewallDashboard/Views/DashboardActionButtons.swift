@@ -6,7 +6,7 @@ import SwiftUI
 
 struct DashboardOpenSystemSettingsButton: View {
     var body: some View {
-        AppButton("打开系统设置", systemImage: "gearshape", style: .secondary, fillsWidth: true) {
+        AppButton("Open System Settings", systemImage: "gearshape", style: .secondary, fillsWidth: true) {
             guard let url = URL(string: "x-apple.systempreferences:com.apple.ExtensionsPreferences?extensionPointIdentifier=com.apple.system_extension.network_extension.extension-point") else { return }
             NSWorkspace.shared.open(url)
         }
@@ -16,8 +16,8 @@ struct DashboardOpenSystemSettingsButton: View {
 }
 
 struct DashboardInstallExtensionButton: View {
-    var title = "安装系统扩展"
-    var busyTitle = "安装中…"
+    var title = String(localized: "Install System Extension")
+    var busyTitle = String(localized: "Installing…")
     var style: AppButton.Style = .primary
 
     @Environment(\.firewallProvider) private var service: FirewallProviding?

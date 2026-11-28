@@ -37,8 +37,8 @@ struct GuideView: View {
                         StopView()
                     case .disabled:
                         SystemSettingsGuideView(
-                            title: "防火墙已禁用",
-                            message: "过滤器在系统设置中被禁用，启用后才能拦截未授权联网。",
+                            title: "Firewall Disabled",
+                            message: "The filter is disabled in System Settings. Enable it to block unauthorized network access.",
                             iconName: "shield.slash"
                         )
                     case .unknown:
@@ -63,8 +63,8 @@ struct GuideView: View {
                         ApprovalView()
                     case .permissionDenied:
                         SystemSettingsGuideView(
-                            title: "权限被拒绝",
-                            message: "请在系统设置中授予必要的权限后重试。",
+                            title: "Permission Denied",
+                            message: "Grant the required permissions in System Settings and try again.",
                             iconName: "exclamationmark.shield.fill",
                             iconColor: .red
                         )

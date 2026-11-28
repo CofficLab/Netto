@@ -14,8 +14,8 @@ public final class BrandLogoPlugin: SuperPlugin {
     public let order = 20
     public let metadata = PluginMetadata(
         id: "brand-logo",
-        name: "品牌图标",
-        description: "向菜单栏贡献 Netpause 品牌图标",
+        name: String(localized: "Brand Logo"),
+        description: String(localized: "Contributes the Netpause brand icon to the menu bar"),
         version: "1.0",
         category: .design,
         policy: .alwaysOn

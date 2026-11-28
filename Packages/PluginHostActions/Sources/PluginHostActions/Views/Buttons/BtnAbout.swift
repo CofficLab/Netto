@@ -9,7 +9,7 @@ struct BtnAbout: View {
     
     private var asToolbarItem: Bool = false
     private var icon: String = "info.circle"
-    private var title: String = "关于"
+    private var title: String = String(localized: "About")
     
     /**
      * 初始化关于按钮

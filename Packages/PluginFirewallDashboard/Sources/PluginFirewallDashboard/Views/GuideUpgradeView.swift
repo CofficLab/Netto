@@ -12,19 +12,19 @@ struct UpgradeGuideView: View {
     var body: some View {
         DashboardGuidePanel(
             iconName: "crown.fill",
-            title: "升级到 Pro 版本",
+            title: "Upgrade to Pro",
             iconColor: .orange
         ) {
             VStack(spacing: AppUI.Spacing.md) {
-                AppStatusBanner(kind: .warning, title: "已达到免费版限制")
-                AppStatusBanner(kind: .info, title: "Pro 版本可无限制禁止应用")
+                AppStatusBanner(kind: .warning, title: "Free Plan Limit Reached")
+                AppStatusBanner(kind: .info, title: "Pro lets you block unlimited apps")
 
                 HStack(spacing: AppUI.Spacing.sm) {
-                    AppButton("稍后再说", style: .secondary, fillsWidth: true) {
+                    AppButton("Not Now", style: .secondary, fillsWidth: true) {
                         ui.hideUpgradeGuide()
                     }
 
-                    AppButton("立即升级", systemImage: "crown.fill", style: .primary, fillsWidth: true) {
+                    AppButton("Upgrade Now", systemImage: "crown.fill", style: .primary, fillsWidth: true) {
                         openStoreWindow()
                     }
                 }

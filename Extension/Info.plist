@@ -4,8 +4,16 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>zh-Hans</string>
+		<string>zh-Hant</string>
+		<string>zh-HK</string>
+		<string>zh-TW</string>
+	</array>
 	<key>CFBundleDisplayName</key>
-	<string>Netpause用于控制APP联网的扩展</string>
+	<string>Netpause Network Extension</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -25,7 +33,7 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2019 Apple Inc. All rights reserved.</string>
 	<key>NSSystemExtensionUsageDescription</key>
-	<string>这个扩展配合Netpause APP控制APP的联网权限</string>
+	<string>This extension works with the Netpause app to control app network access.</string>
 	<key>NetworkExtension</key>
 	<dict>
 		<key>NEMachServiceName</key>

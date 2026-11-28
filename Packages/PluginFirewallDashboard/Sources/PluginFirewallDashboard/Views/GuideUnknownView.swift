@@ -6,9 +6,9 @@ struct UnknownView: View {
     var body: some View {
         DashboardGuidePanel(
             iconName: "questionmark.circle",
-            title: "当前状态未知"
+            title: "Status Unknown"
         ) {
-            Text("暂时无法读取防火墙状态，请稍后重试。")
+            Text("Unable to read the firewall status right now. Try again later.")
                 .font(.appBody)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

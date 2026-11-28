@@ -7,20 +7,20 @@ struct SystemExtensionNotInstalledView: View {
     var body: some View {
         DashboardGuidePanel(
             iconName: "exclamationmark.triangle",
-            title: "系统扩展未安装",
+            title: "System Extension Not Installed",
             iconColor: .red
         ) {
             VStack(spacing: AppUI.Spacing.md) {
-                Text("系统扩展未安装，无法启动防火墙功能")
+                Text("The system extension is not installed, so the firewall cannot start")
                     .font(.appBody)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
-                DashboardGuideSteps("解决方案", steps: [
-                    "点击下方按钮提交安装请求",
-                    "在系统设置中找到本应用的扩展",
-                    "打开扩展开关并等待安装完成",
+                DashboardGuideSteps("Solution", steps: [
+                    "Click the button below to submit the installation request",
+                    "Find this app's extension in System Settings",
+                    "Turn on the extension switch and wait for installation to finish",
                 ])
 
                 DashboardInstallExtensionButton()

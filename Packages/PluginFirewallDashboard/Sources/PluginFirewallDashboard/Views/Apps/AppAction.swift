@@ -27,7 +27,7 @@ private struct AppActionContent: View, LogPrefixed {
     }
 
     private var title: String {
-        shouldAllow ? "禁止联网" : "允许联网"
+        shouldAllow ? String(localized: "Block Network Access") : String(localized: "Allow Network Access")
     }
 
     private var tint: Color {
@@ -130,7 +130,7 @@ extension AppActionContent {
                 try await repo.setAllow(appId)
                 self.shouldAllow = true
                 self.onRuleChange?()
-                shell.post(ToastMessage(description: "已允许"))
+                shell.post(ToastMessage(description: String(localized: "Allowed")))
             } catch let error {
                 os_log("\(self.t)操作失败 -> \(error.localizedDescription)")
                 shell.postError(error.localizedDescription)

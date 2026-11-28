@@ -20,7 +20,7 @@ public final class PluginAppSettings: AsyncSuperPlugin {
     public let metadata = PluginMetadata(
         id: PersistenceConfig.settingsPluginID,
         name: "AppSettings",
-        description: "应用允许/阻止规则存储（SwiftData）",
+        description: String(localized: "Allow/block rules for apps (SwiftData)"),
         version: "1.0",
         policy: .required
     )

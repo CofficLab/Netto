@@ -40,12 +40,12 @@ struct NetworkFilterDiagramView: View {
                     Circle()
                         .fill(Color.red.opacity(0.3))
                         .frame(width: 12, height: 12)
-                    Text("已禁止")
+                    Text("Blocked")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
 
-                Text("将鼠标悬停在应用上查看操作按钮")
+                Text("Hover over an app to see available actions")
                     .font(.caption)
                     .foregroundColor(.orange)
                     .fontWeight(.medium)
@@ -95,7 +95,7 @@ struct NetworkFilterDiagramView: View {
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: allowedStates[index] ? "xmark.circle.fill" : "checkmark.circle.fill")
-                        Text(allowedStates[index] ? "禁止" : "允许")
+                        Text(allowedStates[index] ? String(localized: "Block") : String(localized: "Allow"))
                     }
                     .font(.caption)
                     .foregroundColor(.white)

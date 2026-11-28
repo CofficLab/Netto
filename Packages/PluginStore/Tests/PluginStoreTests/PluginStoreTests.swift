@@ -117,7 +117,7 @@ struct StoreStateTests {
             // 商店入口已注入设置视图（替代旧主窗口 StoreBtn / store-window）。
             let entries = settingsView.entries
             #expect(entries.contains { $0.id == "store" } == true)
-            #expect(entries.first(where: { $0.id == "store" })?.title == "商店")
+            #expect(entries.first(where: { $0.id == "store" })?.title == "Store")
 
             // 停止后：Provider 撤回、设置入口移除。
             try await kernel.stopAsync()

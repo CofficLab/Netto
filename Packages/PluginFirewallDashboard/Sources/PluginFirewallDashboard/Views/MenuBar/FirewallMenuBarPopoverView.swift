@@ -41,7 +41,7 @@ struct FirewallMenuBarPopoverView: View {
             actionButton
         } content: {
             if let errorMessage {
-                AppStatusBanner(kind: .error, title: "操作失败", message: errorMessage)
+                AppStatusBanner(kind: .error, title: "Action Failed", message: errorMessage)
                     .padding(.horizontal, 8)
             }
 
@@ -72,17 +72,17 @@ struct FirewallMenuBarPopoverView: View {
 
     private var detailText: String {
         guard deniedApps.deniedCount > 0 else { return presentation.detail }
-        return "已阻止 \(deniedApps.deniedCount) 个应用"
+        return String(localized: "Blocked \(deniedApps.deniedCount) apps")
     }
 
     @ViewBuilder
     private var actionButton: some View {
         if snapshot.state.isRunning() {
-            AppButton("停止", style: .secondary, size: .small, action: stop)
+            AppButton("Stop", style: .secondary, size: .small, action: stop)
                 .disabled(isBusy || !snapshot.canStop)
                 .accessibilityIdentifier("netpause.menubar.firewall.stop")
         } else {
-            AppButton("开启", style: .primary, size: .small, action: start)
+            AppButton("Start", style: .primary, size: .small, action: start)
                 .disabled(isBusy || !snapshot.canStart)
                 .accessibilityIdentifier("netpause.menubar.firewall.start")
         }

@@ -11,25 +11,25 @@ struct ErrorView: View {
     var body: some View {
         DashboardGuidePanel(
             iconName: "exclamationmark.triangle.fill",
-            title: "启动失败",
+            title: "Startup Failed",
             iconColor: theme.error
         ) {
             VStack(spacing: AppUI.Spacing.md) {
                 AppStatusBanner(
                     kind: .error,
-                    title: "防火墙启动时遇到错误",
+                    title: "An error occurred while starting the firewall",
                     message: error.localizedDescription
                 )
 
                 AppButton(
-                    showCopiedMessage ? "已复制" : "复制错误信息",
+                    showCopiedMessage ? String(localized: "Copied") : String(localized: "Copy Error Message"),
                     systemImage: showCopiedMessage ? "checkmark.circle.fill" : "doc.on.clipboard",
                     style: showCopiedMessage ? .tonal : .secondary,
                     fillsWidth: true,
                     action: copyErrorToClipboard
                 )
 
-                BtnStart(title: "重试")
+                BtnStart(title: String(localized: "Retry"))
             }
         }
     }

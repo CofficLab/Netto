@@ -113,7 +113,7 @@ public final class PersistencePlugin: SuperPlugin {
     public let metadata = PluginMetadata(
         id: "persistence",
         name: "Persistence",
-        description: "各数据插件独立 ModelContainer / SQLite 文件的唯一创建者",
+        description: String(localized: "The sole creator of each data plugin's ModelContainer / SQLite file"),
         version: "2.0",
         policy: .required
     )
@@ -207,9 +207,9 @@ public enum PersistenceBootError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .storageProviderMissing:
-            return "缺少 StorageProviding：无法确定插件数据目录"
+            return String(localized: "Missing StorageProviding: unable to determine the plugin data directory")
         case .containerCreationFailed(let url, let underlying):
-            return "无法创建数据库 \(url.path)：\(underlying.localizedDescription)"
+            return String(localized: "Failed to create database at \(url.path): \(underlying.localizedDescription)")
         }
     }
 }

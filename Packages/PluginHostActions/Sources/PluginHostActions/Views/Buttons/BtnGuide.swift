@@ -10,7 +10,7 @@ struct BtnGuide: View {
     
     private var asToolbarItem: Bool = false
     private var icon: String = "questionmark.circle"
-    private var title: String = "使用引导"
+    private var title: String = String(localized: "Usage Guide")
     
     /**
      * 初始化引导按钮
