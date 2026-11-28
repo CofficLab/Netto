@@ -31,6 +31,11 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     private var snapshotContinuations: [UUID: AsyncStream<FirewallSnapshot>.Continuation] = [:]
     private var awaitingApproval = false
     private var ipcRecoveryTask: Task<Void, Never>?
+    /// 升级系统扩展前停用了过滤器，激活完成后需要恢复启用。
+    private var pendingFilterResume = false
+    private var isUpgradePreparing = false
+    /// 已自动尝试升级过的版本；失败后不再自动重试，避免反复弹授权。
+    private var attemptedUpgradeVersion: String?
 
     /// 最近一次扩展心跳（流量上报）时间；nil 表示本次运行尚未收到。
     private var lastHeartbeatAt: Date?
@@ -38,6 +43,8 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     private var runningSince: Date?
     /// 过滤器是否在响应（扩展心跳存活）；由心跳与健康检查共同维护。
     private var isFilterResponding = true
+    /// App 与扩展的 IPC 是否已建立；断开时无法判断过滤器健康，界面单独提示。
+    private var isIPCConnected = true
     private var healthTask: Task<Void, Never>?
 
     private(set) var snapshot: FirewallSnapshot
@@ -88,7 +95,8 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         snapshot = FirewallSnapshot(
             state: state,
             lastUpdated: Date(),
-            isFilterResponding: isFilterResponding
+            isFilterResponding: isFilterResponding,
+            isIPCConnected: isIPCConnected
         )
         snapshotContinuations.values.forEach { $0.yield(snapshot) }
     }
@@ -110,7 +118,9 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
 
     /// 判定过滤器是否仍在响应；由周期任务调用，测试可直接驱动。
     func evaluateFilterHealth(now: Date = Date()) {
-        guard state == .running else { return }
+        // IPC 断开时收不到任何心跳，这不是「过滤器未生效」的证据；
+        // 连接状态由 isIPCConnected 单独暴露，避免把两种故障混为一谈。
+        guard state == .running, isIPCConnected else { return }
         if let lastHeartbeatAt, now.timeIntervalSince(lastHeartbeatAt) <= Self.heartbeatTimeout {
             return
         }
@@ -172,13 +182,28 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
             } else {
                 updateState(enabled ? .running : .stopped)
             }
+
+            // 运行中但 IPC 未关联（扩展被替换/重启后端点缺失）：
+            // 顺带重试一次关联，用户点「重新检测」时能自愈。
+            if enabled, !isIPCConnected, ipcRecoveryTask == nil {
+                _ = await registerIPC()
+            }
         } catch {
             updateState(failure(error))
         }
     }
 
     func installSystemExtension() async {
-        // 旧 activateSystemExtension 的守卫路径。
+        await activateSystemExtension()
+    }
+
+    /// 请求激活系统扩展；过滤器运行中时先停过滤器再激活。
+    ///
+    /// 过滤器会话运行期间替换扩展会让系统重建 NetworkExtension 的
+    /// launchd 任务，扩展的 Mach service 端点可能随之丢失，之后 App 永远
+    /// 连不上扩展（界面显示运行中，实际无法决策）。先停用过滤器（保留
+    /// 配置）再激活，激活完成后再恢复启用。
+    private func activateSystemExtension() async {
         guard system.isAppInApplicationsFolder else {
             updateState(.notInApplicationsFolder)
             return
@@ -187,6 +212,21 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
             updateState(.stopped)
             return
         }
+        guard !isUpgradePreparing else { return }
+        isUpgradePreparing = true
+        defer { isUpgradePreparing = false }
+
+        if (try? await system.loadFilterEnabled()) == true {
+            do {
+                try await system.disableFilter()
+            } catch {
+                // 停不掉就不替换：保住当前可用的旧扩展，避免换完连不上。
+                updateState(failure(error))
+                return
+            }
+            pendingFilterResume = true
+        }
+
         system.submitSystemExtensionRequest(.activate)
     }
 
@@ -200,8 +240,8 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         }
 
         guard !enabled else {
-            // 旧行为保留：过滤器已启用时不再重复安装。
-            updateState(.filterNotInstalled)
+            // 过滤器已启用，无需重复安装；状态应与实际一致。
+            updateState(.running)
             return
         }
 
@@ -224,6 +264,11 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
 
         if enabled {
             updateState(.running)
+            // 配置已启用但 IPC 断开：start 也要尝试重建关联，
+            // 否则「重试」只是把界面改回运行中，实际仍然失效。
+            if !isIPCConnected {
+                _ = await registerIPC()
+            }
             return
         }
 
@@ -239,6 +284,8 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         do {
             try await system.enableFilter()
             updateState(.running)
+            // 扩展会话随过滤器一起启动：立即建立关联，不等观察者回调。
+            _ = await registerIPC()
         } catch {
             updateState(failure(error))
         }
@@ -246,6 +293,11 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
 
     func stop() async throws {
         try await system.disableFilter()
+        // 停用过滤器会卸载扩展会话，IPC 关联随之失效；
+        // 这是用户主动操作，不应触发重连流程。
+        ipcRecoveryTask?.cancel()
+        ipcRecoveryTask = nil
+        setIPCConnected(false)
         updateState(.stopped)
     }
 
@@ -276,6 +328,9 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
             updateState(failure(error))
             throw error
         }
+
+        // 配置重建会重启扩展会话，旧的 IPC 关联随之中断，需要重新关联。
+        _ = await registerIPC()
 
         // 配置重建后状态可能仍是 running（旧配置启用但未生效），
         // updateState 会因状态去重被跳过，因此显式发布复位后的快照。
@@ -357,32 +412,63 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
 
     /// 与 Extension 建立 IPC 关联（旧 registerWithProvider）。
     func registerIPC() async -> Bool {
-        await ipc.register()
+        let connected = await ipc.register()
+        setIPCConnected(connected)
+        return connected
+    }
+
+    /// 记录 IPC 关联变化：连接状态属于快照的一部分，界面据此区分
+    /// 「过滤器未生效」与「App 连不上扩展」。
+    private func setIPCConnected(_ connected: Bool) {
+        guard isIPCConnected != connected else { return }
+        isIPCConnected = connected
+        publishSnapshot()
+        if connected {
+            logger.info("已与系统扩展建立 IPC 关联")
+        } else {
+            logger.error("无法与系统扩展建立 IPC 关联，扩展将放行全部流量")
+        }
     }
 
     /// IPC 注册成功后的意外断开（扩展进程退出/连接失效）后的恢复流程。
     ///
-    /// 扩展侧在无 App 连接时会放行一切流量，因此必须重连；重连失败时把
-    /// 状态切到 failed，避免界面继续显示「运行中」而实际已失效。
+    /// 扩展侧在无 App 连接时会放行一切流量，因此必须重连；重连失败时
+    /// 只标记连接断开，不篡改过滤器状态——系统配置里过滤器可能仍在运行，
+    /// 界面据此展示独立的「连接中断」引导，而不是误报过滤器未生效。
     private func recoverIPCConnection() {
+        // 已停用过滤器时的断开是预期内的，无需重连。
+        guard state != .stopped else {
+            setIPCConnected(false)
+            return
+        }
         guard ipcRecoveryTask == nil else { return }
         ipcRecoveryTask = Task { [weak self] in
             guard let self else { return }
+            // 过滤器已停用时扩展会话不存在，重连没有意义（也避免与
+            // 用户主动 stop 竞态，把连接标记错误地改回已连接）。
+            let filterEnabled = (try? await self.system.loadFilterEnabled()) ?? true
+            guard filterEnabled, !Task.isCancelled else {
+                self.setIPCConnected(false)
+                self.ipcRecoveryTask = nil
+                return
+            }
             for attempt in 1...Self.ipcRecoveryAttempts {
+                if Task.isCancelled { break }
                 if attempt > 1 {
                     try? await Task.sleep(for: .milliseconds(300 * attempt))
                 }
+                if Task.isCancelled { break }
                 if await self.registerIPC() {
+                    if Task.isCancelled { return }
                     await self.refresh()
                     self.ipcRecoveryTask = nil
                     return
                 }
             }
-            self.updateState(.failed(FirewallFailure(
-                domain: "com.yueyi.Netpause.ipc",
-                code: -1,
-                message: "与系统扩展的连接已断开且重连失败，防火墙规则可能未生效"
-            )))
+            if !Task.isCancelled {
+                self.setIPCConnected(false)
+                self.logger.error("与系统扩展的连接已断开且重连失败，防火墙规则可能未生效")
+            }
             self.ipcRecoveryTask = nil
         }
     }
@@ -415,10 +501,44 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
 
     func systemExtensionActivationCompleted() {
         awaitingApproval = false
+        attemptedUpgradeVersion = nil
         // 旧行为：未就绪态（未安装/需更新/待审批/未激活）回落 stopped。
         if Self.isExtensionGateState(state) {
             updateState(.stopped)
         }
+        // 激活会替换扩展进程，旧的 IPC 关联已经失效，必须重新关联。
+        Task { await self.resumeAfterSystemExtensionActivation() }
+    }
+
+    /// 激活完成后的收尾：重建 IPC 关联；升级前停用的过滤器恢复启用。
+    private func resumeAfterSystemExtensionActivation() async {
+        _ = await registerIPC()
+        guard pendingFilterResume else { return }
+        pendingFilterResume = false
+        do {
+            if try await system.loadFilterEnabled() == false {
+                try await system.enableFilter()
+            }
+            resetFilterHealth()
+            updateState(.running)
+            publishSnapshot()
+        } catch {
+            updateState(failure(error))
+        }
+    }
+
+    /// CFBundleVersion 按点分段做数值比较（"2.10" > "2.9"）；
+    /// 字符串比较会把 "2.9" 误判为最新。
+    static func isVersion(_ candidate: String, newerThan base: String) -> Bool {
+        guard !base.isEmpty else { return !candidate.isEmpty }
+        let lhs = candidate.split(separator: ".").map { Int($0) ?? 0 }
+        let rhs = base.split(separator: ".").map { Int($0) ?? 0 }
+        for index in 0..<max(lhs.count, rhs.count) {
+            let left = index < lhs.count ? lhs[index] : 0
+            let right = index < rhs.count ? rhs[index] : 0
+            if left != right { return left > right }
+        }
+        return false
     }
 
     /// 仅由「系统扩展未就绪」推导出的状态；扩展确认已启用后必须清除。
@@ -440,7 +560,13 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     }
 
     func systemExtensionRequestFailed(_ error: Error) {
-        updateState(failure(error))
+        guard pendingFilterResume else {
+            updateState(failure(error))
+            return
+        }
+        // 升级失败：先把旧过滤器恢复启用，不能让一次失败的升级留下无防护状态。
+        logger.error("系统扩展升级失败: \(error.localizedDescription)")
+        Task { await self.resumeAfterSystemExtensionActivation() }
     }
 
     func systemExtensionProperties(_ properties: [SystemExtensionPropertyInfo]) {
@@ -460,7 +586,7 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
         var latestVersion: String = ""
         var latestProperty: SystemExtensionPropertyInfo?
 
-        for property in active where property.bundleVersion > latestVersion {
+        for property in active where Self.isVersion(property.bundleVersion, newerThan: latestVersion) {
             latestVersion = property.bundleVersion
             latestProperty = property
         }
@@ -476,10 +602,15 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
             }
             updateState(nextState)
         } else {
-            if latestProperty != nil {
-                // 当前版本未安装但有其他版本：需更新，并静默升级（激活请求）。
+            if let latestProperty {
+                // 当前版本未安装但有其他版本：需更新，静默升级（激活请求）。
+                // 过滤器运行中时先停过滤器，避免替换扩展后 IPC 端点丢失；
+                // 同一版本自动升级只尝试一次，失败后交给引导页手动重试。
                 updateState(.systemExtensionNeedsUpdate)
-                system.submitSystemExtensionRequest(.activate)
+                if attemptedUpgradeVersion != latestProperty.bundleVersion {
+                    attemptedUpgradeVersion = latestProperty.bundleVersion
+                    Task { await self.activateSystemExtension() }
+                }
             } else {
                 updateState(.systemExtensionNotInstalled)
             }

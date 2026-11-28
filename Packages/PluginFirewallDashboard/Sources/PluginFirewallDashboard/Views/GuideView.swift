@@ -14,6 +14,9 @@ struct GuideView: View {
     /// 运行中过滤器是否仍有扩展心跳；false 时提示未生效并提供修复入口。
     var isFilterResponding = true
 
+    /// App 与扩展的 IPC 是否已建立；断开时优先提示连接中断。
+    var isIPCConnected = true
+
     /// 外层展示形式使用材质遮罩；菜单栏弹窗内不需要遮罩，只渲染面板本身。
     var showsBackdrop = true
 
@@ -46,9 +49,12 @@ struct GuideView: View {
                     case .installing:
                         InstallingView()
                     case .running:
-                        // 运行中一般不展示引导；配置启用但扩展没有心跳时
-                        // 必须提示「未生效」，否则空列表会被误读为没有流量。
-                        if isFilterResponding {
+                        // 运行中一般不展示引导。IPC 断开时扩展会放行流量，
+                        // 与「过滤器未生效」是两种故障，分开提示；其余情况
+                        // 才用心跳判定是否生效。
+                        if !isIPCConnected {
+                            ExtensionConnectionLostView()
+                        } else if isFilterResponding {
                             EmptyView()
                         } else {
                             FilterUnresponsiveView()

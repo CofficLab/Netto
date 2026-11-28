@@ -26,6 +26,8 @@ public struct ContentView: View {
     @State private var firewallState: FirewallState?
     /// 运行中过滤器是否仍有扩展心跳（false 时列表不可信，改为提示未生效）。
     @State private var isFilterResponding = true
+    /// App 与系统扩展的 IPC 是否已建立（断开时列表与决策都不可信）。
+    @State private var isIPCConnected = true
     /// 菜单栏弹窗的呈现会话：弹窗关闭时复位选中的应用。
     @State private var presentationSession = PopoverPresentationSession()
 
@@ -38,6 +40,7 @@ public struct ContentView: View {
                 GuideView(
                     state: resolvedState,
                     isFilterResponding: isFilterResponding,
+                    isIPCConnected: isIPCConnected,
                     showsBackdrop: false
                 )
                     .padding(.vertical, 8)
@@ -161,8 +164,8 @@ public struct ContentView: View {
         if ui.shouldShowUpgradeGuide { return true }
         guard let resolvedState else { return true }
         // 运行中但过滤器没有响应：列表多半是空的（扩展没起来），
-        // 不能停留在应用列表误导用户。
-        return resolvedState.isNotRunning() || !isFilterResponding
+        // 不能停留在应用列表误导用户；IPC 断开时列表同样不可信。
+        return resolvedState.isNotRunning() || !isFilterResponding || !isIPCConnected
     }
 
     private var resolvedState: FirewallState? {
@@ -173,9 +176,11 @@ public struct ContentView: View {
         guard let firewall else { return }
         firewallState = firewall.snapshot.state
         isFilterResponding = firewall.snapshot.isFilterResponding
+        isIPCConnected = firewall.snapshot.isIPCConnected
         for await update in firewall.observe() {
             firewallState = update.state
             isFilterResponding = update.isFilterResponding
+            isIPCConnected = update.isIPCConnected
         }
     }
 }

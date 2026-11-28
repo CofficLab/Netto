@@ -205,7 +205,12 @@ final class FirewallControllerTests: XCTestCase {
         )
         controller.systemExtensionProperties([older])
         XCTAssertEqual(controller.snapshot.state, .systemExtensionNeedsUpdate)
-        // 旧行为：需更新时自动提交激活请求（静默升级）。
+        // 需更新时自动提交激活请求（静默升级）；现在先确认/停用过滤器，
+        // 激活请求是异步发出的。
+        let deadline = Date().addingTimeInterval(5)
+        while system.submittedRequests.last != .activate, Date() < deadline {
+            try? await Task.sleep(for: .milliseconds(20))
+        }
         XCTAssertEqual(system.submittedRequests.last, .activate)
     }
 
@@ -328,11 +333,12 @@ final class FirewallControllerTests: XCTestCase {
         }
     }
 
-    func testInstallFilterWhenAlreadyEnabledPreservesLegacyFilterNotInstalled() async throws {
+    func testInstallFilterWhenAlreadyEnabledReportsRunning() async throws {
         let (controller, system, _, _, _) = makeController()
         system.filterEnabled = true
         try await controller.installFilter()
-        XCTAssertEqual(controller.snapshot.state, .filterNotInstalled)
+        // 已启用时状态必须与实际一致，不能停留在「未安装」引导。
+        XCTAssertEqual(controller.snapshot.state, .running)
         XCTAssertEqual(system.installCount, 0)
     }
 

@@ -10,7 +10,17 @@ struct FirewallStatusPresentation {
     let title: String
     let detail: String
 
-    init(state: FirewallState, isFilterResponding: Bool = true) {
+    init(state: FirewallState, isFilterResponding: Bool = true, isIPCConnected: Bool = true) {
+        // App 连不上扩展：扩展在无 App 连接时会放行流量，
+        // 与「过滤器未响应」是两种故障，单独提示。
+        if state == .running, isIPCConnected == false {
+            symbol = "bolt.horizontal.circle.fill"
+            color = .orange
+            title = String(localized: "Extension Connection Lost")
+            detail = String(localized: "Firewall rules may not be applied")
+            return
+        }
+
         // 配置启用但扩展没有心跳：系统里过滤器是「开启」的，实际却不在拦截。
         if state == .running, isFilterResponding == false {
             symbol = "exclamationmark.shield.fill"

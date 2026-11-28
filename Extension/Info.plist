@@ -37,7 +37,7 @@
 	<key>NetworkExtension</key>
 	<dict>
 		<key>NEMachServiceName</key>
-		<string>$(TeamIdentifierPrefix)com.yueyi.TravelMode.SimpleFirewall.SimpleFirewallExtension</string>
+		<string>Y6HZ9JJYV6.com.yueyi.TravelMode.SimpleFirewall.SimpleFirewallExtension</string>
 		<key>NEProviderClasses</key>
 		<dict>
 			<key>com.apple.networkextension.filter-data</key>

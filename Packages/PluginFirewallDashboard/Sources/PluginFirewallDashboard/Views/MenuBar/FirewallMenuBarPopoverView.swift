@@ -27,7 +27,8 @@ struct FirewallMenuBarPopoverView: View {
     private var presentation: FirewallStatusPresentation {
         FirewallStatusPresentation(
             state: snapshot.state,
-            isFilterResponding: snapshot.isFilterResponding
+            isFilterResponding: snapshot.isFilterResponding,
+            isIPCConnected: snapshot.isIPCConnected
         )
     }
 

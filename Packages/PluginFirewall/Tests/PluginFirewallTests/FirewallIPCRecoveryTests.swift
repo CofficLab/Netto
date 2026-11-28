@@ -78,7 +78,9 @@ final class FirewallIPCRecoveryTests: XCTestCase {
     // MARK: - 控制器恢复流程
 
     func testConnectionLossTriggersReRegistration() async throws {
-        let (controller, _, ipc, _, _) = makeController()
+        let (controller, system, ipc, _, _) = makeController()
+        // 只有过滤器启用（扩展会话存活）时，连接丢失才需要重连。
+        system.filterEnabled = true
         await controller.startDaemon()
         XCTAssertEqual(ipc.registerCount, 1)
 
@@ -102,22 +104,40 @@ final class FirewallIPCRecoveryTests: XCTestCase {
         XCTAssertEqual(controller.snapshot.state, .running)
     }
 
-    func testRepeatedReconnectFailureSurfacesFailedState() async throws {
-        let (controller, _, ipc, _, _) = makeController()
+    func testRepeatedReconnectFailureMarksIPCDisconnected() async throws {
+        let (controller, system, ipc, _, _) = makeController()
+        system.filterEnabled = true
         await controller.startDaemon()
-        XCTAssertEqual(ipc.registerCount, 1)
+        await controller.refresh()
+        XCTAssertEqual(controller.snapshot.state, .running)
+        XCTAssertTrue(controller.snapshot.isIPCConnected)
 
         ipc.registerResult = false
         ipc.simulateConnectionLoss()
 
-        try await waitUntil {
-            if case .failed = controller.snapshot.state { return true }
-            return false
-        }
-        guard case .failed(let failure) = controller.snapshot.state else {
-            return XCTFail("期望 failed 状态")
-        }
-        XCTAssertEqual(failure.domain, "com.yueyi.Netpause.ipc")
+        try await waitUntil { controller.snapshot.isIPCConnected == false }
+        // 重连失败只标记连接断开，不篡改过滤器状态：配置仍是启用的，
+        // 界面据此展示「连接中断」而非「过滤器未生效」。
+        XCTAssertEqual(controller.snapshot.state, .running)
+        XCTAssertTrue(controller.snapshot.isFilterResponding)
+    }
+
+    func testRefreshReconnectsIPCWhenDisconnected() async throws {
+        let (controller, system, ipc, _, _) = makeController()
+        system.filterEnabled = true
+        await controller.startDaemon()
+
+        ipc.registerResult = false
+        ipc.simulateConnectionLoss()
+
+        // 等恢复流程用尽全部重试（1 次启动注册 + 3 次重连）。
+        try await waitUntil { ipc.registerCount >= 4 }
+        try await waitUntil { controller.snapshot.isIPCConnected == false }
+
+        // 端点恢复后点「重新检测」即可自愈，无需重启 App。
+        ipc.registerResult = true
+        await controller.refresh()
+        XCTAssertTrue(controller.snapshot.isIPCConnected)
     }
 
     func testShutdownClearsConnectionLossHandler() async throws {
