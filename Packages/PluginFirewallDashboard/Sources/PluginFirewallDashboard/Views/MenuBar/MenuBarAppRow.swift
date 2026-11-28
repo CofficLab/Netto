@@ -1,53 +1,45 @@
 import LumiUI
 import ProviderFirewall
-import ProviderViewEnvironment
 import SwiftUI
 
-/// 菜单栏弹窗里的应用行：整行占满宽度，悬停由上层容器展开详情面板，
-/// 点击进入该应用的连接记录。
+/// 菜单栏弹窗里的应用行：整行占满宽度，悬停由上层容器展开详情面板。
 ///
 /// 行内直接绑定 `MenuBarAppRowModel`：网速逐秒变化只失效本行，
-/// 不会让整个列表随 1Hz 刷新重建。
+/// 不会让整个列表随 1Hz 刷新重建。行本身不响应点击——应用联网日志
+/// 不在弹窗中展示，规则开关由悬停面板提供。
 struct MenuBarAppRow: View {
-    @EnvironmentObject private var ui: UIProvider
     @LumiTheme private var theme
 
     let row: MenuBarAppRowModel
 
     var body: some View {
         let app = row.app
-        Button {
-            HoverCoordinator.shared.closeAll()
-            ui.selectApp(app.id)
-        } label: {
-            HStack(spacing: 10) {
-                AppIcon(app: app)
-                    .frame(width: 28, height: 28)
+        HStack(spacing: 10) {
+            AppIcon(app: app)
+                .frame(width: 28, height: 28)
 
-                HStack(spacing: 6) {
-                    Text(app.name)
-                        .font(.appBodyEmphasized)
-                        .lineLimit(1)
+            HStack(spacing: 6) {
+                Text(app.name)
+                    .font(.appBodyEmphasized)
+                    .lineLimit(1)
 
-                    if row.isDenied {
-                        Text("Blocked")
-                            .font(.appMicroEmphasized)
-                            .foregroundStyle(theme.error)
-                    }
-                }
-
-                Spacer(minLength: 8)
-
-                if let speed = row.speed, speed.totalBytesPerSecond > 0 {
-                    speedBadge(speed)
+                if row.isDenied {
+                    Text("Blocked")
+                        .font(.appMicroEmphasized)
+                        .foregroundStyle(theme.error)
                 }
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 7)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())
+
+            Spacer(minLength: 8)
+
+            if let speed = row.speed, speed.totalBytesPerSecond > 0 {
+                speedBadge(speed)
+            }
         }
-        .buttonStyle(.plain)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("netpause.app.row.\(app.id)")
         .accessibilityLabel(accessibilityText)
