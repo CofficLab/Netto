@@ -22,11 +22,11 @@ public struct BtnStop: View {
                 action()
             }
         } else {
-            AppButton("停止", systemImage: icon, style: .primary, fillsWidth: true, action: {
+            AppButton("Stop", systemImage: icon, style: .primary, fillsWidth: true, action: {
                 action()
             })
             .disabled(firewall?.snapshot.state.isNotRunning() == true)
-            .help(firewall?.snapshot.state.isNotRunning() == true ? "未开启" : "")
+            .help(firewall?.snapshot.state.isNotRunning() == true ? String(localized: "Not Started") : "")
             .frame(width: 150)
             .frame(height: 50)
         }
@@ -38,7 +38,7 @@ public struct BtnStop: View {
             do {
                 try await firewall.stop()
             } catch {
-                shell.postError("停止防火墙失败：\(error.localizedDescription)")
+                shell.postError(String(localized: "Failed to stop firewall: \(error.localizedDescription)"))
             }
         }
     }

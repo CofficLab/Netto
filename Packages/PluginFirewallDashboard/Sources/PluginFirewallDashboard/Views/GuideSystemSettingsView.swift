@@ -3,8 +3,8 @@ import SwiftUI
 
 /// 需要在系统设置中调整状态时的通用引导（过滤器被禁用、权限被拒绝等）。
 struct SystemSettingsGuideView: View {
-    let title: String
-    let message: String
+    let title: LocalizedStringKey
+    let message: LocalizedStringKey
     var iconName = "exclamationmark.shield"
     var iconColor: Color = .orange
 
@@ -26,8 +26,8 @@ struct SystemSettingsGuideView: View {
 #Preview {
     DashboardPreviewHost {
         SystemSettingsGuideView(
-            title: "防火墙已禁用",
-            message: "过滤器在系统设置中被禁用，启用后才能拦截未授权联网。",
+            title: "Firewall Disabled",
+            message: "The filter is disabled in System Settings. Enable it to block unauthorized network access.",
             iconName: "shield.slash"
         )
     }

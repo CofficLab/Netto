@@ -22,7 +22,7 @@ struct SubscriptionProductsView: View {
     @ViewBuilder
     private func productList(items: [ProductDTO]) -> some View {
         if items.isEmpty {
-            Text("暂无订阅商品").foregroundStyle(.secondary)
+            Text("No subscription products").foregroundStyle(.secondary)
         } else {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 10) {

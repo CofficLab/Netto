@@ -10,13 +10,23 @@ struct FirewallStatusPresentation {
     let title: String
     let detail: String
 
-    init(state: FirewallState, isFilterResponding: Bool = true) {
+    init(state: FirewallState, isFilterResponding: Bool = true, isIPCConnected: Bool = true) {
+        // App 连不上扩展：扩展在无 App 连接时会放行流量，
+        // 与「过滤器未响应」是两种故障，单独提示。
+        if state == .running, isIPCConnected == false {
+            symbol = "bolt.horizontal.circle.fill"
+            color = .orange
+            title = String(localized: "Extension Connection Lost")
+            detail = String(localized: "Firewall rules may not be applied")
+            return
+        }
+
         // 配置启用但扩展没有心跳：系统里过滤器是「开启」的，实际却不在拦截。
         if state == .running, isFilterResponding == false {
             symbol = "exclamationmark.shield.fill"
             color = .orange
-            title = "防火墙未生效"
-            detail = "过滤器没有响应，可能未在拦截"
+            title = String(localized: "Firewall Not Active")
+            detail = String(localized: "The filter is not responding. Traffic may not be blocked.")
             return
         }
 
@@ -24,62 +34,62 @@ struct FirewallStatusPresentation {
         case .running:
             symbol = "shield.fill"
             color = .green
-            title = "防火墙运行中"
-            detail = "正在拦截未授权联网"
+            title = String(localized: "Firewall Running")
+            detail = String(localized: "Blocking unauthorized network access")
         case .stopped:
             symbol = "shield.slash"
             color = .secondary
-            title = "防火墙已停止"
-            detail = "开启后开始拦截未授权联网"
+            title = String(localized: "Firewall Stopped")
+            detail = String(localized: "Start it to block unauthorized network access")
         case .unknown:
             symbol = "shield"
             color = .secondary
-            title = "防火墙状态未知"
-            detail = "点击「开启」重新检测"
+            title = String(localized: "Firewall Status Unknown")
+            detail = String(localized: "Click \"Start\" to check again")
         case .disabled:
             symbol = "shield.slash"
             color = .secondary
-            title = "防火墙已禁用"
-            detail = "过滤器在系统设置中被禁用"
+            title = String(localized: "Firewall Disabled")
+            detail = String(localized: "The filter is disabled in System Settings")
         case .installing:
             symbol = "shield.lefthalf.filled"
             color = .orange
-            title = "正在安装系统扩展"
-            detail = "请稍候…"
+            title = String(localized: "Installing System Extension")
+            detail = String(localized: "Please wait…")
         case .waitingForApproval, .systemExtensionApprovalNeeded:
             symbol = "shield.lefthalf.filled"
             color = .orange
-            title = "等待批准系统扩展"
-            detail = "请在系统设置中启用扩展"
+            title = String(localized: "Waiting for System Extension Approval")
+            detail = String(localized: "Enable the extension in System Settings")
         case .filterApprovalNeeded:
             symbol = "shield.lefthalf.filled"
             color = .orange
-            title = "过滤器需要授权"
-            detail = "请在系统设置中允许过滤器"
+            title = String(localized: "Filter Needs Approval")
+            detail = String(localized: "Allow the filter in System Settings")
         case .extensionNotActivated, .systemExtensionNotInstalled, .systemExtensionNeedsUpdate:
             symbol = "shield.lefthalf.filled"
             color = .orange
-            title = "系统扩展未就绪"
-            detail = "请在下方引导中完成系统扩展安装"
+            title = String(localized: "System Extension Not Ready")
+            detail = String(localized: "Complete the system extension installation using the guide below")
         case .filterNotInstalled:
             symbol = "shield.lefthalf.filled"
             color = .orange
-            title = "过滤器未安装"
-            detail = "请在下方引导中安装过滤器"
+            title = String(localized: "Filter Not Installed")
+            detail = String(localized: "Install the filter using the guide below")
         case .notInApplicationsFolder:
             symbol = "exclamationmark.shield.fill"
             color = .orange
-            title = "需要移入应用程序文件夹"
-            detail = "将 App 移入 /Applications 后重试"
+            title = String(localized: "Move to Applications Folder")
+            detail = String(localized: "Move the app to /Applications and try again")
         case .permissionDenied:
             symbol = "exclamationmark.shield.fill"
             color = .red
-            title = "权限被拒绝"
-            detail = "请在系统设置中授予权限"
+            title = String(localized: "Permission Denied")
+            detail = String(localized: "Grant permission in System Settings")
         case let .failed(failure):
             symbol = "exclamationmark.shield.fill"
             color = .red
-            title = "防火墙发生错误"
+            title = String(localized: "Firewall Error")
             detail = failure.message
         }
     }

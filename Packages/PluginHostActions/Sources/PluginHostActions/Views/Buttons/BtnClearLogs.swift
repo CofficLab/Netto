@@ -13,13 +13,13 @@ struct BtnClearLogs: View {
     @EnvironmentObject private var shell: ShellCenter
 
     var body: some View {
-        AppButton("清空所有日志", systemImage: "trash", style: .primary, fillsWidth: true, action: {
+        AppButton("Clear All Logs", systemImage: "trash", style: .primary, fillsWidth: true, action: {
             guard let events else { return }
             Task {
                 do {
                     let deleted = try await events.deleteAll()
                     os_log("🧹 已清空日志: 删除 \(deleted) 条记录")
-                    shell.post(ToastMessage(description: "已删除 \(deleted) 条记录"))
+                    shell.post(ToastMessage(description: String(localized: "Deleted \(deleted) records")))
                 } catch {
                     os_log("❌ 清空日志失败: \(error.localizedDescription)")
                     shell.postError(error.localizedDescription)

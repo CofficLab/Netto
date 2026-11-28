@@ -14,12 +14,12 @@ struct ProxyExplanationView: View {
             Spacer()
 
             // 标题
-            Text("代理应用对网络监控的影响")
+            Text("How Proxy Apps Affect Network Monitoring")
                 .font(.appSectionTitle)
                 .foregroundStyle(theme.textPrimary)
 
             // 说明文字
-            Text("💡 当代理应用运行时，部分应用的网络流量会被代理应用接管，\n这些应用的网络活动将无法被本软件直接监控到。")
+            Text("💡 When a proxy app is running, some apps' network traffic is routed through the proxy,\nso their network activity cannot be observed directly by this app.")
                 .font(.appBody)
                 .foregroundStyle(theme.textSecondary)
                 .multilineTextAlignment(.center)
@@ -29,7 +29,7 @@ struct ProxyExplanationView: View {
             VStack(spacing: 0) {
                 // 标题行（对齐）
                 HStack {
-                    Text("未开启代理")
+                    Text("Proxy Off")
                         .font(.appCallout)
                         .foregroundStyle(theme.success)
                         .frame(maxWidth: .infinity)
@@ -39,7 +39,7 @@ struct ProxyExplanationView: View {
                         .frame(width: 1)
                         .frame(height: 36)
 
-                    Text("开启代理")
+                    Text("Proxy On")
                         .font(.appCallout)
                         .foregroundStyle(theme.warning)
                         .frame(maxWidth: .infinity)
@@ -78,7 +78,7 @@ struct ProxyExplanationView: View {
                                 Image(systemName: "gear")
                                     .foregroundStyle(theme.info)
                                     .font(.title2)
-                                Text("操作系统 (macOS)")
+                                Text("Operating System (macOS)")
                                     .font(.appCallout)
                                     .foregroundStyle(theme.info)
                             }
@@ -144,7 +144,7 @@ struct ProxyExplanationView: View {
                     HStack {
                         Image(systemName: "shield.fill")
                             .foregroundStyle(theme.warning)
-                        Text("代理应用")
+                        Text("Proxy App")
                             .font(.appCaptionEmphasized)
                             .foregroundStyle(theme.warning)
                     }

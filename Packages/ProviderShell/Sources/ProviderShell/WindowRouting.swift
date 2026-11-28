@@ -29,13 +29,13 @@ public enum ShellWindowTitle {
     public static let main = "Netpause"
 
     /// 设置窗口标题。
-    public static let settings = "设置"
+    public static let settings = String(localized: "Settings")
 
     /// 插件窗口标题。
-    public static let plugin = "Plugin Window"
+    public static let plugin = String(localized: "Plugin Window")
 
     /// 欢迎/引导窗口标题。
-    public static let welcome = "Welcome to Netpause"
+    public static let welcome = String(localized: "Welcome to Netpause")
 }
 
 /// 设置入口深链请求：打开设置窗口并选中指定入口。

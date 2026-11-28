@@ -62,14 +62,14 @@ struct GeneralSettingsView: View {
 
     /// 使用引导：打开应用各功能的使用说明。
     private var guideSection: some View {
-        AppSettingSection(title: "使用引导", titleAlignment: .leading) {
+        AppSettingSection(title: String(localized: "Usage Guide"), titleAlignment: .leading) {
             AppSettingRow(
-                title: "使用引导",
-                description: "查看应用各功能的使用说明",
+                title: String(localized: "Usage Guide"),
+                description: String(localized: "View instructions for each feature"),
                 icon: "book"
             ) {
                 AppButton(
-                    "打开",
+                    "Open",
                     systemImage: "book.pages",
                     style: .secondary,
                     size: .small
@@ -85,7 +85,7 @@ struct GeneralSettingsView: View {
         AppSettingSection(title: PersistenceConfig.appName, titleAlignment: .leading) {
             VStack(spacing: 0) {
                 AppSettingRow(
-                    title: "名称",
+                    title: String(localized: "Name"),
                     description: bundleInfo.name,
                     icon: "app"
                 ) {
@@ -105,7 +105,7 @@ struct GeneralSettingsView: View {
                 divider
 
                 AppSettingRow(
-                    title: "版本",
+                    title: String(localized: "Version"),
                     description: bundleInfo.version ?? "—",
                     icon: "info.circle"
                 ) {
@@ -115,7 +115,7 @@ struct GeneralSettingsView: View {
                 divider
 
                 AppSettingRow(
-                    title: "构建",
+                    title: String(localized: "Build"),
                     description: bundleInfo.build ?? "—",
                     icon: "hammer"
                 ) {
@@ -125,12 +125,12 @@ struct GeneralSettingsView: View {
                 divider
 
                 AppSettingRow(
-                    title: "数据目录",
+                    title: String(localized: "Data Folder"),
                     description: dataRootDirectory?.path ?? "—",
                     icon: "folder"
                 ) {
                     AppButton(
-                        "打开",
+                        "Open",
                         systemImage: "folder",
                         style: .secondary,
                         size: .small
@@ -145,14 +145,14 @@ struct GeneralSettingsView: View {
 
     /// 系统扩展：跳转系统设置中的网络扩展页。
     private var systemExtensionSection: some View {
-        AppSettingSection(title: "系统扩展", titleAlignment: .leading) {
+        AppSettingSection(title: String(localized: "System Extension"), titleAlignment: .leading) {
             AppSettingRow(
-                title: "网络扩展",
-                description: "打开系统设置中的网络扩展页",
+                title: String(localized: "Network Extension"),
+                description: String(localized: "Open the Network Extension page in System Settings"),
                 icon: "puzzlepiece.extension"
             ) {
                 AppButton(
-                    "打开",
+                    "Open",
                     systemImage: "arrow.up.forward.app",
                     style: .secondary,
                     size: .small,
@@ -177,7 +177,7 @@ struct GeneralSettingsView: View {
     }
 }
 
-#Preview("通用设置") {
+#Preview("General Settings") {
     GeneralSettingsView()
         .frame(width: 640, height: 600)
 }

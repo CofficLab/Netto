@@ -31,6 +31,17 @@ final class NetpauseSettingsUITests: NetpauseUITestBase {
         )
     }
 
+    /// 开发语言为英语时，未匹配到中文变体的环境回落到英文窗口标题。
+    func testSettingsWindowUsesEnglishFallback() {
+        let app = launchApp(language: "en")
+
+        XCTAssertTrue(
+            app.windows.matching(NSPredicate(format: "title == %@", "Settings"))
+                .firstMatch.waitForExistence(timeout: 20),
+            "英文环境下设置窗口标题未回落到 Settings"
+        )
+    }
+
     /// 重复触发（菜单栏入口 + ⌘,）不会创建第二个设置窗口。
     func testRepeatedSettingsRequestsDoNotDuplicateWindow() {
         let app = launchApp()

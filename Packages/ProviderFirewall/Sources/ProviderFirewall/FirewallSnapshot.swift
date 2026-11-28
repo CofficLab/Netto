@@ -14,28 +14,43 @@ public struct FirewallSnapshot: Sendable, Equatable {
     /// 无上报时置为 false。
     public let isFilterResponding: Bool
 
+    /// App 与系统扩展的 IPC 是否已建立。
+    ///
+    /// 与 `isFilterResponding` 相互独立：连接断开时既无法判断过滤器是否
+    /// 在拦截，扩展侧也会因没有 App 连接而放行流量，界面需要单独提示。
+    /// 注意 `isFilterResponding` 此时保持上一次的判定，不代表过滤器未生效。
+    public let isIPCConnected: Bool
+
     public init(
         state: FirewallState,
         canStart: Bool,
         canStop: Bool,
         lastUpdated: Date = Date(),
-        isFilterResponding: Bool = true
+        isFilterResponding: Bool = true,
+        isIPCConnected: Bool = true
     ) {
         self.state = state
         self.canStart = canStart
         self.canStop = canStop
         self.lastUpdated = lastUpdated
         self.isFilterResponding = isFilterResponding
+        self.isIPCConnected = isIPCConnected
     }
 
     /// 便捷构造：由状态推导 canStart/canStop。
-    public init(state: FirewallState, lastUpdated: Date = Date(), isFilterResponding: Bool = true) {
+    public init(
+        state: FirewallState,
+        lastUpdated: Date = Date(),
+        isFilterResponding: Bool = true,
+        isIPCConnected: Bool = true
+    ) {
         self.init(
             state: state,
             canStart: state.canStart,
             canStop: state.canStop,
             lastUpdated: lastUpdated,
-            isFilterResponding: isFilterResponding
+            isFilterResponding: isFilterResponding,
+            isIPCConnected: isIPCConnected
         )
     }
 }

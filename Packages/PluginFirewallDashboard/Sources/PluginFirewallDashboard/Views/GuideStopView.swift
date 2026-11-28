@@ -6,10 +6,10 @@ struct StopView: View {
     var body: some View {
         DashboardGuidePanel(
             iconName: "shield.slash",
-            title: "所有应用可自由联网",
+            title: "All Apps Can Access the Network Freely",
             iconColor: .orange
         ) {
-            Text("点击右上角「开启」开始拦截未授权联网。")
+            Text("Click \"Start\" in the top-right corner to begin blocking unauthorized network access.")
                 .font(.appBody)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

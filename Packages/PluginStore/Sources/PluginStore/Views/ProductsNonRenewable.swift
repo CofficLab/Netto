@@ -13,7 +13,7 @@ struct ProductsNonRenewable: View {
     @ViewBuilder
     private func productList(items: [ProductDTO]) -> some View {
         if items.isEmpty {
-            Text("暂无非续订商品").foregroundStyle(.secondary)
+            Text("No non-renewing products").foregroundStyle(.secondary)
         } else {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 10) {

@@ -25,7 +25,7 @@ public final class PluginStore: SuperPlugin, StoreProviding {
     public let metadata = PluginMetadata(
         id: "store",
         name: "Store",
-        description: "StoreKit 商店：购买/恢复/订阅/权益快照",
+        description: String(localized: "StoreKit store: purchases, restore, subscriptions, and entitlement snapshots"),
         version: "1.0",
         policy: .enabledByDefault
     )
@@ -48,7 +48,7 @@ public final class PluginStore: SuperPlugin, StoreProviding {
         storeViewModel = viewModel
         kernel.resolveProvider(SettingViewProviding.self)?
             .addEntries([
-                SettingEntryItem(id: "store", title: "商店", systemImage: "storefront", order: 30) {
+                SettingEntryItem(id: "store", title: String(localized: "Store"), systemImage: "storefront", order: 30) {
                     StoreSettingsView(viewModel: viewModel)
                 },
             ])

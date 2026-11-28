@@ -16,7 +16,7 @@ struct ProductsSubscription: View, LogPrefixed {
         ScrollView {
             VStack {
                 if refreshing == false && subscriptionGroups.isEmpty {
-                    Text("🏃 暂无")
+                    Text("🏃 None yet")
                 } else {
                     VStack(spacing: 16) {
                         ForEach(subscriptionGroups, id: \.id) { group in
@@ -64,7 +64,7 @@ struct ProductsSubscription: View, LogPrefixed {
                         .font(.headline)
                         .fontWeight(.semibold)
                     
-                    Text("\(group.subscriptions.count) 个订阅选项")
+                    Text("\(group.subscriptions.count) subscription options")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

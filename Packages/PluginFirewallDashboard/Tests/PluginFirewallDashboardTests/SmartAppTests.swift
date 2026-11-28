@@ -77,7 +77,7 @@ struct SmartAppTests {
     func unknownApp() {
         let app = SmartApp.unknownApp("com.unknown.app")
         #expect(app.id == "com.unknown.app")
-        #expect(app.name == "未知")
+        #expect(app.name == "Unknown")
         #expect(!app.isSystemApp)
         #expect(!app.hidden)
         #expect(!app.isProxy)

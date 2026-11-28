@@ -41,7 +41,7 @@ struct WorkingPrincipleDiagramView: View {
                         Image(systemName: "puzzlepiece.extension.fill")
                             .font(.system(size: 16))
                             .foregroundColor(.orange)
-                        Text("系统扩展")
+                        Text("System Extension")
                             .font(.caption2)
                             .fontWeight(.medium)
                             .foregroundColor(.orange)
@@ -69,7 +69,7 @@ struct WorkingPrincipleDiagramView: View {
             }
             
             VStack(spacing: 4) {
-                Text("数据交换")
+                Text("Data Exchange")
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }
@@ -130,7 +130,7 @@ struct WorkingPrincipleDiagramView: View {
             VStack(spacing: 0) {
                 // 应用列表标题
                 HStack {
-                    Text("应用列表")
+                    Text("App List")
                         .font(.caption)
                         .fontWeight(.medium)
                         .foregroundColor(.blue)

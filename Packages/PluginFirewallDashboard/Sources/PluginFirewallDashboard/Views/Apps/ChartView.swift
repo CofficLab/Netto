@@ -33,13 +33,13 @@ struct ChartView: View {
         ) {
             VStack(alignment: .leading, spacing: AppUI.Spacing.sm) {
                 HStack {
-                    Text(title ?? (appId == nil ? "联网次数" : "应用联网次数"))
+                    Text(title ?? (appId == nil ? String(localized: "Connection Count") : String(localized: "App Connection Count")))
                         .font(.appSectionTitle)
                         .foregroundStyle(theme.textPrimary)
 
                     Spacer()
 
-                    Text("合计 \(total)")
+                    Text("Total \(total)")
                         .font(.appCaption)
                         .foregroundStyle(theme.textSecondary)
                 }
@@ -55,7 +55,7 @@ struct ChartView: View {
 
                 AppLineChart(
                     points: smoothed.map { AppLineChartPoint(date: $0.time, value: Double($0.count)) },
-                    accessibilityLabel: "联网次数趋势",
+                    accessibilityLabel: String(localized: "Connection Count Trend"),
                     pointStyle: .automatic,
                     showsArea: true
                 )
@@ -187,9 +187,9 @@ extension ChartView {
         var id: String { rawValue }
         var title: String {
             switch self {
-            case .hour: return "按小时"
-            case .last7: return "近7天"
-            case .last30: return "近30天"
+            case .hour: return String(localized: "By Hour")
+            case .last7: return String(localized: "Last 7 Days")
+            case .last30: return String(localized: "Last 30 Days")
             }
         }
         var unit: BucketUnit {

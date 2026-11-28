@@ -27,7 +27,7 @@ struct SmartAppLookupTests {
         let found = SmartApp.getSystemApp(".com.example.notInCatalog")
 
         #expect(found?.id == ".com.example.notInCatalog")
-        #expect(found?.name == "未知系统应用")
+        #expect(found?.name == "Unknown System App")
         #expect(found?.isSystemApp == true)
         #expect(found?.hidden == true)
     }
@@ -42,7 +42,7 @@ struct SmartAppLookupTests {
         let app = SmartApp.fromId("com.example.definitely-not-running")
 
         #expect(app.id == "com.example.definitely-not-running")
-        #expect(app.name == "未知")
+        #expect(app.name == "Unknown")
         #expect(app.isSystemApp == false)
     }
 
@@ -50,7 +50,7 @@ struct SmartAppLookupTests {
     func fromIdTreatsDotPrefixedAsSystemApp() {
         let app = SmartApp.fromId(".com.example.notRunning")
 
-        #expect(app.name == "未知系统应用")
+        #expect(app.name == "Unknown System App")
         #expect(app.isSystemApp)
         #expect(app.hidden)
     }
@@ -207,7 +207,7 @@ struct FirewallDashboardPluginTests {
         #expect(plugin.order == 60)
         #expect(plugin.dependencies == ["firewall", "appsettings", "eventstore", "store"])
         #expect(plugin.metadata.id == "firewall-dashboard")
-        #expect(plugin.metadata.name == "防火墙面板")
+        #expect(plugin.metadata.name == "Firewall Dashboard")
         #expect(plugin.metadata.version == "1.0")
     }
 

@@ -180,7 +180,7 @@ struct RunningAppsPreview: View {
 
     var body: some View {
         VStack {
-            Text("当前运行的应用程序")
+            Text("Currently Running Applications")
                 .font(.headline)
                 .padding()
 
@@ -197,7 +197,7 @@ struct RunningAppsPreview: View {
                     }
 
                     VStack(alignment: .leading) {
-                        Text(app.localizedName ?? "未知应用")
+                        Text(app.localizedName ?? String(localized: "Unknown App"))
                             .font(.headline)
 
                         if let bundleId = app.bundleIdentifier {

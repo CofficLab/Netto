@@ -7,7 +7,7 @@ struct BtnOpenDataFolder: View {
     let directory: URL?
 
     var body: some View {
-        AppButton("打开数据目录", systemImage: "gearshape", style: .primary, fillsWidth: true, action: {
+        AppButton("Open Data Folder", systemImage: "gearshape", style: .primary, fillsWidth: true, action: {
             guard let directory else { return }
             NSWorkspace.shared.open(directory)
         })

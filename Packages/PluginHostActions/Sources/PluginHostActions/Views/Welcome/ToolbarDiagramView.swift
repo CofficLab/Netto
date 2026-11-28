@@ -12,13 +12,13 @@ struct ToolbarDiagramView: View {
 
     // 更多菜单选项
     private let moreMenuItems = [
-        (icon: "puzzlepiece.extension", title: "安装", description: "安装网络过滤扩展"),
-        (icon: "stop.circle", title: "停止", description: "停止网络监控"),
-        (icon: "play.circle", title: "启动", description: "开始网络监控"),
-        (icon: "gearshape", title: "打开系统设置", description: "配置系统扩展权限"),
-        (icon: "questionmark.circle", title: "使用引导", description: "查看应用使用指南"),
-        (icon: "info.circle", title: "关于", description: "查看应用信息"),
-        (icon: "power", title: "退出", description: "退出应用程序"),
+        (icon: "puzzlepiece.extension", title: String(localized: "Install"), description: String(localized: "Install the network filter extension")),
+        (icon: "stop.circle", title: String(localized: "Stop"), description: String(localized: "Stop network monitoring")),
+        (icon: "play.circle", title: String(localized: "Start"), description: String(localized: "Start network monitoring")),
+        (icon: "gearshape", title: String(localized: "Open System Settings"), description: String(localized: "Configure system extension permissions")),
+        (icon: "questionmark.circle", title: String(localized: "Usage Guide"), description: String(localized: "View the app usage guide")),
+        (icon: "info.circle", title: String(localized: "About"), description: String(localized: "View app information")),
+        (icon: "power", title: String(localized: "Quit"), description: String(localized: "Quit the app")),
     ]
 
     // 模拟应用数据
@@ -35,7 +35,7 @@ struct ToolbarDiagramView: View {
                 // 箭头指向更多菜单按钮（在工具栏上方）
                 HStack {
                     VStack(spacing: 4) {
-                        Text("开关")
+                        Text("Switch")
                             .font(.caption)
                             .foregroundColor(.purple)
                             .fontWeight(.bold)
@@ -50,7 +50,7 @@ struct ToolbarDiagramView: View {
 
                     Spacer()
                     VStack(spacing: 4) {
-                        Text("更多操作")
+                        Text("More Actions")
                             .font(.caption)
                             .foregroundColor(.orange)
                             .fontWeight(.bold)
@@ -94,7 +94,7 @@ struct ToolbarDiagramView: View {
     private var toolbarView: some View {
         HStack(spacing: 20) {
             // 开关插件
-            toolbarButton(icon: "power.circle", title: "开关")
+            toolbarButton(icon: "power.circle", title: String(localized: "Switch"))
 
             Spacer()
 
@@ -293,7 +293,7 @@ struct ToolbarDiagramView: View {
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: allowedStates[index] ? "xmark.circle.fill" : "checkmark.circle.fill")
-                        Text(allowedStates[index] ? "禁止" : "允许")
+                        Text(allowedStates[index] ? String(localized: "Block") : String(localized: "Allow"))
                     }
                     .font(.caption)
                     .foregroundColor(.white)

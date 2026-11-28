@@ -12,14 +12,16 @@ class NetpauseUITestBase: XCTestCase {
         continueAfterFailure = false
     }
 
-    func launchApp() -> XCUIApplication {
+    func launchApp(language: String = "zh-Hans") -> XCUIApplication {
         let app = XCUIApplication()
         // 禁用 macOS 窗口/弹出层状态恢复，避免上一次运行的残留状态干扰测试。
         // 菜单栏 App 正常启动没有窗口；XCUITest 对无窗口进程做深层 AX 枚举会
         // 无限递归，测试统一用宿主的设置窗参数保持一个窗口存在。
+        // 固定语言让中文可见文案断言不受测试机系统语言影响。
         app.launchArguments += [
             "-ApplePersistenceIgnoreState", "YES",
             "-netpause-open-settings",
+            "-AppleLanguages", "(\(language))",
         ]
         app.launch()
         return app

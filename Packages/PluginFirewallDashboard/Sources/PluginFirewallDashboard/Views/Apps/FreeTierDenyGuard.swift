@@ -21,6 +21,6 @@ enum FreeTierDenyGuard {
         if isProOrHigher || deniedCount < deniedLimit {
             return .allowed
         }
-        return .upgradeRequired("已达到免费版限制，请升级到 Pro")
+        return .upgradeRequired(String(localized: "You've reached the free plan limit. Upgrade to Pro."))
     }
 }

@@ -9,13 +9,13 @@ struct DashboardGuidePanel<Content: View>: View {
     @LumiTheme private var theme
 
     private let iconName: String
-    private let title: String
+    private let title: LocalizedStringKey
     private let iconColor: Color
     private let content: Content
 
     init(
         iconName: String,
-        title: String,
+        title: LocalizedStringKey,
         iconColor: Color = .accentColor,
         @ViewBuilder content: () -> Content
     ) {
@@ -56,10 +56,10 @@ struct DashboardGuidePanel<Content: View>: View {
 struct DashboardGuideSteps: View {
     @LumiTheme private var theme
 
-    private let title: String
-    private let steps: [String]
+    private let title: LocalizedStringKey
+    private let steps: [LocalizedStringKey]
 
-    init(_ title: String = "操作步骤", steps: [String]) {
+    init(_ title: LocalizedStringKey = "Setup Steps", steps: [LocalizedStringKey]) {
         self.title = title
         self.steps = steps
     }

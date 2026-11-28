@@ -74,19 +74,19 @@ struct MenuBarAppHoverDetailView: View {
         if let speed, speed.totalBytesPerSecond > 0 {
             HStack(spacing: 24) {
                 metric(
-                    label: "下载",
+                    label: String(localized: "Download"),
                     value: NetworkSpeedFormatter.format(speed.downloadBytesPerSecond),
                     tint: theme.success
                 )
                 metric(
-                    label: "上传",
+                    label: String(localized: "Upload"),
                     value: NetworkSpeedFormatter.format(speed.uploadBytesPerSecond),
                     tint: theme.primary
                 )
                 Spacer(minLength: 0)
             }
         } else {
-            Text("当前无网络活动")
+            Text("No network activity right now")
                 .font(.appCaption)
                 .foregroundStyle(theme.textSecondary)
         }
@@ -110,10 +110,10 @@ struct MenuBarAppHoverDetailView: View {
     private func ruleSection(isDenied: Bool) -> some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("联网权限")
+                Text("Network Access")
                     .font(.appCaptionEmphasized)
 
-                Text(isDenied ? "当前已禁止该应用联网" : "当前允许该应用联网")
+                Text(isDenied ? String(localized: "Network access is currently blocked for this app") : String(localized: "Network access is currently allowed for this app"))
                     .font(.appMicro)
                     .foregroundStyle(isDenied ? theme.error : theme.textSecondary)
             }

@@ -14,11 +14,11 @@ enum EventCSVExport {
         var errorDescription: String? {
             switch self {
             case .providerUnavailable:
-                return "事件存储不可用"
+                return String(localized: "Event storage is unavailable")
             case .downloadsUnavailable:
-                return "无法访问下载目录"
+                return String(localized: "Cannot access the Downloads folder")
             case .encodingFailed:
-                return "CSV 编码失败"
+                return String(localized: "Failed to encode CSV")
             }
         }
     }

@@ -43,7 +43,7 @@ struct ProductCell: View, LogPrefixed {
             }
         }
         .alert(isPresented: $isShowingError, content: {
-            Alert(title: Text(errorTitle), message: nil, dismissButton: .default(Text("好")))
+            Alert(title: Text(errorTitle), message: nil, dismissButton: .default(Text("OK")))
         })
     }
 
@@ -64,12 +64,12 @@ struct ProductCell: View, LogPrefixed {
                         .font(.caption)
                 }
                 if isCurrent {
-                    Text("正在使用")
+                    Text("In Use")
                         .font(.footnote)
                         .foregroundStyle(.green)
                 }
                 if isPurchased {
-                    Text("已购买")
+                    Text("Purchased")
                         .font(.footnote)
                         .foregroundStyle(.green)
                 }
@@ -103,15 +103,15 @@ struct ProductCell: View, LogPrefixed {
         let plural = 1 < period.value
         switch period.unit {
         case "day":
-            return plural ? "\(period.value) 天" : "天"
+            return plural ? String(localized: "\(period.value) days") : String(localized: "day")
         case "week":
-            return plural ? "\(period.value) 周" : "周"
+            return plural ? String(localized: "\(period.value) weeks") : String(localized: "week")
         case "month":
-            return plural ? "\(period.value) 月" : "月"
+            return plural ? String(localized: "\(period.value) months") : String(localized: "month")
         case "year":
-            return plural ? "\(period.value) 年" : "年"
+            return plural ? String(localized: "\(period.value) years") : String(localized: "year")
         default:
-            return "period"
+            return String(localized: "period")
         }
     }
     
@@ -123,26 +123,26 @@ struct ProductCell: View, LogPrefixed {
         
         switch offer.subscriptionPeriod.unit {
         case "day":
-            periodText = plural ? "\(offer.subscriptionPeriod.value) 天" : "天"
+            periodText = plural ? String(localized: "\(offer.subscriptionPeriod.value) days") : String(localized: "day")
         case "week":
-            periodText = plural ? "\(offer.subscriptionPeriod.value) 周" : "周"
+            periodText = plural ? String(localized: "\(offer.subscriptionPeriod.value) weeks") : String(localized: "week")
         case "month":
-            periodText = plural ? "\(offer.subscriptionPeriod.value) 月" : "月"
+            periodText = plural ? String(localized: "\(offer.subscriptionPeriod.value) months") : String(localized: "month")
         case "year":
-            periodText = plural ? "\(offer.subscriptionPeriod.value) 年" : "年"
+            periodText = plural ? String(localized: "\(offer.subscriptionPeriod.value) years") : String(localized: "year")
         default:
-            periodText = "period"
+            periodText = String(localized: "period")
         }
         
         switch offer.paymentMode {
         case "FreeTrial":
-            return "首\(periodText)免费"
+            return String(localized: "Free for the first \(periodText)")
         case "PayAsYouGo":
-            return "首\(periodText)仅\(offer.displayPrice)"
+            return String(localized: "Only \(offer.displayPrice) for the first \(periodText)")
         case "PayUpFront":
-            return "首\(periodText)预付\(offer.displayPrice)"
+            return String(localized: "Prepay \(offer.displayPrice) for the first \(periodText)")
         default:
-            return "首\(periodText)优惠"
+            return String(localized: "Discount for the first \(periodText)")
         }
     }
 
@@ -153,7 +153,7 @@ struct ProductCell: View, LogPrefixed {
             buy()
         }) {
             if purchasing {
-                Text("支付中...")
+                Text("Processing…")
                     .bold()
                     .foregroundColor(.white)
             } else {
@@ -192,7 +192,7 @@ struct ProductCell: View, LogPrefixed {
                     os_log("\(self.t)购买回调，结果为空，表示取消了")
                 }
             } catch StoreError.failedVerification {
-                errorTitle = "App Store 验证失败"
+                errorTitle = String(localized: "App Store verification failed")
                 isShowingError = true
             } catch {
                 errorTitle = error.localizedDescription

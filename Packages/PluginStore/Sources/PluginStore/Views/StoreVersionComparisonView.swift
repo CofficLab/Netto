@@ -16,14 +16,14 @@ struct StoreVersionComparisonView: View {
                     .foregroundStyle(theme.primary)
                     .accessibilityHidden(true)
 
-                Text("解锁完整体验")
+                Text("Unlock the Full Experience")
                     .font(AppUI.Typography.bodyEmphasized)
                     .foregroundStyle(theme.textPrimary)
             }
 
             HStack(alignment: .top, spacing: AppUI.Spacing.sm) {
                 StoreVersionCard(
-                    title: "免费版",
+                    title: String(localized: "Free"),
                     icon: "person.fill",
                     tint: theme.textTertiary,
                     features: freeFeatures,
@@ -31,7 +31,7 @@ struct StoreVersionComparisonView: View {
                 )
 
                 StoreVersionCard(
-                    title: "Pro 版",
+                    title: String(localized: "Pro"),
                     icon: "crown.fill",
                     tint: theme.primary,
                     features: proFeatures,
@@ -54,16 +54,16 @@ struct StoreVersionComparisonView: View {
     /// 免费版权益：与 `AppAction` 的免费限制一致（最多禁止 5 个应用）。
     private var freeFeatures: [StoreVersionFeature] {
         [
-            StoreVersionFeature(icon: "tray.full", title: "最多禁止 5 个应用"),
-            StoreVersionFeature(icon: "lock.shield", title: "按应用控制联网"),
+            StoreVersionFeature(icon: "tray.full", title: String(localized: "Block up to 5 apps")),
+            StoreVersionFeature(icon: "lock.shield", title: String(localized: "Per-app network control")),
         ]
     }
 
     /// Pro 版权益。
     private var proFeatures: [StoreVersionFeature] {
         [
-            StoreVersionFeature(icon: "infinity", title: "禁止应用数量无限制"),
-            StoreVersionFeature(icon: "heart.fill", title: "支持持续开发"),
+            StoreVersionFeature(icon: "infinity", title: String(localized: "Block unlimited apps")),
+            StoreVersionFeature(icon: "heart.fill", title: String(localized: "Support ongoing development")),
         ]
     }
 }

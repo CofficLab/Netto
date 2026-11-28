@@ -2,7 +2,7 @@ import SwiftUI
 
 extension SmartApp {
     static func unknownApp(_ id: String) -> SmartApp {
-        SmartApp(id: id, name: "未知")
+        SmartApp(id: id, name: String(localized: "Unknown"))
     }
     
     static func getDefaultIcon() -> some View {

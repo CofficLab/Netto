@@ -37,14 +37,14 @@ struct DBDatabaseDetailView: View {
                 Image(systemName: "cylinder.split.1x2")
                     .font(.appBody)
                     .foregroundStyle(theme.primary)
-                Text("数据库")
+                Text("Database")
                     .font(.appTitle)
                     .foregroundStyle(theme.textPrimary)
             }
             .padding(.horizontal, AppUI.Spacing.md)
             .padding(.top, AppUI.Spacing.md)
 
-            Text("本地 SwiftData 存储的防火墙事件与规则（DEBUG 调试）")
+            Text("Firewall events and rules stored locally with SwiftData (DEBUG)")
                 .font(.appCaption)
                 .foregroundStyle(theme.textSecondary)
                 .padding(.horizontal, AppUI.Spacing.md)
@@ -69,7 +69,7 @@ struct DBDatabaseDetailView: View {
     }
 }
 
-#Preview("数据库详情") {
+#Preview("Database Details") {
     DBDatabaseDetailView(events: nil, settings: nil)
         .frame(width: 600, height: 500)
 }

@@ -13,8 +13,8 @@ public final class FirewallDashboardPlugin: SuperPlugin {
     public let dependencies = ["firewall", "appsettings", "eventstore", "store"]
     public let metadata = PluginMetadata(
         id: "firewall-dashboard",
-        name: "防火墙面板",
-        description: "向菜单栏弹窗注入防火墙状态、应用列表与事件详情",
+        name: String(localized: "Firewall Dashboard"),
+        description: String(localized: "Adds firewall status, app lists, and event details to the menu bar popover"),
         version: "1.0",
         policy: .enabledByDefault
     )

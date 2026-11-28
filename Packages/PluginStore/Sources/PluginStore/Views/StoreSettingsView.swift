@@ -61,11 +61,11 @@ private struct StoreSettingsContent: View {
 
     /// 订阅信息：当前版本、订阅状态、到期时间。
     private var subscriptionSection: some View {
-        AppSettingSection(title: "订阅信息") {
+        AppSettingSection(title: String(localized: "Subscription Info")) {
             VStack(spacing: 0) {
                 AppSettingRow(
-                    title: "当前版本",
-                    description: "你正在使用的版本",
+                    title: String(localized: "Current Plan"),
+                    description: String(localized: "The plan you are using"),
                     icon: "star.fill"
                 ) {
                     Text(viewModel.tierDisplayName)
@@ -76,10 +76,10 @@ private struct StoreSettingsContent: View {
                 divider
 
                 AppSettingRow(
-                    title: "订阅状态",
+                    title: String(localized: "Subscription Status"),
                     description: viewModel.isPro
-                        ? "订阅有效，感谢你的支持"
-                        : "当前使用免费版",
+                        ? String(localized: "Your subscription is active. Thank you for your support.")
+                        : String(localized: "You are using the free plan"),
                     icon: "info.circle"
                 ) {
                     statusBadge
@@ -89,8 +89,8 @@ private struct StoreSettingsContent: View {
                     divider
 
                     AppSettingRow(
-                        title: "到期时间",
-                        description: "订阅的到期日期",
+                        title: String(localized: "Expiration Date"),
+                        description: String(localized: "When your subscription ends"),
                         icon: "calendar"
                     ) {
                         Text(expiresAt.formatted(date: .abbreviated, time: .omitted))
@@ -104,7 +104,7 @@ private struct StoreSettingsContent: View {
 
     /// 应用内购买：版本对比 + 商品列表 + 法律链接。
     private var purchaseSection: some View {
-        AppSettingSection(title: "应用内购买") {
+        AppSettingSection(title: String(localized: "In-App Purchases")) {
             VStack(alignment: .leading, spacing: AppUI.Spacing.md) {
                 StoreVersionComparisonView()
 
@@ -133,12 +133,12 @@ private struct StoreSettingsContent: View {
     private var restoreSection: some View {
         AppSettingSection {
             AppSettingRow(
-                title: "恢复购买",
-                description: "找回在其他设备上完成的购买",
+                title: String(localized: "Restore Purchases"),
+                description: String(localized: "Recover purchases made on other devices"),
                 icon: "arrow.clockwise"
             ) {
                 AppButton(
-                    "恢复",
+                    "Restore",
                     systemImage: "arrow.clockwise",
                     style: .secondary,
                     size: .small
@@ -159,11 +159,11 @@ private struct StoreSettingsContent: View {
     @ViewBuilder
     private var statusBadge: some View {
         if viewModel.isPro {
-            Text("已激活")
+            Text("Active")
                 .font(AppUI.Typography.footnote)
                 .foregroundStyle(theme.success)
         } else {
-            Text("免费")
+            Text("Free")
                 .font(AppUI.Typography.footnote)
                 .foregroundStyle(theme.textSecondary)
         }

@@ -12,28 +12,28 @@ struct MySubscription: View {
 
     private var statusDescription: String {
         guard let status = status else {
-            return "无状态"
+            return String(localized: "No Status")
         }
 
         switch status {
         case RenewalState.subscribed.rawValue:
-            return "订阅中"
+            return String(localized: "Subscribed")
         case RenewalState.expired.rawValue:
-            return "已过期"
+            return String(localized: "Expired")
         case RenewalState.revoked.rawValue:
-            return "被撤回"
+            return String(localized: "Revoked")
         case RenewalState.inGracePeriod.rawValue:
-            return "在账单宽限期"
+            return String(localized: "In Billing Grace Period")
         case RenewalState.inBillingRetryPeriod.rawValue:
-            return "在账单支付期，App Store 会自动扣费"
+            return String(localized: "In Billing Retry Period. The App Store will charge automatically.")
         default:
-            return "状态未知"
+            return String(localized: "Unknown Status")
         }
     }
 
     private var productDescription: String {
         guard let product = product else {
-            return "无订阅产品"
+            return String(localized: "No Subscription Product")
         }
 
         return product.displayName
@@ -63,9 +63,9 @@ struct MySubscription: View {
     private var header: some View {
         ZStack {
             if status != nil {
-                Text("已订阅").font(.title3)
+                Text("Subscribed").font(.title3)
             } else {
-                Text("现在没有订阅").font(.title3)
+                Text("No Active Subscription").font(.title3)
             }
 
             HStack {
@@ -90,7 +90,7 @@ struct MySubscription: View {
             }
         }, label: {
             Label(
-                title: { Text("刷新") },
+                title: { Text("Refresh") },
                 icon: { Image(systemName: "arrow.clockwise") }
             ).labelStyle(.iconOnly)
         }).disabled(refreshing).buttonStyle(.plain)

@@ -141,13 +141,13 @@ struct StoreServiceLogicTests {
 @Suite("StoreError")
 struct StoreErrorTests {
 
-    @Test("failedVerification 使用英文错误码作为描述")
+    @Test("failedVerification 使用可读的验证失败描述")
     func failedVerificationDescription() {
-        #expect(StoreError.failedVerification.errorDescription == "failedVerification")
+        #expect(StoreError.failedVerification.errorDescription == "App Store verification failed")
     }
 
-    @Test("canNotGetProducts 使用中文错误描述")
+    @Test("canNotGetProducts 使用可读的加载失败描述")
     func canNotGetProductsDescription() {
-        #expect(StoreError.canNotGetProducts.errorDescription == "发生错误：无法获取产品")
+        #expect(StoreError.canNotGetProducts.errorDescription == "Failed to load products")
     }
 }

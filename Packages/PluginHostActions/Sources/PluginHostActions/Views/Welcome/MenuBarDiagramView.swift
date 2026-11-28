@@ -59,7 +59,7 @@ struct MenuBarDiagramView: View {
                     .font(.system(size: 20, weight: .bold))
                     .offset(x: 10) // 指向网络图标位置
 
-                Text("点击这里访问应用")
+                Text("Click here to open the app")
                     .font(.caption)
                     .foregroundColor(.green)
                     .fontWeight(.medium)

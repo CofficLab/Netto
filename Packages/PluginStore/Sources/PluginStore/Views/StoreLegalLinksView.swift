@@ -24,7 +24,7 @@ struct StoreLegalLinksView: View {
             HStack(spacing: AppUI.Spacing.md) {
                 Link(destination: privacyURL) {
                     Label {
-                        Text("隐私政策")
+                        Text("Privacy Policy")
                     } icon: {
                         Image(systemName: "hand.raised.fill")
                     }
@@ -33,7 +33,7 @@ struct StoreLegalLinksView: View {
 
                 Link(destination: licenseURL) {
                     Label {
-                        Text("许可协议")
+                        Text("License Agreement")
                     } icon: {
                         Image(systemName: "doc.text.fill")
                     }

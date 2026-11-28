@@ -30,7 +30,7 @@ struct MenuBarAppRow: View {
                         .lineLimit(1)
 
                     if row.isDenied {
-                        Text("已阻止")
+                        Text("Blocked")
                             .font(.appMicroEmphasized)
                             .foregroundStyle(theme.error)
                     }
@@ -71,15 +71,15 @@ struct MenuBarAppRow: View {
     }
 
     private var accessibilityText: String {
-        var parts = [row.app.name, row.isDenied ? "已阻止" : "允许联网"]
+        var parts = [row.app.name, row.isDenied ? String(localized: "Blocked") : String(localized: "Allowed")]
         if let speed = row.speed, speed.totalBytesPerSecond > 0 {
             if speed.downloadBytesPerSecond > 0 {
-                parts.append("下载 \(NetworkSpeedFormatter.format(speed.downloadBytesPerSecond))")
+                parts.append(String(localized: "Download \(NetworkSpeedFormatter.format(speed.downloadBytesPerSecond))"))
             }
             if speed.uploadBytesPerSecond > 0 {
-                parts.append("上传 \(NetworkSpeedFormatter.format(speed.uploadBytesPerSecond))")
+                parts.append(String(localized: "Upload \(NetworkSpeedFormatter.format(speed.uploadBytesPerSecond))"))
             }
         }
-        return parts.joined(separator: "，")
+        return parts.joined(separator: ", ")
     }
 }

@@ -111,7 +111,7 @@ struct DBSettingView: View {
                             .foregroundStyle(item.allowed ? theme.error : theme.success)
                     }
                     .buttonStyle(.plain)
-                    .help(item.allowed ? "禁止此应用" : "允许此应用")
+                    .help(item.allowed ? String(localized: "Block this app") : String(localized: "Allow this app"))
                 }
             })
         }
@@ -123,7 +123,7 @@ struct DBSettingView: View {
     /// 工具栏视图
     private var toolbarView: some View {
         HStack(spacing: AppUI.Spacing.md) {
-            AppSearchBar(text: $searchText, placeholder: "搜索应用ID")
+            AppSearchBar(text: $searchText, placeholder: "Search app ID")
                 .frame(maxWidth: 220)
 
             Spacer()
@@ -134,18 +134,18 @@ struct DBSettingView: View {
                 maxWidth: 200
             )
 
-            AppButton("Finder中显示", systemImage: "folder", style: .secondary, size: .small) {
+            AppButton("Show in Finder", systemImage: "folder", style: .secondary, size: .small) {
                 guard let settingsDirectory else { return }
                 NSWorkspace.shared.open(settingsDirectory)
             }
 
             // 统计信息
             HStack(spacing: 6) {
-                Text("总计: \(items.count)")
+                Text("Total: \(items.count)")
                     .font(.appCaption)
                     .foregroundStyle(theme.textSecondary)
 
-                Text("显示: \(filteredItems.count)")
+                Text("Showing: \(filteredItems.count)")
                     .font(.appMicroEmphasized)
                     .foregroundStyle(theme.primary)
                     .padding(.horizontal, 6)
@@ -164,9 +164,9 @@ struct DBSettingView: View {
 }
 
 private enum DBFilterStatus: String, CaseIterable {
-    case all = "全部"
-    case allowed = "允许"
-    case rejected = "阻止"
+    case all = "All"
+    case allowed = "Allowed"
+    case rejected = "Blocked"
 }
 
 #Preview("APP") {
@@ -177,6 +177,6 @@ private enum DBFilterStatus: String, CaseIterable {
     DBSettingView().frame(width: 600, height: 700)
 }
 
-#Preview("防火墙事件视图") {
+#Preview("Firewall Event View") {
     DBEventView().frame(width: 600, height: 700)
 }

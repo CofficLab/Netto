@@ -48,7 +48,7 @@ struct DenyOperation {
         }
 
         onRuleChange?()
-        shell.post(ToastMessage(description: "已禁止"))
+        shell.post(ToastMessage(description: String(localized: "Blocked")))
         return .denied
     }
 }

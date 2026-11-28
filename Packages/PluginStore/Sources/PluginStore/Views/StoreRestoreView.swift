@@ -24,20 +24,20 @@ struct StoreRestoreView: View {
             VStack(alignment: .leading, spacing: AppUI.Spacing.sm) {
                 StoreRestoreInfoRow(
                     icon: "desktopcomputer.and.arrow.down",
-                    title: "跨设备恢复",
-                    description: "找回在其他设备上完成的购买"
+                    title: String(localized: "Cross-Device Restore"),
+                    description: String(localized: "Recover purchases made on other devices")
                 )
 
                 StoreRestoreInfoRow(
                     icon: "person.circle",
-                    title: "Apple ID 验证",
-                    description: "请使用购买时所用的 Apple ID"
+                    title: String(localized: "Apple ID Verification"),
+                    description: String(localized: "Use the Apple ID you purchased with")
                 )
 
                 StoreRestoreInfoRow(
                     icon: "checkmark.circle",
-                    title: "权益恢复",
-                    description: "恢复成功后立即解锁已购功能"
+                    title: String(localized: "Entitlement Restore"),
+                    description: String(localized: "Unlock purchased features as soon as restore succeeds")
                 )
             }
             .padding(AppUI.Spacing.sm)
@@ -70,7 +70,7 @@ struct StoreRestoreView: View {
                 .foregroundStyle(theme.primary)
                 .accessibilityHidden(true)
 
-            Text("恢复购买")
+            Text("Restore Purchases")
                 .font(AppUI.Typography.title3)
                 .foregroundStyle(theme.textPrimary)
 
@@ -84,7 +84,7 @@ struct StoreRestoreView: View {
                     .foregroundStyle(theme.textTertiary)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("关闭")
+            .accessibilityLabel("Close")
         }
     }
 
@@ -96,27 +96,27 @@ struct StoreRestoreView: View {
         case .restoring:
             AppStatusBanner(
                 kind: .loading,
-                title: "正在恢复购买",
-                message: "正在验证你的购买记录…"
+                title: "Restoring Purchases",
+                message: "Verifying your purchase history…"
             )
         case .success:
             AppStatusBanner(
                 kind: .success,
-                title: "恢复成功",
-                message: "已找回购买记录，相关功能已解锁"
+                title: "Restore Complete",
+                message: "Purchases recovered. Relevant features are now unlocked."
             )
         case .nothingFound:
             // 「恢复调用成功」不等于「找回了权益」——免费用户同样会走到这里。
             AppStatusBanner(
                 kind: .warning,
-                title: "未找到可恢复的购买",
-                message: "当前 Apple ID 下没有购买记录。如果你在另一台设备上购买，请使用同一 Apple ID 后重试。"
+                title: "No Purchases to Restore",
+                message: "No purchase history was found for this Apple ID. If you purchased on another device, sign in with the same Apple ID and try again."
             )
         case .failed:
             AppStatusBanner(
                 kind: .error,
-                title: "恢复失败",
-                message: error?.localizedDescription ?? "恢复过程中出错，请稍后重试"
+                title: "Restore Failed",
+                message: error?.localizedDescription ?? String(localized: "Something went wrong during restore. Try again later.")
             )
         }
     }
@@ -126,18 +126,18 @@ struct StoreRestoreView: View {
         switch state {
         case .success, .nothingFound:
             HStack(spacing: AppUI.Spacing.sm) {
-                AppButton("完成", systemImage: "checkmark.circle.fill", style: .primary, fillsWidth: true) {
+                AppButton("Done", systemImage: "checkmark.circle.fill", style: .primary, fillsWidth: true) {
                     dismiss()
                 }
 
-                AppButton("重试", systemImage: "arrow.clockwise", style: .secondary, fillsWidth: true) {
+                AppButton("Retry", systemImage: "arrow.clockwise", style: .secondary, fillsWidth: true) {
                     onReset()
                     onRestore()
                 }
             }
         case .failed, .idle:
             AppButton(
-                state == .failed ? "重新恢复" : "恢复购买",
+                state == .failed ? String(localized: "Restore Again") : String(localized: "Restore Purchases"),
                 systemImage: "arrow.clockwise",
                 style: .primary,
                 fillsWidth: true

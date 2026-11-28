@@ -105,7 +105,7 @@ final class HostDBPlugin: SuperPlugin {
         let eventsDirectory = storage?.pluginDataDirectory(for: PersistenceConfig.eventsPluginID)
         let settingsDirectory = storage?.pluginDataDirectory(for: PersistenceConfig.settingsPluginID)
         settingsView.addEntries([
-            SettingEntryItem(id: "database", title: "数据库", systemImage: "cylinder.split.1x2", order: 40) {
+            SettingEntryItem(id: "database", title: String(localized: "Database"), systemImage: "cylinder.split.1x2", order: 40) {
                 DBDatabaseDetailView(
                     events: events,
                     settings: settings,
@@ -146,7 +146,7 @@ final class HostSettingsPlugin: SuperPlugin {
         if let settingsView = kernel.resolveProvider(SettingViewProviding.self) {
             let dataRootDirectory = kernel.resolveProvider((any StorageProviding).self)?.dataRootDirectory
             settingsView.addEntries([
-                SettingEntryItem(id: "general", title: "通用", systemImage: "gearshape", order: 5) {
+                SettingEntryItem(id: "general", title: String(localized: "General"), systemImage: "gearshape", order: 5) {
                     GeneralSettingsView(dataRootDirectory: dataRootDirectory)
                 },
             ])

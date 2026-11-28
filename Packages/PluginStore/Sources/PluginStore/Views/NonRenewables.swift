@@ -12,14 +12,14 @@ struct NonRenewables: View {
         GroupBox {
             VStack {
                 ZStack {
-                    Text("一次性产品").font(.title3)
+                    Text("One-Time Products").font(.title3)
                     refreshButton
                 }
 
                 Divider()
 
                 if refreshing == false && nonRenewables.isEmpty {
-                    Text("☹️ 暂不能从App Store获取产品列表")
+                    Text("☹️ Unable to load products from the App Store")
                 } else {
                     VStack {
                         ForEach(nonRenewables) { product in
@@ -46,7 +46,7 @@ struct NonRenewables: View {
                     Button(action: {
                         getProducts("点击了重试按钮")
                     }, label: {
-                        Label("重试", systemImage: "arrow.clockwise")
+                        Label("Retry", systemImage: "arrow.clockwise")
                             .labelStyle(.iconOnly)
                     }).buttonStyle(.plain)
                 }

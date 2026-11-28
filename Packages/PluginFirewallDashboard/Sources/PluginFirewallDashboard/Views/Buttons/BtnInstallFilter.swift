@@ -13,7 +13,7 @@ public struct BtnInstallFilter: View {
     }
 
     public var body: some View {
-        AppButton("安装过滤器", systemImage: "puzzlepiece.extension", style: .primary, fillsWidth: true, action: {
+        AppButton("Install Filter", systemImage: "puzzlepiece.extension", style: .primary, fillsWidth: true, action: {
             guard let service else { return }
             Task {
                 try? await service.installFilter()

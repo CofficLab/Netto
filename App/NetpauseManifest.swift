@@ -109,17 +109,17 @@ enum NetpauseManifest {
             wrapPopup: { themed, kernel in injectEnvironment(themed, kernel: kernel) },
             menuItems: [
                 HostStatusMenuItem(
-                    title: "设置…",
+                    title: String(localized: "Settings…"),
                     windowID: identity.settingsWindowID,
                     accessibilityIdentifier: "netpause.menubar.settings"
                 ),
                 HostStatusMenuItem(
-                    title: "修复防火墙过滤器",
+                    title: String(localized: "Repair Firewall Filter"),
                     accessibilityIdentifier: "netpause.menubar.firewall.repair",
                     action: repairFirewallFilter
                 ),
                 HostStatusMenuItem(
-                    title: "退出 Netpause",
+                    title: String(localized: "Quit Netpause"),
                     accessibilityIdentifier: "netpause.menubar.quit",
                     isDestructive: true,
                     action: { NSApp.terminate(nil) }

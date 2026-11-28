@@ -50,11 +50,11 @@ extension FirewallEventSnapshot {
         "\(address):\(port)"
     }
 
-    /// 状态中文描述（旧 `statusDescription` 语义）。
+    /// 状态描述（旧 `statusDescription` 语义）。
     public var statusDescription: String {
         switch status {
-        case .allowed: "允许"
-        case .rejected: "阻止"
+        case .allowed: String(localized: "Allow")
+        case .rejected: String(localized: "Block")
         }
     }
 }

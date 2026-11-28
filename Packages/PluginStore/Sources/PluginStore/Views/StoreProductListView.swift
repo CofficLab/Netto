@@ -24,7 +24,7 @@ struct StoreProductListView: View {
             if let loadError, state == .content {
                 AppStatusBanner(
                     kind: .warning,
-                    title: "刷新失败",
+                    title: "Refresh Failed",
                     message: loadError.localizedDescription
                 )
             }
@@ -34,7 +34,7 @@ struct StoreProductListView: View {
             if let purchaseError {
                 AppStatusBanner(
                     kind: .error,
-                    title: "购买失败",
+                    title: "Purchase Failed",
                     message: purchaseError.localizedDescription
                 )
             }
@@ -59,7 +59,7 @@ struct StoreProductListView: View {
             ProgressView()
                 .controlSize(.small)
 
-            Text("正在加载订阅选项…")
+            Text("Loading subscription options…")
                 .font(AppUI.Typography.footnote)
                 .foregroundStyle(theme.textSecondary)
         }
@@ -71,11 +71,11 @@ struct StoreProductListView: View {
         VStack(spacing: AppUI.Spacing.sm) {
             AppStatusBanner(
                 kind: .error,
-                title: "无法加载订阅选项",
-                message: loadError?.localizedDescription ?? "请检查网络后重试。"
+                title: "Unable to Load Subscription Options",
+                message: loadError?.localizedDescription ?? String(localized: "Check your network connection and try again.")
             )
 
-            AppButton("重试", systemImage: "arrow.clockwise", style: .secondary, fillsWidth: true) {
+            AppButton("Retry", systemImage: "arrow.clockwise", style: .secondary, fillsWidth: true) {
                 onRetry()
             }
         }
@@ -89,11 +89,11 @@ struct StoreProductListView: View {
                 .foregroundStyle(theme.textTertiary)
                 .accessibilityHidden(true)
 
-            Text("暂无可用订阅")
+            Text("No subscription options available")
                 .font(AppUI.Typography.bodyEmphasized)
                 .foregroundStyle(theme.textSecondary)
 
-            Text("订阅选项在 App Store 上架后会显示在这里。")
+            Text("Subscription options appear here once they are available on the App Store.")
                 .font(AppUI.Typography.footnote)
                 .foregroundStyle(theme.textTertiary)
                 .multilineTextAlignment(.center)

@@ -148,9 +148,9 @@ public final class StoreViewModel: ObservableObject {
     /// 订阅状态保持一致。
     public var tierDisplayName: String {
         switch entitlement.effectiveTier {
-        case .none: return "免费版"
-        case .pro: return "Pro 版"
-        case .ultimate: return "终极版"
+        case .none: return String(localized: "Free")
+        case .pro: return String(localized: "Pro")
+        case .ultimate: return String(localized: "Ultimate")
         }
     }
 
