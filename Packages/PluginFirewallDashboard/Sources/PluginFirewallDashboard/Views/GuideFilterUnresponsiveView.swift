@@ -26,7 +26,7 @@ struct FilterUnresponsiveView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("修复后会重新创建过滤器配置；如果仍然无效，请重启 TravelMode 或电脑。")
+                Text("修复后会重新创建过滤器配置；如果仍然无效，请重启 Netpause 或电脑。")
                     .font(.appCaption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -46,7 +46,7 @@ struct FilterUnresponsiveView: View {
                 .disabled(isBusy || firewall == nil)
                 .frame(width: 150)
                 .frame(height: 50)
-                .accessibilityIdentifier("netto.firewall.repair")
+                .accessibilityIdentifier("netpause.firewall.repair")
             }
         }
     }

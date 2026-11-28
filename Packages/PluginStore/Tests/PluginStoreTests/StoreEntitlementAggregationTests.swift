@@ -5,15 +5,15 @@ import StoreKit
 import Testing
 @testable import PluginStore
 
-/// Netto 侧「机制结果 → 权益快照」翻译的单测。
+/// Netpause 侧「机制结果 → 权益快照」翻译的单测。
 ///
 /// ## 可达性说明
 /// 交易聚合内核由共享的 `KitStoreKit` 承担
-/// （`StoreKitSubscriptionAggregator`，另有完整单测）。Netto 这一侧只负责
-/// 把机制结论翻译成权益快照，翻译依赖 **Netto 商品表** 的档位映射，
+/// （`StoreKitSubscriptionAggregator`，另有完整单测）。Netpause 这一侧只负责
+/// 把机制结论翻译成权益快照，翻译依赖 **Netpause 商品表** 的档位映射，
 /// 因此本文件覆盖「商品表 × 机制结论」的组合语义。
-@Suite("Netto 权益翻译")
-struct NettoEntitlementTranslationTests {
+@Suite("Netpause 权益翻译")
+struct NetpauseEntitlementTranslationTests {
 
     /// 构造一个共享机制层的订阅持有结论。
     private func holding(
@@ -28,7 +28,7 @@ struct NettoEntitlementTranslationTests {
 
     @Test("空持有：无档位、无到期时间")
     func emptyHoldingYieldsFreeTier() {
-        let snapshot = NettoStoreCatalog.shared.entitlement(
+        let snapshot = NetpauseStoreCatalog.shared.entitlement(
             activeProductIDs: holding(productIDs: [], expiration: nil).activeSubscriptionProductIDs,
             latestExpiration: nil
         )
@@ -40,7 +40,7 @@ struct NettoEntitlementTranslationTests {
     @Test("已登记的订阅商品：授予 Pro 档位并带上到期时间")
     func registeredProductGrantsProTier() {
         let expiry = Date(timeIntervalSince1970: 1_800_000_000)
-        let snapshot = NettoStoreCatalog.shared.entitlement(
+        let snapshot = NetpauseStoreCatalog.shared.entitlement(
             activeProductIDs: holding(
                 productIDs: ["com.coffic.netto.monthly"],
                 expiration: expiry
@@ -55,7 +55,7 @@ struct NettoEntitlementTranslationTests {
     @Test("未登记的商品 ID：档位回退 none")
     func unknownProductIDFallsBackToNone() {
         let expiry = Date(timeIntervalSince1970: 1_800_000_000)
-        let snapshot = NettoStoreCatalog.shared.entitlement(
+        let snapshot = NetpauseStoreCatalog.shared.entitlement(
             activeProductIDs: holding(
                 productIDs: ["com.example.unknown"],
                 expiration: expiry

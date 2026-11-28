@@ -1,5 +1,5 @@
 import Foundation
-import NettoIPCContracts
+import NetpauseIPCContracts
 import NetworkExtension
 import ProviderFirewall
 import ProviderFirewallEvents

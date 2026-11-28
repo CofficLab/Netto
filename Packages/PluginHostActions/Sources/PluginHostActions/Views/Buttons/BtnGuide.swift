@@ -38,7 +38,7 @@ struct BtnGuide: View {
             })
             .frame(width: 150)
             .frame(height: 50)
-            .accessibilityIdentifier("netto.settings.guide")
+            .accessibilityIdentifier("netpause.settings.guide")
         }
     }
     

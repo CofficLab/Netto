@@ -16,13 +16,13 @@ struct PersistenceConfigTests {
         #expect(PersistenceConfig.settingsPluginID == "appsettings")
         #expect(PersistenceConfig.eventsFileName == "events.sqlite")
         #expect(PersistenceConfig.settingsFileName == "settings.sqlite")
-        #expect(PersistenceConfig.appName == "TravelMode")
+        #expect(PersistenceConfig.appName == "Netpause")
     }
 
     @Test("旧版库位于 Documents 下与构建配置匹配的子目录")
     func legacyDatabaseURLMatchesBuildConfiguration() {
         let root = FileManager.default.temporaryDirectory
-            .appendingPathComponent("NettoPersistenceConfigTest-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("NetpausePersistenceConfigTest-\(UUID().uuidString)", isDirectory: true)
         let url = PersistenceConfig.legacyDatabaseURL(baseDocumentsURL: root)
 
         #if DEBUG

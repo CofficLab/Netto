@@ -39,7 +39,7 @@ scope 为**模块名或组件名**，使用 PascalCase 或 kebab-case，与代�
 
 | 范围 | scope 示例 |
 |------|-----------|
-| 核心框架 | `FactoryNetto`、`LumiKernel`、`NettoIPCContracts` |
+| 核心框架 | `NetpauseAssembly`、`LumiKernel`、`NetpauseIPCContracts` |
 | App & Extension | `App`、`Extension`、`Bridge` |
 | UI 组件 | `Dashboard`、`ProviderFirewallEvents`、`ViewEnvironment` |
 | 插件 | `PluginFirewall`、`PluginPersistence`、`PluginStore`、`PluginAppSettings` |

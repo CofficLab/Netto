@@ -129,7 +129,7 @@ class FilterDataProvider: NEFilterDataProvider, @unchecked Sendable {
     private var ipc = IPCConnection.shared
 
     private let trafficCounter = TrafficCounter()
-    private let trafficQueue = DispatchQueue(label: "com.coffic.netto.traffic", qos: .utility)
+    private let trafficQueue = DispatchQueue(label: "com.coffic.netpause.traffic", qos: .utility)
     private var trafficTimer: DispatchSourceTimer?
 
     /// 网速上报周期；与菜单栏 UI 的刷新节奏一致。

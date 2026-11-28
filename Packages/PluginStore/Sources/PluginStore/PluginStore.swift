@@ -120,7 +120,7 @@ public final class PluginStore: SuperPlugin, StoreProviding {
                 displayName: dto.displayName,
                 price: dto.displayPrice,
                 kind: .nonConsumable,
-                tier: NettoStoreCatalog.shared.tier(for: dto.id)
+                tier: NetpauseStoreCatalog.shared.tier(for: dto.id)
             ))
         }
         for group in groups.subscriptionGroups {
@@ -130,7 +130,7 @@ public final class PluginStore: SuperPlugin, StoreProviding {
                     displayName: dto.displayName,
                     price: dto.displayPrice,
                     kind: .autoRenewable,
-                    tier: NettoStoreCatalog.shared.tier(for: dto.id)
+                    tier: NetpauseStoreCatalog.shared.tier(for: dto.id)
                 ))
             }
         }

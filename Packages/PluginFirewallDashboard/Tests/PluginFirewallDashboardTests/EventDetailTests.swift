@@ -171,7 +171,7 @@ struct EventCSVExportTests {
 
     private func makeDirectory() throws -> URL {
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("netto-export-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("netpause-export-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }

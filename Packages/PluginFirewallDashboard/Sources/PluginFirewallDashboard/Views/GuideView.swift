@@ -82,7 +82,7 @@ struct GuideView: View {
             // 作为无障碍容器暴露引导标识，避免标识下发给子元素后覆盖
             // 按钮自身的 accessibilityIdentifier。
             .accessibilityElement(children: .contain)
-            .accessibilityIdentifier("netto.firewall.guide")
+            .accessibilityIdentifier("netpause.firewall.guide")
         }
     }
 }

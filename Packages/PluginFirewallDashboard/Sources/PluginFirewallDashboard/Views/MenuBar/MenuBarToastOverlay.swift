@@ -52,7 +52,7 @@ struct MenuBarToastOverlay: View {
                 title: message.description
             )
             .transition(.opacity)
-            .accessibilityIdentifier("netto.menubar.toast")
+            .accessibilityIdentifier("netpause.menubar.toast")
         }
     }
 }

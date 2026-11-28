@@ -10,7 +10,7 @@ final class AppSettingDatabase: Sendable {
     init(container: ModelContainer) {
         self.database = SerialModelDatabase(
             container: container,
-            label: "com.yueyi.TravelMode.appsettings.database"
+            label: "com.yueyi.Netpause.appsettings.database"
         )
     }
 

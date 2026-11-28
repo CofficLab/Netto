@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "travelmode-logo-256.png",
+      "filename" : "netpause-logo-256.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "travelmode-logo-1024.png",
+      "filename" : "netpause-logo-1024.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "travelmode-logo-1024.png",
+      "filename" : "netpause-logo-1024.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -7,7 +7,7 @@ import SwiftUI
 ///
 /// 架构归属：插件贡献视图层。HostSettingsPlugin 在 `onBoot` 向
 /// `SettingViewProviding` 注入 `SettingEntryItem(id: "general", ...)`，本视图
-/// 作为该入口的详情视图（设置窗口右侧内容）；`FactoryNetto.makeSettingsView`
+/// 作为该入口的详情视图（设置窗口右侧内容）；共享窗口壳
 /// 解析 Provider 并渲染「左侧入口列表 + 右侧详情视图」（复刻 Lumi
 /// `ProviderSettingView`），组合根只装配一次并缓存。
 ///

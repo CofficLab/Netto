@@ -38,7 +38,7 @@ struct MenuBarAppHoverDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("netto.app.hover.\(app.id)")
+        .accessibilityIdentifier("netpause.app.hover.\(app.id)")
         .onChange(of: row.isDenied) { _, newValue in
             shouldAllow = !newValue
         }
@@ -128,7 +128,7 @@ struct MenuBarAppHoverDetailView: View {
                 HoverCoordinator.shared.close(id: hoverID)
                 onRuleChange()
             }
-            .accessibilityIdentifier("netto.app.hover.rule.\(app.id)")
+            .accessibilityIdentifier("netpause.app.hover.rule.\(app.id)")
         }
         .padding(10)
         .background(

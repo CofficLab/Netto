@@ -3,10 +3,10 @@ import OSLog
 import ProviderStore
 import StoreKit
 
-/// Netto 权益缓存：把权益快照持久化到 `UserDefaults`。
+/// Netpause 权益缓存：把权益快照持久化到 `UserDefaults`。
 ///
 /// 共享的 `KitStoreKit` 负责**机制**（何时校准、如何读交易），本类型负责
-/// **Netto 侧的持久化格式**。
+/// **Netpause 侧的持久化格式**。
 final class StoreState: ObservableObject, LogPrefixed {
     nonisolated static let emoji = "💰"
 

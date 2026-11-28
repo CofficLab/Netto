@@ -107,14 +107,14 @@ public struct ContentView: View {
         }
         .padding(.vertical, 8)
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("netto.apps.list")
+        .accessibilityIdentifier("netpause.apps.list")
         .onDisappear {
             HoverCoordinator.shared.closeAll()
         }
     }
 
     private func appRow(_ row: MenuBarAppRowModel) -> some View {
-        let hoverID = "netto.app.hover.\(row.id)"
+        let hoverID = "netpause.app.hover.\(row.id)"
 
         return HoverDetailContainer(
             id: hoverID,
@@ -133,12 +133,12 @@ public struct ContentView: View {
 
     private var filterPicker: some View {
         Picker("", selection: $ui.displayType) {
-            Text("全部").tag(DisplayType.All).accessibilityIdentifier("netto.filter.all")
-            Text("允许").tag(DisplayType.Allowed).accessibilityIdentifier("netto.filter.allowed")
-            Text("禁止").tag(DisplayType.Rejected).accessibilityIdentifier("netto.filter.rejected")
+            Text("全部").tag(DisplayType.All).accessibilityIdentifier("netpause.filter.all")
+            Text("允许").tag(DisplayType.Allowed).accessibilityIdentifier("netpause.filter.allowed")
+            Text("禁止").tag(DisplayType.Rejected).accessibilityIdentifier("netpause.filter.rejected")
         }
         .pickerStyle(.segmented)
-        .accessibilityIdentifier("netto.dashboard.filter")
+        .accessibilityIdentifier("netpause.dashboard.filter")
         .labelsHidden()
     }
 

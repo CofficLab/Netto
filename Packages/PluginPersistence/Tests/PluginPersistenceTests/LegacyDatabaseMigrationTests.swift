@@ -12,7 +12,7 @@ final class LegacyDatabaseMigrationTests: XCTestCase {
 
     private func makeTempRoot() -> URL {
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("NettoMigrationTests-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("NetpauseMigrationTests-\(UUID().uuidString)", isDirectory: true)
         try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }

@@ -65,7 +65,7 @@ struct EventDetailView: View {
             }
         }
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("netto.events.detail")
+        .accessibilityIdentifier("netpause.events.detail")
         .onAppear {
             updateDataSource()
         }
@@ -91,9 +91,9 @@ struct EventDetailView: View {
                 StatusFilter.allCases.map(\.rawValue),
                 selection: statusSelection,
                 maxWidth: 180,
-                accessibilityIdentifiers: StatusFilter.allCases.map { "netto.events.status.\($0.rawValue)" }
+                accessibilityIdentifiers: StatusFilter.allCases.map { "netpause.events.status.\($0.rawValue)" }
             )
-            .accessibilityIdentifier("netto.events.status-filter")
+            .accessibilityIdentifier("netpause.events.status-filter")
 
             Spacer(minLength: 0)
 
@@ -101,16 +101,16 @@ struct EventDetailView: View {
                 DirectionFilter.allCases.map(\.rawValue),
                 selection: directionSelection,
                 maxWidth: 180,
-                accessibilityIdentifiers: DirectionFilter.allCases.map { "netto.events.direction.\($0.rawValue)" }
+                accessibilityIdentifiers: DirectionFilter.allCases.map { "netpause.events.direction.\($0.rawValue)" }
             )
-            .accessibilityIdentifier("netto.events.direction-filter")
+            .accessibilityIdentifier("netpause.events.direction-filter")
 
             AppButton("导出近期日志", systemImage: "arrow.down.circle", style: .secondary, size: .small) {
                 Task {
                     await exportRecentLogs()
                 }
             }
-            .accessibilityIdentifier("netto.events.export")
+            .accessibilityIdentifier("netpause.events.export")
         }
     }
 
