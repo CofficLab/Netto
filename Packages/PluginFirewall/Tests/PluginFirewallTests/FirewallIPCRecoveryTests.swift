@@ -117,7 +117,7 @@ final class FirewallIPCRecoveryTests: XCTestCase {
         guard case .failed(let failure) = controller.snapshot.state else {
             return XCTFail("期望 failed 状态")
         }
-        XCTAssertEqual(failure.domain, "com.yueyi.TravelMode.ipc")
+        XCTAssertEqual(failure.domain, "com.yueyi.Netpause.ipc")
     }
 
     func testShutdownClearsConnectionLossHandler() async throws {

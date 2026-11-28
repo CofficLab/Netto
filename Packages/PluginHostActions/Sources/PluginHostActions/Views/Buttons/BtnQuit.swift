@@ -29,7 +29,7 @@ struct BtnQuit: View {
             })
             .frame(width: 150)
             .frame(height: 50)
-            .accessibilityIdentifier("netto.settings.quit")
+            .accessibilityIdentifier("netpause.settings.quit")
         }
     }
     

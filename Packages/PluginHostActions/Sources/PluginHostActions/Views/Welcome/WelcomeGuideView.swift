@@ -174,5 +174,5 @@ public struct WelcomeGuideView: View {
 
 /// 引导视图使用的产品名称。
 public enum WelcomeGuideAppName {
-    public static let name = "TravelMode"
+    public static let name = "Netpause"
 }

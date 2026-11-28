@@ -24,7 +24,7 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
     private let ipc: any FirewallIPCServing
     private let settings: any AppSettingsProviding
     private let events: any FirewallEventsProviding
-    private let logger = Logger(subsystem: "com.yueyi.TravelMode.PluginFirewall", category: "firewall")
+    private let logger = Logger(subsystem: "com.yueyi.Netpause.PluginFirewall", category: "firewall")
 
     private var filterObserverToken: Any?
     private var appActivationObserverToken: Any?
@@ -379,7 +379,7 @@ final class FirewallController: FirewallProviding, SystemExtensionRequestHandlin
                 }
             }
             self.updateState(.failed(FirewallFailure(
-                domain: "com.yueyi.TravelMode.ipc",
+                domain: "com.yueyi.Netpause.ipc",
                 code: -1,
                 message: "与系统扩展的连接已断开且重连失败，防火墙规则可能未生效"
             )))

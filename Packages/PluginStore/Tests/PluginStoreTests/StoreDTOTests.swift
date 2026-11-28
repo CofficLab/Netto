@@ -209,7 +209,7 @@ struct StoreDTOTests {
     @Test("createSubscriptionGroups：缺少订阅信息时归入 unknown 组")
     func createSubscriptionGroupsFallsBackToUnknownGroup() {
         // 没有 subscription 信息的自动续费商品 → groupID 回退为 "unknown"。
-        let orphan = makeProduct(id: "com.coffic.netto.orphan", kind: .autoRenewable, groupID: nil)
+        let orphan = makeProduct(id: "com.coffic.netpause.orphan", kind: .autoRenewable, groupID: nil)
 
         let groups = ProductGroupsDTO.createSubscriptionGroups(from: [orphan])
 

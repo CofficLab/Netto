@@ -13,7 +13,7 @@ public enum PersistenceConfig {
     nonisolated public static let settingsFileName = "settings.sqlite"
 
     nonisolated static let label = "com.yueyi.TravelMode"
-    public nonisolated static let appName = "TravelMode"
+    public nonisolated static let appName = "Netpause"
 
     /// v3 之前的唯一数据库：`~/Documents/debug|production/db.sqlite`。
     ///

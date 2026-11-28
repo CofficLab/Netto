@@ -15,7 +15,7 @@ import SwiftData
 actor EventDatabase {
     private let database: SerialModelDatabase
     private let logger = Logger(
-        subsystem: "com.yueyi.TravelMode.PluginEventStore",
+        subsystem: "com.yueyi.Netpause.PluginEventStore",
         category: "database"
     )
 
@@ -30,7 +30,7 @@ actor EventDatabase {
     init(container: ModelContainer) {
         self.database = SerialModelDatabase(
             container: container,
-            label: "com.yueyi.TravelMode.eventstore.database"
+            label: "com.yueyi.Netpause.eventstore.database"
         )
     }
 

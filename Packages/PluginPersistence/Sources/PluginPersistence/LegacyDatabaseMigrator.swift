@@ -10,8 +10,8 @@ import SwiftData
 /// 失败不写标记，下次启动重试。重试前会清空目标容器，避免半迁移留下重复行。
 @MainActor
 enum LegacyDatabaseMigrator {
-    nonisolated static let markerFileName = ".netto-storage-migration.json"
-    private static let logger = Logger(subsystem: "com.yueyi.TravelMode", category: "persistence")
+    nonisolated static let markerFileName = ".netpause-storage-migration.json"
+    private static let logger = Logger(subsystem: "com.yueyi.Netpause", category: "persistence")
 
     static func migrateIfNeeded(
         legacyDatabaseURL: URL,

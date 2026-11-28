@@ -17,7 +17,7 @@ if [[ -z "$version" ]]; then
 fi
 
 current_tag="v$version"
-repo_slug="${GITHUB_REPOSITORY:-CofficLab/Netto}"
+repo_slug="${GITHUB_REPOSITORY:-CofficLab/Netpause}"
 
 if [[ -n "$previous_tag" ]]; then
   range="$previous_tag..HEAD"

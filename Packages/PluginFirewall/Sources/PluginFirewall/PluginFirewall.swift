@@ -1,6 +1,6 @@
 import Foundation
 import KernelCore
-import NettoIPCContracts
+import NetpauseIPCContracts
 import NetworkExtension
 import ProviderAppSettings
 import ProviderFirewall

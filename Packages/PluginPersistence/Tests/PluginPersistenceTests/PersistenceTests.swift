@@ -12,7 +12,7 @@ final class PersistenceTests: XCTestCase {
 
     private func makeTempRoot() -> URL {
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("NettoPersistenceTests-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("NetpausePersistenceTests-\(UUID().uuidString)", isDirectory: true)
         try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }

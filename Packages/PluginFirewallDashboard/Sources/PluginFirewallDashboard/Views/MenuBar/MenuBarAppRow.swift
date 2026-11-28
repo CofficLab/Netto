@@ -49,7 +49,7 @@ struct MenuBarAppRow: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("netto.app.row.\(app.id)")
+        .accessibilityIdentifier("netpause.app.row.\(app.id)")
         .accessibilityLabel(accessibilityText)
     }
 

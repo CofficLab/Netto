@@ -11,7 +11,7 @@ struct DashboardOpenSystemSettingsButton: View {
             NSWorkspace.shared.open(url)
         }
         .frame(width: 150, height: 50)
-        .accessibilityIdentifier("netto.extension.system-settings")
+        .accessibilityIdentifier("netpause.extension.system-settings")
     }
 }
 
@@ -35,6 +35,6 @@ struct DashboardInstallExtensionButton: View {
         }
         .disabled(isBusy)
         .frame(width: 150, height: 50)
-        .accessibilityIdentifier("netto.extension.install")
+        .accessibilityIdentifier("netpause.extension.install")
     }
 }

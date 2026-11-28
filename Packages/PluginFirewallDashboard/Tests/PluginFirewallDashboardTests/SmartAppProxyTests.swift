@@ -42,7 +42,7 @@ struct SmartAppProxyTests {
             "com.apple.finder",
             "com.microsoft.Excel",
             "com.apple.Terminal",
-            "com.coffic.netto",
+            "com.coffic.netpause",
         ] {
             #expect(!SmartApp.isProxyApp(withId: id), "\(id) 不应被识别为代理软件")
         }

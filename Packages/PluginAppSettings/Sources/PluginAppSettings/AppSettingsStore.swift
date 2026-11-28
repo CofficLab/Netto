@@ -17,7 +17,7 @@ import SwiftData
 public final class AppSettingsStore: AppSettingsProviding {
     private let database: AppSettingDatabase
     private let logger = Logger(
-        subsystem: "com.yueyi.TravelMode.PluginAppSettings",
+        subsystem: "com.yueyi.Netpause.PluginAppSettings",
         category: "store"
     )
 

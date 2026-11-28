@@ -15,7 +15,7 @@ final class FirewallExtensionBundleHostTests: XCTestCase {
     /// 构造一个临时目录，返回其 URL。
     private func makeTempDirectory(named name: String) throws -> URL {
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("NettoFirewallBundleTest-\(name)-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("NetpauseFirewallBundleTest-\(name)-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         addTeardownBlock {
             try? FileManager.default.removeItem(at: url)

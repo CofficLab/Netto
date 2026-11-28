@@ -54,7 +54,7 @@ struct AppLine: View {
             }
             .contentShape(Rectangle())
             .accessibilityElement(children: .contain)
-            .accessibilityIdentifier("netto.app.row.\(app.id)")
+            .accessibilityIdentifier("netpause.app.row.\(app.id)")
             .onHover(perform: onHover)
         }
         .popover(isPresented: Binding(

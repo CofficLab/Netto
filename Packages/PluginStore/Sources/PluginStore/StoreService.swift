@@ -5,14 +5,14 @@ import ProviderStore
 import StoreKit
 import SwiftUI
 
-// MARK: - Netto Store Catalog
+// MARK: - Netpause Store Catalog
 
-/// Netto 的商品表：商品 ID → 订阅档位。
+/// Netpause 的商品表：商品 ID → 订阅档位。
 ///
-/// 商品 ID 属于 Netto 商店后台的配置，共享层（`ProviderStore` 契约 +
+/// 商品 ID 属于 Netpause 商店后台的配置，共享层（`ProviderStore` 契约 +
 /// `KitStoreKit` 机制）只定义**映射的形状**（`StoreProductCatalog`），
 /// 由本类型提供具体取值。
-public struct NettoStoreCatalog: StoreProductCatalog {
+public struct NetpauseStoreCatalog: StoreProductCatalog {
     /// 商品 ID → 订阅档位。
     public let productTiers: [String: StoreTier]
 
@@ -21,7 +21,7 @@ public struct NettoStoreCatalog: StoreProductCatalog {
     }
 
     /// 商品表本体。
-    public static let shared = NettoStoreCatalog(productTiers: [
+    public static let shared = NetpauseStoreCatalog(productTiers: [
         // Consumables
         "consumable.fuel.octane87": .none,
         "consumable.fuel.octane89": .none,
@@ -49,27 +49,27 @@ public typealias PaymentMode = StoreKit.Product.SubscriptionOffer.PaymentMode
 
 // MARK: - Store Service
 
-/// Netto 商店服务：驱动共享的 StoreKit 机制层，并提供 Netto 独有的展示型查询。
+/// Netpause 商店服务：驱动共享的 StoreKit 机制层，并提供 Netpause 独有的展示型查询。
 ///
 /// ## 分层
 ///
 /// - **机制**（交易监听、权益校准、商品拉取、购买、恢复、验证）由共享的
 ///   `KitStoreKit`（`StoreKitService`）提供，各 App 共用同一份实现；
-/// - **语义**（哪个商品对应什么档位）由 `NettoStoreCatalog` 决定；
-/// - 本类型保留 Netto 独有的展示型查询（已购分组、订阅组状态），这些是
-///   Netto 商店 UI 的需求，不是通用机制。
+/// - **语义**（哪个商品对应什么档位）由 `NetpauseStoreCatalog` 决定；
+/// - 本类型保留 Netpause 独有的展示型查询（已购分组、订阅组状态），这些是
+///   Netpause 商店 UI 的需求，不是通用机制。
 public enum StoreService: LogPrefixed {
     /// 共享机制层实例。
     private static let sharedService: StoreKitService = {
         let configuration = StoreKitConfiguration(
-            productIDs: NettoStoreCatalog.shared.allProductIds,
+            productIDs: NetpauseStoreCatalog.shared.allProductIds,
             entitlementStorageKey: StoreState.Keys.purchase,
             lastCheckedAtStorageKey: StoreState.Keys.lastCheckedAt
         )
 
         return StoreKitService(configuration: configuration) { holding in
-            // 机制层的结论 → Netto 的权益快照（档位映射由 Netto 商品表决定）。
-            let snapshot = NettoStoreCatalog.shared.entitlement(
+            // 机制层的结论 → Netpause 的权益快照（档位映射由 Netpause 商品表决定）。
+            let snapshot = NetpauseStoreCatalog.shared.entitlement(
                 activeProductIDs: holding.activeSubscriptionProductIDs,
                 latestExpiration: holding.latestExpiration
             )
@@ -127,14 +127,14 @@ public enum StoreService: LogPrefixed {
 
     /// 商品表。
     public static var productCatalog: any StoreProductCatalog {
-        NettoStoreCatalog.shared
+        NetpauseStoreCatalog.shared
     }
 
     // MARK: - Data Sources
 
     /// 全部商品 ID 列表。
     private static func allProductIds() -> [String] {
-        NettoStoreCatalog.shared.allProductIds
+        NetpauseStoreCatalog.shared.allProductIds
     }
 
     // MARK: - Product Fetching
@@ -254,7 +254,7 @@ public enum StoreService: LogPrefixed {
 
     /// 查询商品对应的档位。
     public static func tier(for productId: String) -> StoreTier {
-        NettoStoreCatalog.shared.tier(for: productId)
+        NetpauseStoreCatalog.shared.tier(for: productId)
     }
 
     /// 校验 StoreKit 的验证结果。未验证的交易一律拒绝。
@@ -425,7 +425,7 @@ public enum StoreService: LogPrefixed {
                 continue
             }
 
-            let tier = NettoStoreCatalog.shared.tier(for: productID)
+            let tier = NetpauseStoreCatalog.shared.tier(for: productID)
             if highestIndex == nil || tier > highestTier {
                 highestIndex = index
                 highestTier = tier

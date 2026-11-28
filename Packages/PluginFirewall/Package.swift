@@ -2,7 +2,7 @@
 // PluginFirewall：防火墙插件（NEFilterManager / OSSystemExtensionManager /
 // IPC adapter / observer / daemon 的唯一拥有者）。
 // 依赖约束：KernelCore、ProviderFirewall、ProviderFirewallEvents、
-// ProviderAppSettings、NettoIPCContracts。禁止 SwiftUI/具体 Repo。
+// ProviderAppSettings、NetpauseIPCContracts。禁止 SwiftUI/具体 Repo。
 import PackageDescription
 
 let package = Package(
@@ -18,7 +18,7 @@ let package = Package(
         .package(name: "ProviderFirewall", path: "../ProviderFirewall"),
         .package(name: "ProviderFirewallEvents", path: "../ProviderFirewallEvents"),
         .package(name: "ProviderAppSettings", path: "../ProviderAppSettings"),
-        .package(name: "NettoIPCContracts", path: "../NettoIPCContracts"),
+        .package(name: "NetpauseIPCContracts", path: "../NetpauseIPCContracts"),
     ],
     targets: [
         .target(
@@ -28,7 +28,7 @@ let package = Package(
                 "ProviderFirewall",
                 "ProviderFirewallEvents",
                 "ProviderAppSettings",
-                "NettoIPCContracts",
+                "NetpauseIPCContracts",
             ]
         ),
         .testTarget(

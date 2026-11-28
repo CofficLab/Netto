@@ -66,7 +66,7 @@ struct AppList: View {
             }
         }
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("netto.apps.list")
+        .accessibilityIdentifier("netpause.apps.list")
         .environment(\.appCatalog, catalog)
         .task { await observeFirewallState() }
         .task { await model.run(catalog: catalog, settings: repo, events: eventRepo) }

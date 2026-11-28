@@ -37,7 +37,7 @@ struct BtnAbout: View {
             })
             .frame(width: 150)
             .frame(height: 50)
-            .accessibilityIdentifier("netto.settings.about")
+            .accessibilityIdentifier("netpause.settings.about")
         }
     }
     

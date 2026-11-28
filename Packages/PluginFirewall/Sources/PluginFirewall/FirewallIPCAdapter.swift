@@ -1,5 +1,5 @@
 import Foundation
-import NettoIPCContracts
+import NetpauseIPCContracts
 import OSLog
 
 /// 将 XPC 注册回调、连接失效和超时收敛到一个只能完成一次的结果。
@@ -107,7 +107,7 @@ final class IPCConnectionRegistry {
     }
 }
 
-private let ipcLogger = Logger(subsystem: "com.yueyi.TravelMode.PluginFirewall", category: "ipc")
+private let ipcLogger = Logger(subsystem: "com.yueyi.Netpause.PluginFirewall", category: "ipc")
 
 /// 在非隔离上下文创建 NSXPC 回调，避免 Swift 把闭包隐式绑定到调用方的
 /// MainActor；回调线程必须经 `Task { @MainActor in }` 跳回主线程再解析
@@ -159,7 +159,7 @@ final class NSXPCFirewallIPCAdapter: FirewallIPCServing {
     private let extensionBundle: Bundle?
     private var connection: NSXPCConnection?
     private let registry = IPCConnectionRegistry()
-    private let logger = Logger(subsystem: "com.yueyi.TravelMode.PluginFirewall", category: "ipc")
+    private let logger = Logger(subsystem: "com.yueyi.Netpause.PluginFirewall", category: "ipc")
     weak var exportedAppCommunication: (any AppCommunication)?
     var connectionLossHandler: (@MainActor () -> Void)?
 

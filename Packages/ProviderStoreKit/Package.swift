@@ -1,5 +1,5 @@
 // swift-tools-version: 6.0
-// ProviderStoreKit：Netto 特有的商店能力契约。
+// ProviderStoreKit：Netpause 特有的商店能力契约。
 // 依赖约束：仅共享的 ProviderStore 契约（ProviderStore）。禁止 StoreKit 越过边界。
 import PackageDescription
 

@@ -27,7 +27,7 @@ struct AppDetail: View {
         }
         .padding(AppUI.Spacing.md)
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("netto.app.detail")
+        .accessibilityIdentifier("netpause.app.detail")
         .onHover { hovering in
             popoverHovering = hovering
         }

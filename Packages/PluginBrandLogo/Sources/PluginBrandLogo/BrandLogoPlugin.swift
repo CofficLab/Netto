@@ -15,7 +15,7 @@ public final class BrandLogoPlugin: SuperPlugin {
     public let metadata = PluginMetadata(
         id: "brand-logo",
         name: "品牌图标",
-        description: "向菜单栏贡献 TravelMode 品牌图标",
+        description: "向菜单栏贡献 Netpause 品牌图标",
         version: "1.0",
         category: .design,
         policy: .alwaysOn

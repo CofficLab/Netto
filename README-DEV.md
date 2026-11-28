@@ -20,8 +20,8 @@
 
 ```text
 App/  SwiftUI/AppKit 应用宿主与组合根（源码、配置平铺存放）
-    ↓ 通过
-Packages/FactoryNetto  唯一装配点
+    ├─ NetpauseManifest  宿主清单、插件数组与 UI 测试锚点
+    └─ NetpauseAssembly  宿主生命周期对象，驱动共享 LumiFactory 内核
     ↓ 创建并启动
 Packages/KernelCore  插件生命周期与 Provider 注册
     ├─ Packages/Provider*  能力协议与中立数据类型
@@ -33,8 +33,8 @@ Assets.xcassets/     App 图标与界面资源
 
 ### 层级职责 Layer Responsibilities
 
-- **App**：创建 SwiftUI 场景、处理 AppKit 生命周期与状态栏承载，并调用 FactoryNetto 启动唯一 Kernel。
-- **FactoryNetto**：显式装配 Provider 与 Plugin，控制依赖和启动顺序。
+- **App**：创建 SwiftUI 场景、处理 AppKit 生命周期与状态栏承载，并调用 NetpauseAssembly 启动唯一 Kernel。
+- **NetpauseAssembly**：通过 `NetpauseManifest` 显式装配 Provider 与 Plugin，控制依赖和启动顺序。
 - **KernelCore**：管理插件生命周期、Provider 注册解析及贡献清理，不依赖具体功能包。
 - **Provider packages**：定义跨插件能力契约和中立数据类型。
 - **Plugin packages**：拥有各自的业务逻辑、存储、系统 API 与功能界面。

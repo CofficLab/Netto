@@ -1,17 +1,17 @@
-# TravelMode
+# Netpause
 
-TravelMode is a per-app network access control app for macOS. It asks for a decision on every new connection, lets you allow or block internet access for each application, and keeps a local history of what each app connected to.
+Netpause is a per-app network access control app for macOS. It asks for a decision on every new connection, lets you allow or block internet access for each application, and keeps a local history of what each app connected to.
 
 📖 English | [中文版](README_zh.md)
 
 [![App Store](https://img.shields.io/badge/App%20Store-Download-green)](https://apps.apple.com/cn/app/travelmode/id6474899051?mt=12)
-[![Latest release](https://img.shields.io/github/v/release/CofficLab/Netto?label=release&color=blue)](https://github.com/CofficLab/Netto/releases)
+[![Latest release](https://img.shields.io/github/v/release/CofficLab/Netpause?label=release&color=blue)](https://github.com/CofficLab/Netpause/releases)
 [![macOS](https://img.shields.io/badge/macOS-15.0%2B-blue.svg)](https://www.apple.com/macos/)
 [![Swift](https://img.shields.io/badge/Swift-6.0%2B-orange.svg)](https://swift.org)
 [![Coffic](https://img.shields.io/badge/Coffic-website-green)](https://coffic.cn)
-[![HomePage](https://img.shields.io/badge/Product%20Page-red)](https://coffic.cn/en/products/travelmode)
+[![HomePage](https://img.shields.io/badge/Product%20Page-red)](https://coffic.cn/en/products/netpause)
 
-![TravelMode](./docs/feature-1x.webp)
+![Netpause](./docs/feature-1x.webp)
 
 ## Features
 
@@ -25,16 +25,17 @@ TravelMode is a per-app network access control app for macOS. It asks for a deci
 
 ## How it works
 
-TravelMode installs a macOS system extension that acts as a **content filter** (`NEFilterDataProvider`). Every new socket flow is paused briefly while the app decides, using the per-app rule stored locally, and an event is written to the local database. When TravelMode is not running or the system extension is not approved, the filter falls back to allow, so network access is never silently cut off.
+Netpause installs a macOS system extension that acts as a **content filter** (`NEFilterDataProvider`). Every new socket flow is paused briefly while the app decides, using the per-app rule stored locally, and an event is written to the local database. When Netpause is not running or the system extension is not approved, the filter falls back to allow, so network access is never silently cut off.
 
-TravelMode does not proxy, reroute, or decrypt traffic. It only decides whether a connection is allowed, so it can run alongside VPN and proxy tools such as Clash.
+Netpause does not proxy, reroute, or decrypt traffic. It only decides whether a connection is allowed, so it can run alongside VPN and proxy tools such as Clash.
 
 ## Architecture
 
 ```text
 App/  SwiftUI/AppKit host and composition root
+    ├─ NetpauseManifest      Host manifest, plugin list, and UI-test anchors
+    └─ NetpauseAssembly      Host lifecycle objects over the shared LumiFactory kernel
     ↓
-Packages/FactoryNetto        The only assembly point
 Packages/KernelCore          Plugin lifecycle and provider registry
     ├─ Packages/Provider*    Capability contracts and neutral data types
     └─ Packages/Plugin*      Features, UI, and system services
@@ -42,7 +43,7 @@ Extension/ + Bridge/         Network Extension process and IPC boundary
 ```
 
 - **App** hosts the SwiftUI scenes, AppKit lifecycle, and the status bar item.
-- **FactoryNetto** assembles providers and plugins and controls startup order.
+- **NetpauseAssembly** assembles providers and plugins through `NetpauseManifest` and controls startup order.
 - **KernelCore** manages plugin lifecycle and provider registration/resolution without knowing concrete features.
 - **Provider packages** define capability contracts such as firewall state, app rules, events, and settings.
 - **Plugin packages** implement the dashboard, menu bar panel, database browser, and StoreKit integration.
@@ -62,8 +63,8 @@ Download the latest release from the [App Store](https://apps.apple.com/cn/app/t
 
 ## Development
 
-1. Open `TravelMode.xcodeproj` and select the `TravelMode` scheme.
-2. Build and run from Xcode, or install the built `TravelMode.app` into `/Applications` and approve the system extension in **System Settings → General → Login Items & Extensions**.
+1. Open `Netpause.xcodeproj` and select the `Netpause` scheme.
+2. Build and run from Xcode, or install the built `Netpause.app` into `/Applications` and approve the system extension in **System Settings → General → Login Items & Extensions**.
 3. Debug builds keep their data under `~/Library/Application Support/com.yueyi.TravelMode/db_debug_v3/`; release builds use `db_production_v3/`. Each data plugin owns its own SQLite file (`eventstore/events.sqlite`, `appsettings/settings.sqlite`).
 
 `README-DEV.md` covers the architecture, build products, and debugging notes in Chinese.

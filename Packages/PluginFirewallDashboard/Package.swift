@@ -1,5 +1,5 @@
 // swift-tools-version: 6.0
-// PluginFirewallDashboard：Netto 主界面与防火墙/应用/事件呈现。
+// PluginFirewallDashboard：Netpause 主界面与防火墙/应用/事件呈现。
 // UI 只依赖 Provider 契约和 Shell 聚合，不创建服务或访问持久化实现。
 import PackageDescription
 

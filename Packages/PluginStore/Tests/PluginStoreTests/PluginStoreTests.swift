@@ -10,15 +10,15 @@ import Testing
 /// StoreConfig 产品映射测试（不触碰 StoreKit）。
 struct StoreConfigTests {
     @Test func productTierMapping() {
-        // 已知产品 ID → 等级映射（与 NettoStoreCatalog.shared.productTiers 一致）。
-        #expect(NettoStoreCatalog.shared.tier(for: "com.coffic.netto.monthly") == .pro)
-        #expect(NettoStoreCatalog.shared.tier(for: "com.coffic.netto.annual") == .pro)
+        // 已知产品 ID → 等级映射（与 NetpauseStoreCatalog.shared.productTiers 一致）。
+        #expect(NetpauseStoreCatalog.shared.tier(for: "com.coffic.netto.monthly") == .pro)
+        #expect(NetpauseStoreCatalog.shared.tier(for: "com.coffic.netto.annual") == .pro)
         // 未知 ID 回退 none。
-        #expect(NettoStoreCatalog.shared.tier(for: "com.example.unknown") == .none)
+        #expect(NetpauseStoreCatalog.shared.tier(for: "com.example.unknown") == .none)
     }
 
     @Test func allProductIdsUniqueAndNonEmpty() {
-        let ids = NettoStoreCatalog.shared.allProductIds
+        let ids = NetpauseStoreCatalog.shared.allProductIds
         #expect(!ids.isEmpty)
         #expect(Set(ids).count == ids.count)
     }

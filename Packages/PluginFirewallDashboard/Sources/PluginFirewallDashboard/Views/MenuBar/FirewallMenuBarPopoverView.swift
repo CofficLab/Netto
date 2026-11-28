@@ -52,7 +52,7 @@ struct FirewallMenuBarPopoverView: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 8)
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("netto.menubar.firewall")
+        .accessibilityIdentifier("netpause.menubar.firewall")
         .overlay(alignment: .bottom) {
             // 操作反馈（规则变更、导出结果、失败原因）在弹窗内直接可见。
             MenuBarToastOverlay(presenter: toastPresenter)
@@ -80,11 +80,11 @@ struct FirewallMenuBarPopoverView: View {
         if snapshot.state.isRunning() {
             AppButton("停止", style: .secondary, size: .small, action: stop)
                 .disabled(isBusy || !snapshot.canStop)
-                .accessibilityIdentifier("netto.menubar.firewall.stop")
+                .accessibilityIdentifier("netpause.menubar.firewall.stop")
         } else {
             AppButton("开启", style: .primary, size: .small, action: start)
                 .disabled(isBusy || !snapshot.canStart)
-                .accessibilityIdentifier("netto.menubar.firewall.start")
+                .accessibilityIdentifier("netpause.menubar.firewall.start")
         }
     }
 

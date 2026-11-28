@@ -59,7 +59,7 @@ public final class FirewallDashboardPlugin: SuperPlugin {
         // 避免菜单栏出现「品牌图标 + 状态图标」两个图标。
         menuBar.addPopup(MenuBarContribution(
             id: id,
-            title: "TravelMode",
+            title: "Netpause",
             order: 10,
             ownerPluginID: id
         ) {

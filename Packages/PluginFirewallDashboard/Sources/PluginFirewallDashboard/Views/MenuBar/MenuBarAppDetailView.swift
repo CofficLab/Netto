@@ -41,7 +41,7 @@ struct MenuBarAppDetailView: View {
         .padding(.vertical, 8)
         .frame(height: 360, alignment: .top)
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("netto.app.detail")
+        .accessibilityIdentifier("netpause.app.detail")
         .onAppear(perform: handleAppear)
         .onDisappear { loadTask?.cancel() }
         .onChange(of: statusFilter) { resetPageAndReload() }
@@ -56,7 +56,7 @@ struct MenuBarAppDetailView: View {
             HStack(spacing: 6) {
                 AppButton(systemImage: "chevron.left", style: .ghost, size: .small, action: onBack)
                     .accessibilityLabel("返回应用列表")
-                    .accessibilityIdentifier("netto.app.detail.back")
+                    .accessibilityIdentifier("netpause.app.detail.back")
 
                 Text(app.name)
                     .font(.appBodyEmphasized)
@@ -65,7 +65,7 @@ struct MenuBarAppDetailView: View {
                 Spacer(minLength: 4)
 
                 AppAction(shouldAllow: $shouldAllow, appId: app.id, onRuleChange: onRuleChange)
-                    .accessibilityIdentifier("netto.app.detail.rule")
+                    .accessibilityIdentifier("netpause.app.detail.rule")
             }
 
             HStack(spacing: 8) {
@@ -97,17 +97,17 @@ struct MenuBarAppDetailView: View {
                 StatusFilter.allCases.map(\.rawValue),
                 selection: statusSelection,
                 maxWidth: 150,
-                accessibilityIdentifiers: StatusFilter.allCases.map { "netto.events.status.\($0.rawValue)" }
+                accessibilityIdentifiers: StatusFilter.allCases.map { "netpause.events.status.\($0.rawValue)" }
             )
-            .accessibilityIdentifier("netto.events.status-filter")
+            .accessibilityIdentifier("netpause.events.status-filter")
 
             AppSegmentedControl(
                 DirectionFilter.allCases.map(\.rawValue),
                 selection: directionSelection,
                 maxWidth: 96,
-                accessibilityIdentifiers: DirectionFilter.allCases.map { "netto.events.direction.\($0.rawValue)" }
+                accessibilityIdentifiers: DirectionFilter.allCases.map { "netpause.events.direction.\($0.rawValue)" }
             )
-            .accessibilityIdentifier("netto.events.direction-filter")
+            .accessibilityIdentifier("netpause.events.direction-filter")
 
             Spacer(minLength: 0)
 
@@ -116,7 +116,7 @@ struct MenuBarAppDetailView: View {
             }
             .help("导出近期日志")
             .accessibilityLabel("导出近期日志")
-            .accessibilityIdentifier("netto.events.export")
+            .accessibilityIdentifier("netpause.events.export")
         }
     }
 
@@ -146,7 +146,7 @@ struct MenuBarAppDetailView: View {
         }
         .frame(maxHeight: .infinity)
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("netto.events.detail")
+        .accessibilityIdentifier("netpause.events.detail")
     }
 
     private func eventRow(_ event: FirewallEventSnapshot) -> some View {
@@ -190,7 +190,7 @@ struct MenuBarAppDetailView: View {
             }
             .disabled(currentPage <= 0 || model.isLoading)
             .accessibilityLabel("上一页")
-            .accessibilityIdentifier("netto.events.prev")
+            .accessibilityIdentifier("netpause.events.prev")
 
             Spacer(minLength: 0)
 
@@ -206,7 +206,7 @@ struct MenuBarAppDetailView: View {
             }
             .disabled(currentPage >= totalPages - 1 || model.isLoading)
             .accessibilityLabel("下一页")
-            .accessibilityIdentifier("netto.events.next")
+            .accessibilityIdentifier("netpause.events.next")
         }
     }
 

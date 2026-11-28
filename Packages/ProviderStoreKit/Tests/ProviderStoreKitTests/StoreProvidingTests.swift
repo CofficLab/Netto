@@ -3,16 +3,16 @@ import ProviderStore
 import Testing
 @testable import ProviderStoreKit
 
-/// Netto 商店能力契约的测试。
+/// Netpause 商店能力契约的测试。
 ///
 /// 契约本身是纯协议，测试聚焦于「实现方能以共享契约的类型满足契约」这一
-/// 集成点——共享层的 `StoreTier` / `StoreEntitlementSnapshot` 与 Netto 的
+/// 集成点——共享层的 `StoreTier` / `StoreEntitlementSnapshot` 与 Netpause 的
 /// `StoreProviding` 必须对齐，否则消费方拿到的权益结论会失真。
 @Suite("ProviderStoreKit")
 @MainActor
 struct ProviderStoreKitTests {
 
-    /// 满足 Netto 商店契约的最小实现。
+    /// 满足 Netpause 商店契约的最小实现。
     private final class StubStore: StoreProviding {
         var entitlement: StoreEntitlementSnapshot
         private(set) var restored = false

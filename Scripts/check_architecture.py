@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Netto 架构依赖扫描脚本（阶段 8）。
+Netpause 架构依赖扫描脚本（阶段 8）。
 
 用途：阻止回归，维护迁移后架构边界。可独立运行：
     python3 Scripts/check_architecture.py
@@ -21,7 +21,7 @@ Netto 架构依赖扫描脚本（阶段 8）。
       autoRegisterPlugins、@objc(...Registrant)）。
 
 已知豁免（刻意保留，请勿误报）：
-  - App 目标 import ProviderShell / Provider 契约 / FactoryNetto / KernelCore：
+  - App 目标 import ProviderShell / Provider 契约 / LumiFactory / NetpauseManifest / KernelCore：
     App 组合根负责启动 Factory 创建的唯一 Kernel 并缓存视图所需契约。
   - ProviderShell 暴露 `AnyView` 的 UI 贡献契约（阶段 6 既定设计）。
   - App/AppNotifications.swift 的 App 内通知名（无负载壳内信号）。

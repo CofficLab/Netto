@@ -18,7 +18,7 @@ public final class EventStore: FirewallEventsProviding {
     private let database: EventDatabase
     private let maintenanceManager: MaintenanceManager
     private let logger = Logger(
-        subsystem: "com.yueyi.TravelMode.PluginEventStore",
+        subsystem: "com.yueyi.Netpause.PluginEventStore",
         category: "store"
     )
 

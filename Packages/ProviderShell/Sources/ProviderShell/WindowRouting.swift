@@ -26,7 +26,7 @@ public enum ShellWindowID {
 /// 避免「契约里的 ID」与「场景里的标题」各写一份而漂移。
 public enum ShellWindowTitle {
     /// 主窗口标题。
-    public static let main = "TravelMode"
+    public static let main = "Netpause"
 
     /// 设置窗口标题。
     public static let settings = "设置"
@@ -35,7 +35,7 @@ public enum ShellWindowTitle {
     public static let plugin = "Plugin Window"
 
     /// 欢迎/引导窗口标题。
-    public static let welcome = "Welcome to TravelMode"
+    public static let welcome = "Welcome to Netpause"
 }
 
 /// 设置入口深链请求：打开设置窗口并选中指定入口。
